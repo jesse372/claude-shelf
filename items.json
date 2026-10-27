@@ -1,8 +1,35 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-10-27T16:14:06+00:00",
+  "updated": "2026-10-27T16:14:07+00:00",
   "items": [
+    {
+      "slug": "browser-probe",
+      "title": "Browser Probe: let Claude actually look at your web app",
+      "emoji": "🔍",
+      "type": "skill",
+      "summary": "Claude drives a real headless Chrome so it can screenshot every screen of your web app, catch JavaScript errors, and spot bugs that only show up on screen. No Playwright or Puppeteer needed.",
+      "how_to_use": "Install it, then ask Claude: \"test the UI\", \"screenshot every screen at phone size\" or \"it looks wrong but the data is fine, find out why\".",
+      "requires": "Google Chrome and Node 22 or newer.",
+      "tags": [
+        "testing",
+        "web",
+        "qa"
+      ],
+      "link": "",
+      "created": "2026-10-27T16:14:07+00:00",
+      "updated": "2026-10-27T16:14:07+00:00",
+      "version": 1,
+      "files": [
+        "SKILL.md",
+        "scripts/cdp.mjs",
+        "scripts/launch.sh",
+        "scripts/probe.mjs"
+      ],
+      "skill_name": "browser-probe",
+      "zip": "items/browser-probe/browser-probe.zip",
+      "install_prompt": "Please install the Claude Code skill \"Browser Probe: let Claude actually look at your web app\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/browser-probe/browser-probe.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/browser-probe/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+    },
     {
       "slug": "web-essentials",
       "title": "Web Essentials: favicon + iPhone home-screen icon",
