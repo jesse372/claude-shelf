@@ -1,0 +1,23 @@
+{
+  "slug": "auth-framework",
+  "title": "Auth Framework: logins that renew before they expire",
+  "emoji": "🔐",
+  "type": "skill",
+  "summary": "One place that tracks every token, session and cookie your automations depend on, and refreshes them (or warns you) before they expire, instead of breaking silently.",
+  "how_to_use": "Ask \"add an auth keepalive for this\" when you build anything that logs in.",
+  "requires": "macOS (Keychain + launchd).",
+  "tags": [],
+  "link": "",
+  "created": "2026-06-29T02:07:26+08:00",
+  "updated": "2026-10-02T04:00:03+08:00",
+  "version": 1,
+  "useful": 3,
+  "files": [
+    "SKILL.md",
+    "com.jesse.auth-keepalive.plist",
+    "scripts/auth-keepalive.sh",
+    "scripts/authlib.sh"
+  ],
+  "skill_name": "auth-framework",
+  "zip": "items/auth-framework/auth-framework.zip"
+}

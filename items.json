@@ -1,7 +1,7 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-10-27T16:35:25+00:00",
+  "updated": "2026-10-27T16:35:27+00:00",
   "items": [
     {
       "slug": "gmail",
@@ -25,6 +25,30 @@
       "skill_name": "gmail",
       "zip": "items/gmail/gmail.zip",
       "install_prompt": "Please install the Claude Code skill \"Gmail from Claude (draft, then you confirm)\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/gmail/gmail.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/gmail/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+    },
+    {
+      "slug": "auth-framework",
+      "title": "Auth Framework: logins that renew before they expire",
+      "emoji": "🔐",
+      "type": "skill",
+      "summary": "One place that tracks every token, session and cookie your automations depend on, and refreshes them (or warns you) before they expire, instead of breaking silently.",
+      "how_to_use": "Ask \"add an auth keepalive for this\" when you build anything that logs in.",
+      "requires": "macOS (Keychain + launchd).",
+      "tags": [],
+      "link": "",
+      "created": "2026-06-29T02:07:26+08:00",
+      "updated": "2026-10-02T04:00:03+08:00",
+      "version": 1,
+      "useful": 3,
+      "files": [
+        "SKILL.md",
+        "com.jesse.auth-keepalive.plist",
+        "scripts/auth-keepalive.sh",
+        "scripts/authlib.sh"
+      ],
+      "skill_name": "auth-framework",
+      "zip": "items/auth-framework/auth-framework.zip",
+      "install_prompt": "Please install the Claude Code skill \"Auth Framework: logins that renew before they expire\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/auth-framework/auth-framework.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/auth-framework/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "memory",
