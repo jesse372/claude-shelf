@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="AnotherLife">
+  
+  <g transform="rotate(-9 244 292)">
+  <ellipse cx="244.0" cy="292.0" rx="40" ry="37.2" fill="none" stroke="#efe6d8" stroke-width="9"/>
+  <ellipse cx="248.1" cy="283.0" rx="66" ry="61.4" fill="none" stroke="#efe6d8" stroke-width="17"/>
+  <ellipse cx="252.1" cy="274.0" rx="96" ry="89.3" fill="none" stroke="#efe6d8" stroke-width="8"/>
+  <ellipse cx="256.1" cy="265.0" rx="130" ry="120.9" fill="none" stroke="#efe6d8" stroke-width="20"/>
+  <ellipse cx="260.2" cy="256.0" rx="163" ry="151.6" fill="none" stroke="#efe6d8" stroke-width="10"/>
+  <path d="M 379.5 99.5 A 196 182.28 0 1 1 143.6 103.4" fill="none" stroke="#e9a13c" stroke-width="22" stroke-linecap="round"/>
+  <ellipse cx="244" cy="292" rx="15" ry="14" fill="#e9a13c"/>
+  </g>
+</svg>

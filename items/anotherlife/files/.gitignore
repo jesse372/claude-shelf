@@ -1,0 +1,25 @@
+node_modules/
+android/
+ios/
+.DS_Store
+*.log
+_test.html
+_probe.html
+# signing material must never be committed
+*.keystore
+*.jks
+keystore.properties
+android/key.properties
+
+# generated native project — regenerate with `npx cap add android`
+android/local.properties
+android/.gradle/
+android/app/build/
+android/build/
+*.apk
+*.aab
+dist/
+ios/App/Pods/
+ios/App/App/public/
+ios/App/Podfile.lock
+ios/DerivedData/

@@ -1,0 +1,33 @@
+{
+  "name": "anotherlife",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "AnotherLife \u2014 a life simulator for Android and the web.",
+  "scripts": {
+    "start": "python3 -m http.server 8777 --directory www",
+    "sync": "cap sync android",
+    "open": "cap open android",
+    "assets": "capacitor-assets generate --android --assetPath resources",
+    "build:apk": "cd android && ./gradlew assembleDebug",
+    "build:aab": "cd android && ./gradlew bundleRelease",
+    "android:init": "npx cap add android && ./scripts/android-fix.sh && npx capacitor-assets generate --android && npx cap sync android",
+    "android:fix": "./scripts/android-fix.sh",
+    "apk:dev": "./scripts/dev-apk.sh",
+    "apk:release": "./scripts/release-apk.sh",
+    "ios:setup": "./scripts/ios-setup.sh",
+    "ios:open": "open ios/App/App.xcworkspace"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^6.2.0"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/app": "^6.0.2",
+    "@capacitor/core": "^6.2.0",
+    "@capacitor/ios": "^6.2.2",
+    "@capacitor/status-bar": "^6.0.2",
+    "cordova-plugin-purchase": "^13.18.0"
+  }
+}

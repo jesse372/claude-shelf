@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<title>AnotherLife — sound test</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>
+ body{margin:0;background:#14120f;color:#efe6d8;font:16px/1.5 -apple-system,system-ui,sans-serif;
+      padding:24px 18px calc(24px + env(safe-area-inset-bottom))}
+ h1{font:400 22px/1.2 ui-serif,Georgia,serif;letter-spacing:.12em;text-transform:uppercase;margin:0 0 6px}
+ p{color:#a19584;font-size:13.5px;margin:0 0 22px}
+ button{display:flex;align-items:center;justify-content:space-between;width:100%;margin:0 0 10px;
+        padding:18px 18px;border:1px solid #332c23;border-radius:10px;background:#1c1915;color:#efe6d8;
+        font:600 16px/1 inherit}
+ button:active{background:#e9a13c;color:#1a1509}
+ b{font-weight:700} em{font-style:normal;color:#9a8e78;font-size:12px}
+</style></head><body>
+<h1>Sound test</h1>
+<p>Tap each one. Tell me which are wrong and what they should sound like.</p>
+<div id="list"></div>
+<script type="module">
+  import * as Fx from "/js/fx.js";
+  Fx.setSound(true);
+  const SOUNDS = [
+    ["police", "Police siren", "arrest, prison"],
+    ["hit",    "Taking a hit", "fights, beatings"],
+    ["money",  "Money",        "lottery, windfall"],
+    ["death",  "Death",        "the end"],
+    ["love",   "Love",         "marriage"],
+    ["cheer",  "Triumph",      "titles, fame"],
+  ];
+  document.getElementById("list").innerHTML = SOUNDS.map(([id, name, when]) =>
+    `<button data-s="${id}"><span>${name}<br><em>${when}</em></span><b>▶</b></button>`).join("");
+  document.getElementById("list").addEventListener("click", e => {
+    const b = e.target.closest("[data-s]");
+    if (b) Fx.play(b.dataset.s);
+  });
+</script></body></html>

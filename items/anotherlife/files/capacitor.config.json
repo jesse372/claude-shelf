@@ -1,0 +1,18 @@
+{
+  "appId": "com.jessechance.anotherlife",
+  "appName": "AnotherLife",
+  "webDir": "www",
+  "backgroundColor": "#f8f3ea",
+  "android": {
+    "backgroundColor": "#f8f3ea",
+    "allowMixedContent": false,
+    "webContentsDebuggingEnabled": false
+  },
+  "plugins": {
+    "StatusBar": {
+      "style": "LIGHT",
+      "backgroundColor": "#f8f3ea",
+      "overlaysWebView": false
+    }
+  }
+}

@@ -1,0 +1,373 @@
+/* ============================================================
+   AnotherLife
+
+   The look: a life recorded in a ledger. Dark bark, cream type, one
+   amber accent (the same amber as the ring in the app icon), a serif for
+   anything that names a person, a year or a sum, and hairline rules
+   instead of cards-on-cards.
+
+   Deliberately NOT: white background, blue chrome, a green pill button,
+   four stacked emoji stat bars. That was somebody else's app.
+   ============================================================ */
+:root{
+  /* Warm paper, brown ink, one brass accent. Not white-and-blue, which is the
+     other app; not grey-on-grey, which is every app. */
+  --bg:#f8f3ea;            /* the page — unbleached paper */
+  --surface:#fffdf7;       /* sheets and cards, a shade lighter than the page */
+  --surface-2:#f0e8d8;     /* pressed rows, inputs, chips */
+  --line:#e0d5c0;          /* visible rule */
+  --hair:#ece3d2;          /* whisper rule, between rows */
+  --page:#e9e0ce;          /* outside the frame on a wide screen */
+
+  --txt:#2b241b;           /* warm ink */
+  --dim:#796e5e;           /* secondary type */
+  --dimmer:#9a8e78;        /* labels */
+
+  --amber:#9c6612;         /* brass — money, ages, prices. Dark enough to read */
+  --amber-fill:#e9a13c;    /* the accent as a surface */
+  --amber-fill-txt:#241a08;/* type sitting on that surface */
+  --amber-dk:#cf8b25;
+  --amber-soft:rgba(233,161,60,.20);
+
+  --good:#4a7233;          /* moss */
+  --good-tick:#7f9c56;
+  --bad:#b0472f;           /* terracotta */
+  --warn:#c07f14;
+  --ev-good:#2b241b;       /* good news is the default state — no tint */
+  --ev-bad:#9c4630;
+  --tick-off:#e2d8c4;
+
+  --scrim:rgba(43,36,27,.34);
+  --lift:0 10px 30px rgba(70,55,30,.14);
+  --lift-lg:0 18px 44px rgba(70,55,30,.20);
+
+  --serif:ui-serif,Georgia,"Times New Roman","Noto Serif",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+
+  --safe-t:env(safe-area-inset-top,0px);
+  --safe-b:env(safe-area-inset-bottom,0px);
+  --r:10px;
+}
+
+/* The bark theme, kept because it was built and some people do want it.
+   Menu → Appearance. Only the variables change; the layout is identical. */
+[data-theme="dark"]{
+  --bg:#14120f; --surface:#1c1915; --surface-2:#242019;
+  --line:#332c23; --hair:#262119; --page:#0c0b09;
+  --txt:#efe6d8; --dim:#a19584; --dimmer:#6d6357;
+  --amber:#e9a13c; --amber-fill:#e9a13c; --amber-fill-txt:#1a1509; --amber-dk:#c07f22;
+  --amber-soft:rgba(233,161,60,.13);
+  --good:#8ea36a; --good-tick:#8ea36a; --bad:#d4664f; --warn:#dda032;
+  --ev-good:#cfe0bd; --ev-bad:#e9b0a0; --tick-off:#332c23;
+  --scrim:rgba(5,4,3,.66);
+  --lift:0 14px 34px rgba(0,0,0,.5);
+  --lift-lg:0 24px 60px rgba(0,0,0,.55);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0;overscroll-behavior:none}
+body{background:var(--bg);color:var(--txt);font:400 16px/1.5 var(--sans);
+  -webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+h1,h2,h3{margin:0;font-weight:600}
+.screen{display:none;height:100dvh;flex-direction:column;background:var(--bg)}
+.screen.active{display:flex}
+
+/* A small-caps label, used anywhere something needs naming quietly. */
+.cash-label,.section-h,.nav-btn em,.field label,.stat-name,.char-age em,.age-word{
+  font-family:var(--sans);text-transform:uppercase;letter-spacing:.13em;font-weight:700}
+
+/* ---------- Title ---------- */
+#screen-title{background:var(--bg);justify-content:center}
+.title-wrap{margin:auto;padding:32px 30px calc(32px + var(--safe-b));text-align:center;max-width:430px;width:100%}
+.title-mark{display:flex;justify-content:center;margin-bottom:26px;color:var(--txt)}
+.title-mark svg{width:132px;height:132px}
+.title{font:400 clamp(21px,7.4vw,30px)/1 var(--serif);color:var(--txt);letter-spacing:.18em;
+  text-transform:uppercase;padding-left:.18em;margin:0 0 20px;white-space:nowrap}
+.tagline{color:var(--dim);margin:0 0 40px;font-size:14.5px;line-height:1.7}
+.title-actions{display:flex;flex-direction:column;gap:10px}
+
+/* ---------- Buttons ---------- */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;
+  padding:15px 18px;border-radius:var(--r);background:var(--surface-2);color:var(--txt);
+  border:1px solid var(--line);font-weight:600;font-size:15.5px;width:100%;
+  transition:background .14s ease,border-color .14s ease}
+.btn:active{background:var(--line)}
+.btn-primary{background:var(--amber-fill);border-color:var(--amber-fill);color:var(--amber-fill-txt);font-weight:700}
+.btn-primary:active{background:var(--amber-dk);border-color:var(--amber-dk)}
+.btn-ghost{background:transparent}
+.btn-lg{padding:17px;font-size:16.5px}
+.btn.disabled,.btn:disabled{opacity:.35;pointer-events:none}
+.btn-note{flex:0 0 100%;text-align:center;font-size:11.5px;font-weight:500;
+  opacity:.7;margin-top:3px;line-height:1.3}
+
+/* ---------- The identity line ----------
+   This used to be a branding bar, a dossier and a stats panel: 307px, 36% of
+   the screen, before you read a word of what happened. The app's own name is
+   not information. Name, age and balance are; everything else is one tap
+   away in the status sheet. */
+.idbar{display:flex;align-items:stretch;gap:2px;flex:0 0 auto;background:var(--bg);
+  padding:calc(6px + var(--safe-t)) 12px 6px;border-bottom:1px solid var(--hair)}
+.idbar-menu{width:34px;flex:0 0 auto;color:var(--dim);display:flex;align-items:center;justify-content:center}
+.idbar-menu svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
+.idbar-menu:active{color:var(--amber)}
+.idbar-main{flex:1;min-width:0;text-align:left;padding:4px 2px 4px 6px;display:block}
+.idbar-main:active{opacity:.6}
+.id-top{display:flex;align-items:baseline;gap:8px;width:100%}
+.id-name{font:400 17px/1.25 var(--serif);color:var(--txt);min-width:0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.id-age{flex:0 0 auto;font:400 17px/1.25 var(--serif);color:var(--amber);font-variant-numeric:tabular-nums}
+.id-age::before{content:"·";color:var(--dimmer);margin-right:7px}
+.id-money{margin-left:auto;flex:0 0 auto;font:400 15px/1.25 var(--serif);color:var(--amber);
+  font-variant-numeric:tabular-nums}
+.id-money.neg{color:var(--bad)}
+.id-chev{flex:0 0 auto;color:var(--dimmer);font-size:10px;line-height:1.6}
+.id-sub{display:block;color:var(--dim);font-size:11.5px;margin-top:1px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* the age ticking over is the whole game — let it land */
+@keyframes agetick{0%{transform:translateY(-3px);opacity:.3}100%{transform:translateY(0);opacity:1}}
+.id-age.tick{display:inline-block;animation:agetick .42s cubic-bezier(.2,.85,.25,1)}
+.brand-dev{flex:0 0 auto;align-self:center;background:var(--amber-fill);color:var(--amber-fill-txt);
+  font-size:10px;font-weight:800;letter-spacing:.08em;padding:4px 8px;border-radius:3px;line-height:1}
+.brand-dev:active{filter:brightness(.88)}
+.brand-dev.stale{background:var(--bad);color:var(--surface);animation:devpulse 1.1s ease-in-out infinite}
+@keyframes devpulse{0%,100%{opacity:1}50%{opacity:.5}}
+.brand-gen{flex:0 0 auto;align-self:center;color:var(--amber);font-size:9.5px;font-weight:800;
+  letter-spacing:.1em;border:1px solid var(--line);padding:3px 6px;border-radius:3px;margin-left:4px}
+
+/* ---------- Stats, as a ribbon ----------
+   Four gauges you can still read at a glance, in 24px instead of 116px.
+   The numbers live in the status sheet, behind a tap on the name. */
+.statribbon{flex:0 0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:9px;
+  background:var(--bg);padding:7px 14px 8px;border-bottom:1px solid var(--hair)}
+.stat{min-width:0}
+.stat-bar{display:flex;gap:2px;height:5px}
+.stat-bar i{flex:1;background:var(--tick-off);border-radius:1px;transition:background .35s ease}
+.stat-bar i.on{background:var(--good-tick)}
+.stat-bar i.on.mid{background:var(--warn)}
+.stat-bar i.on.low{background:var(--bad)}
+.stat-name{display:block;margin-top:5px;font-size:8px;color:var(--dimmer);
+  white-space:nowrap;overflow:hidden;text-transform:uppercase;letter-spacing:.1em;font-weight:700}
+
+/* Only ever on screen when something is actually wrong. */
+.warnstrip{flex:0 0 auto;background:var(--bg);padding:0 14px 8px}
+.warnrow{display:flex;align-items:center;gap:8px;padding:7px 10px;
+  border-left:2px solid var(--bad);background:var(--amber-soft);border-radius:0 4px 4px 0}
+.warnrow + .warnrow{margin-top:5px}
+.warn-ico{flex:0 0 auto;font-size:12px;line-height:1}
+.warn-text{font-size:11.5px;color:var(--ev-bad);line-height:1.4}
+
+/* ---------- The status sheet ---------- */
+.status-head{display:flex;align-items:center;gap:14px;padding:2px 2px 16px}
+.status-mark{flex:0 0 auto;width:54px;height:54px;color:var(--txt)}
+.status-mark svg{width:54px;height:54px;display:block}
+.status-name{font:400 21px/1.25 var(--serif);color:var(--txt)}
+.status-sub{color:var(--dim);font-size:13px;margin-top:3px;line-height:1.45}
+.statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:6px}
+.statgrid .stat-bar{height:9px}
+.statgrid .stat-name{margin-top:0;margin-bottom:6px;font-size:8.5px}
+.stat-pct{display:block;margin-top:7px;font:400 15px/1 var(--serif);color:var(--txt);
+  font-variant-numeric:tabular-nums}
+.statchips{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0 20px}
+.chip{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--amber);border:1px solid var(--line);border-radius:3px;padding:4px 8px}
+.chip b{font-weight:700;font-family:var(--serif);font-size:12px;letter-spacing:0;margin-left:4px}
+
+/* ---------- The life ----------
+   The year used to sit in a 72px gutter, which cost 18% of the width of every
+   single line for a number that repeats down the page. It's a rule now, and
+   the writing gets the full column. */
+.feed{flex:1 1 auto;overflow-y:auto;background:var(--bg);padding:0 0 16px;
+  -webkit-overflow-scrolling:touch}
+.yr{padding:0 16px}
+.yr-head{position:sticky;top:0;z-index:1;background:var(--bg);
+  display:flex;align-items:center;gap:10px;padding:14px 0 7px}
+.yr-label{flex:0 0 auto;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--dimmer)}
+.yr-head::after{content:"";flex:1;height:1px;background:var(--hair)}
+.yr:last-child .yr-label{color:var(--amber)}
+.yr:last-child .yr-head::after{background:var(--line)}
+.yr-body{padding-bottom:6px}
+.ev{font-size:14px;line-height:1.5;color:var(--txt);padding:2.5px 0}
+.ev.good{color:var(--ev-good)}
+.ev.bad{color:var(--ev-bad)}
+
+/* ---------- Age control ---------- */
+.agebar{flex:0 0 auto;background:var(--bg);padding:10px 16px 12px;border-top:1px solid var(--hair)}
+.age-btn{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:15px 18px;border-radius:var(--r);background:var(--amber-fill);color:var(--amber-fill-txt);
+  font-size:12.5px;transition:background .12s ease,transform .08s ease}
+.age-btn:active{background:var(--amber-dk);transform:scale(.995)}
+.age-word{font-size:12.5px}
+.age-plus{font:400 19px/1 var(--serif);font-variant-numeric:tabular-nums;letter-spacing:0}
+.age-btn.dead{background:transparent;border:1px solid var(--line);color:var(--dim)}
+.age-btn.dead:active{background:var(--surface-2)}
+
+/* ---------- Tab bar ---------- */
+.nav{display:grid;grid-template-columns:repeat(4,1fr);align-items:center;background:var(--bg);
+  flex:0 0 auto;padding:6px 2px calc(6px + var(--safe-b));border-top:1px solid var(--hair)}
+.nav-btn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:6px 1px;color:var(--dimmer)}
+.nav-btn .ni{display:block;line-height:0}
+.nav-btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.5;
+  stroke-linecap:round;stroke-linejoin:round}
+.nav-btn em{font-style:normal;font-size:8.5px}
+.nav-btn:active,.nav-btn.on{color:var(--amber)}
+
+/* ---------- Sheet ---------- */
+.sheet-backdrop{position:fixed;inset:0;background:var(--scrim);z-index:40;
+  display:flex;align-items:flex-end;animation:fade .18s ease}
+.sheet{width:100%;max-height:88dvh;background:var(--surface);border-radius:14px 14px 0 0;overflow:hidden;box-shadow:var(--lift-lg);
+  display:flex;flex-direction:column;animation:slideup .26s cubic-bezier(.2,.85,.25,1);
+  padding-bottom:var(--safe-b);border-top:1px solid var(--line)}
+.sheet-grab{display:none}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;position:relative;
+  padding:20px 16px 15px;background:var(--surface);color:var(--txt);flex:0 0 auto;
+  border-bottom:1px solid var(--line)}
+.sheet-head::before{content:"";position:absolute;top:7px;left:50%;transform:translateX(-50%);
+  width:32px;height:3px;border-radius:99px;background:var(--line)}
+.sheet-head h2{font:400 19px/1.2 var(--serif);letter-spacing:.01em}
+.sheet-close{width:28px;height:28px;border-radius:50%;background:var(--surface-2);color:var(--dim);font-size:11px}
+.sheet-body{overflow-y:auto;padding:16px 14px 22px;-webkit-overflow-scrolling:touch;background:var(--surface)}
+
+/* ---------- Lists ---------- */
+.group{background:transparent;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;
+  margin-bottom:18px}
+.row{display:flex;align-items:center;gap:13px;width:100%;text-align:left;background:transparent;
+  padding:13px 14px;position:relative;transition:background .12s ease}
+.group .row + .row::after{content:"";position:absolute;left:14px;right:0;top:0;height:1px;background:var(--hair)}
+.row:active{background:var(--surface-2)}
+.row-ico{font-size:19px;flex:0 0 auto;width:24px;text-align:center;line-height:1}
+.row-main{flex:1;min-width:0}
+.row-t{display:block;font-weight:600;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-s{display:block;color:var(--dim);font-size:12px;line-height:1.4;margin-top:3px}
+.row-r{flex:0 0 auto;text-align:right;font:400 14px/1.2 var(--serif);color:var(--amber);
+  font-variant-numeric:tabular-nums}
+.row-r.muted{color:var(--dimmer)}
+.row-r.mid{color:var(--warn)} .row-r.low{color:var(--bad)}
+.row.locked{opacity:.32}
+.row.locked:active{background:transparent}
+.section-h{color:var(--dimmer);font-size:9.5px;margin:2px 0 9px;padding-left:2px}
+.empty{color:var(--dimmer);text-align:center;padding:34px 12px;font-size:14px;line-height:1.7}
+.note{color:var(--dim);font-size:13px;line-height:1.6;padding:0 2px 16px}
+.meter{display:block;height:3px;border-radius:99px;background:var(--tick-off);overflow:hidden;
+  margin-top:7px;max-width:190px}
+.meter i{display:block;height:100%;background:var(--good)}
+.meter i.low{background:var(--bad)} .meter i.mid{background:var(--warn)}
+
+/* ---------- Modal ---------- */
+.modal-backdrop{position:fixed;inset:0;background:var(--scrim);z-index:60;
+  display:flex;align-items:center;justify-content:center;padding:24px;animation:fade .18s ease}
+.modal{width:100%;max-width:390px;max-height:86dvh;overflow-y:auto;background:var(--surface);
+  border:1px solid var(--line);border-radius:14px;padding:26px 20px 20px;
+  animation:pop .22s cubic-bezier(.2,.85,.25,1);box-shadow:var(--lift-lg)}
+.modal-emoji{font-size:32px;text-align:center;margin-bottom:14px;line-height:1}
+/* the rings, closed — a finished life */
+.modal-mark{display:flex;justify-content:center;margin-bottom:16px;color:var(--txt)}
+.modal-mark svg{width:62px;height:62px}
+.modal p{margin:0 0 20px;font-size:16px;line-height:1.5;text-align:center}
+.modal .res{margin-bottom:14px;color:var(--txt)}
+.modal .res.good{color:var(--ev-good)}
+.modal .res.bad{color:var(--ev-bad)}
+.modal .btn{margin-bottom:9px}
+.modal .btn:last-child{margin-bottom:0}
+.modal h2{text-align:center;font:400 24px/1.25 var(--serif);margin-bottom:8px}
+.modal .sub{text-align:center;color:var(--dim);font-size:13.5px;margin-bottom:18px;line-height:1.6}
+.tomb{border:1px solid var(--line);border-radius:var(--r);padding:2px 14px;margin-bottom:18px}
+.tomb-row{display:flex;justify-content:space-between;gap:12px;padding:10px 0;font-size:13.5px}
+.tomb-row + .tomb-row{border-top:1px solid var(--hair)}
+.tomb-row span:first-child{color:var(--dimmer)}
+.tomb-row span:last-child{font-family:var(--serif);color:var(--txt)}
+.stars{text-align:center;font-size:22px;letter-spacing:6px;margin:8px 0 16px;color:var(--amber)}
+.pill{display:inline-block;border:1px solid var(--line);color:var(--dimmer);font-size:10px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;padding:4px 9px;border-radius:3px;margin:0 5px 6px 0}
+.pill.on{border-color:var(--amber);color:var(--amber);background:var(--amber-soft)}
+
+/* ---------- Forms ---------- */
+.field{margin-bottom:15px}
+.field label{display:block;font-size:9.5px;color:var(--dimmer);margin-bottom:7px;padding-left:2px}
+.field input,.field select{width:100%;padding:13px 14px;border-radius:var(--r);background:var(--surface-2);
+  border:1px solid var(--line);color:var(--txt);font-size:15px;appearance:none}
+.field input:focus,.field select:focus{outline:none;border-color:var(--amber)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.seg button{padding:13px;border-radius:var(--r);background:transparent;border:1px solid var(--line);
+  font-size:14px;font-weight:600;color:var(--dim)}
+.seg button.on{border-color:var(--amber);color:var(--amber);background:var(--amber-soft)}
+.amt{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 16px}
+.amt button{padding:13px 4px;border-radius:var(--r);background:transparent;border:1px solid var(--line);
+  font-size:13px;font-weight:700;color:var(--txt)}
+.amt button:active{background:var(--surface-2)}
+
+.toast{position:fixed;left:50%;bottom:calc(150px + var(--safe-b));transform:translateX(-50%);
+  background:var(--surface-2);border:1px solid var(--line);color:var(--txt);padding:12px 18px;
+  border-radius:8px;font-size:13.5px;z-index:80;max-width:88vw;text-align:center;
+  box-shadow:var(--lift);animation:pop .2s ease}
+
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes slideup{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+/* a new ring lands when you live another year */
+@keyframes ringin{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:scale(1)}}
+.avatar.tick svg{animation:ringin .5s cubic-bezier(.2,.85,.25,1)}
+
+@media (min-width:560px){
+  .screen{max-width:500px;margin:0 auto;border-left:1px solid var(--hair);border-right:1px solid var(--hair)}
+  body{background:var(--page)}
+}
+
+/* ============================================================
+   Feedback effects
+   Everything here is pointer-events:none and animates only transform and
+   opacity, so it can never intercept a tap or force a layout mid-play.
+   ============================================================ */
+.fx{position:fixed;inset:0;z-index:90;pointer-events:none;overflow:hidden}
+.fx > *{position:absolute;inset:0;pointer-events:none}
+
+/* taking a hit — damage vignette, the way a shooter does it */
+/* Has to land like a hit in a shooter: snap to full in one frame, then bleed
+   away. On paper the earlier version read as a gentle pink wash. */
+@keyframes fxhit{0%{opacity:0}6%{opacity:1}55%{opacity:.62}100%{opacity:0}}
+.fx-hit{animation:fxhit .62s cubic-bezier(.1,.7,.3,1) forwards;
+  background:radial-gradient(ellipse at center,rgba(190,35,20,.30) 8%,rgba(150,18,10,.95) 100%);
+  box-shadow:inset 0 0 130px 46px rgba(140,15,8,.95)}
+
+/* money — a warm flush behind the falling notes */
+@keyframes fxgold{0%{opacity:0}20%{opacity:1}100%{opacity:0}}
+.fx-gold{animation:fxgold .9s ease-out forwards;
+  background:radial-gradient(ellipse at center,rgba(233,161,60,.28) 0%,rgba(233,161,60,0) 70%)}
+
+/* the law — red and blue washing across the edges */
+@keyframes fxpolice{0%,100%{opacity:0}
+  10%{opacity:1;box-shadow:inset 90px 0 90px -40px rgba(210,50,50,.75), inset -90px 0 90px -40px rgba(45,85,225,.72)}
+  35%{opacity:1;box-shadow:inset 90px 0 90px -40px rgba(45,85,225,.72), inset -90px 0 90px -40px rgba(210,50,50,.75)}
+  60%{opacity:1;box-shadow:inset 90px 0 90px -40px rgba(210,50,50,.75), inset -90px 0 90px -40px rgba(45,85,225,.72)}
+  85%{opacity:.6;box-shadow:inset 90px 0 90px -40px rgba(45,85,225,.72), inset -90px 0 90px -40px rgba(210,50,50,.75)}}
+.fx-police{animation:fxpolice 1.4s ease-in-out forwards}
+
+/* the end — the room closing in */
+@keyframes fxdeath{0%{opacity:0}30%{opacity:1}75%{opacity:1}100%{opacity:0}}
+.fx-death{animation:fxdeath 2.2s ease-in-out forwards;
+  background:radial-gradient(ellipse at center,rgba(0,0,0,0) 18%,rgba(0,0,0,.82) 96%)}
+
+/* falling things: money, hearts, confetti */
+@keyframes fxfall{
+  0%{transform:translate3d(0,-14vh,0) rotate(0deg);opacity:0}
+  8%{opacity:1}
+  92%{opacity:1}
+  100%{transform:translate3d(0,108vh,0) rotate(340deg);opacity:0}}
+.fx-fall span{position:absolute;top:0;will-change:transform,opacity;
+  animation-name:fxfall;animation-timing-function:linear;animation-fill-mode:forwards}
+.fx-heart{filter:drop-shadow(0 2px 4px rgba(0,0,0,.25))}
+.fx-note{filter:drop-shadow(0 2px 5px rgba(0,0,0,.3))}
+
+/* a short jolt on impact */
+@keyframes fxshake{
+  0%,100%{transform:translate3d(0,0,0)}
+  15%{transform:translate3d(-6px,2px,0)}  30%{transform:translate3d(5px,-3px,0)}
+  45%{transform:translate3d(-4px,-2px,0)} 60%{transform:translate3d(3px,2px,0)}
+  80%{transform:translate3d(-2px,0,0)}}
+.fx-shake{animation:fxshake .4s cubic-bezier(.36,.07,.19,.97)}
+
+@media (prefers-reduced-motion: reduce){
+  .fx-shake{animation:none}
+  .fx-fall span{animation-duration:2.2s!important}
+}
