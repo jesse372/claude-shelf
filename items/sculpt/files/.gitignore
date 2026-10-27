@@ -1,0 +1,12 @@
+vendor/
+tests/fixtures/
+*.part
+.DS_Store
+deploy/dist/
+deploy/.wrangler/
+data/
+tools/.venv/
+__pycache__/
+review/
+deploy/.dev.vars
+deploy/.wrangler/

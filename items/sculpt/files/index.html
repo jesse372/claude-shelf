@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jesse Chance Studio</title>
+<link rel="icon" href="icons/jc-favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="JC Studio">
+<meta name="theme-color" content="#FBF8F4">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6dca6"/><stop offset="1" stop-color="#c8955a"/></linearGradient>
+  </defs>
+  <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.13-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5A2 2 0 0 0 15.5 9.94l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z"/><path d="M20 3v4M22 5h-4M4 17v2M5 18H3"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></symbol>
+  <symbol id="i-redo" viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-split" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 3v18"/></symbol>
+  <symbol id="i-hand" viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-4 0M14 10V4a2 2 0 0 0-4 0v2M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></symbol>
+  <symbol id="i-eraser" viewBox="0 0 24 24"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7M5 11l9 9"/></symbol>
+  <symbol id="i-push" viewBox="0 0 24 24"><path d="M5 12h12M13 7l5 5-5 5"/><circle cx="5" cy="12" r="2"/></symbol>
+  <symbol id="i-restore" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4"/></symbol>
+  <symbol id="i-wand" viewBox="0 0 24 24"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/><path d="m14 7 3 3M5 6v4M19 14v4M10 2v2M7 8H3M21 16h-4M11 3H9"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+  <symbol id="i-fit" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="14" height="14" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="1"/><circle cx="17.5" cy="10.5" r="1"/><circle cx="8.5" cy="7.5" r="1"/><circle cx="6.5" cy="12.5" r="1"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.84-.44-1.13-.29-.29-.44-.65-.44-1.13a1.64 1.64 0 0 1 1.67-1.67h2c3.05 0 5.56-2.5 5.56-5.55C21.97 6.01 17.46 2 12 2z"/></symbol>
+  <symbol id="i-face" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></symbol>
+  <symbol id="i-figure" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><path d="M12 7v6M8 21l4-8 4 8M7 10h10"/></symbol>
+  <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></symbol>
+  <symbol id="i-newtab" viewBox="0 0 24 24"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></symbol>
+</svg>
+
+<header>
+  <a id="btnHome" class="brand" href="./" title="All jobs"><span class="brand-mark">JC</span><span class="brand-txt">Jesse Chance<small>Studio</small></span></a>
+  <div id="jobTitle" class="job-title" hidden><span class="crumb-sep"></span><button id="jobName" class="job-name-btn" title="Rename this job"></button></div>
+  <nav class="modes seg" aria-label="Mode">
+    <button data-mode="cull" title="Choose the keepers (Tab)"><svg class="ic"><use href="#i-grid"/></svg>Cull</button>
+    <button data-mode="edit" title="Fine-tune a photo (Tab)"><svg class="ic"><use href="#i-sliders"/></svg>Edit</button>
+  </nav>
+  <div class="spacer"></div>
+  <span id="status" class="status"></span>
+  <div class="spacer"></div>
+  <div id="editActions" class="row-inline edit-actions" hidden>
+    <button id="btnUndo" class="icon ghost" title="Undo (⌘Z)" aria-label="Undo"><svg class="ic"><use href="#i-undo"/></svg></button>
+    <button id="btnRedo" class="icon ghost" title="Redo (⇧⌘Z)" aria-label="Redo"><svg class="ic"><use href="#i-redo"/></svg></button>
+    <button id="btnBefore" class="ghost" title="Hold to see the original (or hold B)"><svg class="ic"><use href="#i-eye"/></svg>Before</button>
+    <button id="btnCompare" class="ghost" title="Split view (C)"><svg class="ic"><use href="#i-split"/></svg>Compare</button>
+    <span class="vsep"></span>
+  </div>
+  <button id="btnOpen" class="ghost" title="Add photos (⌘O)"><svg class="ic"><use href="#i-plus"/></svg>Photos</button>
+  <button id="btnOpenFolder" class="ghost" title="Add a whole folder or memory card"><svg class="ic"><use href="#i-folder"/></svg>Folder</button>
+  <input id="fileInput" type="file" multiple hidden accept="image/*,.heic,.heif,.hif,.tif,.tiff,.dng,.cr2,.cr3,.crw,.nef,.nrw,.arw,.srf,.sr2,.raf,.orf,.rw2,.pef,.srw,.3fr,.iiq,.erf,.kdc,.mef,.mos,.mrw,.x3f,.rwl,.raw">
+  <input id="folderInput" type="file" webkitdirectory multiple hidden>
+  <button id="btnExport" class="primary" title="Export for Pixieset (⌘E)" disabled><svg class="ic"><use href="#i-upload"/></svg>Export</button>
+</header>
+
+<!-- ============================================================ JOBS -->
+<main id="jobsView" class="jobs" hidden>
+  <div class="jobs-inner">
+    <div class="jobs-head">
+      <div>
+        <p class="eyebrow left">Jesse Chance Studio</p>
+        <h1>Your jobs <span id="jobsCount" class="jobs-count"></span></h1>
+        <p class="muted">Each wedding is a job — come back to it any time, or open several in their own tabs and let them run side by side.</p>
+      </div>
+      <div class="jobs-cta">
+        <button id="btnNewJobFiles" class="ghost"><svg class="ic"><use href="#i-plus"/></svg>Choose photos</button>
+        <button id="btnNewJob" class="primary big"><svg class="ic"><use href="#i-folder"/></svg>New job from a folder</button>
+      </div>
+    </div>
+    <div id="jobsGrid" class="jobs-grid"></div>
+  </div>
+</main>
+
+<!-- ============================================================ CULL -->
+<main id="cullView" class="cull">
+  <section class="cull-main">
+    <div class="cullbar">
+      <div class="seg filters">
+        <button data-filter="all">All <b>0</b></button>
+        <button data-filter="picks"><svg class="ic"><use href="#i-check"/></svg>Picks <b>0</b></button>
+        <button data-filter="rejects"><svg class="ic"><use href="#i-x"/></svg>Rejects <b>0</b></button>
+        <button data-filter="unflagged">Unflagged <b>0</b></button>
+        <button data-filter="stars"><svg class="ic"><use href="#i-star"/></svg>Starred <b>0</b></button>
+        <button data-filter="ai"><svg class="ic"><use href="#i-wand"/></svg>AI flagged <b>0</b></button>
+      </div>
+      <div class="spacer"></div>
+      <span id="aiProgress" class="muted small"></span>
+      <label class="size-ctl" title="Thumbnail size"><svg class="ic"><use href="#i-image"/></svg><input id="thumbSize" type="range" min="120" max="360" value="190"></label>
+      <button id="btnAutoCull" class="ghost" title="Reject closed eyes & blurry shots, pick the best of each burst"><svg class="ic"><use href="#i-wand"/></svg>AI cull</button>
+      <button id="btnProcess" class="primary big" title="Cull, edit in your style, retouch and export — all automatic"><svg class="ic"><use href="#i-sparkles"/></svg>Process shoot</button>
+    </div>
+    <div id="reconnect" class="reconnect" hidden><svg class="ic"><use href="#i-folder"/></svg><span id="reconnectText"></span><button id="btnReconnect" class="primary"></button></div>
+    <div id="resumeBar" class="reconnect" hidden><svg class="ic"><use href="#i-sparkles"/></svg><span id="resumeText"></span><button id="btnResume" class="primary">Continue</button></div>
+    <div id="sendBar" class="reconnect" hidden><svg class="ic"><use href="#i-send"/></svg><span id="sendText">Not every photo reached Pixieset yet.</span><button id="btnSendFinish" class="primary">Finish sending</button></div>
+    <div id="grid" class="grid"></div>
+    <p id="gridEmpty" class="muted center" hidden>No photos in this filter.</p>
+  </section>
+  <aside class="panel">
+    <div class="card info-card">
+      <div id="cullInfo"></div>
+      <div class="flag-row">
+        <button data-flag="1" class="pick-btn" title="Pick (P)"><svg class="ic"><use href="#i-check"/></svg>Pick</button>
+        <button data-flag="-1" class="reject-btn" title="Reject (X)"><svg class="ic"><use href="#i-x"/></svg>Reject</button>
+        <button data-flag="0" class="ghost" title="Unflag (U)">Clear</button>
+      </div>
+      <div class="stars-row">
+        <button data-stars="1" title="1 star (1)">★</button><button data-stars="2" title="2 stars (2)">★★</button><button data-stars="3" title="3 stars (3)">★★★</button><button data-stars="0" title="No stars (0)">☆</button>
+      </div>
+      <label class="check small"><input id="autoAdvance" type="checkbox" class="switch" checked> Jump to the next photo after flagging</label>
+      <button id="btnEditThis" class="primary wide">Edit this photo<svg class="ic after"><use href="#i-right"/></svg></button>
+    </div>
+    <details class="card fold small">
+      <summary>Keyboard shortcuts</summary>
+      <dl class="keys">
+        <dt>P</dt><dd>pick</dd><dt>X</dt><dd>reject</dd><dt>U</dt><dd>clear</dd><dt>1–5</dt><dd>stars</dd>
+        <dt>← →</dt><dd>previous / next</dd><dt>Space</dt><dd>big view</dd><dt>E</dt><dd>edit</dd><dt>⌘A</dt><dd>select all</dd><dt>Tab</dt><dd>switch to Edit</dd>
+      </dl>
+    </details>
+  </aside>
+  <div id="loupe" class="loupe" hidden>
+    <img id="loupeImg" alt="">
+    <button id="btnLoupePrev" class="nav prev" aria-label="Previous"><svg class="ic"><use href="#i-left"/></svg></button>
+    <button id="btnLoupeNext" class="nav next" aria-label="Next"><svg class="ic"><use href="#i-right"/></svg></button>
+    <div id="loupeBadge" class="loupe-badge"></div>
+    <div class="loupe-help"><kbd>P</kbd> pick <kbd>X</kbd> reject <kbd>←</kbd><kbd>→</kbd> next <kbd>Esc</kbd> close</div>
+  </div>
+</main>
+
+<!-- ============================================================ EDIT -->
+<main id="editView" class="edit" hidden>
+  <aside id="strip" class="strip"></aside>
+  <section id="viewport" class="viewport">
+    <div id="stage" class="stage"><canvas id="gl"></canvas></div>
+    <canvas id="overlay" class="overlay"></canvas>
+    <div id="brush" class="brush"></div>
+    <div class="toolbar">
+      <button data-tool="hand" class="on icon" title="Move the photo (H) — or hold Space" aria-label="Move"><svg class="ic"><use href="#i-hand"/></svg></button>
+      <button data-tool="remove" title="Remove exit signs, blemishes, anything (Q)"><svg class="ic"><use href="#i-eraser"/></svg>Remove</button>
+      <button data-tool="push" title="Liquify push (W)"><svg class="ic"><use href="#i-push"/></svg>Push</button>
+      <button data-tool="restore" title="Undo liquify where you paint (R)"><svg class="ic"><use href="#i-restore"/></svg>Restore</button>
+      <span class="vsep"></span>
+      <label>Size <input id="brushSize" type="range" min="6" max="600" value="120"><em id="vSize"></em></label>
+      <label id="brushStrRow">Strength <input id="brushStr" type="range" min="5" max="100" value="45"><em id="vStr"></em></label>
+    </div>
+    <div class="zoombar">
+      <button id="btnFit" class="ghost" title="Fit (0)"><svg class="ic"><use href="#i-fit"/></svg>Fit</button>
+      <button id="btn100" class="ghost" title="Actual pixels (1)">100%</button>
+      <span id="zoomPct">—</span>
+    </div>
+  </section>
+  <aside class="panel">
+    <nav class="tabs seg">
+      <button data-tab="colour" class="on"><svg class="ic"><use href="#i-palette"/></svg>Colour</button>
+      <button data-tab="retouch"><svg class="ic"><use href="#i-face"/></svg>Retouch</button>
+      <button data-tab="shape"><svg class="ic"><use href="#i-figure"/></svg>Shape</button>
+    </nav>
+    <div id="pane-colour" class="pane">
+      <div class="card">
+        <div class="auto-row">
+          <button id="btnAuto" class="primary-soft"><svg class="ic"><use href="#i-sparkles"/></svg>Auto</button>
+          <select id="lookSelect" title="Quick looks"></select>
+        </div>
+        <div class="section-title">Looks <span class="muted">· tap one to try it</span></div>
+        <div id="profiles" class="profiles"></div>
+        <label class="sl amount"><span>Amount <em id="vProfileAmount">—</em></span><input id="profileAmount" type="range" min="0" max="100" value="100"></label>
+        <p id="profileBlurb" class="muted small blurb"></p>
+      </div>
+      <div class="card">
+        <div id="devSliders"></div>
+        <div class="row">
+          <button id="btnSaveLook" class="ghost">Save as my look</button>
+          <button id="btnResetColour" class="ghost">Reset</button>
+        </div>
+      </div>
+      <details class="card fold">
+        <summary>Teach the studio your style <span id="styleInfo" class="muted small"></span></summary>
+        <div class="row">
+          <button id="btnApplyStyle" class="primary-soft" title="Edit this photo the way you would">Apply my style</button>
+          <button id="btnTeachStyle" title="Choose 20–200 finished photos you've delivered (e.g. downloaded from your Pixieset galleries)">Teach from photos…</button>
+        </div>
+        <button id="btnSetLook" class="wide ghost" title="Save this photo's temperature, tint, vibrance, saturation & clarity as your colour look">Use this photo's colour as my look</button>
+        <input id="teachInput" type="file" multiple hidden accept="image/*,.heic,.heif,.dng,.cr2,.cr3,.nef,.arw,.raf">
+      </details>
+    </div>
+    <div id="pane-retouch" class="pane" hidden>
+      <div class="card">
+        <div id="retSliders"></div>
+        <p class="muted small">Smoothing keeps pores and texture, and only touches skin — eyes, brows, lips, hair and clothes are protected.</p>
+      </div>
+      <div class="card">
+        <div class="section-title">Remove things</div>
+        <p class="muted small">Choose <b>Remove</b> on the photo toolbar (Q) and paint over an exit sign, blemish or stray hair. It's filled in when you let go.</p>
+        <label class="sl"><span>Quality</span>
+          <select id="removeQuality"><option value="best">Best — smart (big objects use the pro model)</option><option value="best-always">Best always (slowest)</option><option value="fast">Fast</option></select>
+        </label>
+        <p id="removeStatus" class="muted small"></p>
+      </div>
+    </div>
+    <div id="pane-shape" class="pane" hidden>
+      <div class="card">
+        <div class="seg presets">
+          <button data-shape-preset="natural">Natural</button>
+          <button data-shape-preset="glam">Glam</button>
+          <button data-shape-preset="reset">Reset</button>
+        </div>
+        <div id="shapeSliders"></div>
+        <p class="muted small">Only the person moves — backgrounds, collars and other people stay put. Fine-tune with <b>Push</b> (W); <b>Restore</b> (R) paints it back.</p>
+        <button id="btnClearManual" class="ghost wide">Clear hand liquify</button>
+        <label class="check small"><input id="chkPoints" type="checkbox" class="switch"> Show what the AI detected</label>
+        <p id="detInfo" class="muted small"></p>
+      </div>
+    </div>
+    <details class="card fold">
+      <summary><svg class="ic"><use href="#i-copy"/></svg>Copy these edits to other photos</summary>
+      <div class="row-inline small sync-row">
+        <label class="check"><input type="checkbox" data-sync="dev" checked> Colour</label>
+        <label class="check"><input type="checkbox" data-sync="ret" checked> Retouch</label>
+        <label class="check"><input type="checkbox" data-sync="shape"> Shape</label>
+      </div>
+      <div class="row">
+        <select id="syncTarget"><option value="picks">All picks</option><option value="all">All except rejects</option><option value="selected">Selected in Cull</option></select>
+        <button id="btnSync">Copy</button>
+      </div>
+      <button id="btnSaveDefault" class="wide ghost">Use these as defaults for new photos</button>
+    </details>
+    <details class="card fold small">
+      <summary>Keyboard shortcuts</summary>
+      <dl class="keys">
+        <dt>Q</dt><dd>remove</dd><dt>W</dt><dd>push</dd><dt>R</dt><dd>restore</dd><dt>H</dt><dd>move</dd><dt>[ ]</dt><dd>brush size</dd>
+        <dt>B</dt><dd>hold for before</dd><dt>C</dt><dd>compare</dd><dt>⌘Z</dt><dd>undo</dd><dt>← →</dt><dd>photos</dd><dt>P / X</dt><dd>pick / reject</dd><dt>0</dt><dd>fit</dd><dt>Tab</dt><dd>back to Cull</dd>
+      </dl>
+    </details>
+  </aside>
+</main>
+
+<div id="empty" class="empty">
+  <div class="hero">
+    <div class="hero-mark">JC</div>
+    <p class="eyebrow">Jesse Chance Studio</p>
+    <h1>Drop the shoot. <em>We'll do the rest.</em></h1>
+    <p class="lead">Culled, edited in the Jesse Chance style, gently retouched and ready for Pixieset — on its own.</p>
+    <div class="dropcard">
+      <svg class="ic xl"><use href="#i-drop"/></svg>
+      <div><b>Drag photos or a whole card here</b><br><span class="muted small">RAW (Canon, Nikon, Sony, Fuji, DNG…), JPG or HEIC</span></div>
+      <div class="row-inline"><button id="emptyOpen" class="primary"><svg class="ic"><use href="#i-plus"/></svg>Choose photos</button><button id="emptyFolder"><svg class="ic"><use href="#i-folder"/></svg>Choose a folder</button></div>
+    </div>
+    <ol class="steps">
+      <li><span class="num">1</span><div><b>Drop the shoot</b><span>Every photo, straight off the card.</span></div></li>
+      <li><span class="num">2</span><div><b>Click Process shoot</b><span>Blinks and blur go, the best of each burst stays, colour, skin and shape are done.</span></div></li>
+      <li><span class="num">3</span><div><b>Drag into Pixieset</b><span>Full-quality JPEGs with original names and dates.</span></div></li>
+    </ol>
+    <p class="privacy"><svg class="ic"><use href="#i-lock"/></svg>Everything runs on this computer. Photos are never uploaded.</p>
+  </div>
+</div>
+<div class="dropzone"><div><svg class="ic xl"><use href="#i-drop"/></svg><br>Drop to add photos</div></div>
+<div id="busy" class="busy" hidden><div class="spinner"></div><span id="busyText">Working…</span></div>
+
+<dialog id="autoDlg">
+  <form id="apSetup" method="dialog">
+    <div class="dlg-head"><div class="dlg-mark"><svg viewBox="0 0 24 24"><use href="#i-sparkles"/></svg></div><div><h2>Process shoot</h2><p class="muted small">Does the whole job. Everything stays editable afterwards.</p></div></div>
+    <label class="opt"><input id="apCull" type="checkbox" class="switch" checked><span><b>Cull</b><span class="muted">Reject blinks &amp; blur, keep the best of each burst. Your own picks are kept.</span></span></label>
+    <label class="opt"><input id="apColour" type="checkbox" class="switch" checked><span><b>Colour &amp; tone</b><span class="muted"><span id="apStyle" class="muted small"></span></span><select id="apLook"></select></span></label>
+    <label class="opt"><input id="apRetouch" type="checkbox" class="switch" checked><span><b>Natural skin retouch</b><span class="muted">Smooths blemishes, keeps texture.</span></span></label>
+    <label class="opt"><input id="apShape" type="checkbox" class="switch" checked><span><b>Subtle shape polish</b><span class="muted">Gentle double-chin fix and a barely-there slim. Children are never touched.</span></span></label>
+    <label class="opt"><input id="apSend" type="checkbox" class="switch" checked><span><b>Send to Pixieset</b><span class="muted">Uploads the finished gallery as a hidden Pixieset collection named after the couple. Jesse checks it, then publishes it to them.</span></span></label>
+    <p class="muted small note">The picks are saved as full-quality JPEGs (original names &amp; capture dates) to a folder you choose.</p>
+    <div class="row"><button id="apClose" value="cancel" formnovalidate class="ghost">Cancel</button><button id="apStart" class="primary"><svg class="ic"><use href="#i-sparkles"/></svg>Choose folder &amp; start</button></div>
+  </form>
+  <div id="apCheck" hidden>
+    <div class="dlg-head"><div class="dlg-mark"><svg viewBox="0 0 24 24"><use href="#i-sparkles"/></svg></div><div><h2>Brightness check</h2><p class="muted small">Your style on this wedding, from across the day. Brighter or darker? One choice applies to every photo.</p></div></div>
+    <div id="apCheckGrid" class="check-grid"></div>
+    <p id="apCheckStatus" class="small muted"></p>
+    <div class="check-nudge"><button id="apDarker" type="button" class="ghost">Darker</button><span id="apCheckLabel">Your usual</span><button id="apBrighter" type="button" class="ghost">Brighter</button></div>
+    <div class="row"><button id="apCheckCancel" type="button" class="ghost">Cancel</button><button id="apCheckOk" type="button" class="primary"><svg class="ic"><use href="#i-sparkles"/></svg>Looks right — start</button></div>
+  </div>
+  <div id="apRun" hidden>
+    <div class="dlg-head"><div class="dlg-mark spin-soft"><svg viewBox="0 0 24 24"><use href="#i-sparkles"/></svg></div><div><h2>Processing…</h2><p class="muted small">Keep this tab open — you can use other apps meanwhile.</p></div></div>
+    <progress id="apBar" max="1" value="0"></progress>
+    <p id="apStatus" class="small"></p>
+    <div class="row"><button id="apCancel" class="ghost">Stop</button></div>
+  </div>
+  <div id="apDone" hidden>
+    <div class="dlg-head"><div class="dlg-mark done"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg></div><div><h2>All done</h2><p id="apNext" class="muted small">Next: drag the folder into the client's Pixieset gallery.</p></div></div>
+    <p id="apSummary"></p>
+    <div class="row"><button id="apClose2" class="ghost">Close</button><button id="apReview" class="primary">Review in Edit</button></div>
+  </div>
+</dialog>
+
+<dialog id="detailsDlg" class="details-dlg">
+  <form id="wdForm" novalidate>
+    <div class="dlg-head"><div class="dlg-mark"><svg viewBox="0 0 24 24"><use href="#i-heart"/></svg></div><div><h2 id="wdTitle">Wedding details</h2><p id="wdLead" class="muted small"></p></div></div>
+    <div class="wd-grid">
+      <label class="wd-field"><span>Partner</span><input id="wdA" type="text" autocomplete="off" placeholder="First name" required></label>
+      <span class="wd-amp">&amp;</span>
+      <label class="wd-field"><span>Partner</span><input id="wdB" type="text" autocomplete="off" placeholder="First name" required></label>
+    </div>
+    <label class="wd-field"><span>Wedding date</span><input id="wdDate" type="date" required></label>
+    <label class="wd-field"><span>Venue</span><input id="wdVenue" type="text" list="venueList" autocomplete="off" placeholder="Start typing — e.g. Quarry Farm" required><small id="wdVenueHint" class="muted"></small></label>
+    <datalist id="venueList"></datalist>
+    <div class="row"><button id="wdSkip" type="button" class="ghost">Later</button><button id="wdSave" type="submit" class="primary"><svg class="ic"><use href="#i-check"/></svg>Save</button></div>
+  </form>
+</dialog>
+
+<dialog id="exportDlg">
+  <form id="exportForm" method="dialog">
+    <div class="dlg-head"><div class="dlg-mark"><svg viewBox="0 0 24 24"><use href="#i-upload"/></svg></div><div><h2>Export for Pixieset</h2><p class="muted small">Original names and capture dates, so Pixieset sorts them correctly.</p></div></div>
+    <fieldset class="choices">
+      <label class="choice"><input type="radio" name="which" value="picks"><span>Picks <em data-count="picks"></em></span></label>
+      <label class="choice"><input type="radio" name="which" value="keep"><span>Everything except rejects <em data-count="keep"></em></span></label>
+      <label class="choice"><input type="radio" name="which" value="selected"><span>Selected in Cull <em data-count="selected"></em></span></label>
+      <label class="choice"><input type="radio" name="which" value="current"><span>Just this photo <em data-count="current"></em></span></label>
+    </fieldset>
+    <label class="sl"><span>Size</span>
+      <select id="exSize"><option value="0">Full resolution (recommended)</option><option value="4096">Long edge 4096px</option><option value="3000">Long edge 3000px</option><option value="2048">Long edge 2048px (web)</option></select>
+    </label>
+    <label class="sl"><span>JPEG quality <em id="vQuality">92</em></span><input id="exQuality" type="range" min="75" max="100" value="92"></label>
+    <label class="check small"><input id="exSuffix" type="checkbox" class="switch"> Add “-edit” to file names</label>
+    <div class="row"><button id="btnExportClose" value="cancel" formnovalidate class="ghost">Cancel</button><button id="btnDoExport" class="primary"><svg class="ic"><use href="#i-upload"/></svg>Choose folder &amp; export</button></div>
+  </form>
+  <div id="exportResult" hidden>
+    <div class="dlg-head"><div class="dlg-mark done"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg></div><div><h2>Exported</h2><p id="exportResultText" class="muted small"></p></div></div>
+    <ol class="small next-steps">
+      <li>Open the gallery at <b>pixieset.com</b> → Client Gallery.</li>
+      <li>Click <b>Upload</b> (or open a set) and drag the folder's photos in.</li>
+      <li>Pixieset Editor users can import the folder there instead.</li>
+    </ol>
+    <div class="row"><button id="btnExportDone" class="primary">OK</button></div>
+  </div>
+</dialog>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

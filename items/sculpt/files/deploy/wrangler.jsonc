@@ -1,0 +1,12 @@
+{
+  "name": "sculpt",
+  "main": "worker.js",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
+  "kv_namespaces": [{ "binding": "STYLE", "id": "e6c35fd168e148dab2b19b22f52580e3" }],
+  "observability": { "enabled": true }
+}

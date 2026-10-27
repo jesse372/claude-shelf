@@ -1,0 +1,9 @@
+// Local testing only (wrangler dev -c wrangler.dev.jsonc --local): same Worker plus simulated R2 + KV.
+{
+  "name": "sculpt-dev",
+  "main": "worker.js",
+  "compatibility_date": "2026-09-01",
+  "assets": { "directory": "./dist", "binding": "ASSETS", "run_worker_first": true },
+  "kv_namespaces": [{ "binding": "STYLE", "id": "local-style" }],
+  "r2_buckets": [{ "binding": "DELIVERY", "bucket_name": "jc-studio-deliveries" }]
+}
