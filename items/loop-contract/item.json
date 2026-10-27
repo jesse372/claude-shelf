@@ -1,0 +1,22 @@
+{
+  "slug": "loop-contract",
+  "title": "Loop Contract: turn a recurring task into a proper loop",
+  "emoji": "🔁",
+  "type": "skill",
+  "summary": "Before a recurring job ever runs, Claude writes a contract for it: the goal, the scope, a checker that proves it worked, a budget, and when to stop and ask you. Pairs with Pipeline QC.",
+  "how_to_use": "Say \"make this a loop\" or \"turn this into a daily job\".",
+  "requires": "Claude Code. Works best alongside the pipeline-qc skill.",
+  "tags": [],
+  "link": "",
+  "created": "2026-06-29T02:07:26+08:00",
+  "updated": "2026-06-29T02:07:26+08:00",
+  "version": 1,
+  "useful": 3,
+  "files": [
+    "SKILL.md",
+    "scripts/new-loop.sh",
+    "templates/contract.md"
+  ],
+  "skill_name": "loop-contract",
+  "zip": "items/loop-contract/loop-contract.zip"
+}
