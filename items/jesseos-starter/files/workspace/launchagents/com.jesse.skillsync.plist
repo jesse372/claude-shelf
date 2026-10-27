@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>Label</key><string>com.jesse.skillsync</string>
+  <key>ProgramArguments</key><array>
+    <string>/bin/bash</string><string>/Users/YOU/JesseOS/workspace/skills/sync-skills.sh</string>
+  </array>
+  <key>EnvironmentVariables</key><dict><key>HOME</key><string>/Users/YOU</string><key>PATH</key><string>/usr/local/bin:/Users/YOU/.omnara/bin:/usr/bin:/bin:/usr/sbin:/sbin</string></dict>
+  <key>WatchPaths</key><array><string>/Users/YOU/JesseOS/workspace/skills</string></array>
+  <key>RunAtLoad</key><true/>
+  <key>StandardOutPath</key><string>/Users/YOU/JesseOS/workspace/logs/skillsync.log</string>
+  <key>StandardErrorPath</key><string>/Users/YOU/JesseOS/workspace/logs/skillsync.log</string>
+</dict></plist>

@@ -1,7 +1,7 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-10-27T16:35:38+00:00",
+  "updated": "2026-10-27T16:35:39+00:00",
   "items": [
     {
       "slug": "share-with-friend",
@@ -546,6 +546,49 @@
       "skill_name": "wrap-up",
       "zip": "items/wrap-up/wrap-up.zip",
       "install_prompt": "Please install the Claude Code skill \"Wrap-up: the end-of-project checklist\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/wrap-up/wrap-up.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/wrap-up/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+    },
+    {
+      "slug": "jesseos-starter",
+      "title": "JesseOS starter: one brain for Claude Code + Codex",
+      "emoji": "🧠",
+      "type": "tool",
+      "summary": "The setup Jesse runs on his Mac: Claude Code and Codex share the same skills, memory and standing instructions, with nightly private GitHub backup, safe auto-updates that roll back bad versions, a login-expiry watchdog and a bounded Claude/Codex handoff tool.",
+      "how_to_use": "Unzip, read README.md, run ./install.sh (it never overwrites your files). Then fill in vault/00-context and add skills from this shelf.",
+      "requires": "macOS, GitHub CLI. Codex is optional.",
+      "tags": [],
+      "link": "",
+      "created": "2026-06-29T01:45:57+08:00",
+      "updated": "2026-06-29T01:45:57+08:00",
+      "version": 1,
+      "useful": 5,
+      "files": [
+        "README.md",
+        "install.sh",
+        "vault/00-context/about-me.md",
+        "vault/00-context/agents.md",
+        "vault/00-context/working-style.md",
+        "vault/50-memory/decisions.md",
+        "workspace/AGENTS.md",
+        "workspace/CLAUDE.md",
+        "workspace/agent-collaboration/ROUTING_POLICY.md",
+        "workspace/agent-collaboration/delegate.py",
+        "workspace/agent-collaboration/google_read_guard.py",
+        "workspace/backup/backup.sh",
+        "workspace/backup/connect-github.sh",
+        "workspace/launchagents/com.jesse.appupdate.plist",
+        "workspace/launchagents/com.jesse.authwatchdog.plist",
+        "workspace/launchagents/com.jesse.backup.plist",
+        "workspace/launchagents/com.jesse.skillsync.plist",
+        "workspace/security/README.md",
+        "workspace/security/auth-watchdog.sh",
+        "workspace/security/tcc-watch.sh",
+        "workspace/skills/CONVENTIONS.md",
+        "workspace/skills/sync-skills.sh",
+        "workspace/skills/_TEMPLATE/SKILL.md",
+        "workspace/update/update.sh"
+      ],
+      "zip": "items/jesseos-starter/jesseos-starter.zip",
+      "install_prompt": "Please set up \"JesseOS starter: one brain for Claude Code + Codex\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/jesseos-starter/jesseos-starter.zip and unzip it to ~/claude-shelf/jesseos-starter/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Unzip, read README.md, run ./install.sh (it never overwrites your files). Then fill in vault/00-context and add skills from this shelf."
     }
   ]
 }
