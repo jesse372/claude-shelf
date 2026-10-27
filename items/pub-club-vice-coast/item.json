@@ -1,0 +1,20 @@
+{
+  "slug": "pub-club-vice-coast",
+  "title": "Pub Club: Vice Coast (browser pub-crawl game)",
+  "emoji": "🌴",
+  "type": "website",
+  "summary": "A GTA 6-flavoured browser game: drive (and drift) around Vice Coast, find the flashing bars, drink, jack cars and try to survive the pub crawl. Works with keyboard or touch controls, all in one HTML file.",
+  "how_to_use": "Open index.html. WASD to drive, Space to drift, F to get in/out, E to drink. On a phone, use the on-screen controls.",
+  "requires": "A browser (desktop or phone).",
+  "tags": [],
+  "link": "",
+  "created": "2026-07-17T20:39:23+08:00",
+  "updated": "2026-07-17T20:51:10+08:00",
+  "version": 1,
+  "useful": 2,
+  "files": [
+    ".gitignore",
+    "index.html"
+  ],
+  "zip": "items/pub-club-vice-coast/pub-club-vice-coast.zip"
+}

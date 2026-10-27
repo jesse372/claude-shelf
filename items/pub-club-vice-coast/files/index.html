@@ -1,0 +1,2061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Pub Club — Vice Coast</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Ctext%20x%3D%2750%27%20y%3D%2754%27%20font-size%3D%2780%27%20text-anchor%3D%27middle%27%20dominant-baseline%3D%27central%27%3E%F0%9F%8D%BB%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pub Club">
+<meta name="theme-color" content="#0b0d17">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body { height:100%; overflow:hidden; background:#0b0d17; }
+  body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color:#fff; user-select:none; touch-action:none;
+  }
+  #game { display:block; width:100%; height:100%; }
+
+  /* ---------- HUD ---------- */
+  #hud { position:fixed; inset:0; pointer-events:none; }
+
+  #topright {
+    position:absolute; top:14px; right:16px; text-align:right;
+  }
+  #money {
+    font-size:30px; font-weight:800; letter-spacing:1px; color:#4ade80;
+    text-shadow:0 2px 0 #14532d, 0 0 18px rgba(74,222,128,.5);
+    font-variant-numeric:tabular-nums;
+  }
+  #stars { font-size:23px; letter-spacing:3px; margin-top:2px; height:28px; }
+  .star { color:#3a3f55; text-shadow:0 0 2px #000; transition:color .2s; }
+  .star.on { color:#ffd54a; text-shadow:0 0 12px #ffb300, 0 0 3px #000; animation:pulse .8s infinite alternate; }
+  @keyframes pulse { from{opacity:.75; transform:scale(1)} to{opacity:1; transform:scale(1.12)} }
+
+  #botleft { position:absolute; left:16px; bottom:16px; }
+  #hpwrap {
+    width:190px; height:13px; background:rgba(0,0,0,.55); border:2px solid rgba(255,255,255,.25);
+    border-radius:7px; overflow:hidden; margin-bottom:8px;
+  }
+  #hp { height:100%; width:100%; background:linear-gradient(90deg,#ff3d6e,#ff8a5c); transition:width .18s; }
+  #armorwrap { width:190px; height:8px; background:rgba(0,0,0,.55); border:2px solid rgba(255,255,255,.2); border-radius:6px; overflow:hidden; }
+  #armor { height:100%; width:0%; background:linear-gradient(90deg,#38bdf8,#a78bfa); transition:width .18s; }
+
+  /* BAC meter */
+  #bacwrap {
+    width:190px; height:10px; margin-top:8px; background:rgba(0,0,0,.55);
+    border:2px solid rgba(255,255,255,.22); border-radius:6px; overflow:hidden; position:relative;
+  }
+  #bac { height:100%; width:0%; background:linear-gradient(90deg,#facc15,#fb923c,#ef4444); transition:width .3s; }
+  #baclabel {
+    font-size:10px; letter-spacing:2.4px; font-weight:800; color:#facc15; margin-top:5px;
+    text-shadow:0 1px 4px #000;
+  }
+  #baclabel.wasted { color:#ef4444; animation:pulse .5s infinite alternate; }
+
+  /* ---------- touch controls ---------- */
+  #touch { position:absolute; inset:0; display:none; }
+  body.touch #touch { display:block; }
+  #stick {
+    position:absolute; left:26px; bottom:26px; width:132px; height:132px; border-radius:50%;
+    background:rgba(255,255,255,.07); border:2px solid rgba(255,255,255,.2);
+    pointer-events:auto; touch-action:none;
+  }
+  #nub {
+    position:absolute; left:50%; top:50%; width:58px; height:58px; margin:-29px 0 0 -29px;
+    border-radius:50%; background:rgba(255,255,255,.32); border:2px solid rgba(255,255,255,.5);
+    box-shadow:0 3px 14px rgba(0,0,0,.5);
+  }
+  .btn {
+    position:absolute; border-radius:50%; pointer-events:auto; touch-action:none;
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    font-weight:800; letter-spacing:.5px; color:#fff; font-size:12px; line-height:1.15;
+    background:rgba(255,255,255,.12); border:2px solid rgba(255,255,255,.28);
+    box-shadow:0 4px 16px rgba(0,0,0,.45); backdrop-filter:blur(4px);
+    transition:transform .06s, background .06s;
+  }
+  .btn:active, .btn.on { transform:scale(.9); background:rgba(255,255,255,.34); }
+  #bGas   { right:22px;  bottom:30px;  width:92px; height:92px; font-size:15px; background:rgba(74,222,128,.24); border-color:rgba(74,222,128,.5); }
+  #bBrake { right:124px; bottom:34px;  width:74px; height:74px; background:rgba(255,61,110,.22); border-color:rgba(255,61,110,.5); }
+  #bHand  { right:38px;  bottom:132px; width:64px; height:64px; background:rgba(56,189,248,.2); border-color:rgba(56,189,248,.5); }
+  #bEnter { right:120px; bottom:120px; width:64px; height:64px; background:rgba(255,213,74,.22); border-color:rgba(255,213,74,.55); }
+  #bDrink { left:26px;   bottom:170px; width:64px; height:64px; font-size:22px; background:rgba(251,146,60,.22); border-color:rgba(251,146,60,.55); }
+
+
+  #speedo {
+    position:absolute; right:16px; bottom:16px; text-align:right;
+    font-weight:800; text-shadow:0 2px 6px rgba(0,0,0,.9);
+  }
+  #kmh { font-size:44px; line-height:.9; font-variant-numeric:tabular-nums; color:#e8ecff; }
+  #kmh small { font-size:14px; opacity:.6; font-weight:600; letter-spacing:2px; }
+  #gear { font-size:12px; letter-spacing:3px; opacity:.65; margin-top:4px; }
+
+  #minimap {
+    position:absolute; left:16px; top:16px; width:184px; height:184px;
+    border-radius:50%; overflow:hidden;
+    border:3px solid rgba(255,255,255,.35);
+    box-shadow:0 6px 26px rgba(0,0,0,.7), inset 0 0 30px rgba(0,0,0,.5);
+    background:#10131f;
+  }
+  #minimap canvas { display:block; }
+
+  #objective {
+    position:absolute; left:50%; top:20px; transform:translateX(-50%);
+    background:rgba(10,12,22,.78); backdrop-filter:blur(8px);
+    border:1px solid rgba(255,255,255,.14); border-left:4px solid #ffd54a;
+    padding:9px 18px; border-radius:9px; font-size:14px; font-weight:600;
+    letter-spacing:.3px; white-space:nowrap; max-width:70vw; overflow:hidden; text-overflow:ellipsis;
+  }
+  #objective b { color:#ffd54a; }
+
+  #toast {
+    position:absolute; left:50%; top:44%; transform:translate(-50%,-50%) scale(.9);
+    font-size:40px; font-weight:900; letter-spacing:2px; text-align:center;
+    text-shadow:0 4px 0 rgba(0,0,0,.55), 0 0 40px currentColor;
+    opacity:0; transition:opacity .3s, transform .3s; color:#ffd54a;
+  }
+  #toast.show { opacity:1; transform:translate(-50%,-50%) scale(1); }
+  #toast small { display:block; font-size:15px; font-weight:600; letter-spacing:1px; opacity:.8; margin-top:6px; color:#fff; }
+
+  #flash { position:absolute; inset:0; background:#f00; opacity:0; pointer-events:none; }
+
+  /* ---------- Start screen ---------- */
+  #menu {
+    position:fixed; inset:0; z-index:20;
+    background:
+      radial-gradient(1000px 600px at 50% 110%, #ff2d95 0%, transparent 60%),
+      radial-gradient(800px 500px at 20% -10%, #00e5ff 0%, transparent 55%),
+      linear-gradient(180deg,#140b28 0%,#07080f 100%);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:24px; transition:opacity .5s;
+  }
+  #menu.hide { opacity:0; pointer-events:none; }
+  .logo {
+    font-size:clamp(56px,13vw,140px); font-weight:900; letter-spacing:-4px; line-height:.85;
+    background:linear-gradient(180deg,#fff8b0 0%,#ffb62e 45%,#ff2d95 75%,#7c3aed 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter:drop-shadow(0 5px 0 rgba(0,0,0,.5)) drop-shadow(0 0 44px rgba(255,45,149,.55));
+  }
+  .sub {
+    font-size:clamp(13px,2.6vw,19px); letter-spacing:9px; margin-top:12px; font-weight:700;
+    color:#8be9ff; text-shadow:0 0 22px rgba(0,229,255,.75);
+  }
+  .keys {
+    margin-top:34px; display:grid; grid-template-columns:auto auto; gap:9px 22px;
+    font-size:13.5px; color:#cbd0e6; text-align:left;
+  }
+  .keys b {
+    color:#fff; background:rgba(255,255,255,.11); border:1px solid rgba(255,255,255,.2);
+    border-bottom-width:3px; padding:2px 9px; border-radius:6px; font-size:12px;
+    font-family:ui-monospace,Menlo,monospace; display:inline-block; min-width:74px; text-align:center;
+  }
+  #play {
+    margin-top:38px; pointer-events:auto; cursor:pointer;
+    font-size:19px; font-weight:800; letter-spacing:3px; color:#0b0d17;
+    background:linear-gradient(180deg,#fff 0%,#ffd54a 100%);
+    border:0; border-radius:44px; padding:16px 58px;
+    box-shadow:0 8px 0 #b4820c, 0 16px 40px rgba(255,213,74,.4);
+    transition:transform .1s, box-shadow .1s;
+  }
+  #play:active { transform:translateY(6px); box-shadow:0 2px 0 #b4820c, 0 6px 20px rgba(255,213,74,.35); }
+  .hint { margin-top:20px; font-size:11.5px; letter-spacing:1.6px; color:#7b81a0; }
+  /* ---------- mobile / small screens ----------
+     NOTE: must stay last in the stylesheet — these are id selectors with the
+     same specificity as the base rules, so they only win by source order. */
+  @media (max-width: 780px), (pointer: coarse) {
+    /* objective becomes a slim banner across the top; everything else sits
+       below it, keeping the whole bottom half clear for the thumb controls */
+    #objective {
+      top:8px; bottom:auto; font-size:11.5px; padding:6px 12px;
+      max-width:96vw; white-space:normal; text-align:center; line-height:1.3;
+    }
+    #minimap { width:118px; height:118px; top:56px; left:12px; border-width:2px; }
+    #topright { top:58px; right:12px; }
+    #money { font-size:21px; }
+    #stars { font-size:16px; letter-spacing:2px; height:20px; }
+    #speedo { right:12px; bottom:auto; top:118px; }
+    #kmh { font-size:26px; }
+    #kmh small { font-size:9px; }
+    #gear { font-size:9px; letter-spacing:1.5px; margin-top:2px; }
+    #botleft { bottom:auto; top:182px; left:12px; }
+    #hpwrap, #armorwrap, #bacwrap { width:126px; }
+    #baclabel { font-size:9px; letter-spacing:1.4px; }
+    #toast { font-size:26px; top:34%; }
+    #toast small { font-size:12px; }
+    .keys { grid-template-columns:1fr; gap:6px; font-size:12px; text-align:center; }
+    .keys b { min-width:0; }
+    .logo { letter-spacing:-2px; }
+  }
+  @media (max-width: 780px) and (orientation: landscape) {
+    #minimap { width:88px; height:88px; top:44px; }
+    #topright { top:44px; }
+    #speedo { top:96px; }
+    #botleft { top:44px; left:110px; }
+    #hpwrap, #armorwrap, #bacwrap { width:104px; }
+    #toast { top:26%; }
+    /* stick occupies the bottom-left, so move the drink button clear of it */
+    #bDrink { left:172px; bottom:30px; }
+  }
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<div id="hud">
+  <div id="minimap"></div>
+  <div id="topright">
+    <div id="money">$0</div>
+    <div id="stars"></div>
+  </div>
+  <div id="botleft">
+    <div id="hpwrap"><div id="hp"></div></div>
+    <div id="armorwrap"><div id="armor"></div></div>
+    <div id="bacwrap"><div id="bac"></div></div>
+    <div id="baclabel">BAC 0.00 · SOBER</div>
+  </div>
+  <div id="speedo"><div id="kmh">0<small>KM/H</small></div><div id="gear">ON FOOT</div></div>
+  <div id="objective">Find the <b>flashing bar</b> and start the bender</div>
+  <div id="toast"></div>
+  <div id="flash"></div>
+
+  <div id="touch">
+    <div id="stick"><div id="nub"></div></div>
+    <div class="btn" id="bGas">GAS</div>
+    <div class="btn" id="bBrake">BRAKE</div>
+    <div class="btn" id="bHand">DRIFT</div>
+    <div class="btn" id="bEnter">IN/OUT</div>
+    <div class="btn" id="bDrink">🍺</div>
+  </div>
+</div>
+
+<div id="menu">
+  <div class="logo">PUB<br>CLUB</div>
+  <div class="sub">VICE&nbsp;COAST</div>
+  <div class="keys" id="keysDesktop">
+    <b>W A S D</b><span>Drive / stumble</span>
+    <b>SPACE</b><span>Handbrake — hold it to drift</span>
+    <b>F</b><span>Enter / exit vehicle</span>
+    <b>E</b><span>Drink 🍺 (at a bar)</span>
+    <b>CLICK</b><span>Shoot (on foot)</span>
+    <b>SHIFT</b><span>Sprint (badly)</span>
+  </div>
+  <div class="keys" id="keysTouch" style="display:none">
+    <span>Left stick to move · GAS / BRAKE to drive</span>
+    <span>IN/OUT to jack a car · 🍺 to drink at a bar</span>
+    <span>Tap the world to shoot on foot</span>
+  </div>
+  <button id="play">START THE CRAWL</button>
+  <div class="hint">CRAWL THE BARS · GET WRECKED · SOMEHOW SURVIVE</div>
+</div>
+
+<script>
+"use strict";
+/* ============================================================================
+   GTA VI — VICE COAST
+   A single-file, top-down open-world driving game.
+   ========================================================================== */
+
+// ---------------------------------------------------------------- constants
+const TILE   = 460;   // city grid spacing
+const ROAD   = 104;   // road width
+const HALFR  = ROAD / 2;
+const GRID   = 15;    // city is GRID x GRID blocks
+const WORLD  = GRID * TILE;
+const LANE   = 26;    // lane offset from centerline
+
+const TAU = Math.PI * 2;
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+const lerp  = (a, b, t) => a + (b - a) * t;
+const rand  = (a, b) => a + Math.random() * (b - a);
+const pick  = a => a[(Math.random() * a.length) | 0];
+const dist2 = (ax, ay, bx, by) => { const dx = ax - bx, dy = ay - by; return dx * dx + dy * dy; };
+const dist  = (ax, ay, bx, by) => Math.hypot(ax - bx, ay - by);
+function angDiff(a, b) { let d = (b - a) % TAU; if (d > Math.PI) d -= TAU; if (d < -Math.PI) d += TAU; return d; }
+
+// deterministic RNG so the city is the same every session
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+// ---------------------------------------------------------------- canvas
+const cvs = document.getElementById("game");
+const ctx = cvs.getContext("2d", { alpha: false });
+let W = 0, H = 0, DPR = 1;
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  cvs.width = (W * DPR) | 0; cvs.height = (H * DPR) | 0;
+  cvs.style.width = W + "px"; cvs.style.height = H + "px";
+}
+resize();
+addEventListener("resize", resize);
+
+// minimap canvas
+const mm = document.createElement("canvas");
+const mmc = mm.getContext("2d");
+const MMS = 184;
+mm.width = MMS * 2; mm.height = MMS * 2;
+mm.style.width = MMS + "px"; mm.style.height = MMS + "px";
+mmc.scale(2, 2);
+document.getElementById("minimap").appendChild(mm);
+
+// ---------------------------------------------------------------- road math
+function roadDistX(x) { const m = ((x % TILE) + TILE) % TILE; return Math.min(m, TILE - m); }
+function roadDistY(y) { return roadDistX(y); }
+function onRoad(x, y) { return roadDistX(x) <= HALFR || roadDistY(y) <= HALFR; }
+function nearestRoadLine(v) { return Math.round(v / TILE) * TILE; }
+
+// ---------------------------------------------------------------- world gen
+const R = mulberry32(20260717);
+const BUILDING_PALETTE = [
+  ["#2c3350", "#3d4670", "#171b2e"], ["#4a2f52", "#66416f", "#241629"],
+  ["#1f4a52", "#2c6670", "#0f272b"], ["#513a2c", "#70523d", "#291d16"],
+  ["#2f2f3d", "#454556", "#18181f"], ["#3c2a44", "#54405e", "#1e1524"],
+];
+const NEON = ["#ff2d95", "#00e5ff", "#ffd54a", "#7c3aed", "#4ade80", "#ff6b3d"];
+
+const buildings = [];
+const cellIndex = new Map();     // "i,j" -> buildings in that cell
+const palms = [];
+
+function cellKey(i, j) { return i + "," + j; }
+
+(function generateCity() {
+  for (let i = 0; i < GRID; i++) {
+    for (let j = 0; j < GRID; j++) {
+      const x0 = i * TILE + HALFR + 14, y0 = j * TILE + HALFR + 14;
+      const x1 = (i + 1) * TILE - HALFR - 14, y1 = (j + 1) * TILE - HALFR - 14;
+      const list = [];
+
+      // downtown = taller buildings toward the middle
+      const cx = (i + .5) / GRID - .5, cy = (j + .5) / GRID - .5;
+      const downtown = 1 - clamp(Math.hypot(cx, cy) * 2.3, 0, 1);
+
+      // a few cells become parks / parking lots instead
+      if (R() < 0.1) {
+        cellIndex.set(cellKey(i, j), list);
+        for (let p = 0; p < 5; p++) palms.push({ x: rand(x0, x1), y: rand(y0, y1), r: rand(9, 15) });
+        continue;
+      }
+
+      // split the block into 2x2..3x3 lots
+      const nx = 1 + ((R() * 2.4) | 0), ny = 1 + ((R() * 2.4) | 0);
+      const lw = (x1 - x0) / nx, lh = (y1 - y0) / ny;
+      for (let a = 0; a < nx; a++) {
+        for (let b = 0; b < ny; b++) {
+          if (R() < 0.12) continue;                    // empty lot
+          const pad = rand(6, 16);
+          const bx = x0 + a * lw + pad, by = y0 + b * lh + pad;
+          const bw = lw - pad * 2, bh = lh - pad * 2;
+          if (bw < 26 || bh < 26) continue;
+          const pal = pick(BUILDING_PALETTE);
+          const h = clamp(rand(24, 62) * (0.55 + downtown * 1.75) * (R() < .12 ? 1.9 : 1), 18, 210);
+          list.push({
+            x: bx, y: by, w: bw, h: bh, hgt: h,
+            side: pal[0], top: pal[1], dark: pal[2],
+            neon: R() < 0.3 ? pick(NEON) : null,
+            seed: R(),
+          });
+        }
+      }
+      cellIndex.set(cellKey(i, j), list);
+      buildings.push(...list);
+    }
+  }
+  // palms along the boulevards
+  for (let i = 0; i <= GRID; i++) {
+    for (let j = 0; j < GRID; j++) {
+      for (let k = 0; k < 3; k++) {
+        if (R() < .45) palms.push({ x: i * TILE + (R() < .5 ? -HALFR - 12 : HALFR + 12), y: j * TILE + rand(60, TILE - 60), r: rand(8, 13) });
+        if (R() < .45) palms.push({ x: j * TILE + rand(60, TILE - 60), y: i * TILE + (R() < .5 ? -HALFR - 12 : HALFR + 12), r: rand(8, 13) });
+      }
+    }
+  }
+})();
+
+function buildingsNear(x, y) {
+  const i = Math.floor(x / TILE), j = Math.floor(y / TILE);
+  const out = [];
+  for (let a = -1; a <= 1; a++) for (let b = -1; b <= 1; b++) {
+    const l = cellIndex.get(cellKey(i + a, j + b));
+    if (l) out.push(...l);
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------- audio
+const Audio_ = {
+  ac: null, master: null, engine: null, engGain: null, sirenOsc: null, sirenGain: null, on: false,
+  init() {
+    if (this.ac) return;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    this.ac = new AC();
+    this.master = this.ac.createGain(); this.master.gain.value = 0.5;
+    this.master.connect(this.ac.destination);
+
+    // engine: sawtooth through a lowpass
+    this.engine = this.ac.createOscillator(); this.engine.type = "sawtooth";
+    const f = this.ac.createBiquadFilter(); f.type = "lowpass"; f.frequency.value = 700;
+    this.engGain = this.ac.createGain(); this.engGain.gain.value = 0;
+    this.engine.connect(f); f.connect(this.engGain); this.engGain.connect(this.master);
+    this.engine.frequency.value = 60; this.engine.start();
+
+    // siren
+    this.sirenOsc = this.ac.createOscillator(); this.sirenOsc.type = "square";
+    this.sirenGain = this.ac.createGain(); this.sirenGain.gain.value = 0;
+    this.sirenOsc.connect(this.sirenGain); this.sirenGain.connect(this.master);
+    this.sirenOsc.frequency.value = 700; this.sirenOsc.start();
+    this.on = true;
+  },
+  engineTo(rpm, vol) {
+    if (!this.on) return;
+    this.engine.frequency.setTargetAtTime(45 + rpm * 115, this.ac.currentTime, .07);
+    this.engGain.gain.setTargetAtTime(vol * 0.075, this.ac.currentTime, .1);
+  },
+  siren(active, t) {
+    if (!this.on) return;
+    this.sirenGain.gain.setTargetAtTime(active ? 0.035 : 0, this.ac.currentTime, .15);
+    if (active) this.sirenOsc.frequency.setTargetAtTime(Math.sin(t * 7) > 0 ? 880 : 620, this.ac.currentTime, .02);
+  },
+  blip(freq, dur, type, vol) {
+    if (!this.on) return;
+    const o = this.ac.createOscillator(), g = this.ac.createGain();
+    o.type = type || "square"; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol || .12, this.ac.currentTime);
+    g.gain.exponentialRampToValueAtTime(.0001, this.ac.currentTime + dur);
+    o.connect(g); g.connect(this.master); o.start(); o.stop(this.ac.currentTime + dur);
+  },
+  noise(dur, vol, freq) {
+    if (!this.on) return;
+    const n = this.ac.sampleRate * dur;
+    const buf = this.ac.createBuffer(1, n, this.ac.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
+    const s = this.ac.createBufferSource(); s.buffer = buf;
+    const f = this.ac.createBiquadFilter(); f.type = "lowpass"; f.frequency.value = freq || 1400;
+    const g = this.ac.createGain(); g.gain.value = vol || .3;
+    s.connect(f); f.connect(g); g.connect(this.master); s.start();
+  },
+  gunshot() { this.noise(.14, .35, 2600); this.blip(140, .1, "square", .18); },
+  crash(v) { this.noise(.22, clamp(v / 400, .05, .45), 900); },
+};
+
+// ---------------------------------------------------------------- entities
+const CAR_TYPES = [
+  { name: "Cheetah",  w: 26, l: 52, top: 470, acc: 340, col: "#ff2d55", handling: 1.10 },
+  { name: "Infernus", w: 27, l: 54, top: 500, acc: 360, col: "#ffd54a", handling: 1.05 },
+  { name: "Banshee",  w: 26, l: 50, top: 450, acc: 320, col: "#00e5ff", handling: 1.15 },
+  { name: "Sentinel", w: 28, l: 55, top: 360, acc: 250, col: "#4ade80", handling: .92 },
+  { name: "Manana",   w: 27, l: 53, top: 330, acc: 225, col: "#f97316", handling: .88 },
+  { name: "Bobcat",   w: 31, l: 60, top: 340, acc: 245, col: "#94a3b8", handling: .80 },
+  { name: "Voodoo",   w: 29, l: 58, top: 355, acc: 240, col: "#a78bfa", handling: .85 },
+  { name: "Stallion", w: 27, l: 54, top: 400, acc: 285, col: "#ec4899", handling: .98 },
+];
+const COP_TYPE = { name: "Police Cruiser", w: 29, l: 56, top: 415, acc: 305, col: "#f8fafc", handling: 1.0 };
+
+function makeCar(x, y, a, type, isCop) {
+  return {
+    x, y, a, vx: 0, vy: 0, type, isCop: !!isCop,
+    col: isCop ? COP_TYPE.col : type.col,
+    hp: isCop ? 130 : 100, dead: false, burn: 0,
+    ai: null, steerT: 0, targetA: a, throttle: 0, brake: 0, hand: false,
+    shootCd: rand(.6, 2), stuck: 0, honk: 0,
+  };
+}
+function carFwd(c) { return c.vx * Math.cos(c.a) + c.vy * Math.sin(c.a); }
+
+const cars = [];   // traffic + cops
+const peds = [];
+const bullets = [];
+const fx = [];     // particles / debris / blood / smoke
+
+function makePed(x, y) {
+  const dirs = [0, Math.PI / 2, Math.PI, -Math.PI / 2];
+  return {
+    x, y, a: pick(dirs), spd: rand(26, 46), dead: false, panic: 0, t: rand(0, 9),
+    col: pick(["#fca5a5", "#fcd34d", "#86efac", "#93c5fd", "#f0abfc", "#fdba74", "#e2e8f0"]),
+    skin: pick(["#8d5524", "#c68642", "#e0ac69", "#f1c27d", "#ffdbac"]),
+    hp: 30,
+  };
+}
+function spawnFx(x, y, col, n, spd, life, size) {
+  for (let i = 0; i < n; i++) {
+    const a = rand(0, TAU), s = rand(spd * .25, spd);
+    fx.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: rand(life * .5, life), max: life, col, r: rand(size * .5, size) });
+  }
+}
+
+// ---------------------------------------------------------------- player
+const player = {
+  x: 3 * TILE, y: 3 * TILE + 0, a: 0,
+  vx: 0, vy: 0,
+  inCar: null,
+  hp: 100, armor: 0, money: 0,
+  wanted: 0, wantedHeat: 0,
+  shootCd: 0, dead: false, respawnT: 0,
+  facing: 0,
+  // ---- the bender
+  bac: 0,          // 0..1 blood alcohol. everything gets worse as this climbs
+  drinks: 0,
+  drinkCd: 0,
+  hurl: 0,         // vomit cooldown timer at very high BAC
+};
+
+/* Drunkenness model.
+   bac drives four separate effects, each with its own curve:
+     - sway   : low-frequency camera roll + world wobble
+     - swerve : involuntary steering input (car) / stumble (on foot)
+     - blur   : ghosted double-vision draw pass
+     - lag    : input response damping (you react late)                          */
+const Drunk = {
+  sway()   { return player.bac * player.bac; },
+  swerve() { return clamp((player.bac - 0.12) / 0.88, 0, 1); },
+  blur()   { return clamp((player.bac - 0.35) / 0.65, 0, 1); },
+  lag()    { return clamp(player.bac * 0.75, 0, .8); },
+  // slow, drifting wander so it never feels like clean noise
+  wobble(t, seed) {
+    return Math.sin(t * 1.7 + seed) * 0.6
+         + Math.sin(t * 0.43 + seed * 2.3) * 0.9
+         + Math.sin(t * 3.1 + seed * 0.7) * 0.25;
+  },
+  label() {
+    const b = player.bac;
+    if (b < .02) return "SOBER";
+    if (b < .18) return "LOOSE";
+    if (b < .38) return "BUZZED";
+    if (b < .58) return "DRUNK";
+    if (b < .78) return "HAMMERED";
+    if (b < .93) return "WRECKED";
+    return "OBLITERATED";
+  },
+};
+let camX = player.x, camY = player.y, camZoom = 1, camRoll = 0;
+
+// ---------------------------------------------------------------- input
+const keys = {};
+const mouse = { x: 0, y: 0, down: false };
+let steerSmooth = 0;
+
+// touch state
+const isTouch = matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
+const touch = { mx: 0, my: 0, gas: false, brake: false, hand: false };
+if (isTouch) document.body.classList.add("touch");
+
+addEventListener("keydown", e => {
+  keys[e.code] = true;
+  if (["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "KeyF"].includes(e.code)) e.preventDefault();
+  if (e.code === "KeyF") toggleVehicle();
+  if (e.code === "KeyE") drinkAtBar();
+  Audio_.init();
+});
+addEventListener("keyup", e => { keys[e.code] = false; });
+addEventListener("mousemove", e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+addEventListener("mousedown", e => { if (e.button === 0) { mouse.down = true; Audio_.init(); } });
+addEventListener("mouseup", e => { if (e.button === 0) mouse.down = false; });
+addEventListener("blur", () => { for (const k in keys) keys[k] = false; mouse.down = false; });
+
+// ---------------------------------------------------------------- touch controls
+(function setupTouch() {
+  if (!isTouch) return;
+  const stick = document.getElementById("stick");
+  const nub = document.getElementById("nub");
+  const RAD = 46;
+  let stickId = null;
+
+  function stickMove(t) {
+    const r = stick.getBoundingClientRect();
+    let dx = t.clientX - (r.left + r.width / 2);
+    let dy = t.clientY - (r.top + r.height / 2);
+    const d = Math.hypot(dx, dy);
+    if (d > RAD) { dx = dx / d * RAD; dy = dy / d * RAD; }
+    nub.style.transform = "translate(" + dx + "px," + dy + "px)";
+    touch.mx = dx / RAD; touch.my = dy / RAD;
+  }
+  stick.addEventListener("touchstart", e => {
+    e.preventDefault(); Audio_.init();
+    const t = e.changedTouches[0]; stickId = t.identifier; stickMove(t);
+  }, { passive: false });
+  stick.addEventListener("touchmove", e => {
+    e.preventDefault();
+    for (const t of e.changedTouches) if (t.identifier === stickId) stickMove(t);
+  }, { passive: false });
+  const stickEnd = e => {
+    for (const t of e.changedTouches) if (t.identifier === stickId) {
+      stickId = null; touch.mx = 0; touch.my = 0;
+      nub.style.transform = "translate(0,0)";
+    }
+  };
+  stick.addEventListener("touchend", stickEnd);
+  stick.addEventListener("touchcancel", stickEnd);
+
+  // hold buttons
+  function hold(id, prop) {
+    const b = document.getElementById(id);
+    b.addEventListener("touchstart", e => {
+      e.preventDefault(); Audio_.init(); touch[prop] = true; b.classList.add("on");
+    }, { passive: false });
+    const off = e => { e.preventDefault(); touch[prop] = false; b.classList.remove("on"); };
+    b.addEventListener("touchend", off, { passive: false });
+    b.addEventListener("touchcancel", off, { passive: false });
+  }
+  hold("bGas", "gas"); hold("bBrake", "brake"); hold("bHand", "hand");
+
+  // tap buttons
+  function tap(id, fn) {
+    const b = document.getElementById(id);
+    b.addEventListener("touchstart", e => {
+      e.preventDefault(); Audio_.init(); fn();
+      b.classList.add("on"); setTimeout(() => b.classList.remove("on"), 110);
+    }, { passive: false });
+  }
+  tap("bEnter", toggleVehicle);
+  tap("bDrink", drinkAtBar);
+
+  // tap the world to aim + shoot on foot
+  cvs.addEventListener("touchstart", e => {
+    e.preventDefault(); Audio_.init();
+    if (player.inCar) return;
+    const t = e.changedTouches[0];
+    mouse.x = t.clientX; mouse.y = t.clientY; mouse.down = true;
+  }, { passive: false });
+  cvs.addEventListener("touchmove", e => {
+    const t = e.changedTouches[0];
+    mouse.x = t.clientX; mouse.y = t.clientY;
+  }, { passive: false });
+  cvs.addEventListener("touchend", () => { mouse.down = false; }, { passive: false });
+
+  // show the touch key legend on the menu
+  const kd = document.getElementById("keysDesktop"), kt = document.getElementById("keysTouch");
+  if (kd && kt) { kd.style.display = "none"; kt.style.display = "grid"; }
+})();
+
+function screenToWorld(sx, sy) {
+  return { x: (sx - W / 2) / camZoom + camX, y: (sy - H / 2) / camZoom + camY };
+}
+
+// ---------------------------------------------------------------- HUD refs
+const el = {
+  money: document.getElementById("money"),
+  stars: document.getElementById("stars"),
+  hp: document.getElementById("hp"),
+  armor: document.getElementById("armor"),
+  bac: document.getElementById("bac"),
+  bacLabel: document.getElementById("baclabel"),
+  kmh: document.getElementById("kmh"),
+  gear: document.getElementById("gear"),
+  obj: document.getElementById("objective"),
+  toast: document.getElementById("toast"),
+  flash: document.getElementById("flash"),
+};
+let toastT = 0;
+function toast(msg, sub, col) {
+  el.toast.innerHTML = msg + (sub ? "<small>" + sub + "</small>" : "");
+  el.toast.style.color = col || "#ffd54a";
+  el.toast.classList.add("show");
+  toastT = 2.0;
+}
+let flashT = 0, flashCol = "#f00";
+function hitFlash(col, amt) { flashT = Math.max(flashT, amt || .35); flashCol = col || "#f00"; }
+
+// ---------------------------------------------------------------- vehicles
+function toggleVehicle() {
+  if (player.dead || menuOpen) return;
+  if (player.inCar) {
+    const c = player.inCar;
+    if (Math.abs(carFwd(c)) > 120) return;           // no jumping out at speed
+    const off = c.type.w / 2 + 16;
+    player.x = c.x + Math.cos(c.a + Math.PI / 2) * off;
+    player.y = c.y + Math.sin(c.a + Math.PI / 2) * off;
+    player.a = c.a; player.vx = 0; player.vy = 0;
+    c.ai = "parked"; c.throttle = 0; c.brake = 1;
+    player.inCar = null;
+    Audio_.blip(320, .09, "sine", .1);
+    setObjective();
+  } else {
+    let best = null, bd = 62 * 62;
+    for (const c of cars) {
+      if (c.dead) continue;
+      const d = dist2(c.x, c.y, player.x, player.y);
+      if (d < bd) { bd = d; best = c; }
+    }
+    if (best) {
+      if (Math.abs(carFwd(best)) > 60) {              // yank the driver out
+        best.vx *= .2; best.vy *= .2;
+      }
+      if (best.ai !== "parked" || best.isCop) {
+        peds.push(makePed(best.x + Math.cos(best.a + Math.PI / 2) * 26, best.y + Math.sin(best.a + Math.PI / 2) * 26));
+        peds[peds.length - 1].panic = 6;
+        if (best.isCop) addWanted(1, "GRAND THEFT AUTO");
+      }
+      best.ai = null; best.isCop = false; best.hand = false;
+      player.inCar = best;
+      Audio_.blip(220, .1, "sine", .12);
+      Audio_.init();
+      setObjective();
+    }
+  }
+}
+
+// ---------------------------------------------------------------- wanted
+function addWanted(n, why) {
+  const before = player.wanted;
+  player.wanted = clamp(player.wanted + n, 0, 5);
+  player.wantedHeat = 1;
+  if (player.wanted > before) {
+    Audio_.blip(1200, .07, "square", .12);
+    setTimeout(() => Audio_.blip(1500, .09, "square", .12), 90);
+    if (why) toast("WANTED " + "★".repeat(player.wanted), why, "#ffd54a");
+  }
+}
+let wantedDecay = 0;
+
+// ---------------------------------------------------------------- missions
+let mission = null;
+const BAR_NAMES = [
+  "The Rusty Anchor", "Neon Palms", "Malibu Club", "The Sticky Pelican",
+  "Last Call Lounge", "The Broken Compass", "Vice Tiki Bar", "Dive 47",
+  "The Salty Iguana", "Sunset Dive", "The Flamingo Room", "Hangover Heights",
+  "El Gato Borracho", "The Kraken", "Pier Pressure", "The Wet Parrot",
+];
+const DRINKS = [
+  ["a warm lager",        .10], ["a double whiskey",   .17],
+  ["a tequila slammer",   .21], ["a flaming sambuca",  .24],
+  ["a suspicious cocktail", .19], ["a pint of something green", .15],
+  ["the house special",   .27], ["a triple rum",       .23],
+];
+function randRoadPoint(minDistFrom, fx_, fy_) {
+  for (let k = 0; k < 200; k++) {
+    const i = (Math.random() * (GRID + 1)) | 0, j = (Math.random() * GRID) | 0;
+    const horiz = Math.random() < .5;
+    const x = horiz ? j * TILE + rand(80, TILE - 80) : i * TILE;
+    const y = horiz ? i * TILE : j * TILE + rand(80, TILE - 80);
+    if (x < 0 || y < 0 || x > WORLD || y > WORLD) continue;
+    if (minDistFrom && dist(x, y, fx_, fy_) < minDistFrom) continue;
+    return { x, y };
+  }
+  return { x: TILE * 5, y: TILE * 5 };
+}
+function newMission() {
+  const p = randRoadPoint(1100, player.x, player.y);
+  const drink = pick(DRINKS);
+  mission = {
+    x: p.x, y: p.y, r: 48,
+    name: pick(BAR_NAMES), drink: drink[0], proof: drink[1],
+    reward: 150 + ((Math.random() * 14) | 0) * 50,
+    time: 55 + ((Math.random() * 30) | 0), maxTime: 0, t: 0,
+    arrived: false,
+  };
+  mission.maxTime = mission.time;
+  setObjective();
+}
+function setObjective() {
+  if (!mission) { el.obj.textContent = "…"; return; }
+  const d = (dist(player.x, player.y, mission.x, mission.y) / 90).toFixed(0);
+  if (mission.arrived) {
+    el.obj.innerHTML = "<b>" + mission.name + "</b> — " + (isTouch ? "tap 🍺" : "press <b>E</b>") +
+                       " for " + mission.drink;
+  } else if (!player.inCar) {
+    el.obj.innerHTML = "<b>" + mission.name + "</b> — get a car · " + d + "m · " + Math.ceil(mission.time) + "s";
+  } else {
+    el.obj.innerHTML = "<b>" + mission.name + "</b> — " + d + "m · " + Math.ceil(mission.time) + "s · $" + mission.reward;
+  }
+}
+// arriving at the bar doesn't complete the leg — you have to actually drink
+function arriveAtBar() {
+  if (mission.arrived) return;
+  mission.arrived = true;
+  toast("YOU'RE HERE", mission.name + " — get a drink in you", "#fb923c");
+  Audio_.blip(520, .1, "sine", .12);
+  setObjective();
+}
+function drinkAtBar() {
+  if (!mission || !mission.arrived || player.drinkCd > 0) return;
+  player.drinkCd = .6;
+  player.drinks++;
+
+  const bonus = Math.round(mission.reward * (mission.time / mission.maxTime) * .6);
+  const total = mission.reward + bonus;
+  player.money += total;
+
+  // the drink itself
+  player.bac = clamp(player.bac + mission.proof, 0, 1.15);
+  player.hp = Math.min(100, player.hp + 6);   // liquid courage patches you up a bit
+
+  toast("DRINK #" + player.drinks, mission.drink + " · +$" + total + " · " + Drunk.label(), "#fb923c");
+  Audio_.blip(300, .08, "sine", .16);
+  setTimeout(() => Audio_.blip(180, .22, "sine", .14), 90);
+  spawnFx(player.x, player.y, "#fbbf24", 14, 120, .7, 4);
+  newMission();
+}
+function failMission() {
+  toast("LAST ORDERS", mission.name + " called it a night.", "#ff3d6e");
+  Audio_.blip(160, .35, "sawtooth", .12);
+  newMission();
+}
+
+// ---------------------------------------------------------------- spawning
+const SPAWN_R = 1500, DESPAWN_R = 2100;
+
+/* Spawn just outside what the camera can actually see, rather than at a fixed
+   radius — a fixed 700+ ring is far bigger than the ~600 view radius, so the
+   streets around the player stayed empty while traffic idled off-screen. */
+function offScreen(x, y, margin) {
+  const hw = W / 2 / camZoom + (margin || 90), hh = H / 2 / camZoom + (margin || 90);
+  return x < camX - hw || x > camX + hw || y < camY - hh || y > camY + hh;
+}
+
+// `force` seeds the opening scene on-screen (nothing to pop in front of yet)
+function spawnTraffic(force) {
+  if (cars.filter(c => !c.isCop).length > 30) return;
+  const a = rand(0, TAU), d = rand(force ? 90 : 420, force ? 900 : 1250);
+  let x = player.x + Math.cos(a) * d, y = player.y + Math.sin(a) * d;
+  // snap onto a lane
+  const horiz = Math.random() < .5;
+  if (horiz) { y = nearestRoadLine(y) + (Math.random() < .5 ? LANE : -LANE); }
+  else { x = nearestRoadLine(x) + (Math.random() < .5 ? LANE : -LANE); }
+  if (x < 0 || y < 0 || x > WORLD || y > WORLD) return;
+  if (force) { if (dist(x, y, player.x, player.y) < 80) return; }
+  else if (!offScreen(x, y)) return;
+
+  let ang;
+  if (horiz) ang = (y - nearestRoadLine(y)) > 0 ? Math.PI : 0;
+  else ang = (x - nearestRoadLine(x)) > 0 ? -Math.PI / 2 : Math.PI / 2;
+
+  const c = makeCar(x, y, ang, pick(CAR_TYPES), false);
+  c.ai = "traffic"; c.cruise = rand(120, 190);
+  cars.push(c);
+}
+function spawnCop() {
+  const want = player.wanted * 2;
+  if (cars.filter(c => c.isCop).length >= want) return;
+  const a = rand(0, TAU), d = rand(1000, 1500);
+  let x = player.x + Math.cos(a) * d, y = player.y + Math.sin(a) * d;
+  if (Math.random() < .5) y = nearestRoadLine(y); else x = nearestRoadLine(x);
+  x = clamp(x, 0, WORLD); y = clamp(y, 0, WORLD);
+  const c = makeCar(x, y, rand(0, TAU), COP_TYPE, true);
+  c.ai = "chase"; c.cruise = 260;
+  cars.push(c);
+}
+function spawnPed(force) {
+  if (peds.length > 44) return;
+  const a = rand(0, TAU), d = rand(force ? 70 : 340, force ? 700 : 820);
+  let x = player.x + Math.cos(a) * d, y = player.y + Math.sin(a) * d;
+  // sidewalk: just outside the road edge
+  if (Math.random() < .5) y = nearestRoadLine(y) + (Math.random() < .5 ? HALFR + 12 : -HALFR - 12);
+  else x = nearestRoadLine(x) + (Math.random() < .5 ? HALFR + 12 : -HALFR - 12);
+  if (x < 0 || y < 0 || x > WORLD || y > WORLD) return;
+  if (force) { if (dist(x, y, player.x, player.y) < 60) return; }
+  else if (!offScreen(x, y, 40)) return;
+  peds.push(makePed(x, y));
+}
+
+// ---------------------------------------------------------------- collision
+function resolveBuildings(o, radius, bounce) {
+  const list = buildingsNear(o.x, o.y);
+  let hit = 0;
+  for (const b of list) {
+    const nx = clamp(o.x, b.x, b.x + b.w), ny = clamp(o.y, b.y, b.y + b.h);
+    const dx = o.x - nx, dy = o.y - ny;
+    const d2 = dx * dx + dy * dy;
+    if (d2 < radius * radius) {
+      const d = Math.sqrt(d2) || .0001;
+      const px = dx / d, py = dy / d, pen = radius - d;
+      o.x += px * pen; o.y += py * pen;
+      if (bounce) {
+        const vn = o.vx * px + o.vy * py;
+        if (vn < 0) {
+          o.vx -= px * vn * 1.4; o.vy -= py * vn * 1.4;
+          o.vx *= .55; o.vy *= .55;
+          hit = Math.max(hit, -vn);
+        }
+      } else { o.vx = 0; o.vy = 0; }
+    }
+  }
+  return hit;
+}
+
+// ---------------------------------------------------------------- car physics
+function driveCar(c, dt, throttle, steer, brake, hand) {
+  const ca = Math.cos(c.a), sa = Math.sin(c.a);
+  const rx = -sa, ry = ca;
+  let vF = c.vx * ca + c.vy * sa;
+  let vL = c.vx * rx + c.vy * ry;
+
+  const top = c.type.top;
+  const accel = c.type.acc;
+  // engine
+  if (throttle > 0) vF += accel * throttle * dt * (1 - clamp(vF / top, 0, .92));
+  if (throttle < 0) vF += accel * .55 * throttle * dt * (1 - clamp(-vF / (top * .4), 0, .9));
+  if (brake > 0) { const b = 520 * brake * dt; vF -= clamp(vF, -b, b); }
+  vF *= (1 - 0.55 * dt);   // rolling drag
+
+  // steering — speed-sensitive, reverses when reversing
+  const speedFactor = clamp(Math.abs(vF) / 90, 0, 1);
+  const turn = 2.7 * c.type.handling * steer * speedFactor * Math.sign(vF || 1);
+  c.a += turn * dt;
+
+  // lateral grip (handbrake => slide)
+  const grip = hand ? 0.985 : (0.86 - clamp(Math.abs(vF) / top, 0, 1) * 0.06);
+  vL *= Math.pow(grip, dt * 60);
+  if (hand) { const b = 240 * dt; vF -= clamp(vF, -b, b); }
+  // drifting scrubs a little speed
+  if (Math.abs(vL) > 40) vF *= (1 - .25 * dt);
+
+  const ca2 = Math.cos(c.a), sa2 = Math.sin(c.a);
+  c.vx = ca2 * vF + (-sa2) * vL;
+  c.vy = sa2 * vF + (ca2) * vL;
+
+  c.x += c.vx * dt; c.y += c.vy * dt;
+  c.x = clamp(c.x, 8, WORLD - 8); c.y = clamp(c.y, 8, WORLD - 8);
+
+  // tyre smoke when sliding
+  if (Math.abs(vL) > 90 && Math.random() < .6) {
+    const bx = c.x - ca2 * c.type.l * .32, by = c.y - sa2 * c.type.l * .32;
+    fx.push({ x: bx + rand(-8, 8), y: by + rand(-8, 8), vx: rand(-12, 12), vy: rand(-12, 12), life: .55, max: .55, col: "#d9dbe6", r: rand(4, 8), smoke: 1 });
+  }
+
+  const impact = resolveBuildings(c, c.type.w * .62, true);
+  if (impact > 60) {
+    const dmg = impact * .1;
+    c.hp -= dmg;
+    if (c === player.inCar) { player.hp -= dmg * .45; hitFlash("#f00", .3); }
+    Audio_.crash(impact);
+    spawnFx(c.x, c.y, "#ffd54a", 5, 130, .35, 3);
+  }
+  return { vF, vL };
+}
+
+// car-vs-car
+function carCollisions(dt) {
+  for (let i = 0; i < cars.length; i++) {
+    const a = cars[i]; if (a.dead) continue;
+    for (let j = i + 1; j < cars.length; j++) {
+      const b = cars[j]; if (b.dead) continue;
+      const rr = (a.type.l + b.type.l) * .34;
+      const d2 = dist2(a.x, a.y, b.x, b.y);
+      if (d2 > rr * rr || d2 === 0) continue;
+      const d = Math.sqrt(d2) || .001;
+      const nx = (b.x - a.x) / d, ny = (b.y - a.y) / d, pen = rr - d;
+      a.x -= nx * pen * .5; a.y -= ny * pen * .5;
+      b.x += nx * pen * .5; b.y += ny * pen * .5;
+      const rvx = b.vx - a.vx, rvy = b.vy - a.vy;
+      const vn = rvx * nx + rvy * ny;
+      if (vn > 0) continue;
+      const imp = -vn * .8;
+      a.vx -= nx * imp; a.vy -= ny * imp;
+      b.vx += nx * imp; b.vy += ny * imp;
+      if (imp > 55) {
+        Audio_.crash(imp * 2);
+        spawnFx((a.x + b.x) / 2, (a.y + b.y) / 2, "#ffd54a", 6, 150, .4, 3);
+        a.hp -= imp * .12; b.hp -= imp * .12;
+        if (a === player.inCar || b === player.inCar) {
+          const other = a === player.inCar ? b : a;
+          player.hp -= imp * .05; hitFlash("#f00", .25);
+          if (other.isCop) addWanted(1, "ASSAULTING AN OFFICER");
+        }
+      }
+    }
+  }
+}
+
+// ---------------------------------------------------------------- AI
+function aiTraffic(c, dt) {
+  // follow the lane: figure out whether we're on a horizontal or vertical road
+  const dX = roadDistX(c.x), dY = roadDistY(c.y);
+  const atIntersection = dX <= HALFR && dY <= HALFR;
+
+  if (atIntersection && !c.turnLock) {
+    if (Math.random() < .022) {
+      // pick a new cardinal direction at the junction
+      const opts = [0, Math.PI / 2, Math.PI, -Math.PI / 2].filter(o => Math.abs(angDiff(c.a, o)) < 2.4);
+      c.targetA = pick(opts);
+      c.turnLock = .8;
+    } else {
+      c.targetA = Math.round(c.a / (Math.PI / 2)) * (Math.PI / 2);
+    }
+  } else if (!atIntersection) {
+    c.turnLock = 0;
+    const horiz = dY < dX;
+    let base = horiz ? (Math.abs(angDiff(c.a, 0)) < Math.PI / 2 ? 0 : Math.PI)
+                     : (Math.abs(angDiff(c.a, Math.PI / 2)) < Math.PI / 2 ? Math.PI / 2 : -Math.PI / 2);
+    // steer back to the correct side of the road
+    const line = horiz ? nearestRoadLine(c.y) : nearestRoadLine(c.x);
+    const want = line + (horiz ? (base === 0 ? LANE : -LANE) : (base === Math.PI / 2 ? -LANE : LANE));
+    const off = horiz ? (want - c.y) : (want - c.x);
+    const corr = clamp(off / 60, -.6, .6) * (horiz ? (base === 0 ? 1 : -1) : (base === Math.PI / 2 ? 1 : -1));
+    c.targetA = base + corr * .55;
+  }
+  if (c.turnLock) c.turnLock -= dt;
+
+  const steer = clamp(angDiff(c.a, c.targetA) * 1.9, -1, 1);
+
+  // brake for whatever is in front
+  let block = 0;
+  const fx_ = Math.cos(c.a), fy_ = Math.sin(c.a);
+  for (const o of cars) {
+    if (o === c || o.dead) continue;
+    const dx = o.x - c.x, dy = o.y - c.y;
+    const f = dx * fx_ + dy * fy_;
+    if (f > 0 && f < 92 && Math.abs(-dx * fy_ + dy * fx_) < 24) block = 1;
+  }
+  if (player.inCar === null && !player.dead) {
+    const dx = player.x - c.x, dy = player.y - c.y;
+    const f = dx * fx_ + dy * fy_;
+    if (f > 0 && f < 70 && Math.abs(-dx * fy_ + dy * fx_) < 22) { block = 1; c.honk = Math.max(c.honk, .5); }
+  }
+  const vF = carFwd(c);
+  const throttle = block ? 0 : (vF < c.cruise ? .7 : 0);
+  driveCar(c, dt, throttle, steer, block ? 1 : 0, false);
+}
+
+function aiParked(c, dt) { driveCar(c, dt, 0, 0, 1, false); }
+
+function aiChase(c, dt) {
+  const tx = player.inCar ? player.inCar.x : player.x;
+  const ty = player.inCar ? player.inCar.y : player.y;
+  const d = dist(c.x, c.y, tx, ty);
+  const want = Math.atan2(ty - c.y, tx - c.x);
+  const steer = clamp(angDiff(c.a, want) * 2.1, -1, 1);
+  const vF = carFwd(c);
+
+  // avoid other cars a bit
+  let avoid = 0;
+  for (const o of cars) {
+    if (o === c || o.dead || o === player.inCar) continue;
+    const dx = o.x - c.x, dy = o.y - c.y;
+    if (dx * dx + dy * dy > 110 * 110) continue;
+    const f = dx * Math.cos(c.a) + dy * Math.sin(c.a);
+    const l = -dx * Math.sin(c.a) + dy * Math.cos(c.a);
+    if (f > 0 && f < 100 && Math.abs(l) < 30) avoid += l > 0 ? -.8 : .8;
+  }
+
+  const throttle = d > 90 ? 1 : .3;
+  driveCar(c, dt, throttle, clamp(steer + avoid, -1, 1), d < 60 ? .5 : 0, false);
+
+  // stuck detection — reverse out
+  if (Math.abs(vF) < 18 && d > 100) { c.stuck += dt; } else c.stuck = 0;
+  if (c.stuck > 1.4) { driveCar(c, dt, -1, -steer, 0, false); if (c.stuck > 2.6) c.stuck = 0; }
+
+  // shoot at you once things get serious
+  c.shootCd -= dt;
+  if (player.wanted >= 3 && d < 300 && c.shootCd <= 0 && !player.dead) {
+    c.shootCd = rand(.55, 1.5);
+    const spread = rand(-.1, .1) + (player.wanted >= 4 ? 0 : rand(-.08, .08));
+    const ba = want + spread;
+    bullets.push({ x: c.x + Math.cos(ba) * 30, y: c.y + Math.sin(ba) * 30, vx: Math.cos(ba) * 900, vy: Math.sin(ba) * 900, life: .7, cop: true });
+    Audio_.gunshot();
+  }
+}
+
+function updatePed(p, dt) {
+  p.t += dt;
+  if (p.dead) return;
+
+  // flee from danger
+  let danger = null, dd = 1e9;
+  const px = player.inCar ? player.inCar.x : player.x;
+  const py = player.inCar ? player.inCar.y : player.y;
+  if (player.inCar) {
+    const d = dist(p.x, p.y, px, py);
+    const sp = Math.hypot(player.inCar.vx, player.inCar.vy);
+    if (d < 150 && sp > 90) { danger = { x: px, y: py }; dd = d; }
+  }
+  if (p.panic > 0) { p.panic -= dt; if (!danger) danger = { x: px, y: py }; }
+
+  if (danger) {
+    p.a = Math.atan2(p.y - danger.y, p.x - danger.x) + rand(-.25, .25);
+    p.spd = 105;
+    p.panic = Math.max(p.panic, .6);
+  } else {
+    p.spd = lerp(p.spd, 36, dt * 2);
+    if (Math.random() < .006) p.a += pick([Math.PI / 2, -Math.PI / 2]);
+  }
+
+  const nx = p.x + Math.cos(p.a) * p.spd * dt;
+  const ny = p.y + Math.sin(p.a) * p.spd * dt;
+  const o = { x: nx, y: ny, vx: 0, vy: 0 };
+  resolveBuildings(o, 8, false);
+  if (dist(o.x, o.y, p.x, p.y) < .5 && p.spd > 5) p.a += rand(1.5, 2.6);  // bumped a wall
+  p.x = clamp(o.x, 4, WORLD - 4); p.y = clamp(o.y, 4, WORLD - 4);
+
+  // splat
+  if (player.inCar) {
+    const c = player.inCar;
+    const sp = Math.hypot(c.vx, c.vy);
+    if (sp > 55 && dist(p.x, p.y, c.x, c.y) < c.type.l * .45) {
+      p.dead = true;
+      spawnFx(p.x, p.y, "#b91c1c", 14, sp * .8, .8, 4);
+      Audio_.noise(.12, .3, 500);
+      addWanted(1, "HIT AND RUN");
+      player.money += 5;
+      hitFlash("#8b0000", .18);
+      c.vx *= .97; c.vy *= .97;
+    }
+  }
+  for (const c of cars) {
+    if (c.dead || c === player.inCar) continue;
+    if (Math.hypot(c.vx, c.vy) > 60 && dist(p.x, p.y, c.x, c.y) < c.type.l * .42) {
+      p.dead = true; spawnFx(p.x, p.y, "#b91c1c", 10, 130, .7, 3);
+    }
+  }
+}
+
+// ---------------------------------------------------------------- player on foot
+function updateOnFoot(dt) {
+  const sprint = keys.ShiftLeft || keys.ShiftRight;
+  const drunk = Drunk.swerve();
+  // drunk = slower, and sprinting while wrecked is a bad idea
+  const spd = (sprint ? 215 : 130) * (1 - drunk * .3);
+  let dx = 0, dy = 0;
+  if (keys.KeyW || keys.ArrowUp) dy -= 1;
+  if (keys.KeyS || keys.ArrowDown) dy += 1;
+  if (keys.KeyA || keys.ArrowLeft) dx -= 1;
+  if (keys.KeyD || keys.ArrowRight) dx += 1;
+  if (isTouch) { dx += touch.mx; dy += touch.my; }
+  const m = Math.hypot(dx, dy);
+  if (m > 0) {
+    dx /= m; dy /= m;
+    // stumble: rotate your intended direction by a slow drifting wobble
+    if (drunk > 0) {
+      const stagger = Drunk.wobble(time, 1.3) * drunk * 0.95;
+      const ca = Math.cos(stagger), sa = Math.sin(stagger);
+      const nx = dx * ca - dy * sa, ny = dx * sa + dy * ca;
+      dx = nx; dy = ny;
+    }
+    const resp = 14 * (1 - Drunk.lag() * .6);   // you react late when drunk
+    player.vx = lerp(player.vx, dx * spd, dt * resp);
+    player.vy = lerp(player.vy, dy * spd, dt * resp);
+    player.facing = Math.atan2(dy, dx);
+  } else {
+    // even standing still you sway on your feet
+    const s = drunk * 26;
+    player.vx = lerp(player.vx, Drunk.wobble(time, 4.1) * s, dt * 6);
+    player.vy = lerp(player.vy, Drunk.wobble(time, 8.7) * s, dt * 6);
+  }
+  player.x += player.vx * dt; player.y += player.vy * dt;
+  player.x = clamp(player.x, 6, WORLD - 6); player.y = clamp(player.y, 6, WORLD - 6);
+  resolveBuildings(player, 9, false);
+
+  // aim & shoot
+  const w = screenToWorld(mouse.x, mouse.y);
+  player.a = Math.atan2(w.y - player.y, w.x - player.x);
+  player.shootCd -= dt;
+  if (mouse.down && player.shootCd <= 0) {
+    player.shootCd = .16;
+    // drunk aim: wide, drifting spread
+    const dsp = Drunk.swerve() * .34;
+    const a = player.a + rand(-.035, .035) + Drunk.wobble(time * 2.2, 5.5) * dsp;
+    bullets.push({ x: player.x + Math.cos(a) * 14, y: player.y + Math.sin(a) * 14, vx: Math.cos(a) * 1100, vy: Math.sin(a) * 1100, life: .6, cop: false });
+    Audio_.gunshot();
+    player.vx -= Math.cos(a) * 22; player.vy -= Math.sin(a) * 22;
+    spawnFx(player.x + Math.cos(a) * 16, player.y + Math.sin(a) * 16, "#ffd54a", 3, 90, .12, 2);
+    if (player.wanted < 1) addWanted(1, "DISCHARGING A FIREARM");
+    for (const p of peds) if (!p.dead && dist2(p.x, p.y, player.x, player.y) < 260 * 260) p.panic = 3;
+  }
+}
+
+// ---------------------------------------------------------------- bullets
+function updateBullets(dt) {
+  for (let i = bullets.length - 1; i >= 0; i--) {
+    const b = bullets[i];
+    const nx = b.x + b.vx * dt, ny = b.y + b.vy * dt;
+    let hit = false;
+
+    // buildings
+    for (const bl of buildingsNear(nx, ny)) {
+      if (nx > bl.x && nx < bl.x + bl.w && ny > bl.y && ny < bl.y + bl.h) {
+        spawnFx(nx, ny, "#cbd5e1", 4, 90, .2, 2); hit = true; break;
+      }
+    }
+    if (!hit) {
+      if (b.cop) {
+        const tx = player.inCar ? player.inCar.x : player.x;
+        const ty = player.inCar ? player.inCar.y : player.y;
+        const rr = player.inCar ? player.inCar.type.w * .6 : 10;
+        if (dist2(nx, ny, tx, ty) < rr * rr) {
+          hit = true;
+          const dmg = 7;
+          if (player.inCar) { player.inCar.hp -= dmg; player.hp -= dmg * .35; }
+          else damagePlayer(dmg);
+          hitFlash("#f00", .22);
+          spawnFx(nx, ny, "#ff6b3d", 4, 110, .2, 2);
+        }
+      } else {
+        for (const p of peds) {
+          if (p.dead) continue;
+          if (dist2(nx, ny, p.x, p.y) < 100) {
+            p.hp -= 25;
+            spawnFx(nx, ny, "#b91c1c", 6, 130, .35, 3);
+            if (p.hp <= 0) { p.dead = true; addWanted(1, "MURDER"); }
+            else p.panic = 5;
+            hit = true; break;
+          }
+        }
+        if (!hit) for (const c of cars) {
+          if (c.dead || c === player.inCar) continue;
+          if (dist2(nx, ny, c.x, c.y) < (c.type.l * .35) * (c.type.l * .35)) {
+            c.hp -= 12;
+            spawnFx(nx, ny, "#fde68a", 4, 120, .2, 2);
+            if (c.isCop && Math.random() < .5) addWanted(1, "SHOOTING AT POLICE");
+            hit = true; break;
+          }
+        }
+      }
+    }
+    b.x = nx; b.y = ny; b.life -= dt;
+    if (hit || b.life <= 0) bullets.splice(i, 1);
+  }
+}
+
+function damagePlayer(d) {
+  if (player.armor > 0) {
+    const a = Math.min(player.armor, d);
+    player.armor -= a; d -= a;
+  }
+  player.hp -= d;
+}
+
+// ---------------------------------------------------------------- death
+function killPlayer() {
+  player.dead = true;
+  player.respawnT = 2.6;
+  const fine = Math.min(player.money, 250);
+  player.money -= fine;
+  spawnFx(player.inCar ? player.inCar.x : player.x, player.inCar ? player.inCar.y : player.y, "#b91c1c", 20, 200, 1, 5);
+  toast("WASTED", "Hospital bill: $" + fine, "#ff3d6e");
+  hitFlash("#f00", 1);
+  Audio_.blip(90, .8, "sawtooth", .16);
+  if (player.inCar) { player.inCar.ai = "parked"; player.inCar = null; }
+}
+function respawnPlayer() {
+  player.dead = false;
+  player.hp = 100; player.armor = 0; player.wanted = 0;
+  player.bac *= .45;              // they pumped your stomach, mostly
+  player.hurl = 0; player.drinkCd = 0;
+  const p = randRoadPoint(0);
+  player.x = p.x; player.y = p.y; player.vx = player.vy = 0;
+  cars.length = 0; peds.length = 0; bullets.length = 0;
+  newMission();
+}
+
+function explodeCar(c) {
+  c.dead = true; c.burn = 1.6;
+  spawnFx(c.x, c.y, "#ff6b3d", 22, 260, .8, 6);
+  spawnFx(c.x, c.y, "#ffd54a", 14, 180, .6, 5);
+  Audio_.noise(.5, .5, 400); Audio_.blip(70, .5, "sawtooth", .2);
+  // blast damage
+  const all = [{ o: player, r: 100 }];
+  if (dist(player.x, player.y, c.x, c.y) < 110 && !player.inCar) damagePlayer(45);
+  for (const p of peds) if (!p.dead && dist(p.x, p.y, c.x, c.y) < 100) p.dead = true;
+  for (const o of cars) if (o !== c && !o.dead && dist(o.x, o.y, c.x, c.y) < 110) o.hp -= 45;
+  if (player.inCar && dist(player.inCar.x, player.inCar.y, c.x, c.y) < 120) { player.inCar.hp -= 40; player.hp -= 20; }
+}
+
+// ---------------------------------------------------------------- update
+let time = 0;
+let menuOpen = true;
+
+function update(dt) {
+  time += dt;
+  if (menuOpen) return;
+
+  // ---- player
+  if (player.dead) {
+    player.respawnT -= dt;
+    if (player.respawnT <= 0) respawnPlayer();
+  } else if (player.inCar) {
+    const c = player.inCar;
+    let th = 0, st = 0, br = 0;
+    if (keys.KeyW || keys.ArrowUp) th = 1;
+    if (keys.KeyS || keys.ArrowDown) { if (carFwd(c) > 20) br = 1; else th = -1; }
+    if (keys.KeyA || keys.ArrowLeft) st = -1;
+    if (keys.KeyD || keys.ArrowRight) st = 1;
+    let hand = !!keys.Space;
+
+    if (isTouch) {
+      if (touch.gas) th = 1;
+      if (touch.brake) { if (carFwd(c) > 20) br = 1; else th = -1; }
+      st += clamp(touch.mx * 1.4, -1, 1);
+      if (touch.hand) hand = true;
+    }
+
+    // ---- drunk driving
+    const drunk = Drunk.swerve();
+    if (drunk > 0) {
+      // involuntary steering wander + laggy, over-corrected input
+      st += Drunk.wobble(time, 2.7) * drunk * 0.5;
+      steerSmooth = lerp(steerSmooth, st, dt * (9 - Drunk.lag() * 6.5));
+      st = steerSmooth * (1 + drunk * .35);
+      // you also can't hold a steady throttle
+      if (th > 0) th *= 1 - Math.max(0, Drunk.wobble(time * 1.4, 6.2)) * drunk * .3;
+    } else steerSmooth = st;
+    st = clamp(st, -1.4, 1.4);
+
+    const r = driveCar(c, dt, th, st, br, hand);
+    player.x = c.x; player.y = c.y; player.a = c.a;
+    player.vx = c.vx; player.vy = c.vy;
+
+    const sp = Math.abs(r.vF);
+    Audio_.engineTo(clamp(sp / c.type.top, .06, 1) + (th > 0 ? .12 : 0), .9);
+    if (c.hp <= 0) { explodeCar(c); player.inCar = null; damagePlayer(55); }
+  } else {
+    updateOnFoot(dt);
+    Audio_.engineTo(.04, .12);
+  }
+
+  if (player.hp <= 0 && !player.dead) killPlayer();
+  player.hp = Math.min(player.hp, 100);
+
+  // ---- wanted decay
+  if (player.wanted > 0) {
+    let seen = false;
+    for (const c of cars) if (c.isCop && !c.dead && dist(c.x, c.y, player.x, player.y) < 620) seen = true;
+    if (!seen) { wantedDecay += dt; if (wantedDecay > 9) { player.wanted--; wantedDecay = 0; if (player.wanted === 0) toast("YOU LOST THEM", "", "#4ade80"); } }
+    else wantedDecay = 0;
+  } else wantedDecay = 0;
+
+  Audio_.siren(player.wanted > 0 && cars.some(c => c.isCop && !c.dead && dist(c.x, c.y, player.x, player.y) < 700), time);
+
+  // ---- the bender: you sober up slowly, and it costs you
+  if (player.drinkCd > 0) player.drinkCd -= dt;
+  if (player.bac > 0 && !player.dead) {
+    player.bac = Math.max(0, player.bac - 0.0125 * dt);   // ~80s per drink to burn off
+    // being wrecked slowly hurts you
+    if (player.bac > .8) player.hp -= (player.bac - .8) * 5 * dt;
+    // hurling at very high BAC
+    player.hurl -= dt;
+    if (player.bac > .85 && player.hurl <= 0 && Math.random() < .35 * dt) {
+      player.hurl = rand(6, 14);
+      spawnFx(player.x + Math.cos(player.a) * 14, player.y + Math.sin(player.a) * 14, "#84cc16", 12, 90, .8, 4);
+      Audio_.noise(.4, .18, 700);
+      toast("🤮", "That's coming back up", "#84cc16");
+      for (const p of peds) if (!p.dead && dist2(p.x, p.y, player.x, player.y) < 160 * 160) p.panic = 4;
+    }
+  }
+  // cops notice you weaving
+  if (player.inCar && player.bac > .5 && player.wanted === 0) {
+    const sp = Math.hypot(player.vx, player.vy);
+    for (const c of cars) {
+      if (!c.isCop || c.dead) continue;
+      if (dist(c.x, c.y, player.x, player.y) < 420 && sp > 120) { addWanted(1, "DRIVING UNDER THE INFLUENCE"); break; }
+    }
+  }
+
+  // ---- mission
+  if (mission && !player.dead) {
+    mission.t += dt;
+    if (!mission.arrived) {
+      mission.time -= dt;
+      if (mission.time <= 0) failMission();
+      else if (dist(player.x, player.y, mission.x, mission.y) < mission.r) arriveAtBar();
+    } else if (dist(player.x, player.y, mission.x, mission.y) > mission.r * 2.2) {
+      // wandered off before drinking — the leg is still live
+      mission.arrived = false;
+      setObjective();
+    }
+    if ((mission.t * 60 | 0) % 8 === 0) setObjective();
+  }
+
+  // ---- AI
+  for (const c of cars) {
+    if (c === player.inCar) continue;
+    if (c.dead) { c.burn -= dt; continue; }
+    if (c.hp <= 0) { explodeCar(c); continue; }
+    if (c.honk > 0) c.honk -= dt;
+    if (c.isCop) aiChase(c, dt);
+    else if (c.ai === "parked") aiParked(c, dt);
+    else aiTraffic(c, dt);
+  }
+  carCollisions(dt);
+  for (const p of peds) updatePed(p, dt);
+  updateBullets(dt);
+
+  // ---- particles
+  for (let i = fx.length - 1; i >= 0; i--) {
+    const f = fx[i];
+    f.x += f.vx * dt; f.y += f.vy * dt;
+    f.vx *= (1 - 2.2 * dt); f.vy *= (1 - 2.2 * dt);
+    if (f.smoke) { f.r += 22 * dt; f.vy -= 4 * dt; }
+    f.life -= dt;
+    if (f.life <= 0) fx.splice(i, 1);
+  }
+
+  // ---- spawn / despawn
+  // top up harder when the streets are thin so the city never feels dead
+  const traffic = cars.length - cars.filter(c => c.isCop).length;
+  const tries = traffic < 14 ? 3 : 1;
+  for (let i = 0; i < tries; i++) spawnTraffic();
+  for (let i = 0; i < (peds.length < 20 ? 3 : 1); i++) spawnPed();
+  if (player.wanted > 0 && Math.random() < .06) spawnCop();
+  for (let i = cars.length - 1; i >= 0; i--) {
+    const c = cars[i];
+    if (c === player.inCar) continue;
+    if (c.dead && c.burn <= 0) { cars.splice(i, 1); continue; }
+    if (dist(c.x, c.y, player.x, player.y) > 1650) cars.splice(i, 1);
+  }
+  for (let i = peds.length - 1; i >= 0; i--) {
+    const p = peds[i];
+    if (dist(p.x, p.y, player.x, player.y) > 1000) peds.splice(i, 1);
+  }
+
+  // ---- camera
+  const sp = Math.hypot(player.vx, player.vy);
+  const look = player.inCar ? 0.42 : 0.16;
+  const tx = player.x + player.vx * look, ty = player.y + player.vy * look;
+  const k = 1 - Math.pow(0.0015, dt);
+  camX = lerp(camX, tx, k); camY = lerp(camY, ty, k);
+  // drunk camera: the world drifts, rolls and breathes
+  const sway = Drunk.sway();
+  camX += Drunk.wobble(time * .8, 0.4) * sway * 26;
+  camY += Drunk.wobble(time * .8, 3.9) * sway * 26;
+  camRoll = lerp(camRoll, Drunk.wobble(time * .55, 1.9) * sway * .13, dt * 4);
+  const base = (player.inCar ? 1.0 : 1.45) * (1 - clamp(sp / 900, 0, .28));
+  const targetZoom = base * (1 + Math.sin(time * 1.1) * sway * .05);
+  camZoom = lerp(camZoom, targetZoom, dt * 3);
+
+  // ---- HUD
+  el.money.textContent = "$" + player.money.toLocaleString();
+  el.hp.style.width = clamp(player.hp, 0, 100) + "%";
+  el.armor.style.width = clamp(player.armor, 0, 100) + "%";
+  el.bac.style.width = clamp(player.bac * 100, 0, 100) + "%";
+  el.bacLabel.textContent = "BAC " + player.bac.toFixed(2) + " · " + Drunk.label() +
+                            (player.drinks ? "  🍺" + player.drinks : "");
+  el.bacLabel.classList.toggle("wasted", player.bac > .75);
+  const kmh = Math.round(sp * (player.inCar ? 0.62 : 0.3));
+  el.kmh.innerHTML = kmh + "<small>KM/H</small>";
+  el.gear.textContent = player.inCar ? player.inCar.type.name.toUpperCase() : "ON FOOT";
+  let s = "";
+  for (let i = 0; i < 5; i++) s += '<span class="star' + (i < player.wanted ? " on" : "") + '">★</span>';
+  el.stars.innerHTML = s;
+
+  if (toastT > 0) { toastT -= dt; if (toastT <= 0) el.toast.classList.remove("show"); }
+  if (flashT > 0) { flashT -= dt * 2.2; el.flash.style.background = flashCol; el.flash.style.opacity = clamp(flashT, 0, 1) * .32; }
+  else el.flash.style.opacity = 0;
+}
+
+// ---------------------------------------------------------------- rendering
+function skyTint() {
+  // slow day/night cycle
+  const t = (time / 90) % 1;
+  const night = clamp(Math.sin(t * TAU) * .5 + .5, 0, 1);
+  return night;
+}
+
+function drawGround() {
+  ctx.fillStyle = "#171a26";
+  ctx.fillRect(0, 0, W, H);
+}
+
+function worldViewBounds() {
+  // pad the frustum so camera roll / drunk offset never reveals unbuilt edges
+  const pad = 1.35 + Drunk.sway() * .3;
+  const hw = W / 2 / camZoom * pad, hh = H / 2 / camZoom * pad;
+  return { x0: camX - hw, y0: camY - hh, x1: camX + hw, y1: camY + hh };
+}
+
+function drawRoads(vb) {
+  const i0 = Math.floor(vb.x0 / TILE) - 1, i1 = Math.ceil(vb.x1 / TILE) + 1;
+  const j0 = Math.floor(vb.y0 / TILE) - 1, j1 = Math.ceil(vb.y1 / TILE) + 1;
+
+  ctx.fillStyle = "#2b3040";
+  for (let i = i0; i <= i1; i++) ctx.fillRect(i * TILE - HALFR, vb.y0, ROAD, vb.y1 - vb.y0);
+  for (let j = j0; j <= j1; j++) ctx.fillRect(vb.x0, j * TILE - HALFR, vb.x1 - vb.x0, ROAD);
+
+  // sidewalk kerbs
+  ctx.strokeStyle = "#3f465c"; ctx.lineWidth = 4;
+  ctx.beginPath();
+  for (let i = i0; i <= i1; i++) {
+    ctx.moveTo(i * TILE - HALFR, vb.y0); ctx.lineTo(i * TILE - HALFR, vb.y1);
+    ctx.moveTo(i * TILE + HALFR, vb.y0); ctx.lineTo(i * TILE + HALFR, vb.y1);
+  }
+  for (let j = j0; j <= j1; j++) {
+    ctx.moveTo(vb.x0, j * TILE - HALFR); ctx.lineTo(vb.x1, j * TILE - HALFR);
+    ctx.moveTo(vb.x0, j * TILE + HALFR); ctx.lineTo(vb.x1, j * TILE + HALFR);
+  }
+  ctx.stroke();
+
+  // centre lines (skip intersections)
+  if (camZoom > .55) {
+    ctx.strokeStyle = "rgba(240,220,120,.5)"; ctx.lineWidth = 3;
+    ctx.setLineDash([26, 22]);
+    ctx.beginPath();
+    for (let i = i0; i <= i1; i++) {
+      for (let j = j0; j <= j1; j++) {
+        ctx.moveTo(i * TILE, j * TILE + HALFR); ctx.lineTo(i * TILE, (j + 1) * TILE - HALFR);
+        ctx.moveTo(j * TILE + HALFR, i * TILE); ctx.lineTo((j + 1) * TILE - HALFR, i * TILE);
+      }
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+}
+
+function drawBuildings(vb, night) {
+  const list = [];
+  const i0 = Math.floor(vb.x0 / TILE) - 1, i1 = Math.ceil(vb.x1 / TILE) + 1;
+  const j0 = Math.floor(vb.y0 / TILE) - 1, j1 = Math.ceil(vb.y1 / TILE) + 1;
+  for (let i = i0; i <= i1; i++) for (let j = j0; j <= j1; j++) {
+    const l = cellIndex.get(cellKey(i, j)); if (l) list.push(...l);
+  }
+
+  const K = 0.0016;   // extrusion strength
+  for (const b of list) {
+    const cx = b.x + b.w / 2, cy = b.y + b.h / 2;
+    const ex = (cx - camX) * b.hgt * K;
+    const ey = (cy - camY) * b.hgt * K;
+
+    // base shadow
+    ctx.fillStyle = "rgba(0,0,0,.45)";
+    ctx.fillRect(b.x + 3, b.y + 3, b.w, b.h);
+
+    // side faces
+    ctx.fillStyle = b.side;
+    const c0 = [[b.x, b.y], [b.x + b.w, b.y], [b.x + b.w, b.y + b.h], [b.x, b.y + b.h]];
+    for (let k = 0; k < 4; k++) {
+      const p = c0[k], q = c0[(k + 1) % 4];
+      ctx.beginPath();
+      ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]);
+      ctx.lineTo(q[0] + ex, q[1] + ey); ctx.lineTo(p[0] + ex, p[1] + ey);
+      ctx.closePath(); ctx.fill();
+    }
+    // darker on two of them for depth
+    ctx.fillStyle = b.dark;
+    for (const k of [1, 2]) {
+      const p = c0[k], q = c0[(k + 1) % 4];
+      ctx.beginPath();
+      ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]);
+      ctx.lineTo(q[0] + ex, q[1] + ey); ctx.lineTo(p[0] + ex, p[1] + ey);
+      ctx.closePath(); ctx.fill();
+    }
+
+    // roof
+    ctx.fillStyle = b.top;
+    ctx.fillRect(b.x + ex, b.y + ey, b.w, b.h);
+    ctx.strokeStyle = "rgba(0,0,0,.35)"; ctx.lineWidth = 1.5;
+    ctx.strokeRect(b.x + ex, b.y + ey, b.w, b.h);
+
+    // rooftop detail + windows
+    if (camZoom > .6) {
+      ctx.fillStyle = "rgba(255,255,255,.05)";
+      ctx.fillRect(b.x + ex + 5, b.y + ey + 5, b.w - 10, b.h - 10);
+      const lit = night * (0.35 + b.seed * .55);
+      if (lit > .12) {
+        ctx.fillStyle = "rgba(255,225,150," + (lit * .8).toFixed(2) + ")";
+        const step = 13;
+        for (let wx = b.x + 8; wx < b.x + b.w - 8; wx += step)
+          for (let wy = b.y + 8; wy < b.y + b.h - 8; wy += step) {
+            if (((wx * 7 + wy * 13 + b.seed * 1000) | 0) % 3) continue;
+            ctx.fillRect(wx + ex, wy + ey, 4, 4);
+          }
+      }
+      // neon sign on the roof edge
+      if (b.neon && b.hgt > 60) {
+        ctx.save();
+        ctx.globalAlpha = .55 + night * .45;
+        ctx.shadowColor = b.neon; ctx.shadowBlur = 14;
+        ctx.strokeStyle = b.neon; ctx.lineWidth = 2.5;
+        ctx.strokeRect(b.x + ex + 4, b.y + ey + 4, b.w - 8, b.h - 8);
+        ctx.restore();
+      }
+    }
+  }
+}
+
+function drawPalms(vb, night) {
+  for (const p of palms) {
+    if (p.x < vb.x0 - 40 || p.x > vb.x1 + 40 || p.y < vb.y0 - 40 || p.y > vb.y1 + 40) continue;
+    const ex = (p.x - camX) * 30 * 0.0016, ey = (p.y - camY) * 30 * 0.0016;
+    ctx.fillStyle = "rgba(0,0,0,.35)";
+    ctx.beginPath(); ctx.arc(p.x + 3, p.y + 3, p.r, 0, TAU); ctx.fill();
+    ctx.strokeStyle = "#6b4f2a"; ctx.lineWidth = 3.5;
+    ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.x + ex, p.y + ey); ctx.stroke();
+    ctx.fillStyle = night > .4 ? "#14532d" : "#166534";
+    ctx.beginPath();
+    for (let k = 0; k < 7; k++) {
+      const a = (k / 7) * TAU + p.r;
+      ctx.moveTo(p.x + ex, p.y + ey);
+      ctx.lineTo(p.x + ex + Math.cos(a) * p.r, p.y + ey + Math.sin(a) * p.r);
+      ctx.lineTo(p.x + ex + Math.cos(a + .5) * p.r * .6, p.y + ey + Math.sin(a + .5) * p.r * .6);
+    }
+    ctx.fill();
+    ctx.fillStyle = "#22c55e";
+    ctx.beginPath(); ctx.arc(p.x + ex, p.y + ey, 3, 0, TAU); ctx.fill();
+  }
+}
+
+function drawCar(c, night) {
+  const { w, l } = c.type;
+  ctx.save();
+  ctx.translate(c.x, c.y); ctx.rotate(c.a);
+
+  if (c.dead) {
+    ctx.fillStyle = "#1c1917";
+    ctx.fillRect(-l / 2, -w / 2, l, w);
+    ctx.restore();
+    if (c.burn > 0) {
+      ctx.save(); ctx.globalAlpha = clamp(c.burn, 0, 1) * .8;
+      ctx.fillStyle = "#ff6b3d";
+      ctx.beginPath(); ctx.arc(c.x + rand(-6, 6), c.y + rand(-6, 6), rand(8, 20), 0, TAU); ctx.fill();
+      ctx.restore();
+      if (Math.random() < .5) fx.push({ x: c.x, y: c.y, vx: rand(-14, 14), vy: rand(-14, 14), life: 1.1, max: 1.1, col: "#4b5563", r: 8, smoke: 1 });
+    }
+    return;
+  }
+
+  // ground shadow
+  ctx.fillStyle = "rgba(0,0,0,.42)";
+  roundRect(-l / 2 + 3, -w / 2 + 4, l, w, 6); ctx.fill();
+
+  // body
+  ctx.fillStyle = c.col;
+  roundRect(-l / 2, -w / 2, l, w, 6); ctx.fill();
+
+  // police livery
+  if (c.isCop) {
+    ctx.fillStyle = "#0f172a";
+    ctx.fillRect(-l * .18, -w / 2, l * .36, w);
+    ctx.fillStyle = "#0f172a";
+    ctx.fillRect(-l / 2, -w / 2, l * .1, w);
+  }
+
+  // roof / cabin
+  ctx.fillStyle = "rgba(0,0,0,.5)";
+  roundRect(-l * .16, -w * .38, l * .42, w * .76, 4); ctx.fill();
+  // windscreen glint
+  ctx.fillStyle = "rgba(150,200,255,.22)";
+  roundRect(l * .12, -w * .34, l * .12, w * .68, 2); ctx.fill();
+
+  // highlight stripe
+  ctx.fillStyle = "rgba(255,255,255,.14)";
+  ctx.fillRect(-l / 2 + 4, -w / 2 + 2, l - 8, 2.5);
+
+  // headlights
+  ctx.fillStyle = "#fff8d0";
+  ctx.fillRect(l / 2 - 4, -w / 2 + 3, 3, 5);
+  ctx.fillRect(l / 2 - 4, w / 2 - 8, 3, 5);
+  // tail lights
+  ctx.fillStyle = "#ff2d55";
+  ctx.fillRect(-l / 2 + 1, -w / 2 + 3, 3, 5);
+  ctx.fillRect(-l / 2 + 1, w / 2 - 8, 3, 5);
+
+  ctx.restore();
+
+  // headlight cones at night
+  if (night > .3 && Math.abs(carFwd(c)) > 5) {
+    ctx.save();
+    ctx.translate(c.x, c.y); ctx.rotate(c.a);
+    const g = ctx.createRadialGradient(l / 2, 0, 4, l / 2, 0, 190);
+    g.addColorStop(0, "rgba(255,248,200," + (.22 * night).toFixed(2) + ")");
+    g.addColorStop(1, "rgba(255,248,200,0)");
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.moveTo(l / 2, 0);
+    ctx.arc(l / 2, 0, 190, -.34, .34); ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+
+  // police light bar
+  if (c.isCop) {
+    const on = Math.sin(time * 14) > 0;
+    ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(c.a);
+    ctx.shadowBlur = 22; ctx.shadowColor = on ? "#ff2d55" : "#2d7dff";
+    ctx.fillStyle = on ? "#ff2d55" : "#2d7dff";
+    ctx.fillRect(-l * .06, -w * .42, 5, w * .84);
+    ctx.restore();
+    ctx.save();
+    ctx.globalAlpha = .18;
+    ctx.fillStyle = on ? "#ff2d55" : "#2d7dff";
+    ctx.beginPath(); ctx.arc(c.x, c.y, 52, 0, TAU); ctx.fill();
+    ctx.restore();
+  }
+}
+
+function roundRect(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function drawPed(p) {
+  ctx.save();
+  ctx.translate(p.x, p.y);
+  if (p.dead) {
+    ctx.fillStyle = "rgba(120,20,20,.55)";
+    ctx.beginPath(); ctx.ellipse(0, 0, 13, 9, p.t, 0, TAU); ctx.fill();
+    ctx.fillStyle = "#7f1d1d";
+    ctx.beginPath(); ctx.ellipse(0, 0, 6, 4, p.t, 0, TAU); ctx.fill();
+    ctx.restore(); return;
+  }
+  ctx.rotate(p.a);
+  ctx.fillStyle = "rgba(0,0,0,.4)";
+  ctx.beginPath(); ctx.arc(1.5, 2, 6, 0, TAU); ctx.fill();
+  // legs bob
+  const bob = Math.sin(p.t * (p.spd * .16)) * 3;
+  ctx.fillStyle = "#1f2937";
+  ctx.fillRect(-2, -5 + bob, 5, 3.4);
+  ctx.fillRect(-2, 2 - bob, 5, 3.4);
+  // body
+  ctx.fillStyle = p.col;
+  ctx.beginPath(); ctx.arc(0, 0, 5.4, 0, TAU); ctx.fill();
+  // head
+  ctx.fillStyle = p.skin;
+  ctx.beginPath(); ctx.arc(1.6, 0, 3.4, 0, TAU); ctx.fill();
+  ctx.restore();
+}
+
+/* Jesse, from directly above:
+   black flat-brim cap · shield sunglasses · beard · full tattoo sleeves ·
+   black-and-gold jersey · beer permanently in the off-hand.               */
+/* Palette is deliberately lifted off true black — he stands on dark asphalt at
+   night, and pure #000 kit made him an unreadable blob. Everything gets a rim
+   light for separation. */
+const ME = {
+  skin:   "#f0c395",
+  ink:    "#2a3550",   // tattoo sleeve
+  ink2:   "#4a5f8a",   // ink streaks (not dots — dots read as eyes)
+  cap:    "#171b26",
+  jersey: "#1c2030",
+  gold:   "#f0be4e",
+  beard:  "#5a422e",
+  rim:    "rgba(255,255,255,.22)",
+};
+
+function drawPlayerFoot() {
+  const p = player;
+  const drunk = Drunk.swerve();
+  ctx.save();
+  ctx.translate(p.x, p.y);
+  ctx.fillStyle = "rgba(0,0,0,.45)";
+  ctx.beginPath(); ctx.ellipse(2, 3.5, 9.5, 7.5, 0, 0, TAU); ctx.fill();
+  // body leans with the booze on top of the aim direction
+  ctx.rotate(p.a + Drunk.wobble(time * 1.5, 2.2) * drunk * .2);
+  // deliberately oversized vs. the peds — at true scale he's a 20px speck and
+  // none of the kit reads. The on-foot camera pulls in to match.
+  ctx.scale(1.35, 1.35);
+
+  const moving = Math.hypot(p.vx, p.vy) > 10;
+  const bob = moving ? Math.sin(time * 13) * 2.4 : Math.sin(time * 1.8) * .4;
+
+  /* He renders ~20px tall in play. Only five things survive at that size:
+     the silhouette, the forward cap brim, the gold jersey trim, tan hands,
+     and the green bottle. Beard/emblem/ink detail just turned to noise, so
+     each element below is kept separated in value and never overlapped. */
+
+  // --- legs, tucked behind
+  ctx.fillStyle = "#14161e";
+  roundRect(-7.6, -4.8 + bob, 5.2, 3.5, 1.4); ctx.fill();
+  roundRect(-7.6,  1.3 - bob, 5.2, 3.5, 1.4); ctx.fill();
+
+  // --- torso: jersey sits LIGHTER than the cap so the head reads on top of it
+  ctx.fillStyle = ME.jersey;
+  roundRect(-6.4, -6.4, 10.6, 12.8, 4.4); ctx.fill();
+  ctx.strokeStyle = ME.rim; ctx.lineWidth = .7;
+  roundRect(-6.4, -6.4, 10.6, 12.8, 4.4); ctx.stroke();
+  ctx.fillStyle = ME.gold;                       // two stripes running front-to-back
+  roundRect(-5.4, -4.7, 8.6, 1.4, .6); ctx.fill();
+  roundRect(-5.4,  3.3, 8.6, 1.4, .6); ctx.fill();
+
+  // --- arms: ink sleeve clear of the torso edge, tan hand at the wrist
+  for (const s of [-1, 1]) {
+    const ay = s * 7.8 + (s > 0 ? -bob : bob) * .3;
+    ctx.fillStyle = ME.ink;
+    roundRect(-3.2, ay - 1.9, 7.2, 3.8, 1.9); ctx.fill();
+    ctx.strokeStyle = ME.rim; ctx.lineWidth = .55;
+    roundRect(-3.2, ay - 1.9, 7.2, 3.8, 1.9); ctx.stroke();
+    ctx.fillStyle = ME.skin;
+    ctx.beginPath(); ctx.arc(4.5, ay, 1.9, 0, TAU); ctx.fill();
+  }
+
+  // --- beer, always
+  ctx.save(); ctx.translate(6.2, -8.0); ctx.rotate(-.5);
+  ctx.fillStyle = "#1f8a3a"; roundRect(-1.3, -2.6, 2.6, 5.2, 1.0); ctx.fill();
+  ctx.fillStyle = "#8fe0a0"; roundRect(-.9, -2.2, .9, 4.2, .4); ctx.fill();
+  ctx.fillStyle = "#e8e3cf"; roundRect(-1.0, -3.8, 2.0, 1.4, .5); ctx.fill();
+  ctx.restore();
+
+  // --- pistol in the right hand
+  ctx.fillStyle = "#2b3444";
+  roundRect(5.0, 6.6, 7.2, 2.3, 1); ctx.fill();
+
+  // --- head: cap sits forward of the torso, darker than the jersey
+  ctx.fillStyle = ME.cap;
+  ctx.beginPath(); ctx.arc(3.4, 0, 3.4, 0, TAU); ctx.fill();
+  ctx.strokeStyle = ME.rim; ctx.lineWidth = .7;
+  ctx.beginPath(); ctx.arc(3.4, 0, 3.4, 0, TAU); ctx.stroke();
+  ctx.fillStyle = "#0b0e16";                     // shield shades under the brim
+  roundRect(4.9, -2.5, 1.5, 5.0, .7); ctx.fill();
+  ctx.fillStyle = "rgba(150,200,245,.5)";        // lens glint
+  roundRect(5.05, -2.1, .7, 4.2, .35); ctx.fill();
+  ctx.fillStyle = ME.cap;                        // flat brim, straight out front
+  roundRect(6.1, -2.8, 3.2, 5.6, 1.1); ctx.fill();
+  ctx.strokeStyle = ME.rim; ctx.lineWidth = .7;
+  roundRect(6.1, -2.8, 3.2, 5.6, 1.1); ctx.stroke();
+  ctx.fillStyle = "rgba(255,255,255,.10)";
+  roundRect(6.1, -2.8, 3.2, 1.7, 1.0); ctx.fill();
+
+  ctx.restore();
+
+  // aim line
+  const w = screenToWorld(mouse.x, mouse.y);
+  ctx.save();
+  ctx.strokeStyle = "rgba(255,45,85,.28)"; ctx.lineWidth = 1.2;
+  ctx.setLineDash([6, 8]);
+  ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(w.x, w.y); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.strokeStyle = "rgba(255,45,85,.75)"; ctx.lineWidth = 1.6;
+  ctx.beginPath(); ctx.arc(w.x, w.y, 7, 0, TAU); ctx.moveTo(w.x - 11, w.y); ctx.lineTo(w.x - 3, w.y);
+  ctx.moveTo(w.x + 3, w.y); ctx.lineTo(w.x + 11, w.y);
+  ctx.moveTo(w.x, w.y - 11); ctx.lineTo(w.x, w.y - 3);
+  ctx.moveTo(w.x, w.y + 3); ctx.lineTo(w.x, w.y + 11);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawMissionMarker() {
+  if (!mission) return;
+  const pulse = .5 + Math.sin(time * 4) * .5;
+  const col = mission.arrived ? "#4ade80" : "#fb923c";
+  ctx.save();
+  ctx.globalAlpha = .28 + pulse * .3;
+  ctx.fillStyle = col;
+  ctx.beginPath(); ctx.arc(mission.x, mission.y, mission.r, 0, TAU); ctx.fill();
+  ctx.globalAlpha = .9;
+  ctx.strokeStyle = col; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.arc(mission.x, mission.y, mission.r * (0.6 + pulse * .4), 0, TAU); ctx.stroke();
+  ctx.shadowColor = col; ctx.shadowBlur = 20;
+  ctx.beginPath(); ctx.arc(mission.x, mission.y, mission.r, 0, TAU); ctx.stroke();
+
+  // neon bar sign
+  ctx.globalAlpha = 1; ctx.shadowBlur = 18; ctx.shadowColor = col;
+  ctx.font = "28px serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.fillText("🍺", mission.x, mission.y - 4);
+  if (camZoom > .7) {
+    ctx.font = "bold 11px Helvetica"; ctx.fillStyle = col;
+    ctx.fillText(mission.name.toUpperCase(), mission.x, mission.y + mission.r + 14);
+  }
+  ctx.restore();
+
+  // off-screen arrow
+  const vb = worldViewBounds();
+  if (mission.x < vb.x0 || mission.x > vb.x1 || mission.y < vb.y0 || mission.y > vb.y1) {
+    const a = Math.atan2(mission.y - camY, mission.x - camX);
+    const rr = Math.min(W, H) * .36 / camZoom;
+    const ax = camX + Math.cos(a) * rr, ay = camY + Math.sin(a) * rr;
+    ctx.save(); ctx.translate(ax, ay); ctx.rotate(a);
+    ctx.fillStyle = "#ffd54a"; ctx.shadowColor = "#ffd54a"; ctx.shadowBlur = 14;
+    ctx.beginPath(); ctx.moveTo(16, 0); ctx.lineTo(-10, -10); ctx.lineTo(-5, 0); ctx.lineTo(-10, 10);
+    ctx.closePath(); ctx.fill(); ctx.restore();
+  }
+}
+
+function drawFx() {
+  for (const f of fx) {
+    const a = clamp(f.life / f.max, 0, 1);
+    ctx.globalAlpha = f.smoke ? a * .35 : a;
+    ctx.fillStyle = f.col;
+    ctx.beginPath(); ctx.arc(f.x, f.y, f.r * (f.smoke ? 1 : a), 0, TAU); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
+function drawBulletsR() {
+  ctx.strokeStyle = "#fff3b0"; ctx.lineWidth = 2;
+  ctx.shadowColor = "#ffd54a"; ctx.shadowBlur = 6;
+  ctx.beginPath();
+  for (const b of bullets) {
+    ctx.moveTo(b.x, b.y);
+    ctx.lineTo(b.x - b.vx * .012, b.y - b.vy * .012);
+  }
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+}
+
+function drawScene(night) {
+  const vb = worldViewBounds();
+  drawRoads(vb);
+  drawMissionMarker();
+  drawPalms(vb, night);
+
+  for (const p of peds) if (p.dead) drawPed(p);
+  for (const c of cars) if (c.dead) drawCar(c, night);
+
+  drawBuildings(vb, night);
+
+  for (const p of peds) if (!p.dead) drawPed(p);
+  for (const c of cars) if (!c.dead && c !== player.inCar) drawCar(c, night);
+  if (player.inCar) drawCar(player.inCar, night);
+  else if (!player.dead) drawPlayerFoot();
+
+  drawFx();
+  drawBulletsR();
+}
+
+function applyCamera(offX, offY, rollMul) {
+  ctx.translate(W / 2, H / 2);
+  ctx.rotate(camRoll * (rollMul === undefined ? 1 : rollMul));
+  ctx.scale(camZoom, camZoom);
+  ctx.translate(-camX + offX, -camY + offY);
+}
+
+function render() {
+  const night = skyTint();
+  drawGround();
+  ctx.save();
+  ctx.scale(DPR, DPR);
+
+  const blur = Drunk.blur();
+
+  // double vision: a ghosted second pass, offset and counter-rolled
+  if (blur > 0.01) {
+    ctx.save();
+    ctx.globalAlpha = blur * 0.45;
+    const gx = Drunk.wobble(time * .9, 7.2) * blur * 22;
+    const gy = Drunk.wobble(time * .9, 2.4) * blur * 22;
+    applyCamera(gx, gy, 1.6);
+    drawScene(night);
+    ctx.restore();
+  }
+
+  ctx.save();
+  applyCamera(0, 0);
+  drawScene(night);
+  ctx.restore();
+
+  // night vignette / colour grade
+  if (night > .02) {
+    ctx.fillStyle = "rgba(20,10,60," + (night * .34).toFixed(3) + ")";
+    ctx.fillRect(0, 0, W, H);
+  }
+  const g = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * .3, W / 2, H / 2, Math.max(W, H) * .78);
+  g.addColorStop(0, "rgba(0,0,0,0)");
+  g.addColorStop(1, "rgba(0,0,0,.55)");
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+  // drunk grade: warm haze + tunnel vision that closes in as you get wrecked
+  const sway = Drunk.sway();
+  if (sway > .01) {
+    ctx.fillStyle = "rgba(251,146,60," + (sway * .1).toFixed(3) + ")";
+    ctx.fillRect(0, 0, W, H);
+    const inner = Math.min(W, H) * (.42 - sway * .26) * (1 + Math.sin(time * 1.6) * .05);
+    const t = ctx.createRadialGradient(W / 2, H / 2, inner, W / 2, H / 2, Math.max(W, H) * .72);
+    t.addColorStop(0, "rgba(0,0,0,0)");
+    t.addColorStop(1, "rgba(10,4,20," + (sway * .78).toFixed(3) + ")");
+    ctx.fillStyle = t; ctx.fillRect(0, 0, W, H);
+  }
+
+  ctx.restore();
+  drawMinimap(night);
+}
+
+// ---------------------------------------------------------------- minimap
+function drawMinimap() {
+  const S = MMS, half = S / 2, scale = 0.052;
+  mmc.save();
+  mmc.clearRect(0, 0, S, S);
+  mmc.fillStyle = "#10131f"; mmc.fillRect(0, 0, S, S);
+  mmc.translate(half, half);
+  mmc.scale(scale, scale);
+  mmc.translate(-player.x, -player.y);
+
+  const range = half / scale;
+  const i0 = Math.floor((player.x - range) / TILE), i1 = Math.ceil((player.x + range) / TILE);
+  const j0 = Math.floor((player.y - range) / TILE), j1 = Math.ceil((player.y + range) / TILE);
+
+  // blocks
+  mmc.fillStyle = "#232838";
+  for (let i = i0; i <= i1; i++) for (let j = j0; j <= j1; j++) {
+    if (i < 0 || j < 0 || i >= GRID || j >= GRID) continue;
+    mmc.fillRect(i * TILE + HALFR, j * TILE + HALFR, TILE - ROAD, TILE - ROAD);
+  }
+  // roads
+  mmc.strokeStyle = "#495373"; mmc.lineWidth = ROAD * .55;
+  mmc.beginPath();
+  for (let i = i0; i <= i1; i++) { mmc.moveTo(i * TILE, player.y - range); mmc.lineTo(i * TILE, player.y + range); }
+  for (let j = j0; j <= j1; j++) { mmc.moveTo(player.x - range, j * TILE); mmc.lineTo(player.x + range, j * TILE); }
+  mmc.stroke();
+
+  // mission
+  if (mission) {
+    mmc.fillStyle = "#ffd54a";
+    mmc.beginPath(); mmc.arc(mission.x, mission.y, 90, 0, TAU); mmc.fill();
+    // line to the marker
+    mmc.strokeStyle = "rgba(255,213,74,.5)"; mmc.lineWidth = 26;
+    mmc.beginPath(); mmc.moveTo(player.x, player.y); mmc.lineTo(mission.x, mission.y); mmc.stroke();
+  }
+  // traffic
+  mmc.fillStyle = "#7c839c";
+  for (const c of cars) {
+    if (c.dead || c.isCop || c === player.inCar) continue;
+    mmc.fillRect(c.x - 26, c.y - 26, 52, 52);
+  }
+  // cops
+  for (const c of cars) {
+    if (c.dead || !c.isCop) continue;
+    mmc.fillStyle = Math.sin(time * 14) > 0 ? "#ff2d55" : "#2d7dff";
+    mmc.beginPath(); mmc.arc(c.x, c.y, 52, 0, TAU); mmc.fill();
+  }
+  // player
+  mmc.save();
+  mmc.translate(player.x, player.y); mmc.rotate(player.a);
+  mmc.fillStyle = "#4ade80";
+  mmc.beginPath(); mmc.moveTo(115, 0); mmc.lineTo(-75, -72); mmc.lineTo(-40, 0); mmc.lineTo(-75, 72);
+  mmc.closePath(); mmc.fill();
+  mmc.restore();
+  mmc.restore();
+
+  // north marker
+  mmc.fillStyle = "rgba(255,255,255,.5)";
+  mmc.font = "bold 9px Helvetica";
+  mmc.textAlign = "center";
+  mmc.fillText("N", half, 12);
+}
+
+// ---------------------------------------------------------------- loop
+let last = performance.now();
+function frame(now) {
+  let dt = (now - last) / 1000;
+  last = now;
+  dt = Math.min(dt, 1 / 20);            // never let physics explode on a tab-out
+  update(dt);
+  render();
+  requestAnimationFrame(frame);
+}
+
+// ---------------------------------------------------------------- boot
+function start() {
+  menuOpen = false;
+  document.getElementById("menu").classList.add("hide");
+  Audio_.init();
+
+  // put the player next to a car they can steal
+  const p = randRoadPoint(0);
+  player.x = p.x; player.y = p.y;
+  camX = player.x; camY = player.y;
+  for (let i = 0; i < 120; i++) spawnTraffic(true);
+  for (let i = 0; i < 120; i++) spawnPed(true);
+  const startCar = makeCar(player.x + 40, player.y, 0, pick(CAR_TYPES), false);
+  startCar.ai = "parked";
+  cars.push(startCar);
+
+  newMission();
+  toast("PUB CLUB", "Hit every bar on the coast. Try not to die.", "#fb923c");
+}
+document.getElementById("play").addEventListener("click", start);
+addEventListener("keydown", e => { if (menuOpen && (e.code === "Enter" || e.code === "Space")) start(); });
+
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

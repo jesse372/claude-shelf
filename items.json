@@ -1,7 +1,7 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-10-27T16:36:05+00:00",
+  "updated": "2026-10-27T16:36:06+00:00",
   "items": [
     {
       "slug": "share-with-friend",
@@ -715,6 +715,27 @@
       ],
       "zip": "items/jarvis/jarvis.zip",
       "install_prompt": "Please set up \"J.A.R.V.I.S: an Iron Man-style voice HUD for Claude\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/jarvis/jarvis.zip and unzip it to ~/claude-shelf/jarvis/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: node server.js, then open http://localhost:1963. Read README.md first: it runs Claude with permissions skipped, so keep it local only."
+    },
+    {
+      "slug": "pub-club-vice-coast",
+      "title": "Pub Club: Vice Coast (browser pub-crawl game)",
+      "emoji": "🌴",
+      "type": "website",
+      "summary": "A GTA 6-flavoured browser game: drive (and drift) around Vice Coast, find the flashing bars, drink, jack cars and try to survive the pub crawl. Works with keyboard or touch controls, all in one HTML file.",
+      "how_to_use": "Open index.html. WASD to drive, Space to drift, F to get in/out, E to drink. On a phone, use the on-screen controls.",
+      "requires": "A browser (desktop or phone).",
+      "tags": [],
+      "link": "",
+      "created": "2026-07-17T20:39:23+08:00",
+      "updated": "2026-07-17T20:51:10+08:00",
+      "version": 1,
+      "useful": 2,
+      "files": [
+        ".gitignore",
+        "index.html"
+      ],
+      "zip": "items/pub-club-vice-coast/pub-club-vice-coast.zip",
+      "install_prompt": "Please set up \"Pub Club: Vice Coast (browser pub-crawl game)\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/pub-club-vice-coast/pub-club-vice-coast.zip and unzip it to ~/claude-shelf/pub-club-vice-coast/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Open index.html. WASD to drive, Space to drift, F to get in/out, E to drink. On a phone, use the on-screen controls."
     },
     {
       "slug": "voice",
