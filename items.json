@@ -1,8 +1,34 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-10-27T16:35:35+00:00",
+  "updated": "2026-10-27T16:35:36+00:00",
   "items": [
+    {
+      "slug": "share-with-friend",
+      "title": "Claude Shelf: make your own version of this site",
+      "emoji": "🧰",
+      "type": "skill",
+      "summary": "The skill behind this site. One command publishes anything you build with Claude: it strips secrets and private info, builds a zip and install prompt, updates the feed and pushes to GitHub Pages.",
+      "how_to_use": "Create your own public GitHub repo with Pages enabled, copy config.example.json to config.json and fill in your repo and site URL, and add your own private-terms.txt. Then say \"post this to the shelf\".",
+      "requires": "GitHub CLI (gh) logged in, Python 3.",
+      "tags": [],
+      "link": "",
+      "created": "2026-10-28T00:11:21+08:00",
+      "updated": "2026-10-28T00:34:47+08:00",
+      "version": 1,
+      "useful": 3,
+      "files": [
+        "SKILL.md",
+        "config.example.json",
+        "scripts/recipes/jesseos-starter.sh",
+        "scripts/shelf.py",
+        "scripts/site_template/icons.html",
+        "scripts/site_template/index.html"
+      ],
+      "skill_name": "share-with-friend",
+      "zip": "items/share-with-friend/share-with-friend.zip",
+      "install_prompt": "Please install the Claude Code skill \"Claude Shelf: make your own version of this site\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/share-with-friend/share-with-friend.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/share-with-friend/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+    },
     {
       "slug": "daily-reels",
       "title": "Daily Reels: an Instagram reel every day, automatically",

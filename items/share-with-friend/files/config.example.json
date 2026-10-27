@@ -1,0 +1,17 @@
+{
+  "site_title": "My Claude Shelf",
+  "owner_first_name": "Me",
+  "repo_dir": "~/claude-shelf",
+  "repo_url": "https://github.com/YOUR-GITHUB/claude-shelf",
+  "site_url": "https://YOUR-GITHUB.github.io/claude-shelf/",
+  "path_rewrites": [
+    [
+      "/Users/YOURNAME",
+      "~"
+    ],
+    [
+      "you@yourdomain\\.com",
+      "you@example.com"
+    ]
+  ]
+}

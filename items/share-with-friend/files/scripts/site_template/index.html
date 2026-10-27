@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{SITE_TITLE}}</title>
+<meta name="description" content="Things {{OWNER}} built with Claude: skills, tools and sites you can install and use with your own Claude.">
+<meta name="theme-color" content="#0e0f13">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Claude Shelf">
+<link rel="alternate" type="application/atom+xml" title="{{SITE_TITLE}}: new posts" href="feed.xml">
+{{ICONS}}
+<style>
+  :root {
+    --bg: #0e0f13; --panel: #171920; --panel2: #1e212b; --line: #2a2e3a;
+    --text: #e9eaf0; --muted: #9aa0b2; --accent: #d97757; --accent2: #f0a77f;
+    --good: #6fcf97; --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; }
+  a { color: var(--accent2); }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 32px 20px 80px; }
+  header h1 { font-size: clamp(28px, 5vw, 40px); margin: 0 0 6px; letter-spacing: -0.02em; }
+  header p { color: var(--muted); margin: 0; max-width: 680px; }
+  .how { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 24px 0 8px; }
+  .how div { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; font-size: 14px; color: var(--muted); }
+  .how b { color: var(--text); display: block; margin-bottom: 2px; }
+  .bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 28px 0 18px; }
+  .bar input { flex: 1 1 240px; background: var(--panel); border: 1px solid var(--line); color: var(--text);
+    border-radius: 10px; padding: 10px 14px; font-size: 15px; }
+  .chip { background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px;
+    padding: 7px 13px; font-size: 13px; cursor: pointer; }
+  .chip.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .sort { display: inline-flex; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 3px; }
+  .sort button { background: none; border: 0; color: var(--muted); padding: 7px 12px; border-radius: 8px; font-size: 13.5px; cursor: pointer; }
+  .sort button.on { background: var(--panel2); color: var(--text); font-weight: 600; }
+  #chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .stars { color: #f2c46d; letter-spacing: 1px; }
+  .stars .off { color: #3a3f4d; }
+  .badge.top { background: rgba(242,196,109,.12); border-color: rgba(242,196,109,.45); color: #f2c46d; }
+  .count { color: var(--muted); font-size: 13px; margin: -6px 0 14px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 16px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px;
+    display: flex; flex-direction: column; gap: 10px; }
+  .top { display: flex; gap: 12px; align-items: flex-start; }
+  .emoji { font-size: 30px; line-height: 1; width: 48px; height: 48px; display: grid; place-items: center;
+    background: var(--panel2); border-radius: 12px; flex: none; }
+  .card h2 { font-size: 18px; margin: 0; line-height: 1.25; }
+  .meta { font-size: 12px; color: var(--muted); display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+  .badge { background: var(--panel2); border: 1px solid var(--line); border-radius: 6px; padding: 1px 7px; text-transform: uppercase; letter-spacing: .04em; font-size: 11px; }
+  .badge.new { background: rgba(111,207,151,.12); border-color: rgba(111,207,151,.4); color: var(--good); }
+  .summary { margin: 0; color: #cfd2dc; font-size: 15px; }
+  details { background: var(--panel2); border-radius: 10px; padding: 8px 12px; font-size: 14px; }
+  details summary { cursor: pointer; color: var(--muted); }
+  details pre { white-space: pre-wrap; word-break: break-word; font: 13px/1.45 ui-monospace, Menlo, monospace; margin: 8px 0 2px; color: #d7d9e2; }
+  details ul { margin: 8px 0 2px; padding-left: 18px; color: var(--muted); font: 12.5px/1.6 ui-monospace, Menlo, monospace; }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 4px; }
+  .btn { border: 1px solid var(--line); background: var(--panel2); color: var(--text); text-decoration: none;
+    border-radius: 9px; padding: 8px 12px; font-size: 13.5px; cursor: pointer; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  .btn:hover { filter: brightness(1.12); }
+  .hint { font-size: 12px; color: var(--muted); margin: 0; }
+  .empty { color: var(--muted); text-align: center; padding: 60px 0; }
+  footer { margin-top: 48px; color: var(--muted); font-size: 13px; }
+  .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(20px); opacity: 0;
+    background: var(--good); color: #0e0f13; font-weight: 600; padding: 10px 16px; border-radius: 10px; transition: .2s; pointer-events: none; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🧰 {{SITE_TITLE}}</h1>
+    <p>Things {{OWNER}} built with Claude: skills, tools, sites and prompts. Grab anything here and use it with your own Claude.</p>
+    <div class="how">
+      <div><b>1. Pick something</b>Each card says what it does and how to use it.</div>
+      <div><b>2. Copy the prompt for Claude</b>Paste it into Claude Code and it downloads and sets everything up for you.</div>
+      <div><b>3. On claude.ai?</b>Download the .zip and upload it under Settings → Capabilities → Skills.</div>
+    </div>
+  </header>
+
+  <div class="bar">
+    <input id="q" type="search" placeholder="Search…" autocomplete="off">
+    <div class="sort" role="group" aria-label="Sort">
+      <button data-sort="useful">★ Most useful</button>
+      <button data-sort="recent">Most recent</button>
+    </div>
+  </div>
+  <div id="chips" style="margin:-6px 0 16px"></div>
+  <p id="count" class="count"></p>
+
+  <div id="grid" class="grid"></div>
+  <div id="empty" class="empty" hidden>Nothing here yet. Check back soon.</div>
+
+  <footer>
+    New posts: <a href="feed.xml">RSS feed</a> · or Watch the <a href="{{REPO_URL}}">GitHub repo</a>.
+    Want everything at once? <a href="#" id="all">Copy the "install the whole shelf" prompt</a>.
+    <br>Read anything before you run it. Nothing here needs {{OWNER}}'s accounts. Where you need your own API key, the card says so.
+  </footer>
+</div>
+<div id="toast" class="toast">Copied, now paste it into Claude</div>
+
+<script>
+const SITE = {{SITE_URL_JSON}};
+const REPO = {{REPO_URL_JSON}};
+const TYPES = { skill: "Skill", tool: "Tool", website: "Website", prompt: "Prompt", script: "Script", other: "Other" };
+let items = [], filter = "all";
+let sort = new URLSearchParams(location.search).get("sort") || localStorage.getItem("shelf-sort") || "useful";
+const byRecent = (a, b) => (b.updated || "").localeCompare(a.updated || "");
+const byUseful = (a, b) => (b.useful || 3) - (a.useful || 3) || byRecent(a, b);
+function stars(n) {
+  n = n || 3;
+  return el("span", { class: "stars", title: `Usefulness: ${n} out of 5` }, "★".repeat(n), el("span", { class: "off", text: "★".repeat(5 - n) }));
+}
+
+const el = (tag, attrs = {}, ...kids) => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") n.className = v; else if (k === "text") n.textContent = v;
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v); else n.setAttribute(k, v);
+  }
+  for (const k of kids) if (k) n.append(k);
+  return n;
+};
+
+function toast(msg) {
+  const t = document.getElementById("toast"); t.textContent = msg || "Copied, now paste it into Claude";
+  t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 1800);
+}
+async function copy(text) {
+  try { await navigator.clipboard.writeText(text); }
+  catch { const ta = el("textarea"); ta.value = text; document.body.append(ta); ta.select(); document.execCommand("copy"); ta.remove(); }
+  toast();
+}
+const isNew = (d) => (Date.now() - new Date(d).getTime()) < 7 * 864e5;
+const fmt = (d) => new Date(d).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
+
+function card(it) {
+  const meta = el("div", { class: "meta" },
+    el("span", { class: "badge", text: TYPES[it.type] || it.type }),
+    (it.useful || 3) >= 5 ? el("span", { class: "badge top", text: "Top pick" }) : null,
+    isNew(it.updated) ? el("span", { class: "badge new", text: it.version > 1 ? "Updated" : "New" }) : null,
+    el("span", { text: fmt(it.updated) + (it.version > 1 ? ` · v${it.version}` : "") }),
+    stars(it.useful));
+  const c = el("article", { class: "card", id: it.slug },
+    el("div", { class: "top" }, el("div", { class: "emoji", text: it.emoji || "✨" }),
+      el("div", {}, el("h2", { text: it.title }), meta)),
+    el("p", { class: "summary", text: it.summary }));
+  if (it.how_to_use) c.append(el("details", {}, el("summary", { text: "How to use it" }), el("pre", { text: it.how_to_use })));
+  if (it.requires) c.append(el("details", {}, el("summary", { text: "What you'll need" }), el("pre", { text: it.requires })));
+  if (it.files && it.files.length) {
+    const ul = el("ul");
+    it.files.slice(0, 40).forEach(f => ul.append(el("li", { text: f })));
+    if (it.files.length > 40) ul.append(el("li", { text: `…and ${it.files.length - 40} more` }));
+    c.append(el("details", {}, el("summary", { text: `What's inside (${it.files.length} file${it.files.length > 1 ? "s" : ""})` }), ul));
+  }
+  const a = el("div", { class: "actions" });
+  if (it.install_prompt) a.append(el("button", { class: "btn primary", text: it.type === "prompt" ? "Copy prompt" : "Copy prompt for Claude", onclick: () => copy(it.install_prompt) }));
+  if (it.link) a.append(el("a", { class: "btn" + (it.install_prompt ? "" : " primary"), href: it.link, target: "_blank", rel: "noopener", text: "Open ↗" }));
+  if (it.zip) a.append(el("a", { class: "btn", href: it.zip, download: "", text: "Download .zip" }));
+  if (it.files && it.files.length) a.append(el("a", { class: "btn", href: `${REPO}/tree/main/items/${it.slug}/files`, target: "_blank", rel: "noopener", text: "View files" }));
+  c.append(a);
+  if (it.type === "skill" && it.zip) c.append(el("p", { class: "hint", text: "claude.ai: Settings → Capabilities → Skills → upload the .zip" }));
+  return c;
+}
+
+function render() {
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  const grid = document.getElementById("grid"); grid.replaceChildren();
+  const shown = items.filter(it => (filter === "all" || it.type === filter) &&
+    (!q || [it.title, it.summary, it.how_to_use, (it.tags || []).join(" ")].join(" ").toLowerCase().includes(q)))
+    .sort(sort === "recent" ? byRecent : byUseful);
+  document.getElementById("count").textContent = `${shown.length} of ${items.length} · sorted by ${sort === "recent" ? "most recent" : "most useful"}`;
+  document.querySelectorAll(".sort button").forEach(b => b.classList.toggle("on", b.dataset.sort === sort));
+  shown.forEach(it => grid.append(card(it)));
+  document.getElementById("empty").hidden = shown.length > 0;
+}
+
+function chips() {
+  const box = document.getElementById("chips"); box.replaceChildren();
+  const present = ["all", ...Object.keys(TYPES).filter(t => items.some(i => i.type === t))];
+  present.forEach(t => box.append(el("button", { class: "chip" + (t === filter ? " on" : ""), text: t === "all" ? "All" : TYPES[t] + "s",
+    onclick: () => { filter = t; chips(); render(); } })));
+}
+
+document.getElementById("q").addEventListener("input", render);
+document.querySelectorAll(".sort button").forEach(b => b.addEventListener("click", () => {
+  sort = b.dataset.sort; localStorage.setItem("shelf-sort", sort); render();
+}));
+document.getElementById("all").addEventListener("click", (e) => {
+  e.preventDefault();
+  copy(`My friend shares things he builds with Claude at ${SITE}. Please:\n` +
+    `1. Fetch ${SITE}items.json and list everything on it with a one-line summary each.\n` +
+    `2. Ask me which ones I want. For each one I pick, follow its "install_prompt".\n` +
+    `3. Before running or installing anything, read the files and tell me if anything looks risky or needs an API key or a paid service.\n` +
+    `Later, when I ask "what's new on the shelf?", fetch ${SITE}feed.xml and show me anything posted since you last checked.`);
+});
+
+fetch("items.json", { cache: "no-store" }).then(r => r.json()).then(d => {
+  items = d.items || [];
+  chips(); render();
+  if (location.hash) document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView({ behavior: "smooth", block: "center" });
+}).catch(() => { document.getElementById("empty").hidden = false; });
+</script>
+</body>
+</html>
