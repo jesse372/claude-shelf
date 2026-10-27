@@ -1,0 +1,24 @@
+{
+  "slug": "memory-capture",
+  "title": "Memory Capture: Claude remembers past sessions",
+  "emoji": "🧠",
+  "type": "skill",
+  "summary": "Automatically turns finished Claude Code (and Codex) sessions into short, durable decision notes, so later you can ask 'what did we decide about X?' and get an answer.",
+  "how_to_use": "Install it, then ask \"what did we decide about…\", \"have we done this before?\" or \"search memory for…\".",
+  "requires": "Claude Code. Originally set up with a ~/JesseOS/vault folder; tell Claude where you want your notes kept.",
+  "tags": [],
+  "link": "",
+  "created": "2026-06-29T02:07:26+08:00",
+  "updated": "2026-06-29T02:07:26+08:00",
+  "version": 1,
+  "useful": 4,
+  "files": [
+    "SKILL.md",
+    "com.jesse.memcapture.plist",
+    "run-capture.sh",
+    "search.js",
+    "summarize.js"
+  ],
+  "skill_name": "memory-capture",
+  "zip": "items/memory-capture/memory-capture.zip"
+}

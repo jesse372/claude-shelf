@@ -1,7 +1,7 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-10-27T16:35:16+00:00",
+  "updated": "2026-10-27T16:35:17+00:00",
   "items": [
     {
       "slug": "browser-probe",
@@ -72,6 +72,31 @@
       "skill_name": "llm-council",
       "zip": "items/llm-council/llm-council.zip",
       "install_prompt": "Please install the Claude Code skill \"LLM Council\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/llm-council/llm-council.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/llm-council/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+    },
+    {
+      "slug": "memory-capture",
+      "title": "Memory Capture: Claude remembers past sessions",
+      "emoji": "🧠",
+      "type": "skill",
+      "summary": "Automatically turns finished Claude Code (and Codex) sessions into short, durable decision notes, so later you can ask 'what did we decide about X?' and get an answer.",
+      "how_to_use": "Install it, then ask \"what did we decide about…\", \"have we done this before?\" or \"search memory for…\".",
+      "requires": "Claude Code. Originally set up with a ~/JesseOS/vault folder; tell Claude where you want your notes kept.",
+      "tags": [],
+      "link": "",
+      "created": "2026-06-29T02:07:26+08:00",
+      "updated": "2026-06-29T02:07:26+08:00",
+      "version": 1,
+      "useful": 4,
+      "files": [
+        "SKILL.md",
+        "com.jesse.memcapture.plist",
+        "run-capture.sh",
+        "search.js",
+        "summarize.js"
+      ],
+      "skill_name": "memory-capture",
+      "zip": "items/memory-capture/memory-capture.zip",
+      "install_prompt": "Please install the Claude Code skill \"Memory Capture: Claude remembers past sessions\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/memory-capture/memory-capture.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/memory-capture/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "pipeline-qc",
