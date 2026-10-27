@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sick Karnt Tours — 7-Day Vietnam Off-Road Motorcycle Expedition</title>
+<meta name="description" content="Sick Karnt Tours: a 7-day guided off-road motorcycle expedition through the wild north of Vietnam. Dirt, mountains, jungle & legends. $2000 USD all-in." />
+<meta name="theme-color" content="#0d0f0a" />
+
+<!-- Favicon + iPhone Add-to-Home-Screen icon (custom Sick Karnt Tours emblem) -->
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Sick Karnt" />
+
+<!-- Social preview -->
+<meta property="og:title" content="Sick Karnt Tours — 7 Days of Vietnam Dirt" />
+<meta property="og:description" content="The gnarliest guided off-road motorcycle expedition in Northern Vietnam. 7 days. $2000. No sealed roads, no worries." />
+<meta property="og:type" content="website" />
+
+<style>
+  :root{
+    --bg:#0d0f0a;
+    --bg2:#14180f;
+    --card:#191d13;
+    --mud:#8a5a2b;
+    --orange:#e8501a;
+    --orange2:#ff7a3d;
+    --lime:#c6f24e;
+    --sand:#e8dcc2;
+    --ink:#f4efe4;
+    --muted:#a9a48f;
+    --line:rgba(232,220,194,.12);
+    --max:1180px;
+    --shadow:0 30px 60px -20px rgba(0,0,0,.7);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;overflow-x:hidden}
+  img,video,canvas{max-width:100%}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Segoe UI',system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.6;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:'Arial Black','Helvetica Neue',Impact,sans-serif;
+    text-transform:uppercase;
+    letter-spacing:-.5px;
+    line-height:.98;
+  }
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+  .tag{
+    display:inline-block;font-size:.72rem;font-weight:800;letter-spacing:3px;
+    text-transform:uppercase;color:var(--orange2);
+    border:1px solid var(--line);border-radius:100px;padding:7px 16px;background:rgba(232,80,26,.08);
+  }
+  .btn{
+    display:inline-block;font-weight:900;text-transform:uppercase;letter-spacing:1px;
+    padding:16px 30px;border-radius:12px;cursor:pointer;transition:.2s transform,.2s box-shadow;
+    border:none;font-size:.95rem;
+  }
+  .btn-primary{background:linear-gradient(135deg,var(--orange),var(--orange2));color:#12140c;box-shadow:0 12px 30px -8px rgba(232,80,26,.6)}
+  .btn-primary:hover{transform:translateY(-3px);box-shadow:0 20px 40px -10px rgba(232,80,26,.75)}
+  .btn-ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--orange2);transform:translateY(-3px)}
+
+  /* NAV */
+  header.nav{
+    position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);
+    background:rgba(13,15,10,.72);border-bottom:1px solid var(--line);
+    transition:background .35s ease, box-shadow .35s ease;
+  }
+  header.nav.scrolled{background:rgba(11,13,8,.94);box-shadow:0 12px 34px -14px rgba(0,0,0,.8)}
+  header.nav .nav-inner{transition:height .35s ease}
+  header.nav.scrolled .nav-inner{height:60px}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:70px}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:900;text-transform:uppercase;letter-spacing:1px}
+  .brand .mark{width:40px;height:40px;display:block;flex:0 0 auto;
+    filter:drop-shadow(0 5px 13px rgba(232,80,26,.5))}
+  .brand small{display:block;font-size:.55rem;letter-spacing:3px;color:var(--muted);font-weight:700}
+  .nav-links{display:flex;gap:28px;align-items:center}
+  .nav-links a{font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);transition:.2s}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-links .btn{padding:11px 20px;font-size:.8rem}
+  @media(max-width:820px){.nav-links a:not(.btn){display:none}}
+
+  /* HERO */
+  .hero{
+    position:relative;min-height:92vh;display:flex;align-items:center;
+    background:
+      radial-gradient(1200px 600px at 75% -10%,rgba(232,80,26,.22),transparent 60%),
+      radial-gradient(900px 500px at 0% 100%,rgba(198,242,78,.10),transparent 55%),
+      linear-gradient(180deg,#0d0f0a,#171b10 60%,#0d0f0a);
+    overflow:hidden;
+  }
+  .hero .mountains{
+    position:absolute;inset:0;opacity:.5;
+    background:
+      linear-gradient(180deg,transparent 40%,rgba(0,0,0,.6)),
+      repeating-linear-gradient(115deg,rgba(255,255,255,.02) 0 2px,transparent 2px 40px);
+  }
+  .ridge{position:absolute;bottom:0;left:0;width:100%;opacity:.9}
+  .hero-inner{position:relative;z-index:2;padding:60px 24px;min-width:0;width:100%}
+  .hero h1{font-size:clamp(3rem,9vw,7rem);margin:18px 0 10px}
+  .hero h1 .stroke{color:transparent;-webkit-text-stroke:2px var(--sand)}
+  .hero h1 .fill{color:var(--orange2)}
+  .hero p.lead{max-width:560px;font-size:1.18rem;color:var(--sand);margin-bottom:30px}
+  .hero-cta{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .hero-meta{display:flex;gap:34px;margin-top:44px;flex-wrap:wrap}
+  .hero-meta div span{display:block}
+  .hero-meta .big{font-family:'Arial Black',sans-serif;font-size:1.9rem;color:var(--lime)}
+  .hero-meta .lbl{font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+
+  .marquee{
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    background:var(--bg2);overflow:hidden;white-space:nowrap;padding:14px 0;
+  }
+  .marquee div{display:inline-block;animation:scroll 26s linear infinite;font-weight:900;text-transform:uppercase;letter-spacing:2px;color:var(--muted)}
+  .marquee span{color:var(--orange2);margin:0 20px}
+  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  section{padding:96px 0}
+  .eyebrow{color:var(--lime);font-weight:800;letter-spacing:3px;text-transform:uppercase;font-size:.78rem;margin-bottom:14px}
+  h2.section-title{font-size:clamp(2.1rem,5vw,3.6rem);margin-bottom:18px}
+  .section-sub{color:var(--muted);max-width:640px;font-size:1.05rem}
+
+  /* FEATURE GRID */
+  .grid{display:grid;gap:22px}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  @media(max-width:900px){.g3,.g2{grid-template-columns:1fr}}
+  .card{
+    background:linear-gradient(180deg,var(--card),#12150d);border:1px solid var(--line);
+    border-radius:18px;padding:30px;transition:.25s;position:relative;overflow:hidden;
+  }
+  .card:hover{transform:translateY(-6px);border-color:rgba(255,122,61,.4)}
+  .card .ico{font-size:2rem;margin-bottom:14px}
+  .card h3{font-size:1.25rem;margin-bottom:10px}
+  .card p{color:var(--muted);font-size:.96rem}
+
+  /* ITINERARY */
+  .timeline{margin-top:50px;position:relative}
+  .day{
+    display:grid;grid-template-columns:130px 1fr;gap:30px;padding:28px 0;border-top:1px solid var(--line);
+    align-items:start;
+  }
+  .day:hover .daynum{color:var(--orange2)}
+  .daynum{font-family:'Arial Black',sans-serif;font-size:2.6rem;color:var(--sand);transition:.2s;line-height:1}
+  .daynum small{display:block;font-size:.62rem;letter-spacing:3px;color:var(--muted);margin-top:6px}
+  .day-body h3{font-size:1.4rem;margin-bottom:8px}
+  .day-body p{color:var(--muted);max-width:640px}
+  .day-body .stats{display:flex;gap:18px;margin-top:14px;flex-wrap:wrap}
+  .chip{font-size:.72rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--lime);
+    border:1px solid var(--line);padding:5px 12px;border-radius:100px;background:rgba(198,242,78,.06)}
+  @media(max-width:640px){.day{grid-template-columns:1fr;gap:10px}.daynum{font-size:2rem}}
+
+  /* PRICE */
+  .price-wrap{background:
+      radial-gradient(700px 300px at 100% 0,rgba(232,80,26,.18),transparent 60%),
+      linear-gradient(180deg,var(--bg2),var(--bg));border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .price-card{
+    background:linear-gradient(160deg,#1d2214,#12150d);border:1px solid rgba(255,122,61,.35);
+    border-radius:24px;padding:44px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  .price-card::before{content:"";position:absolute;top:-40%;right:-10%;width:340px;height:340px;
+    background:radial-gradient(circle,rgba(232,80,26,.3),transparent 65%);filter:blur(10px)}
+  .price-card .amt{font-family:'Arial Black',sans-serif;font-size:4.6rem;color:var(--orange2);line-height:1}
+  .price-card .amt small{font-size:1rem;color:var(--muted);letter-spacing:2px}
+  .incl{list-style:none;margin-top:26px;display:grid;gap:12px}
+  .incl li{display:flex;gap:12px;align-items:flex-start;color:var(--sand);font-size:.98rem}
+  .incl li::before{content:"▲";color:var(--lime);font-size:.7rem;margin-top:5px}
+  .notincl li::before{content:"✕";color:#c85c4a}
+
+  /* BIKES */
+  .bike{display:grid;grid-template-columns:1fr;gap:0;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:var(--card)}
+  .bike .art{height:170px;display:grid;place-items:center;font-size:4rem;
+    background:radial-gradient(400px 200px at 50% 0,rgba(198,242,78,.15),transparent),linear-gradient(160deg,#20261a,#14180f)}
+  .bike .info{padding:24px}
+  .bike h3{font-size:1.2rem}
+  .bike p{color:var(--muted);font-size:.9rem;margin-top:6px}
+  .bike .spec{margin-top:14px;font-size:.8rem;color:var(--lime);font-weight:800;letter-spacing:1px}
+
+  /* TESTIMONIAL */
+  .quote{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:30px}
+  .quote p{font-size:1.05rem;color:var(--sand);font-style:italic}
+  .quote .who{margin-top:16px;font-weight:800;text-transform:uppercase;letter-spacing:1px;font-size:.85rem}
+  .quote .who small{display:block;color:var(--muted);letter-spacing:2px;font-size:.68rem}
+  .stars{color:var(--orange2);letter-spacing:3px}
+
+  /* FAQ */
+  details{border:1px solid var(--line);border-radius:14px;padding:0 24px;margin-bottom:14px;background:var(--card);overflow:hidden}
+  details summary{cursor:pointer;list-style:none;padding:22px 0;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
+    display:flex;justify-content:space-between;align-items:center;font-size:1rem}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"+";color:var(--orange2);font-size:1.6rem;font-weight:400}
+  details[open] summary::after{content:"–"}
+  details p{color:var(--muted);padding:0 0 22px;max-width:720px}
+
+  /* CTA */
+  .final{
+    background:
+      radial-gradient(700px 400px at 50% 0,rgba(232,80,26,.25),transparent 60%),
+      linear-gradient(180deg,#171b10,#0d0f0a);
+    text-align:center;border-top:1px solid var(--line);
+  }
+  .final h2{font-size:clamp(2.4rem,7vw,5rem)}
+  .final p{color:var(--sand);max-width:560px;margin:18px auto 30px;font-size:1.1rem}
+
+  footer{border-top:1px solid var(--line);padding:44px 0;color:var(--muted);font-size:.85rem}
+  .foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px;align-items:center}
+  .disclaimer{margin-top:26px;font-size:.72rem;color:#6d6a5a;max-width:720px;line-height:1.5}
+
+  .reveal{opacity:0;transform:translateY(32px);
+    transition:opacity .85s cubic-bezier(.2,.75,.2,1),transform .85s cubic-bezier(.2,.75,.2,1),filter .85s ease}
+  .reveal[data-reveal="left"]{transform:translateX(-52px)}
+  .reveal[data-reveal="right"]{transform:translateX(52px)}
+  .reveal[data-reveal="scale"]{transform:scale(.9)}
+  .reveal[data-reveal="blur"]{transform:translateY(22px);filter:blur(12px)}
+  .reveal.in{opacity:1;transform:none;filter:none}
+  [data-parallax]{will-change:transform}
+
+  /* extra scroll-motion hooks */
+  .marquee div{will-change:transform}
+  @media(min-width:641px){ .gallery figure img{height:125%} }
+  .trail{position:absolute;left:-3px;top:0;bottom:0;width:3px;background:var(--line);border-radius:4px;z-index:0}
+  .trail span{position:absolute;top:0;left:0;width:100%;height:0;border-radius:4px;
+    background:linear-gradient(180deg,var(--orange),var(--lime));box-shadow:0 0 14px rgba(232,80,26,.75)}
+  .timeline .day{position:relative;z-index:1}
+  @media(max-width:640px){ .trail{left:-8px} }
+
+  /* HERO VIDEO */
+  .hero .bgvid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:.55}
+  .hero .veil{position:absolute;inset:0;z-index:1;
+    background:
+      linear-gradient(180deg,rgba(13,15,10,.55),rgba(13,15,10,.35) 40%,rgba(13,15,10,.95)),
+      radial-gradient(1000px 500px at 78% 0,rgba(232,80,26,.25),transparent 60%);}
+
+  /* GALLERY */
+  .gallery{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:220px;gap:14px;margin-top:46px}
+  .gallery figure{position:relative;overflow:hidden;border-radius:16px;border:1px solid var(--line);margin:0}
+  .gallery img{width:100%;height:100%;object-fit:cover;transition:.5s transform,.4s filter;filter:saturate(1.05) contrast(1.03)}
+  .gallery figure:hover img{transform:scale(1.09)}
+  .gallery figure::after{content:attr(data-cap);position:absolute;left:0;right:0;bottom:0;padding:14px;
+    font-size:.72rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--sand);
+    background:linear-gradient(0deg,rgba(0,0,0,.85),transparent);opacity:0;transform:translateY(8px);transition:.3s}
+  .gallery figure:hover::after{opacity:1;transform:none}
+  .gallery .tall{grid-row:span 2}
+  .gallery .wide{grid-column:span 2}
+  @media(max-width:900px){.gallery{grid-template-columns:repeat(2,1fr);grid-auto-rows:160px}.gallery .wide{grid-column:span 2}}
+
+  /* VIDEO SECTION */
+  .vid-hero{position:relative;border-radius:22px;overflow:hidden;border:1px solid rgba(255,122,61,.35);box-shadow:var(--shadow);background:#000}
+  .vid-hero video{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#000}
+  .vid-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+  .vid-grid figure{margin:0;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:#000}
+  .vid-grid video{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
+  .vid-cap{position:absolute;top:16px;left:16px;z-index:3}
+  @media(max-width:760px){.vid-grid{grid-template-columns:1fr}}
+
+  /* SCROLL PROGRESS */
+  .progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:100;
+    background:linear-gradient(90deg,var(--orange),var(--lime));box-shadow:0 0 12px rgba(232,80,26,.7)}
+
+  /* DUST / EMBERS CANVAS */
+  #dust{position:absolute;inset:0;z-index:1;pointer-events:none}
+
+  /* FILM GRAIN */
+  .grain{position:fixed;inset:0;z-index:90;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation:grainshift .5s steps(2) infinite}
+  @keyframes grainshift{0%{transform:translate(0,0)}50%{transform:translate(-4%,3%)}100%{transform:translate(2%,-2%)}}
+
+  @media(prefers-reduced-motion:reduce){
+    .grain,.marquee div{animation:none}
+    .hero .bgvid{opacity:.4}
+    .reveal{opacity:1!important;transform:none!important;filter:none!important;transition:none}
+  }
+
+  /* ============ MOBILE MENU (hamburger) ============ */
+  .menu-btn{display:none;flex-direction:column;gap:5px;background:none;border:0;padding:11px;cursor:pointer;z-index:60}
+  .menu-btn span{width:26px;height:2.5px;background:var(--ink);border-radius:2px;transition:.3s}
+  .menu-btn.open span:nth-child(1){transform:translateY(7.5px) rotate(45deg)}
+  .menu-btn.open span:nth-child(2){opacity:0}
+  .menu-btn.open span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
+  .mobile-menu{position:fixed;inset:0;z-index:55;
+    background:linear-gradient(180deg,#0d0f0a,#14180f);
+    display:flex;flex-direction:column;justify-content:center;padding:30px calc(24px + env(safe-area-inset-right)) 30px calc(24px + env(safe-area-inset-left));
+    transform:translateY(-100%);transition:.42s cubic-bezier(.2,.8,.2,1);visibility:hidden}
+  .mobile-menu.open{transform:none;visibility:visible}
+  .mobile-menu a{font-family:'Arial Black',sans-serif;text-transform:uppercase;font-size:clamp(1.7rem,8vw,2.3rem);
+    color:var(--sand);padding:14px 0;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px}
+  .mobile-menu a .num{color:var(--orange2);font-size:.85rem;font-family:'Arial',sans-serif}
+  .mobile-menu a:active{color:var(--orange2)}
+  .mobile-menu .btn{margin-top:26px;text-align:center;font-size:1.15rem;padding:18px}
+
+  /* ============ STICKY MOBILE BOOKING BAR ============ */
+  .mobile-cta{position:fixed;left:0;right:0;bottom:0;z-index:70;display:none;
+    align-items:center;justify-content:space-between;gap:14px;
+    padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+    background:rgba(13,15,10,.86);backdrop-filter:blur(16px);border-top:1px solid var(--line)}
+  .mobile-cta .price{font-family:'Arial Black',sans-serif;font-size:1.15rem;color:var(--ink);line-height:1.05}
+  .mobile-cta .price small{display:block;font-size:.58rem;letter-spacing:2px;color:var(--muted);font-weight:700;margin-top:3px}
+  .mobile-cta .btn{flex:0 0 auto;padding:15px 26px;font-size:.92rem}
+
+  /* ============ MOBILE LAYOUT TUNING ============ */
+  @media(max-width:820px){
+    .nav-links{display:none}
+    .menu-btn{display:flex}
+    .mobile-cta{display:flex}
+    body{padding-bottom:76px}
+    .grain{animation:none;opacity:.04}
+    .nav-inner{height:62px}
+  }
+  @media(max-width:640px){
+    section{padding:60px 0}
+    .wrap{padding:0 20px}
+    h2.section-title{font-size:2.05rem}
+    .hero{min-height:92vh}
+    .hero-inner{padding:36px 20px}
+    .hero h1{font-size:clamp(2.4rem,13vw,4.2rem)}
+    .hero p.lead{font-size:1.02rem;max-width:100%}
+    .hero-cta{flex-direction:column;gap:11px}
+    .hero-cta .btn{width:100%;text-align:center;padding:16px}
+    .hero-meta{display:grid;grid-template-columns:1fr 1fr;gap:22px 16px;margin-top:34px}
+    .hero-meta .big{font-size:1.7rem}
+    .tag{font-size:.62rem;letter-spacing:2px;padding:6px 13px}
+    .grid.g3,.grid.g2{gap:16px}
+    .card{padding:24px}
+    /* gallery becomes a snap carousel */
+    .gallery{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;
+      margin:36px -20px 0;padding:0 20px 6px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+    .gallery::-webkit-scrollbar{display:none}
+    .gallery figure{flex:0 0 82%;scroll-snap-align:center;height:54vh;
+      grid-row:auto!important;grid-column:auto!important}
+    .gallery figure::after{opacity:1;transform:none}
+    .swipe-hint{display:block}
+    .price-card{padding:30px}
+    .price-card .amt{font-size:3.6rem}
+    .day{gap:8px}
+  }
+  .swipe-hint{display:none;text-align:center;color:var(--muted);font-size:.72rem;letter-spacing:3px;
+    text-transform:uppercase;font-weight:800;margin-top:14px}
+  .swipe-hint span{color:var(--orange2)}
+</style>
+</head>
+<body>
+<!-- Brand emblem (reusable) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="skLogo" viewBox="0 0 64 64">
+    <defs>
+      <linearGradient id="skO" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#ff8a4d"/><stop offset="1" stop-color="#e8501a"/>
+      </linearGradient>
+      <clipPath id="skDisc"><circle cx="32" cy="32" r="24.5"/></clipPath>
+    </defs>
+    <circle cx="32" cy="32" r="31" fill="url(#skO)"/>
+    <circle cx="32" cy="32" r="28" fill="none" stroke="#12140c" stroke-width="5" stroke-dasharray="2.4 3.5"/>
+    <circle cx="32" cy="32" r="24.5" fill="#1b2f3f"/>
+    <g clip-path="url(#skDisc)">
+      <path d="M15 58 C 17 47 24 45 32 45 C 40 45 47 47 49 58 Z" fill="#2f6fb0"/>
+      <path d="M28 45 L28 52 M36 45 L36 52" stroke="#255c95" stroke-width="1.4"/>
+      <path d="M17 48 C 10 40 12 25 21 21 L 27 27 C 22 31 22 41 24 49 Z" fill="#5c3f22"/>
+      <path d="M47 48 C 54 40 52 25 43 21 L 37 27 C 42 31 42 41 40 49 Z" fill="#5c3f22"/>
+      <path d="M23 44 Q32 49 41 44 L 40 53 Q32 57 24 53 Z" fill="#4a3018"/>
+      <circle cx="21.3" cy="32" r="2.4" fill="#e6b083"/>
+      <circle cx="42.7" cy="32" r="2.4" fill="#e6b083"/>
+      <ellipse cx="32" cy="31.5" rx="11" ry="12.6" fill="#e6b083"/>
+      <path d="M21 25 C 21 16 43 16 43 25 C 40.5 21.5 38 21.5 36 22.8 C 34 19.8 30 19.8 28 22.8 C 26 21.5 23.5 21.5 21 25 Z" fill="#5c3f22"/>
+      <rect x="21.3" y="26.6" width="9.2" height="6.3" rx="2.3" fill="#101010"/>
+      <rect x="33.5" y="26.6" width="9.2" height="6.3" rx="2.3" fill="#101010"/>
+      <rect x="30.2" y="28.4" width="3.6" height="1.7" fill="#101010"/>
+      <path d="M23 28.3 h3.2 l-3.2 3.2 z" fill="#ffffff" opacity="0.22"/>
+      <path d="M35.2 28.3 h3.2 l-3.2 3.2 z" fill="#ffffff" opacity="0.22"/>
+      <path d="M32 33 l-1.4 3 h2.8 z" fill="#cf9765"/>
+      <path d="M25.5 37.4 Q32 41.2 38.5 37.4 Q35 42.4 32 41.1 Q29 42.4 25.5 37.4 Z" fill="#4a3018"/>
+      <path d="M29 43 Q32 45.4 35 43" fill="none" stroke="#3a2414" stroke-width="1.5" stroke-linecap="round"/>
+      <rect x="34.5" y="43.4" width="7.6" height="1.9" rx="0.9" fill="#f4efe4"/>
+      <rect x="41.2" y="43.4" width="1.6" height="1.9" fill="#ff6a2a"/>
+      <path d="M43.5 43 q1.6 -2.2 0.4 -4.2 q-1.2 -2 0.4 -4" fill="none" stroke="#cfd8d0" stroke-width="1" opacity="0.5" stroke-linecap="round"/>
+    </g>
+  </symbol>
+</svg>
+<div class="progress" id="progress"></div>
+<div class="grain"></div>
+
+<!-- NAV -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top">
+      <svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><use href="#skLogo"/></svg>
+      <span>Sick Karnt Tours<small>Northern Vietnam · Est. 2019</small></span>
+    </a>
+    <nav class="nav-links">
+      <a href="#trip">The Trip</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#itinerary">Itinerary</a>
+      <a href="#watch">Watch</a>
+      <a href="#price">Price</a>
+      <a href="#faq">FAQ</a>
+      <a class="btn btn-primary" href="#book">Book Now</a>
+    </nav>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- MOBILE MENU -->
+<nav class="mobile-menu" id="mobileMenu">
+  <a href="#trip"><span class="num">01</span>The Trip</a>
+  <a href="#gallery"><span class="num">02</span>Gallery</a>
+  <a href="#itinerary"><span class="num">03</span>Itinerary</a>
+  <a href="#watch"><span class="num">04</span>Watch</a>
+  <a href="#price"><span class="num">05</span>Price</a>
+  <a href="#faq"><span class="num">06</span>FAQ</a>
+  <a class="btn btn-primary" href="#book">Book Now — $2000</a>
+</nav>
+
+<!-- STICKY MOBILE BOOKING BAR -->
+<div class="mobile-cta">
+  <div class="price">$2000<small>7 DAYS · ALL-IN</small></div>
+  <a class="btn btn-primary" href="#book">Book Now →</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <video class="bgvid" autoplay muted loop playsinline
+         poster="https://images.pexels.com/photos/33334989/pexels-photo-33334989/free-photo-of-dynamic-motocross-rider-on-dirt-track-in-germany.jpeg?auto=compress&cs=tinysrgb&w=1600">
+    <source src="https://assets.mixkit.co/videos/48771/48771-720.mp4" type="video/mp4">
+  </video>
+  <div class="veil"></div>
+  <canvas id="dust"></canvas>
+  <div class="mountains"></div>
+  <div class="wrap hero-inner">
+    <span class="tag">🇻🇳 7-Day Guided Off-Road Expedition</span>
+    <h1>
+      <span class="stroke">Ride The</span><br>
+      <span class="fill">Wild North</span><br>
+      <span class="stroke">Of Vietnam</span>
+    </h1>
+    <p class="lead">Seven days. Zero sealed roads that matter. Mud, mountain passes, jungle single-track and rice-terrace switchbacks — guided by locals who actually know the gnar. This is not a tourist loop. This is <strong>Sick Karnt Tours.</strong></p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="#book">Grab a Seat — $2000</a>
+      <a class="btn btn-ghost" href="#itinerary">See the Route ↓</a>
+    </div>
+    <div class="hero-meta">
+      <div><span class="big" data-count="7">0</span><span class="lbl">Days of Dirt</span></div>
+      <div><span class="big" data-count="1150" data-suffix="km">0</span><span class="lbl">Off-Road Terrain</span></div>
+      <div><span class="big" data-count="8">0</span><span class="lbl">Riders Max / Group</span></div>
+      <div><span class="big" data-count="100" data-suffix="%">0</span><span class="lbl">Send-It Rating</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="marquee">
+  <div>
+    Ha Giang Loop <span>•</span> Jungle Single-Track <span>•</span> Mountain Passes <span>•</span> Rice Terraces <span>•</span> River Crossings <span>•</span> Local Homestays <span>•</span> Ha Giang Loop <span>•</span> Jungle Single-Track <span>•</span> Mountain Passes <span>•</span> Rice Terraces <span>•</span> River Crossings <span>•</span> Local Homestays <span>•</span>
+  </div>
+</div>
+
+<!-- THE TRIP -->
+<section id="trip">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">Why This Trip Hits Different</p>
+      <h2 class="section-title">Built For Riders,<br>Not Tourists</h2>
+      <p class="section-sub">We don't do air-conditioned buses and photo stops. We do busted knuckles, muddy boots, and views you'll never shut up about. Small groups, real terrain, and a support crew that has your back when it gets sketchy.</p>
+    </div>
+    <div class="grid g3" style="margin-top:50px">
+      <div class="card reveal"><div class="ico">🗺️</div><h3>Untouched Routes</h3><p>Hidden trails through the Dong Van Karst Plateau and the Tay Con Linh range — tracks locals ride, that tour buses can't reach.</p></div>
+      <div class="card reveal"><div class="ico">🧑‍🔧</div><h3>Full Support Crew</h3><p>Lead guide, sweep rider, and a chase truck carrying spares, tools and your luggage. Drop a bike? We pick you up.</p></div>
+      <div class="card reveal"><div class="ico">🏡</div><h3>Real Homestays</h3><p>Sleep in Hmong and Tay villages, eat food cooked over open fire, and drink rice wine you'll regret by day 4.</p></div>
+      <div class="card reveal"><div class="ico">🛵</div><h3>Proper Dirt Bikes</h3><p>Fleet of maintained Honda XR150L & CRF250L machines — knobbies on, ready to abuse. Not a scooter in sight.</p></div>
+      <div class="card reveal"><div class="ico">🩹</div><h3>Safety Dialed</h3><p>Wilderness-first-aid certified guides, sat-comms in dead zones, and daily bike checks. Send it — smartly.</p></div>
+      <div class="card reveal"><div class="ico">📸</div><h3>Free Photo Pack</h3><p>Our sweep rider shoots the whole trip on a GoPro & drone. You go home with the footage to prove you survived.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">The Gnar Gallery</p>
+      <h2 class="section-title">Shot On The Trail</h2>
+      <p class="section-sub">Real terrain, real riders, real dirt. This is what your week looks like — minus the smell of two-stroke and rice wine.</p>
+    </div>
+    <div class="gallery reveal">
+      <figure class="tall" data-cap="Send it — Dong Van plateau">
+        <img loading="lazy" src="https://images.pexels.com/photos/33334989/pexels-photo-33334989/free-photo-of-dynamic-motocross-rider-on-dirt-track-in-germany.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Rider throwing dirt on a berm">
+      </figure>
+      <figure class="wide" data-cap="Mountain forest single-track">
+        <img loading="lazy" src="https://images.pexels.com/photos/15001950/pexels-photo-15001950/free-photo-of-man-riding-a-motorcycle-in-the-mountain-forest.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="Riding through mountain forest">
+      </figure>
+      <figure data-cap="Gear up">
+        <img loading="lazy" src="https://images.pexels.com/photos/5803622/pexels-photo-5803622.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Rider gearing up">
+      </figure>
+      <figure data-cap="Adventure trail">
+        <img loading="lazy" src="https://images.pexels.com/photos/35538682/pexels-photo-35538682/free-photo-of-adventure-motorcycling-on-a-nepalese-trail.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Adventure motorcycling on a mountain trail">
+      </figure>
+      <figure class="wide" data-cap="Scenic off-road pass">
+        <img loading="lazy" src="https://images.pexels.com/photos/33963140/pexels-photo-33963140/free-photo-of-motorcyclist-exploring-scenic-off-road-trail.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="Motorcyclist on a scenic off-road trail">
+      </figure>
+      <figure data-cap="Sand & loose stuff">
+        <img loading="lazy" src="https://images.pexels.com/photos/29410146/pexels-photo-29410146/free-photo-of-motorcyclist-navigating-sandy-terrain-on-red-bike.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Rider on sandy terrain">
+      </figure>
+      <figure data-cap="Dust storm">
+        <img loading="lazy" src="https://images.pexels.com/photos/33896120/pexels-photo-33896120/free-photo-of-dynamic-motocross-action-on-dusty-track.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Motocross action in the dust">
+      </figure>
+      <figure class="tall" data-cap="Rest stop with a view">
+        <img loading="lazy" src="https://images.pexels.com/photos/27662214/pexels-photo-27662214/free-photo-of-a-motorcycle-parked-on-a-gravel-road-with-a-view-of-the-mountains.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Motorcycle parked with mountain view">
+      </figure>
+      <figure class="wide" data-cap="Philippines-style backcountry">
+        <img loading="lazy" src="https://images.pexels.com/photos/36352943/pexels-photo-36352943/free-photo-of-adventurous-off-road-motorbike-ride-in-philippines.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="Off-road backcountry ride">
+      </figure>
+    </div>
+    <p class="swipe-hint"><span>←</span>&nbsp; Swipe the gallery &nbsp;<span>→</span></p>
+  </div>
+</section>
+
+<!-- ITINERARY -->
+<section id="itinerary" style="background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">The 7-Day Route</p>
+      <h2 class="section-title">Hanoi → Ha Giang → The Gnar</h2>
+      <p class="section-sub">A loop out of Ha Giang city into the roughest, most beautiful corner of Southeast Asia — then back with a story worth telling.</p>
+    </div>
+    <div class="timeline">
+      <div class="trail"><span id="trailFill"></span></div>
+      <div class="day reveal">
+        <div class="daynum">01<small>Arrive</small></div>
+        <div class="day-body">
+          <h3>Hanoi Pickup & Night Ride North</h3>
+          <p>Meet the crew, gear fitting and bike assignment at our Hanoi garage. Sleeper transfer to Ha Giang, safety briefing, and a proper welcome dinner. Gear check, then rest — tomorrow it starts.</p>
+          <div class="stats"><span class="chip">Bike Fitting</span><span class="chip">Welcome Dinner</span><span class="chip">Briefing</span></div>
+        </div>
+      </div>
+      <div class="day reveal">
+        <div class="daynum">02<small>Warm-Up</small></div>
+        <div class="day-body">
+          <h3>Ha Giang → Quan Ba "Heaven's Gate"</h3>
+          <p>Ease into it with flowing gravel roads and your first mountain pass. Twin-peak viewpoints, a river crossing to test the nerves, and a first taste of loose stuff before we camp in the valley.</p>
+          <div class="stats"><span class="chip">85km Off-Road</span><span class="chip">1 River Crossing</span><span class="chip">Homestay</span></div>
+        </div>
+      </div>
+      <div class="day reveal">
+        <div class="daynum">03<small>Send It</small></div>
+        <div class="day-body">
+          <h3>Yen Minh Jungle Single-Track</h3>
+          <p>The day the trip gets real. Tight jungle trails, root gardens and steep loose climbs through the pine forests. Lunch cooked roadside by our crew, then a rowdy descent into Dong Van.</p>
+          <div class="stats"><span class="chip">170km</span><span class="chip">Technical</span><span class="chip">Karst Plateau</span></div>
+        </div>
+      </div>
+      <div class="day reveal">
+        <div class="daynum">04<small>Peak</small></div>
+        <div class="day-body">
+          <h3>Ma Pi Leng Pass — The Big One</h3>
+          <p>The crown jewel. Ride the knife-edge above the Nho Que River gorge — one of the most spectacular roads on Earth — then peel off onto the mining tracks the tour buses never see. Boat ride optional.</p>
+          <div class="stats"><span class="chip">Cliff Pass</span><span class="chip">1500m Gorge</span><span class="chip">Epic AF</span></div>
+        </div>
+      </div>
+      <div class="day reveal">
+        <div class="daynum">05<small>Deep</small></div>
+        <div class="day-body">
+          <h3>Meo Vac Backcountry & Border Trails</h3>
+          <p>Off the map now. Muddy border trails, terraced rice-field switchbacks and hidden Hmong villages. A big-mileage day rewarded with the best homestay and rice wine of the trip.</p>
+          <div class="stats"><span class="chip">190km</span><span class="chip">Mud Season</span><span class="chip">Rice Wine 🍶</span></div>
+        </div>
+      </div>
+      <div class="day reveal">
+        <div class="daynum">06<small>Legend</small></div>
+        <div class="day-body">
+          <h3>The Long Way Back to Ha Giang</h3>
+          <p>One last enduro loop through waterfalls and abandoned trails, river fording and a final hill-climb challenge with bragging rights on the line. Roll back into Ha Giang filthy and grinning.</p>
+          <div class="stats"><span class="chip">160km</span><span class="chip">Hill-Climb Comp</span><span class="chip">Waterfalls</span></div>
+        </div>
+      </div>
+      <div class="day reveal">
+        <div class="daynum">07<small>Depart</small></div>
+        <div class="day-body">
+          <h3>Recovery, Awards & Transfer Home</h3>
+          <p>Slow morning, hand back the bikes, and a farewell feast where we hand out the "Sickest Karnt" trophy. Transfer back to Hanoi with your photo pack loaded and a permanent grin.</p>
+          <div class="stats"><span class="chip">Awards Feast</span><span class="chip">Photo Pack</span><span class="chip">Hanoi Transfer</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BIKES -->
+<section id="bikes">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">The Fleet</p>
+      <h2 class="section-title">Pick Your Weapon</h2>
+      <p class="section-sub">Every bike is serviced before your trip, fitted with fresh knobbies, hand guards and a bash plate. Included in the price — pick when you book.</p>
+    </div>
+    <div class="grid g3" style="margin-top:46px">
+      <div class="bike reveal">
+        <div class="art">🏍️</div>
+        <div class="info"><h3>Honda XR150L</h3><p>Light, forgiving and bulletproof. The perfect entry into off-road for riders finding their feet in the dirt.</p><div class="spec">150cc · Beginner–Intermediate</div></div>
+      </div>
+      <div class="bike reveal">
+        <div class="art">🏍️💨</div>
+        <div class="info"><h3>Honda CRF250L</h3><p>More power, more suspension, more send. Our most popular pick for riders who want to push the technical days.</p><div class="spec">250cc · Intermediate–Advanced</div></div>
+      </div>
+      <div class="bike reveal">
+        <div class="art">🔥🏍️</div>
+        <div class="info"><h3>KTM 350 EXC-F</h3><p>The full enduro weapon for experienced riders only. Limited availability — request it when you book. +$180.</p><div class="spec">350cc · Advanced Only</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VIDEO -->
+<section id="watch" style="background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">Roll The Footage</p>
+      <h2 class="section-title">Watch The Send</h2>
+      <p class="section-sub">Tap play. This is the kind of riding waiting for you — and the exact footage you'll take home in your photo &amp; video pack.</p>
+    </div>
+    <div class="reveal" style="margin-top:40px">
+      <div class="vid-hero">
+        <span class="tag vid-cap">🎬 Feature Reel</span>
+        <video controls preload="metadata" playsinline
+               poster="https://images.pexels.com/photos/33896120/pexels-photo-33896120/free-photo-of-dynamic-motocross-action-on-dusty-track.jpeg?auto=compress&cs=tinysrgb&w=1600">
+          <source src="https://videos.pexels.com/video-files/32399067/13820397_1920_1080_120fps.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="vid-grid">
+        <figure>
+          <video controls preload="none" playsinline
+                 poster="https://images.pexels.com/photos/29410146/pexels-photo-29410146/free-photo-of-motorcyclist-navigating-sandy-terrain-on-red-bike.jpeg?auto=compress&cs=tinysrgb&w=900">
+            <source src="https://assets.mixkit.co/videos/44337/44337-720.mp4" type="video/mp4">
+          </video>
+        </figure>
+        <figure>
+          <video controls preload="none" playsinline
+                 poster="https://images.pexels.com/photos/35538682/pexels-photo-35538682/free-photo-of-adventure-motorcycling-on-a-nepalese-trail.jpeg?auto=compress&cs=tinysrgb&w=900">
+            <source src="https://assets.mixkit.co/videos/48772/48772-720.mp4" type="video/mp4">
+          </video>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICE -->
+<section id="price" class="price-wrap">
+  <div class="wrap grid g2" style="align-items:center;gap:44px">
+    <div class="reveal">
+      <p class="eyebrow">One Price. All In.</p>
+      <h2 class="section-title">$2000 USD<br>No Hidden Karnt-ery</h2>
+      <p class="section-sub">One flat price covers everything from the moment we pick you up in Hanoi to the moment we drop you back. Just get yourself to Vietnam — we've got the rest.</p>
+      <ul class="incl notincl" style="margin-top:24px">
+        <li><strong style="color:var(--sand)">Not included:</strong></li>
+        <li>International flights & Vietnam visa</li>
+        <li>Travel insurance (mandatory — proof required)</li>
+        <li>Lunches on transfer days & personal spending</li>
+        <li>That third bottle of rice wine 🍶</li>
+      </ul>
+    </div>
+    <div class="price-card reveal">
+      <span class="tag" style="position:relative;z-index:2">All-Inclusive Package</span>
+      <div class="amt" style="margin-top:16px">$2000<small>/rider · USD</small></div>
+      <ul class="incl">
+        <li>6 nights accommodation (homestays + hotels)</li>
+        <li>Fully-serviced dirt bike, fuel & gear</li>
+        <li>Expert lead guide + sweep rider + chase truck</li>
+        <li>All breakfasts & dinners, most lunches</li>
+        <li>Helmet, armour, gloves & boots hire</li>
+        <li>Hanoi ⇄ Ha Giang transfers</li>
+        <li>Pro photo & drone footage pack</li>
+        <li>Sat-comms safety cover & first-aid crew</li>
+      </ul>
+      <a class="btn btn-primary" href="#book" style="width:100%;text-align:center;margin-top:26px;position:relative;z-index:2">Reserve My Spot →</a>
+      <p style="color:var(--muted);font-size:.78rem;text-align:center;margin-top:12px">$400 deposit secures your seat · balance due 30 days out</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="reviews">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">Filthy Reviews</p>
+      <h2 class="section-title">From Actual Sick Karnts</h2>
+    </div>
+    <div class="grid g3" style="margin-top:44px">
+      <div class="quote reveal">
+        <div class="stars">★★★★★</div>
+        <p>"I've done tours in Nepal and Peru. Nothing came close to this. The Ma Pi Leng day literally made me cry into my helmet. Book it."</p>
+        <div class="who">Macca T.<small>Melbourne, AUS</small></div>
+      </div>
+      <div class="quote reveal">
+        <div class="stars">★★★★★</div>
+        <p>"Dropped my bike in a river on day 3. Crew had me back up and riding in 20 minutes with a laugh. These blokes are the real deal."</p>
+        <div class="who">Sofia R.<small>Barcelona, ESP</small></div>
+      </div>
+      <div class="quote reveal">
+        <div class="stars">★★★★★</div>
+        <p>"Came as a solo rider, left with 7 mates and a KTM addiction. The homestays and rice wine nights were the best part. Legendary."</p>
+        <div class="who">Deshawn K.<small>Austin, USA</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap" style="max-width:820px">
+    <div class="reveal" style="text-align:center;margin-bottom:40px">
+      <p class="eyebrow">Before You Send It</p>
+      <h2 class="section-title">Questions, Answered</h2>
+    </div>
+    <details class="reveal"><summary>Do I need off-road experience?</summary><p>You need to be a confident road rider comfortable on a manual/semi-auto bike. Prior dirt experience helps hugely on the technical days (3–6), but we grade the route so beginners can take easier lines while advanced riders send the gnar. Total beginners should chat to us first.</p></details>
+    <details class="reveal"><summary>What's the group size?</summary><p>Maximum 8 riders per trip, plus a lead guide and a sweep rider — a 4:1 rider-to-crew ratio. Small groups mean we ride real trails, not convoy-crawl the highway.</p></details>
+    <details class="reveal"><summary>What if I crash or the bike breaks?</summary><p>It happens — it's off-road. Our chase truck carries a full spares kit and a spare bike. Guides are wilderness-first-aid certified and carry satellite comms for the dead zones. Travel insurance covering motorcycling is mandatory and we check it before departure.</p></details>
+    <details class="reveal"><summary>When's the best time to ride?</summary><p>We run trips Sept–May. Sept–Nov gives green rice terraces and firm trails; Dec–Feb is cooler and dry; Mar–May brings the flowers and warmer days. We avoid the peak monsoon so the river crossings stay fun, not fatal.</p></details>
+    <details class="reveal"><summary>What licence do I need?</summary><p>An International Driving Permit with a motorcycle endorsement is strongly recommended for legality and insurance. We'll send a full pre-trip pack once you book with everything you need to sort.</p></details>
+    <details class="reveal"><summary>Can I come as a solo rider?</summary><p>Absolutely — over half our riders come solo. You'll share homestay rooms (single supplement available) and leave with a crew of new mates. That's kind of the whole point.</p></details>
+  </div>
+</section>
+
+<!-- FINAL CTA / BOOK -->
+<section id="book" class="final">
+  <div class="wrap">
+    <div class="reveal">
+      <span class="tag">Only 6 Trips a Season · Limited Seats</span>
+      <h2 style="margin-top:20px">Don't Be A<br>Soft Karnt.</h2>
+      <p>Seats fill fast and we cap every group at 8. Drop a deposit, lock your bike, and start counting down to the best week of your life.</p>
+      <div class="hero-cta" style="justify-content:center">
+        <a class="btn btn-primary" href="mailto:ride@sickkarnttours.com?subject=Book%20me%20on%20the%207-day%20Vietnam%20tour">Book My Spot — $2000</a>
+        <a class="btn btn-ghost" href="mailto:ride@sickkarnttours.com?subject=Question%20about%20the%20tour">Ask a Question</a>
+      </div>
+      <p style="margin-top:22px;color:var(--muted);font-size:.85rem">📧 ride@sickkarnttours.com · 📱 WhatsApp +84 000 000 000 · 📍 Ha Giang, Vietnam</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><use href="#skLogo"/></svg>
+      <span>Sick Karnt Tours<small>Ride Dirty · Ha Giang, Vietnam</small></span>
+    </div>
+    <div style="display:flex;gap:22px">
+      <a href="#trip">Trip</a><a href="#itinerary">Route</a><a href="#price">Price</a><a href="#faq">FAQ</a>
+    </div>
+  </div>
+  <div class="wrap">
+    <p class="disclaimer">⚠️ Concept site — Sick Karnt Tours is a fictional brand created for demonstration purposes only. All logos, prices, testimonials, contact details and imagery are invented and not real offers. No bookings are being taken. © 2026 Concept Demo.</p>
+  </div>
+</footer>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // --- Assign motion variants + stagger ---
+  document.querySelectorAll('.grid').forEach(grid=>{
+    Array.from(grid.children).filter(c=>c.classList.contains('reveal'))
+      .forEach((el,i)=>{ el.style.transitionDelay = ((i%3)*0.09 + 0.02).toFixed(2)+'s'; });
+  });
+  if(!reduce){
+    document.querySelectorAll('.timeline .day').forEach((el,i)=>{
+      el.setAttribute('data-reveal', i%2 ? 'right' : 'left');
+    });
+    document.querySelectorAll('.gallery.reveal, .price-card.reveal, .quote.reveal')
+      .forEach(el=> el.setAttribute('data-reveal','scale'));
+  }
+
+  // --- Scroll reveal (enter animations) ---
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  },{threshold:.1, rootMargin:'0px 0px -7% 0px'});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  // --- Scroll-driven motion engine (continuous rAF) ---
+  const bar = document.getElementById('progress');
+  const nav = document.querySelector('header.nav');
+  const heroInner = document.querySelector('.hero-inner');
+  const bgvid = document.querySelector('.hero .bgvid');
+  const dustC = document.getElementById('dust');
+  const mountains = document.querySelector('.hero .mountains');
+  const timeline = document.querySelector('.timeline');
+  const trailFill = document.getElementById('trailFill');
+  const marquee = document.querySelector('.marquee > div');
+
+  document.querySelectorAll('.daynum').forEach(el=> el.dataset.parallax = '8');
+  document.querySelectorAll('.section-title').forEach(el=> el.dataset.parallax = '4');
+  if(window.innerWidth > 640) document.querySelectorAll('.gallery figure img').forEach(im=> im.dataset.parallax = '4');
+  const pNodes = Array.from(document.querySelectorAll('[data-parallax]'));
+
+  const m = window.innerWidth < 700 ? 0.55 : 1;
+
+  // lightweight path for reduced-motion
+  if(reduce){
+    const upd = ()=>{ const doc=document.documentElement, y=doc.scrollTop, max=doc.scrollHeight-doc.clientHeight||1;
+      if(bar) bar.style.width=Math.min(100,(y/max)*100)+'%'; if(nav) nav.classList.toggle('scrolled', y>40); };
+    window.addEventListener('scroll', upd, {passive:true}); upd();
+  } else {
+    if(marquee) marquee.style.animation = 'none';
+    let mPos = 0, mHalf = marquee ? marquee.scrollWidth/2 : 0, vel = 0, lastY = window.scrollY;
+    window.addEventListener('resize', ()=>{ if(marquee) mHalf = marquee.scrollWidth/2; }, {passive:true});
+
+    function frame(){
+      const doc = document.documentElement, y = doc.scrollTop, vh = window.innerHeight;
+      const dy = y - lastY; lastY = y;
+      vel = vel*0.82 + dy*0.18;                       // smoothed scroll velocity
+      const max = doc.scrollHeight - doc.clientHeight || 1;
+      if(bar) bar.style.width = Math.min(100,(y/max)*100)+'%';
+      if(nav) nav.classList.toggle('scrolled', y > 40);
+
+      if(bgvid) bgvid.style.transform = 'translateY('+(y*0.35*m)+'px) scale(1.08)';
+      if(dustC) dustC.style.transform = 'translateY('+(y*0.18*m)+'px)';
+      if(mountains) mountains.style.transform = 'translateY('+(y*0.12*m)+'px)';
+      if(heroInner){
+        heroInner.style.transform = 'translateY('+(y*0.16*m)+'px)';
+        heroInner.style.opacity = Math.max(0, 1 - y/(vh*0.9));
+      }
+      for(const el of pNodes){
+        const r = el.getBoundingClientRect();
+        if(r.bottom < -60 || r.top > vh + 60) continue;
+        const off = r.top + r.height/2 - vh/2;
+        const f = parseFloat(el.dataset.parallax) || 0;
+        el.style.transform = 'translateY('+(-off*(f/100)*m).toFixed(1)+'px)';
+      }
+      if(timeline && trailFill){
+        const r = timeline.getBoundingClientRect();
+        trailFill.style.height = Math.max(0, Math.min(1, (vh*0.5 - r.top)/r.height))*100 + '%';
+      }
+      if(marquee){
+        mPos -= (0.55 + vel*0.4);                     // base drift + scroll velocity (reverses on scroll-up)
+        if(mHalf){ if(mPos <= -mHalf) mPos += mHalf; else if(mPos > 0) mPos -= mHalf; }
+        const sk = Math.max(-9, Math.min(9, vel*0.5));
+        marquee.style.transform = 'translateX('+mPos.toFixed(1)+'px) skewX('+sk.toFixed(2)+'deg)';
+      }
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // Count-up stats
+  function countUp(el){
+    const target = +el.dataset.count, suf = el.dataset.suffix || '';
+    const dur = 1400, t0 = performance.now();
+    function tick(t){
+      const k = Math.min(1,(t-t0)/dur), e = 1-Math.pow(1-k,3);
+      el.textContent = Math.round(target*e).toLocaleString() + suf;
+      if(k<1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+  const cio = new IntersectionObserver((es)=>{
+    es.forEach(e=>{ if(e.isIntersecting){ countUp(e.target); cio.unobserve(e.target);} });
+  },{threshold:.6});
+  document.querySelectorAll('[data-count]').forEach(el=>cio.observe(el));
+
+  // Floating embers / dust over the hero
+  (function(){
+    if(reduce || !dustC) return;
+    const ctx = dustC.getContext('2d');
+    let W,H,parts;
+    function size(){
+      const r = dustC.parentElement.getBoundingClientRect();
+      W = dustC.width = r.width; H = dustC.height = r.height;
+      const cap = W < 700 ? 34 : 90;
+      parts = Array.from({length: Math.min(cap, Math.floor(W/14))}, ()=>newP(true));
+    }
+    function newP(anywhere){
+      return {
+        x: Math.random()*W,
+        y: anywhere ? Math.random()*H : H+10,
+        r: Math.random()*2.2+0.4,
+        vx: (Math.random()-0.5)*0.35,
+        vy: -(Math.random()*0.7+0.25),
+        a: Math.random()*0.5+0.15,
+        ember: Math.random()<0.35
+      };
+    }
+    function draw(){
+      ctx.clearRect(0,0,W,H);
+      for(const p of parts){
+        p.x += p.vx; p.y += p.vy; p.x += Math.sin(p.y*0.02)*0.25;
+        if(p.y < -10){ Object.assign(p, newP(false)); }
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.r,0,7);
+        ctx.fillStyle = p.ember
+          ? 'rgba(255,'+(120+Math.random()*40|0)+',60,'+p.a+')'
+          : 'rgba(232,220,194,'+(p.a*0.7)+')';
+        ctx.shadowBlur = p.ember?8:0; ctx.shadowColor='rgba(255,120,50,.8)';
+        ctx.fill();
+      }
+      requestAnimationFrame(draw);
+    }
+    size(); draw();
+    window.addEventListener('resize', size);
+  })();
+
+  // Mobile hamburger menu
+  (function(){
+    const btn = document.getElementById('menuBtn');
+    const menu = document.getElementById('mobileMenu');
+    if(!btn || !menu) return;
+    function setOpen(open){
+      btn.classList.toggle('open', open);
+      menu.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open);
+      document.body.style.overflow = open ? 'hidden' : '';
+    }
+    btn.addEventListener('click', ()=> setOpen(!menu.classList.contains('open')));
+    menu.querySelectorAll('a').forEach(a=> a.addEventListener('click', ()=> setOpen(false)));
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') setOpen(false); });
+  })();
+</script>
+</body>
+</html>

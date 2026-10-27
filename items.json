@@ -1,7 +1,7 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-10-27T16:36:06+00:00",
+  "updated": "2026-10-27T16:36:08+00:00",
   "items": [
     {
       "slug": "share-with-friend",
@@ -736,6 +736,28 @@
       ],
       "zip": "items/pub-club-vice-coast/pub-club-vice-coast.zip",
       "install_prompt": "Please set up \"Pub Club: Vice Coast (browser pub-crawl game)\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/pub-club-vice-coast/pub-club-vice-coast.zip and unzip it to ~/claude-shelf/pub-club-vice-coast/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Open index.html. WASD to drive, Space to drift, F to get in/out, E to drink. On a phone, use the on-screen controls."
+    },
+    {
+      "slug": "sick-karnt-tours",
+      "title": "Sick Karnt Tours: Vietnam motorbike tour landing page",
+      "emoji": "🏍️",
+      "type": "website",
+      "summary": "A one-page landing site for a 7-day off-road motorcycle expedition in Vietnam: itinerary, pricing and booking call-to-action.",
+      "how_to_use": "Open index.html. Swap in your own trip details.",
+      "requires": "A browser.",
+      "tags": [],
+      "link": "",
+      "created": "2026-07-12T04:00:06+08:00",
+      "updated": "2026-07-12T04:00:06+08:00",
+      "version": 1,
+      "useful": 2,
+      "files": [
+        "apple-touch-icon.png",
+        "favicon.svg",
+        "index.html"
+      ],
+      "zip": "items/sick-karnt-tours/sick-karnt-tours.zip",
+      "install_prompt": "Please set up \"Sick Karnt Tours: Vietnam motorbike tour landing page\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/sick-karnt-tours/sick-karnt-tours.zip and unzip it to ~/claude-shelf/sick-karnt-tours/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Open index.html. Swap in your own trip details."
     },
     {
       "slug": "voice",

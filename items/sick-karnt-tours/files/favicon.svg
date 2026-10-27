@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Sick Karnt Tours bogan emblem">
+  <defs>
+    <linearGradient id="skO" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff8a4d"/><stop offset="1" stop-color="#e8501a"/>
+    </linearGradient>
+    <clipPath id="skDisc"><circle cx="32" cy="32" r="24.5"/></clipPath>
+  </defs>
+  <!-- badge -->
+  <circle cx="32" cy="32" r="31" fill="url(#skO)"/>
+  <circle cx="32" cy="32" r="28" fill="none" stroke="#12140c" stroke-width="5" stroke-dasharray="2.4 3.5"/>
+  <circle cx="32" cy="32" r="24.5" fill="#1b2f3f"/>
+  <g clip-path="url(#skDisc)">
+    <!-- singlet -->
+    <path d="M15 58 C 17 47 24 45 32 45 C 40 45 47 47 49 58 Z" fill="#2f6fb0"/>
+    <path d="M28 45 L28 52 M36 45 L36 52" stroke="#255c95" stroke-width="1.4"/>
+    <!-- mullet: long party at the back -->
+    <path d="M17 48 C 10 40 12 25 21 21 L 27 27 C 22 31 22 41 24 49 Z" fill="#5c3f22"/>
+    <path d="M47 48 C 54 40 52 25 43 21 L 37 27 C 42 31 42 41 40 49 Z" fill="#5c3f22"/>
+    <path d="M23 44 Q32 49 41 44 L 40 53 Q32 57 24 53 Z" fill="#4a3018"/>
+    <!-- ears -->
+    <circle cx="21.3" cy="32" r="2.4" fill="#e6b083"/>
+    <circle cx="42.7" cy="32" r="2.4" fill="#e6b083"/>
+    <!-- face -->
+    <ellipse cx="32" cy="31.5" rx="11" ry="12.6" fill="#e6b083"/>
+    <!-- short business up top -->
+    <path d="M21 25 C 21 16 43 16 43 25 C 40.5 21.5 38 21.5 36 22.8 C 34 19.8 30 19.8 28 22.8 C 26 21.5 23.5 21.5 21 25 Z" fill="#5c3f22"/>
+    <!-- sunnies -->
+    <rect x="21.3" y="26.6" width="9.2" height="6.3" rx="2.3" fill="#101010"/>
+    <rect x="33.5" y="26.6" width="9.2" height="6.3" rx="2.3" fill="#101010"/>
+    <rect x="30.2" y="28.4" width="3.6" height="1.7" fill="#101010"/>
+    <path d="M23 28.3 h3.2 l-3.2 3.2 z" fill="#ffffff" opacity="0.22"/>
+    <path d="M35.2 28.3 h3.2 l-3.2 3.2 z" fill="#ffffff" opacity="0.22"/>
+    <!-- nose -->
+    <path d="M32 33 l-1.4 3 h2.8 z" fill="#cf9765"/>
+    <!-- mo -->
+    <path d="M25.5 37.4 Q32 41.2 38.5 37.4 Q35 42.4 32 41.1 Q29 42.4 25.5 37.4 Z" fill="#4a3018"/>
+    <!-- cheeky grin -->
+    <path d="M29 43 Q32 45.4 35 43" fill="none" stroke="#3a2414" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- durry (cigarette) -->
+    <rect x="34.5" y="43.4" width="7.6" height="1.9" rx="0.9" fill="#f4efe4"/>
+    <rect x="41.2" y="43.4" width="1.6" height="1.9" fill="#ff6a2a"/>
+    <path d="M43.5 43 q1.6 -2.2 0.4 -4.2 q-1.2 -2 0.4 -4" fill="none" stroke="#cfd8d0" stroke-width="1" opacity="0.5" stroke-linecap="round"/>
+  </g>
+</svg>
