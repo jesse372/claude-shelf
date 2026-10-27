@@ -36,9 +36,18 @@ $SHELF publish --source <file-or-folder> \
   [--type skill|tool|website|prompt|script|other]  # auto: folder with SKILL.md = skill, else tool
   [--link https://live-site.example]               # for websites
   [--slug existing-slug]                           # to update an existing card
+  --useful 1-5                                     # ALWAYS set: drives the "Most useful" sort (5 = Top pick)
+  [--exclude GLOB]...                              # leave out folders/files, e.g. 'review-*' 'test.js' 'data'
+  [--redact]                                       # replace client names etc. with [redacted] instead of blocking
   [--tags a,b] [--dry-run]
 $SHELF verify <slug>      # waits until the live site shows it
+$SHELF rate <slug> 4      # change a rating later (Jesse: "rate X higher" → do this)
 ```
+**Usefulness (1-5), judged for the friend, not Jesse:** 5 = broadly useful to any Claude user
+(LLM Council, the JesseOS starter kit). 4 = useful to most people building with Claude.
+3 = useful if he has that need. 2 = niche or mostly a reference/example. 1 = just for fun or for one specific place.
+The site sorts by **Most useful** (rating, then newest) or **Most recent** (last-changed date).
+
 Write the summary, how-to-use and requires fields **for the friend**, in plain words. He hasn't
 seen the conversation and doesn't have JesseOS.
 
@@ -48,7 +57,10 @@ What publishing does:
 2. **Rewrites paths** so they work on the friend's machine: `~/.claude/skills/X` becomes
    `~/.claude/skills/X` and `~` becomes `~` (rules in `config.json`).
 3. **Scans** every text file and the card text. **Blocks** API keys, tokens, private keys, hard-coded
-   passwords and anything in `private-terms.txt` (private, never published). **Warns** on email
+   passwords, personal emails (gmail/outlook/icloud…), AU phone numbers, and anything in
+   `private-terms*.txt` (private, never published). `private-terms.clients.txt` holds client couple
+   names (from pixieset/ and reels/ albums). **Add each new couple there** when you shoot them.
+   Git repos publish **tracked files only** (respects .gitignore). Photos/videos get flagged for review. **Warns** on email
    addresses, phone numbers and leftover `JesseOS` references. Read the warnings. If one is a real
    dependency on Jesse's setup, mention it in `--requires` or generalise the file before publishing.
 4. Builds `<slug>.zip`. Skills zip as `<skill-name>/SKILL.md`, so the same zip works for Claude Code
@@ -59,6 +71,13 @@ What publishing does:
 
 Other commands: `scan <path>` (dry check only), `list`, `remove <slug>`, `rebuild` (after editing
 `scripts/site_template/index.html` or `config.json`), `publish ... --dry-run`.
+
+## Not on the shelf (deliberately, as of 2026-10-28)
+Client media and data (pixieset/, sculpt-training/, reels/ albums, Sculpt's review-* photos,
+wedding-jobs test.js with a real client's details), browser profiles (gsc/), video outputs
+(video-projects/, wedding-film/), clawd (agent memory about Jesse), jc-www-bridge (a temporary hack),
+strictly-ornate jersey concepts (client work), and **cartoon-studio** (held: it names Jesse's kids;
+post only if Jesse says yes). Rebuild the starter kit with `scripts/recipes/jesseos-starter.sh /tmp/x`.
 
 ## If the scan blocks
 Don't work around it. Remove or parameterise the secret (read it from an env var), or move the
