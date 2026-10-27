@@ -1,7 +1,7 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-10-27T16:35:11+00:00",
+  "updated": "2026-10-27T16:35:12+00:00",
   "items": [
     {
       "slug": "browser-probe",
@@ -100,6 +100,27 @@
       "skill_name": "pipeline-qc",
       "zip": "items/pipeline-qc/pipeline-qc.zip",
       "install_prompt": "Please install the Claude Code skill \"Pipeline QC: automations that fix themselves\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/pipeline-qc/pipeline-qc.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/pipeline-qc/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+    },
+    {
+      "slug": "scout",
+      "title": "Scout: search everywhere at once",
+      "emoji": "🛰️",
+      "type": "skill",
+      "summary": "When you ask Claude to 'check everywhere', it sends parallel searchers across repos, notes, drives and the web, then gives you ONE combined answer instead of searching one place at a time.",
+      "how_to_use": "Say \"scout: where did I put X?\" or \"look through my repos, notes and the web for Y\".",
+      "requires": "Claude Code (uses sub-agents).",
+      "tags": [],
+      "link": "",
+      "created": "2026-06-29T02:07:26+08:00",
+      "updated": "2026-06-29T02:07:26+08:00",
+      "version": 1,
+      "useful": 4,
+      "files": [
+        "SKILL.md"
+      ],
+      "skill_name": "scout",
+      "zip": "items/scout/scout.zip",
+      "install_prompt": "Please install the Claude Code skill \"Scout: search everywhere at once\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/scout/scout.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/scout/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "wrap-up",

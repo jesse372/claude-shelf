@@ -1,0 +1,20 @@
+{
+  "slug": "scout",
+  "title": "Scout: search everywhere at once",
+  "emoji": "🛰️",
+  "type": "skill",
+  "summary": "When you ask Claude to 'check everywhere', it sends parallel searchers across repos, notes, drives and the web, then gives you ONE combined answer instead of searching one place at a time.",
+  "how_to_use": "Say \"scout: where did I put X?\" or \"look through my repos, notes and the web for Y\".",
+  "requires": "Claude Code (uses sub-agents).",
+  "tags": [],
+  "link": "",
+  "created": "2026-06-29T02:07:26+08:00",
+  "updated": "2026-06-29T02:07:26+08:00",
+  "version": 1,
+  "useful": 4,
+  "files": [
+    "SKILL.md"
+  ],
+  "skill_name": "scout",
+  "zip": "items/scout/scout.zip"
+}
