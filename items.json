@@ -1,7 +1,7 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-10-27T16:35:21+00:00",
+  "updated": "2026-10-27T16:35:23+00:00",
   "items": [
     {
       "slug": "gmail",
@@ -96,6 +96,30 @@
       "skill_name": "browser-probe",
       "zip": "items/browser-probe/browser-probe.zip",
       "install_prompt": "Please install the Claude Code skill \"Browser Probe: let Claude actually look at your web app\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/browser-probe/browser-probe.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/browser-probe/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+    },
+    {
+      "slug": "media-inbox",
+      "title": "Media Inbox: get a video to Claude and transcribe it",
+      "emoji": "📥",
+      "type": "skill",
+      "summary": "Paste a Google Drive share link, any public video URL, or a local file path, and Claude downloads it and transcribes it offline. It's for when your chat app can't upload files.",
+      "how_to_use": "Say \"transcribe this video: <link>\" or \"watch this video\".",
+      "requires": "yt-dlp, ffmpeg, and local Whisper.",
+      "tags": [],
+      "link": "",
+      "created": "2026-07-29T04:00:03+08:00",
+      "updated": "2026-07-29T04:00:03+08:00",
+      "version": 1,
+      "useful": 3,
+      "files": [
+        "SKILL.md",
+        "scripts/install.sh",
+        "scripts/media-inbox-qc.sh",
+        "scripts/process-inbox.sh"
+      ],
+      "skill_name": "media-inbox",
+      "zip": "items/media-inbox/media-inbox.zip",
+      "install_prompt": "Please install the Claude Code skill \"Media Inbox: get a video to Claude and transcribe it\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/media-inbox/media-inbox.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/media-inbox/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "voice",

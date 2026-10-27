@@ -1,0 +1,23 @@
+{
+  "slug": "media-inbox",
+  "title": "Media Inbox: get a video to Claude and transcribe it",
+  "emoji": "📥",
+  "type": "skill",
+  "summary": "Paste a Google Drive share link, any public video URL, or a local file path, and Claude downloads it and transcribes it offline. It's for when your chat app can't upload files.",
+  "how_to_use": "Say \"transcribe this video: <link>\" or \"watch this video\".",
+  "requires": "yt-dlp, ffmpeg, and local Whisper.",
+  "tags": [],
+  "link": "",
+  "created": "2026-07-29T04:00:03+08:00",
+  "updated": "2026-07-29T04:00:03+08:00",
+  "version": 1,
+  "useful": 3,
+  "files": [
+    "SKILL.md",
+    "scripts/install.sh",
+    "scripts/media-inbox-qc.sh",
+    "scripts/process-inbox.sh"
+  ],
+  "skill_name": "media-inbox",
+  "zip": "items/media-inbox/media-inbox.zip"
+}
