@@ -1,0 +1,24 @@
+{
+  "slug": "meta-ads",
+  "title": "Meta Ads from Claude",
+  "emoji": "📣",
+  "type": "skill",
+  "summary": "Run Facebook/Instagram ads from the command line: duplicate campaigns, change budgets, pause and resume, and pull cost-per-lead reports. Every change is shown as a plan first and only applied when you confirm.",
+  "how_to_use": "Ask \"how are my ads doing?\", \"duplicate the winning ad set\", \"raise the budget to $40/day\".",
+  "requires": "Your own Meta Marketing API access token and ad account ID (SETUP.md).",
+  "tags": [],
+  "link": "",
+  "created": "2026-09-17T04:00:00+08:00",
+  "updated": "2026-09-17T04:00:00+08:00",
+  "version": 1,
+  "useful": 3,
+  "files": [
+    "SETUP.md",
+    "SKILL.md",
+    "scripts/ads.sh",
+    "scripts/metaads.py",
+    "scripts/test_metaads.py"
+  ],
+  "skill_name": "meta-ads",
+  "zip": "items/meta-ads/meta-ads.zip"
+}
