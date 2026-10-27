@@ -1,0 +1,22 @@
+{
+  "slug": "memory",
+  "title": "Memory: tiny capture + recall commands",
+  "emoji": "📝",
+  "type": "skill",
+  "summary": "The simplest long-term memory for agents: one command to save a decision, one to search past notes. Shared by Claude and Codex.",
+  "how_to_use": "Say \"remember that…\" or \"what did we decide about…\".",
+  "requires": "Expects a notes folder (~/JesseOS/vault/50-memory). Claude can repoint it.",
+  "tags": [],
+  "link": "",
+  "created": "2026-06-29T01:45:57+08:00",
+  "updated": "2026-09-24T10:11:50+08:00",
+  "version": 1,
+  "useful": 3,
+  "files": [
+    "SKILL.md",
+    "capture.sh",
+    "search.sh"
+  ],
+  "skill_name": "memory",
+  "zip": "items/memory/memory.zip"
+}
