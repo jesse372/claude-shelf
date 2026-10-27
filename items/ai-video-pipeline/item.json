@@ -1,0 +1,27 @@
+{
+  "slug": "ai-video-pipeline",
+  "title": "AI Video Pipeline: one prompt to a YouTube script",
+  "emoji": "🎬",
+  "type": "skill",
+  "summary": "Research a topic, fact-check every claim, write the script in your voice, and chunk it for voice cloning. Later stages render avatar video with motion graphics and QC it visually.",
+  "how_to_use": "Say \"make a video about X\" or \"write a video script about X\".",
+  "requires": "Stage 1 needs no keys. Voice and avatar stages need your own ElevenLabs/HeyGen accounts. The voice profile is Jesse's, so swap in your own.",
+  "tags": [],
+  "link": "",
+  "created": "2026-07-29T04:00:03+08:00",
+  "updated": "2026-07-29T04:00:03+08:00",
+  "version": 1,
+  "useful": 3,
+  "files": [
+    "SKILL.md",
+    "scripts/01-brief.sh",
+    "scripts/01-script.sh",
+    "scripts/derive-voice.sh",
+    "scripts/fetch-transcripts.sh",
+    "scripts/lib/common.sh",
+    "scripts/run.sh",
+    "templates/voice-playbook.md"
+  ],
+  "skill_name": "ai-video-pipeline",
+  "zip": "items/ai-video-pipeline/ai-video-pipeline.zip"
+}

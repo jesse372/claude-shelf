@@ -1,7 +1,7 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-10-27T16:35:27+00:00",
+  "updated": "2026-10-27T16:35:28+00:00",
   "items": [
     {
       "slug": "gmail",
@@ -120,6 +120,34 @@
       "skill_name": "browser-probe",
       "zip": "items/browser-probe/browser-probe.zip",
       "install_prompt": "Please install the Claude Code skill \"Browser Probe: let Claude actually look at your web app\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/browser-probe/browser-probe.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/browser-probe/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+    },
+    {
+      "slug": "ai-video-pipeline",
+      "title": "AI Video Pipeline: one prompt to a YouTube script",
+      "emoji": "🎬",
+      "type": "skill",
+      "summary": "Research a topic, fact-check every claim, write the script in your voice, and chunk it for voice cloning. Later stages render avatar video with motion graphics and QC it visually.",
+      "how_to_use": "Say \"make a video about X\" or \"write a video script about X\".",
+      "requires": "Stage 1 needs no keys. Voice and avatar stages need your own ElevenLabs/HeyGen accounts. The voice profile is Jesse's, so swap in your own.",
+      "tags": [],
+      "link": "",
+      "created": "2026-07-29T04:00:03+08:00",
+      "updated": "2026-07-29T04:00:03+08:00",
+      "version": 1,
+      "useful": 3,
+      "files": [
+        "SKILL.md",
+        "scripts/01-brief.sh",
+        "scripts/01-script.sh",
+        "scripts/derive-voice.sh",
+        "scripts/fetch-transcripts.sh",
+        "scripts/lib/common.sh",
+        "scripts/run.sh",
+        "templates/voice-playbook.md"
+      ],
+      "skill_name": "ai-video-pipeline",
+      "zip": "items/ai-video-pipeline/ai-video-pipeline.zip",
+      "install_prompt": "Please install the Claude Code skill \"AI Video Pipeline: one prompt to a YouTube script\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/ai-video-pipeline/ai-video-pipeline.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/ai-video-pipeline/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "media-inbox",
