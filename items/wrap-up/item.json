@@ -1,0 +1,23 @@
+{
+  "slug": "wrap-up",
+  "title": "Wrap-up: the end-of-project checklist",
+  "emoji": "✅",
+  "type": "skill",
+  "summary": "Before Claude calls anything 'done', it checks for things that will break silently later (expired logins, jobs that stopped running, untested cron paths), hardens them, saves reusable skills and writes notes to memory.",
+  "how_to_use": "Say \"wrap up\" or \"is this done?\" at the end of any project. You can also run scripts/audit.sh for a quick inventory.",
+  "requires": "Claude Code. Most useful on macOS with LaunchAgents/cron jobs.",
+  "tags": [],
+  "link": "",
+  "created": "2026-06-29T02:07:26+08:00",
+  "updated": "2026-06-29T02:07:26+08:00",
+  "version": 1,
+  "useful": 4,
+  "files": [
+    "SKILL.md",
+    "WRAP-UP-PROTOCOL.md",
+    "scripts/audit.sh",
+    "scripts/nightly_audit.py"
+  ],
+  "skill_name": "wrap-up",
+  "zip": "items/wrap-up/wrap-up.zip"
+}
