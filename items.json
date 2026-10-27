@@ -1,7 +1,7 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-10-27T16:36:08+00:00",
+  "updated": "2026-10-27T16:36:09+00:00",
   "items": [
     {
       "slug": "share-with-friend",
@@ -758,6 +758,30 @@
       ],
       "zip": "items/sick-karnt-tours/sick-karnt-tours.zip",
       "install_prompt": "Please set up \"Sick Karnt Tours: Vietnam motorbike tour landing page\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/sick-karnt-tours/sick-karnt-tours.zip and unzip it to ~/claude-shelf/sick-karnt-tours/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Open index.html. Swap in your own trip details."
+    },
+    {
+      "slug": "soundboks-landing",
+      "title": "Soundboks sale landing page",
+      "emoji": "🔊",
+      "type": "website",
+      "summary": "A single-product sales page (a $199 Soundboks 4 deal) with a hero image, specs and call-to-action. Use it as a quick template for selling one thing.",
+      "how_to_use": "Open index.html and replace the product, price and contact.",
+      "requires": "A browser.",
+      "tags": [],
+      "link": "",
+      "created": "2026-07-09T19:13:05+08:00",
+      "updated": "2026-07-09T23:00:35+08:00",
+      "version": 1,
+      "useful": 1,
+      "files": [
+        "index.html",
+        "product.png",
+        "icons/apple-touch-icon.png",
+        "icons/favicon.svg",
+        "icons/head_snippet.html"
+      ],
+      "zip": "items/soundboks-landing/soundboks-landing.zip",
+      "install_prompt": "Please set up \"Soundboks sale landing page\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/soundboks-landing/soundboks-landing.zip and unzip it to ~/claude-shelf/soundboks-landing/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Open index.html and replace the product, price and contact."
     },
     {
       "slug": "voice",

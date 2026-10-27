@@ -1,0 +1,23 @@
+{
+  "slug": "soundboks-landing",
+  "title": "Soundboks sale landing page",
+  "emoji": "🔊",
+  "type": "website",
+  "summary": "A single-product sales page (a $199 Soundboks 4 deal) with a hero image, specs and call-to-action. Use it as a quick template for selling one thing.",
+  "how_to_use": "Open index.html and replace the product, price and contact.",
+  "requires": "A browser.",
+  "tags": [],
+  "link": "",
+  "created": "2026-07-09T19:13:05+08:00",
+  "updated": "2026-07-09T23:00:35+08:00",
+  "version": 1,
+  "useful": 1,
+  "files": [
+    "index.html",
+    "product.png",
+    "icons/apple-touch-icon.png",
+    "icons/favicon.svg",
+    "icons/head_snippet.html"
+  ],
+  "zip": "items/soundboks-landing/soundboks-landing.zip"
+}

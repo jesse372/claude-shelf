@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soundboks 4 — $199 | Perth's Biggest Speaker Deal</title>
+<meta name="description" content="Grab the legendary Soundboks 4 Bluetooth party speaker for just $199 — save over $1,100. Genuine stock, safe local pickup & same-day delivery across Perth, WA.">
+
+<!-- Icons / home-screen (web-essentials) -->
+<link rel="icon" href="./icons/favicon.svg">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Soundboks 4">
+<meta name="theme-color" content="#0b0b0c">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Archivo+Black&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#f6f5f2; --ink:#111114; --muted:#5c5c66; --line:#e6e4de;
+    --card:#ffffff; --dark:#0b0b0c;
+    --deal:#e11d2a;            /* discount red */
+    --deal-dark:#b3121d;
+    --gold:#f5c518;            /* savings yellow */
+    --green:#12a150;           /* in-stock / trust */
+    --shadow:0 18px 50px rgba(17,17,20,.10);
+    --font:'Manrope',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    --display:'Archivo Black','Manrope',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--font);background:var(--bg);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+  a{color:inherit}
+
+  /* Announcement bar */
+  .anno{background:var(--deal);color:#fff;text-align:center;font-weight:700;font-size:14px;padding:9px 16px;letter-spacing:.01em}
+  .anno span{opacity:.92}
+
+  /* Sticky header */
+  header{position:sticky;top:0;z-index:40;background:rgba(246,245,242,.85);backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:62px}
+  .brand{font-family:var(--display);font-size:20px;letter-spacing:.02em}
+  .brand b{color:var(--deal)}
+  .nav-cta{background:var(--ink);color:#fff;text-decoration:none;font-weight:700;font-size:14px;padding:10px 18px;border-radius:10px;transition:transform .12s}
+  .nav-cta:hover{transform:translateY(-1px)}
+
+  /* Hero */
+  .hero{display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center;padding:52px 0 40px}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);color:var(--ink);font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding:7px 13px;border-radius:999px;box-shadow:var(--shadow)}
+  .eyebrow .pin{color:var(--deal)}
+  h1{font-family:var(--display);font-size:clamp(40px,7vw,66px);line-height:.98;letter-spacing:-.01em;margin:20px 0 0}
+  h1 .hl{color:var(--deal)}
+  .lede{color:var(--muted);font-size:clamp(16px,2.2vw,19px);margin-top:16px;max-width:520px}
+
+  .stars{display:flex;align-items:center;gap:10px;margin-top:18px;font-weight:700;font-size:14px}
+  .stars .s{color:var(--gold);font-size:18px;letter-spacing:2px}
+  .stars .muted{color:var(--muted);font-weight:600}
+
+  .pricerow{display:flex;align-items:flex-end;gap:14px;margin-top:22px;flex-wrap:wrap}
+  .now{font-family:var(--display);font-size:60px;line-height:.9;color:var(--ink)}
+  .now sup{font-size:26px;top:-.7em}
+  .was{color:var(--muted);text-decoration:line-through;font-size:22px;font-weight:700;margin-bottom:6px}
+  .save{background:var(--gold);color:#111;font-weight:800;font-size:14px;padding:7px 12px;border-radius:8px;margin-bottom:8px;box-shadow:var(--shadow)}
+
+  .ctas{display:flex;gap:12px;margin-top:22px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-weight:800;font-size:17px;padding:16px 26px;border-radius:13px;text-decoration:none;border:none;cursor:pointer;transition:transform .12s,box-shadow .12s}
+  .btn-primary{background:var(--deal);color:#fff;box-shadow:0 10px 26px rgba(225,29,42,.32)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(225,29,42,.42)}
+  .btn-ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+  .btn-ghost:hover{transform:translateY(-2px)}
+
+  .stockline{display:flex;align-items:center;gap:9px;margin-top:18px;font-weight:700;font-size:14.5px;color:var(--green)}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(18,161,80,.16)}
+  .stockline b{color:var(--deal)}
+
+  /* Hero image */
+  .shot{position:relative;background:radial-gradient(120% 120% at 50% 10%,#2b2b32 0%,#0b0b0c 68%);border-radius:26px;box-shadow:var(--shadow);padding:26px;aspect-ratio:1;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .shot img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 26px 48px rgba(0,0,0,.55))}
+  .flag{position:absolute;top:16px;left:16px;background:#fff;color:#111;font-weight:800;font-size:12px;padding:8px 12px;border-radius:10px;box-shadow:var(--shadow);display:flex;align-items:center;gap:7px}
+  .discbadge{position:absolute;bottom:-14px;right:-14px;width:118px;height:118px;border-radius:50%;background:var(--deal);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-weight:800;box-shadow:0 12px 30px rgba(225,29,42,.4);transform:rotate(-8deg)}
+  .discbadge .big{font-family:var(--display);font-size:30px;line-height:1}
+  .discbadge .sm{font-size:11px;letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
+
+  /* Trust strip */
+  .trust{background:var(--dark);color:#fff}
+  .trust .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:20px 20px}
+  .trust .t{display:flex;align-items:center;gap:11px;font-weight:700;font-size:14px}
+  .trust .t .ic{font-size:20px}
+  .trust .t small{display:block;color:#a9a9b2;font-weight:600;font-size:12.5px}
+
+  /* Section shell */
+  section.block{padding:56px 0}
+  .kicker{color:var(--deal);font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:13px}
+  h2{font-family:var(--display);font-size:clamp(28px,4.4vw,40px);line-height:1.05;margin:8px 0 6px}
+  .sub{color:var(--muted);font-size:17px;max-width:560px}
+
+  /* Deal / countdown */
+  .dealcard{background:linear-gradient(135deg,#141417,#232329);color:#fff;border-radius:24px;padding:36px;display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center;box-shadow:var(--shadow)}
+  .dealcard h3{font-family:var(--display);font-size:26px}
+  .dealcard p{color:#c7c7cf;margin-top:6px;font-size:15px}
+  .timer{display:flex;gap:10px}
+  .tbox{background:#0b0b0c;border:1px solid #35353d;border-radius:12px;min-width:66px;text-align:center;padding:12px 8px}
+  .tbox .n{font-family:var(--display);font-size:28px;line-height:1}
+  .tbox .l{font-size:11px;color:#9a9aa3;text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
+
+  /* Steps */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:28px}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px;box-shadow:var(--shadow)}
+  .step .num{width:38px;height:38px;border-radius:11px;background:var(--deal);color:#fff;font-family:var(--display);font-size:18px;display:flex;align-items:center;justify-content:center}
+  .step h4{font-size:18px;margin:14px 0 6px}
+  .step p{color:var(--muted);font-size:14.5px}
+
+  /* Features */
+  .feats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:28px}
+  .feat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow)}
+  .feat .ic{font-size:26px}
+  .feat h4{font-size:16px;margin:12px 0 5px}
+  .feat p{color:var(--muted);font-size:14px}
+
+  /* Reviews */
+  .reviews{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:28px}
+  .rev{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:var(--shadow)}
+  .rev .s{color:var(--gold);letter-spacing:2px;font-size:15px}
+  .rev p{margin:12px 0 16px;font-size:15px}
+  .rev .who{display:flex;align-items:center;gap:11px;font-weight:700;font-size:14px}
+  .rev .av{width:38px;height:38px;border-radius:50%;background:var(--deal);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800}
+  .rev .who small{display:block;color:var(--muted);font-weight:600}
+
+  /* Suburbs */
+  .suburbs{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:30px;margin-top:26px;box-shadow:var(--shadow)}
+  .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+  .chip{background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:8px 15px;font-weight:700;font-size:13.5px}
+
+  /* Final CTA */
+  .final{background:var(--deal);color:#fff;border-radius:26px;padding:52px 36px;text-align:center;box-shadow:0 20px 50px rgba(225,29,42,.3)}
+  .final h2{color:#fff}
+  .final p{color:#ffe3e5;max-width:520px;margin:8px auto 0;font-size:17px}
+  .final .btn{margin-top:24px;background:#fff;color:var(--deal)}
+  .final .btn:hover{background:#fff}
+  .final .small{color:#ffd5d8;font-size:13px;margin-top:12px}
+
+  footer{padding:34px 0 120px;text-align:center;color:var(--muted);font-size:14px}
+  footer b{color:var(--ink)}
+
+  /* Sticky mobile buy bar */
+  .buybar{position:fixed;bottom:0;left:0;right:0;z-index:50;background:#fff;border-top:1px solid var(--line);box-shadow:0 -8px 30px rgba(0,0,0,.10);padding:11px 16px;display:none;align-items:center;justify-content:space-between;gap:12px}
+  .buybar .p{font-family:var(--display);font-size:22px}
+  .buybar .p .was{font-size:14px;margin-left:6px}
+  .buybar a{background:var(--deal);color:#fff;font-weight:800;padding:13px 20px;border-radius:11px;text-decoration:none;font-size:15px}
+
+  @media (max-width:860px){
+    .hero{grid-template-columns:1fr;gap:30px}
+    .trust .wrap{grid-template-columns:1fr 1fr;gap:16px}
+    .steps,.feats,.reviews{grid-template-columns:1fr}
+    .feats{grid-template-columns:1fr 1fr}
+    .dealcard{grid-template-columns:1fr;text-align:center}
+    .timer{justify-content:center}
+    .nav-cta{display:none}
+    .buybar{display:flex}
+  }
+  @media (max-width:520px){ .feats{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+
+  <div class="anno">🔥 PERTH FLASH DEAL — Soundboks 4 just <b>$199</b> &nbsp;•&nbsp; <span>Save over $1,100 while stock lasts</span></div>
+
+  <header>
+    <div class="wrap nav">
+      <div class="brand">PERTH <b>SOUND</b> DEALS</div>
+      <a class="nav-cta" href="#buy">Grab it — $199 →</a>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <section class="hero" id="top">
+      <div>
+        <span class="eyebrow"><span class="pin">📍</span> Perth, WA · In stock today</span>
+        <h1>The Soundboks 4,<br><span class="hl">now just $199.</span></h1>
+        <p class="lede">Perth's loudest party speaker at our biggest markdown ever. Genuine stock, ready for safe local pickup or same-day delivery across the metro.</p>
+
+        <div class="stars"><span class="s">★★★★★</span><span>4.9/5</span><span class="muted">— loved by Perth party-goers</span></div>
+
+        <div class="pricerow">
+          <div class="now"><sup>$</sup>199</div>
+          <div class="was">$1,299</div>
+          <div class="save">YOU SAVE $1,100 · 85% OFF</div>
+        </div>
+
+        <div class="ctas">
+          <a class="btn btn-primary" href="#buy">🛒 Claim this deal</a>
+          <a class="btn btn-ghost" href="#how">How pickup works</a>
+        </div>
+
+        <div class="stockline"><span class="dot"></span> Only <b>&nbsp;a few units left</b>&nbsp; at this price in Perth</div>
+      </div>
+
+      <div class="shot">
+        <span class="flag">🇦🇺 Genuine WA stock</span>
+        <img src="./product.png" alt="Soundboks 4 Bluetooth performance speaker" width="2000" height="2000">
+        <div class="discbadge"><span class="big">$199</span><span class="sm">was $1,299</span></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="trust">
+    <div class="wrap">
+      <div class="t"><span class="ic">✅</span><div>100% Genuine<small>Brand-new, sealed stock</small></div></div>
+      <div class="t"><span class="ic">🚚</span><div>Same-day delivery<small>Across Perth metro</small></div></div>
+      <div class="t"><span class="ic">🤝</span><div>Safe local pickup<small>Meet in person, pay on collection</small></div></div>
+      <div class="t"><span class="ic">💳</span><div>Cash / card / transfer<small>No hidden fees</small></div></div>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <section class="block" id="deal">
+      <div class="dealcard">
+        <div>
+          <span class="kicker" style="color:var(--gold)">Flash price ends soon</span>
+          <h3>$199 today — then it's gone.</h3>
+          <p>We only hold this price while stock lasts. Once these Perth units sell, the deal's over.</p>
+        </div>
+        <div class="timer" id="timer" aria-label="countdown">
+          <div class="tbox"><div class="n" id="h">00</div><div class="l">Hrs</div></div>
+          <div class="tbox"><div class="n" id="m">00</div><div class="l">Min</div></div>
+          <div class="tbox"><div class="n" id="s">00</div><div class="l">Sec</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="how">
+      <span class="kicker">Easy as</span>
+      <h2>Yours in 3 simple steps</h2>
+      <p class="sub">No queues, no fuss — the friendly Perth way to shop a great deal.</p>
+      <div class="steps">
+        <div class="step"><div class="num">1</div><h4>Message us</h4><p>Tap “Claim this deal” and send your suburb. We'll reply fast to lock in your speaker.</p></div>
+        <div class="step"><div class="num">2</div><h4>Pick a time</h4><p>Choose safe local pickup or same-day delivery anywhere across the Perth metro.</p></div>
+        <div class="step"><div class="num">3</div><h4>Turn it up 🔊</h4><p>Pay on collection — cash, card or transfer — and get the party started tonight.</p></div>
+      </div>
+    </section>
+
+    <section class="block" id="specs">
+      <span class="kicker">Why the Soundboks 4</span>
+      <h2>Built to be the loudest in the room</h2>
+      <div class="feats">
+        <div class="feat"><div class="ic">🔊</div><h4>126 dB of power</h4><p>Concert-level volume that fills any backyard, beach or warehouse.</p></div>
+        <div class="feat"><div class="ic">🔋</div><h4>40+ hr battery</h4><p>Swappable battery keeps the music going all weekend long.</p></div>
+        <div class="feat"><div class="ic">🌧️</div><h4>Weatherproof & tough</h4><p>Drop-resistant and built for Perth summers, indoors or out.</p></div>
+        <div class="feat"><div class="ic">📶</div><h4>Bluetooth 5 + link</h4><p>Instant pairing, and chain multiple SOUNDBOKS for even bigger sound.</p></div>
+      </div>
+    </section>
+
+    <section class="block" id="reviews">
+      <span class="kicker">Local love</span>
+      <h2>Perth can't stop raving</h2>
+      <div class="reviews">
+        <div class="rev"><div class="s">★★★★★</div><p>“Picked it up in Scarborough same arvo. Absolutely rattles the whole backyard — best deal I've scored all year.”</p><div class="who"><span class="av">J</span><div>Jayden R.<small>Scarborough, WA</small></div></div></div>
+        <div class="rev"><div class="s">★★★★★</div><p>“Delivered to Freo within hours. Genuine, sealed, and honestly can't believe the price. Smooth and legit.”</p><div class="who"><span class="av">M</span><div>Mia T.<small>Fremantle, WA</small></div></div></div>
+        <div class="rev"><div class="s">★★★★★</div><p>“Took it to the river for a birthday — the sound is insane. Super easy pickup, top bloke to deal with.”</p><div class="who"><span class="av">C</span><div>Callum D.<small>Joondalup, WA</small></div></div></div>
+      </div>
+    </section>
+
+    <section class="block" id="delivery">
+      <div class="suburbs">
+        <span class="kicker">We come to you</span>
+        <h2 style="font-size:26px">Same-day delivery across Perth metro</h2>
+        <p class="sub">Free local pickup, or we'll drop it to your door across:</p>
+        <div class="chips">
+          <span class="chip">Perth CBD</span><span class="chip">Fremantle</span><span class="chip">Scarborough</span>
+          <span class="chip">Joondalup</span><span class="chip">Cottesloe</span><span class="chip">Subiaco</span>
+          <span class="chip">Cannington</span><span class="chip">Midland</span><span class="chip">Rockingham</span>
+          <span class="chip">Mandurah</span><span class="chip">+ all Perth metro</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="buy">
+      <div class="final">
+        <span class="kicker" style="color:#ffe3e5">Perth exclusive</span>
+        <h2>Grab your Soundboks 4 for $199</h2>
+        <p>Only a few left at this price. Send your suburb and we'll sort pickup or same-day delivery today.</p>
+        <a class="btn" href="mailto:you@example.com?subject=Soundboks%204%20%2D%20%24199%20Perth%20Deal&body=Hi!%20I%27d%20like%20to%20claim%20the%20Soundboks%204%20for%20%24199.%0A%0AMy%20Perth%20suburb%3A%20%0APickup%20or%20delivery%3A%20%0APreferred%20time%3A%20">📩 Claim it now — $199</a>
+        <div class="small">Or text / WhatsApp with your suburb and we'll reply straight away.</div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <div class="wrap">
+      <b>Perth Sound Deals</b> · Soundboks 4 · $199 AUD · Perth, Western Australia<br>
+      Genuine stock · Safe local pickup & same-day metro delivery · While stocks last.
+    </div>
+  </footer>
+
+  <div class="buybar">
+    <div class="p">$199 <span class="was" style="color:var(--muted);text-decoration:line-through">$1,299</span></div>
+    <a href="mailto:you@example.com?subject=Soundboks%204%20%2D%20%24199%20Perth%20Deal&body=Hi!%20I%27d%20like%20to%20claim%20the%20Soundboks%204%20for%20%24199.%0A%0AMy%20Perth%20suburb%3A%20">Claim deal →</a>
+  </div>
+
+  <script>
+    // Honest countdown: ticks down to midnight Perth time (AWST, UTC+8), then rolls to the next day.
+    function perthMidnightRemaining(){
+      var now = new Date();
+      // shift 'now' to AWST wall-clock
+      var awstNow = new Date(now.getTime() + (now.getTimezoneOffset()*60000) + (8*3600000));
+      var end = new Date(awstNow);
+      end.setHours(24,0,0,0); // next midnight AWST
+      return Math.max(0, end - awstNow);
+    }
+    function pad(n){return String(n).padStart(2,'0');}
+    function tick(){
+      var ms = perthMidnightRemaining();
+      var h = Math.floor(ms/3600000);
+      var m = Math.floor((ms%3600000)/60000);
+      var s = Math.floor((ms%60000)/1000);
+      document.getElementById('h').textContent = pad(h);
+      document.getElementById('m').textContent = pad(m);
+      document.getElementById('s').textContent = pad(s);
+    }
+    tick(); setInterval(tick,1000);
+  </script>
+</body>
+</html>
