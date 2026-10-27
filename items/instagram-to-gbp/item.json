@@ -1,0 +1,20 @@
+{
+  "slug": "instagram-to-gbp",
+  "title": "Instagram → Google Business Profile auto-poster",
+  "emoji": "📍",
+  "type": "script",
+  "summary": "A Zapier recipe that mirrors every new Instagram post to your Google Business Profile as a 'What's new' post, with hashtags stripped and Reels skipped. Good for local SEO.",
+  "how_to_use": "Follow RUNBOOK.md step by step. clean-caption.js is the Zapier code step.",
+  "requires": "Zapier, an Instagram Business account linked to a Facebook Page, and a Google Business Profile.",
+  "tags": [],
+  "link": "",
+  "created": "2026-10-01T18:39:43+08:00",
+  "updated": "2026-10-01T18:40:32+08:00",
+  "version": 1,
+  "useful": 3,
+  "files": [
+    "RUNBOOK.md",
+    "clean-caption.js"
+  ],
+  "zip": "items/instagram-to-gbp/instagram-to-gbp.zip"
+}
