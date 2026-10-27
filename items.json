@@ -1,0 +1,31 @@
+{
+  "title": "Jesse's Claude Shelf",
+  "site": "https://jesse372.github.io/claude-shelf/",
+  "updated": "2026-10-27T16:14:05+00:00",
+  "items": [
+    {
+      "slug": "llm-council",
+      "title": "LLM Council",
+      "emoji": "🏛️",
+      "type": "skill",
+      "summary": "Put a big decision in front of 5 AI advisors who each think differently. They review each other's answers anonymously, then a chairman gives you one verdict showing where they agree and where they clash.",
+      "how_to_use": "Install it, then say to Claude: \"council this: should I do X or Y?\" Give it real context (numbers, stakes, constraints). Best for decisions where being wrong is expensive, not quick yes/no questions.",
+      "requires": "Claude Code. No API keys by default (it uses Claude sub-agents). There's an optional multi-model mode if you want to add your own OpenAI/other keys.",
+      "tags": [
+        "decisions",
+        "thinking",
+        "strategy"
+      ],
+      "link": "",
+      "created": "2026-10-27T16:14:05+00:00",
+      "updated": "2026-10-27T16:14:05+00:00",
+      "version": 1,
+      "files": [
+        "SKILL.md"
+      ],
+      "skill_name": "llm-council",
+      "zip": "items/llm-council/llm-council.zip",
+      "install_prompt": "Please install the Claude Code skill \"LLM Council\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/llm-council/llm-council.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/llm-council/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+    }
+  ]
+}
