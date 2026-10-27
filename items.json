@@ -1,8 +1,33 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-10-27T16:14:05+00:00",
+  "updated": "2026-10-27T16:14:06+00:00",
   "items": [
+    {
+      "slug": "web-essentials",
+      "title": "Web Essentials: favicon + iPhone home-screen icon",
+      "emoji": "📱",
+      "type": "skill",
+      "summary": "A checklist Claude follows on every website it builds: a favicon, a proper iPhone Add-to-Home-Screen icon, and the right meta tags. Includes a script that turns any emoji into all the icons in one command.",
+      "how_to_use": "Install it and it kicks in whenever you ask Claude to build a web page. Or run it yourself: python3 ~/.claude/skills/web-essentials/scripts/emoji_icon.py \"🚀\" --title \"My Site\"",
+      "requires": "macOS (uses the Apple emoji font) and Python with Pillow (pip install pillow).",
+      "tags": [
+        "web",
+        "design",
+        "icons"
+      ],
+      "link": "",
+      "created": "2026-10-27T16:14:06+00:00",
+      "updated": "2026-10-27T16:14:06+00:00",
+      "version": 1,
+      "files": [
+        "SKILL.md",
+        "scripts/emoji_icon.py"
+      ],
+      "skill_name": "web-essentials",
+      "zip": "items/web-essentials/web-essentials.zip",
+      "install_prompt": "Please install the Claude Code skill \"Web Essentials: favicon + iPhone home-screen icon\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/web-essentials/web-essentials.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/web-essentials/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+    },
     {
       "slug": "llm-council",
       "title": "LLM Council",
