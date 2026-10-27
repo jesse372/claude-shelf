@@ -58,7 +58,10 @@
   .card.small h2 { font-size: 15px; }
   .card.small .emoji { font-size: 20px; width: 34px; height: 34px; border-radius: 9px; }
   .card.small .summary { font-size: 13.5px; color: var(--muted); }
-  .card.small .btn { padding: 6px 10px; font-size: 12.5px; }
+  .card.small .btn { padding: 5px 9px; font-size: 12px; }
+  .card.small .btn.primary { background: var(--panel2); border-color: var(--line); color: var(--text); font-weight: 500; }
+  .card.small .summary { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .card.small .stars { display: none; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 16px; }
   .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px;
     display: flex; flex-direction: column; gap: 10px; }
