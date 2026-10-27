@@ -1,7 +1,7 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-10-27T16:36:03+00:00",
+  "updated": "2026-10-27T16:36:05+00:00",
   "items": [
     {
       "slug": "share-with-friend",
@@ -125,6 +125,48 @@
       "skill_name": "daily-reels",
       "zip": "items/daily-reels/daily-reels.zip",
       "install_prompt": "Please install the Claude Code skill \"Daily Reels: an Instagram reel every day, automatically\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/daily-reels/daily-reels.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/daily-reels/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+    },
+    {
+      "slug": "jesse-night-out",
+      "title": "JESSE: Night Out, a 3D neon-city browser game",
+      "emoji": "🌃",
+      "type": "website",
+      "summary": "A GTA-style night out in the browser: drivable Ferrari, animated character, neon city with enterable pubs and clubs, traffic and pedestrians, a minimap, procedural audio, and a drunk meter that ends badly at 100%.",
+      "how_to_use": "Open index.html in a browser (it loads ~4 MB of 3D models from CDNs the first time).",
+      "requires": "A modern browser.",
+      "tags": [],
+      "link": "",
+      "created": "2026-07-20T04:00:02+08:00",
+      "updated": "2026-10-25T04:00:18+08:00",
+      "version": 1,
+      "useful": 3,
+      "files": [
+        "NIGHT_SUMMARY.md",
+        "assets/city/Textures/colormap.png",
+        "assets/city/building-garage.glb",
+        "assets/city/building-small-a.glb",
+        "assets/city/building-small-b.glb",
+        "assets/city/building-small-c.glb",
+        "assets/city/building-small-d.glb",
+        "assets/city/character.glb",
+        "assets/city/coin.glb",
+        "assets/city/grass-trees.glb",
+        "assets/city/pavement.glb",
+        "assets/city/road-corner.glb",
+        "assets/city/road-intersection.glb",
+        "assets/city/road-straight-lightposts.glb",
+        "assets/city/road-straight.glb",
+        "assets/racing/Textures/colormap.png",
+        "assets/racing/vehicle-motorcycle.glb",
+        "assets/racing/vehicle-truck-green.glb",
+        "assets/racing/vehicle-truck-purple.glb",
+        "assets/racing/vehicle-truck-red.glb",
+        "assets/racing/vehicle-truck-yellow.glb",
+        "gta-jesse.html",
+        "index.html"
+      ],
+      "zip": "items/jesse-night-out/jesse-night-out.zip",
+      "install_prompt": "Please set up \"JESSE: Night Out, a 3D neon-city browser game\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/jesse-night-out/jesse-night-out.zip and unzip it to ~/claude-shelf/jesse-night-out/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Open index.html in a browser (it loads ~4 MB of 3D models from CDNs the first time)."
     },
     {
       "slug": "wedding-jobs-bot",
