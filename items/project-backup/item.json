@@ -1,0 +1,23 @@
+{
+  "slug": "project-backup",
+  "title": "Project Backup: every project gets a private GitHub repo",
+  "emoji": "💾",
+  "type": "skill",
+  "summary": "At the start of any project, Claude initialises git, writes a sensible .gitignore (keeps secrets and huge files out), creates a PRIVATE GitHub repo and registers it for nightly automatic backup.",
+  "how_to_use": "Say \"back up this project\" or \"set up a repo\", or let it run when you start a new project.",
+  "requires": "GitHub CLI (gh) logged in. macOS for the nightly LaunchAgent.",
+  "tags": [],
+  "link": "",
+  "created": "2026-06-29T02:07:26+08:00",
+  "updated": "2026-09-24T04:00:18+08:00",
+  "version": 1,
+  "useful": 4,
+  "files": [
+    "SKILL.md",
+    "launchagents/com.jesse.project-backup.plist",
+    "scripts/backup_projects.sh",
+    "scripts/init_project.sh"
+  ],
+  "skill_name": "project-backup",
+  "zip": "items/project-backup/project-backup.zip"
+}
