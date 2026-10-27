@@ -1,0 +1,16 @@
+{
+  "slug": "jessechance-com",
+  "title": "jessechance.com: Jesse's wedding photography site",
+  "emoji": "📸",
+  "type": "website",
+  "summary": "Jesse's business site, rebuilt with Claude as a fast static site with no framework or CMS: galleries, films, packages, venue pages and a booking form.",
+  "how_to_use": "Have a look for ideas. Ask Claude for a static, no-framework site like this one.",
+  "requires": "",
+  "tags": [],
+  "link": "https://jessechance.com/",
+  "created": "2026-08-08T16:11:04+08:00",
+  "updated": "2026-10-19T19:15:20+08:00",
+  "version": 1,
+  "useful": 2,
+  "files": []
+}

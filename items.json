@@ -1,7 +1,7 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-10-27T16:36:11+00:00",
+  "updated": "2026-10-27T16:36:12+00:00",
   "items": [
     {
       "slug": "share-with-friend",
@@ -167,6 +167,23 @@
       ],
       "zip": "items/jesse-night-out/jesse-night-out.zip",
       "install_prompt": "Please set up \"JESSE: Night Out, a 3D neon-city browser game\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/jesse-night-out/jesse-night-out.zip and unzip it to ~/claude-shelf/jesse-night-out/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Open index.html in a browser (it loads ~4 MB of 3D models from CDNs the first time)."
+    },
+    {
+      "slug": "jessechance-com",
+      "title": "jessechance.com: Jesse's wedding photography site",
+      "emoji": "📸",
+      "type": "website",
+      "summary": "Jesse's business site, rebuilt with Claude as a fast static site with no framework or CMS: galleries, films, packages, venue pages and a booking form.",
+      "how_to_use": "Have a look for ideas. Ask Claude for a static, no-framework site like this one.",
+      "requires": "",
+      "tags": [],
+      "link": "https://jessechance.com/",
+      "created": "2026-08-08T16:11:04+08:00",
+      "updated": "2026-10-19T19:15:20+08:00",
+      "version": 1,
+      "useful": 2,
+      "files": [],
+      "install_prompt": null
     },
     {
       "slug": "wedding-jobs-bot",
