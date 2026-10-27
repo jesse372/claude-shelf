@@ -4,17 +4,14 @@
   "emoji": "🏛️",
   "type": "skill",
   "summary": "Put a big decision in front of 5 AI advisors who each think differently. They review each other's answers anonymously, then a chairman gives you one verdict showing where they agree and where they clash.",
-  "how_to_use": "Install it, then say to Claude: \"council this: should I do X or Y?\" Give it real context (numbers, stakes, constraints). Best for decisions where being wrong is expensive, not quick yes/no questions.",
-  "requires": "Claude Code. No API keys by default (it uses Claude sub-agents). There's an optional multi-model mode if you want to add your own OpenAI/other keys.",
-  "tags": [
-    "decisions",
-    "thinking",
-    "strategy"
-  ],
+  "how_to_use": "Say to Claude: \"council this: should I do X or Y?\" and give it real context (numbers, stakes, constraints). Best for decisions where being wrong is expensive.",
+  "requires": "Claude Code. No API keys by default (it uses Claude sub-agents). Optional multi-model mode with your own keys.",
+  "tags": [],
   "link": "",
-  "created": "2026-10-27T16:14:27+00:00",
-  "updated": "2026-10-27T16:14:27+00:00",
+  "created": "2026-06-29T02:07:26+08:00",
+  "updated": "2026-06-29T02:07:26+08:00",
   "version": 1,
+  "useful": 5,
   "files": [
     "SKILL.md"
   ],
