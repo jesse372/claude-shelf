@@ -1,0 +1,21 @@
+{
+  "slug": "telly",
+  "title": "Telly: prank the tap-list TVs",
+  "emoji": "📺",
+  "type": "skill",
+  "summary": "Mess with a bar's tap-list TV screens in real time: scramble every word, handwrite a message across the screen, or put a photo up.",
+  "how_to_use": "Only works with the Beer Tap List screens (see that card). Shared as a fun example.",
+  "requires": "A Beer Tap List install.",
+  "tags": [],
+  "link": "",
+  "created": "2026-10-04T04:00:04+08:00",
+  "updated": "2026-10-04T04:00:04+08:00",
+  "version": 1,
+  "useful": 1,
+  "files": [
+    "SKILL.md",
+    "scripts/telly"
+  ],
+  "skill_name": "telly",
+  "zip": "items/telly/telly.zip"
+}

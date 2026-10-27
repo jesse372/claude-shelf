@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+# telly — mess with the MadLad tap list TVs from the command line.
+# Every screen polls the ontap-publish worker every 3s, so effects land within ~3s.
+set -euo pipefail
+W="https://ontap-publish.madlad-taps.workers.dev"
+
+fire(){  # $1 = JSON body
+  local r; r=$(curl -sS --max-time 15 -X POST "$W/laugh" -H 'Content-Type: application/json' -d "$1") \
+    || { echo "telly: couldn't reach the worker" >&2; exit 1; }
+  echo "$r" | grep -q '"ok":true' || { echo "telly: worker said: $r" >&2; exit 1; }
+  echo "sent $(date +%T)  $r"
+}
+json(){ python3 -c 'import json,sys; print(json.dumps(sys.argv[1]))' "$1"; }
+num(){ [[ "$1" =~ ^[0-9]+(\.[0-9]+)?$ ]] || { echo "telly: '$1' isn't a number of seconds" >&2; exit 1; }; echo "$1"; }
+
+usage(){ cat <<'U'
+telly — mess with the tap list TVs
+
+  telly jumble [secs]              scramble every word on the board (default 2s, max 30)
+  telly write "text" [secs]        handwrite text across the screen (default 30s, 5-120, max 40 chars)
+  telly photo FILE [secs] ["cap"]  upload a picture and show it (default 30s), optional handwritten caption
+  telly show [secs] ["cap"]        show the last uploaded picture again
+  telly unphoto                    delete the stored picture from the worker
+  telly laugh                      the next gag in the "Want a laugh?" rotation
+  telly status                     what the TVs last received
+
+One thing at a time: a screen ignores anything sent while it's still showing
+the previous effect, so wait for it to finish.
+U
+}
+
+cmd="${1:-help}"; shift || true
+case "$cmd" in
+  jumble|j)
+    s=$(num "${1:-2}"); fire "{\"fx\":\"jumble\",\"secs\":$s}" ;;
+  write|w)
+    [ -n "${1:-}" ] || { echo 'usage: telly write "text" [secs]' >&2; exit 1; }
+    [ ${#1} -le 40 ] || echo "telly: note — only the first 40 characters will show" >&2
+    s=$(num "${2:-30}"); fire "{\"text\":$(json "$1"),\"secs\":$s}" ;;
+  photo|p)
+    f="${1:-}"; [ -f "$f" ] || { echo "usage: telly photo FILE [secs] [\"caption\"]" >&2; exit 1; }
+    s=$(num "${2:-30}")
+    tmp=$(mktemp -t telly).jpg
+    sips -s format jpeg -s formatOptions 85 -Z 1500 "$f" --out "$tmp" >/dev/null
+    python3 - "$tmp" <<'PY' | curl -sS --max-time 60 -X POST "$W/laughimg" -H 'Content-Type: application/json' --data-binary @- | grep -q '"ok":true' \
+      || { echo "telly: picture upload failed" >&2; rm -f "$tmp"; exit 1; }
+import base64, json, sys
+print(json.dumps({"image": "data:image/jpeg;base64," + base64.b64encode(open(sys.argv[1], "rb").read()).decode()}))
+PY
+    rm -f "$tmp"; echo "uploaded $(basename "$f")"
+    body="{\"img\":true,\"secs\":$s"; [ -n "${3:-}" ] && body+=",\"text\":$(json "$3")"
+    fire "$body}" ;;
+  show|s)
+    s=$(num "${1:-30}")
+    body="{\"img\":true,\"secs\":$s"; [ -n "${2:-}" ] && body+=",\"text\":$(json "$2")"
+    fire "$body}" ;;
+  unphoto)
+    curl -sS -X POST "$W/laughimg" -H 'Content-Type: application/json' -d '{"image":null}'; echo ;;
+  laugh|l)
+    fire '{}' ;;
+  status)
+    curl -sS "$W/laugh"; echo ;;
+  help|-h|--help) usage ;;
+  *) echo "telly: unknown command '$cmd'" >&2; usage; exit 1 ;;
+esac
