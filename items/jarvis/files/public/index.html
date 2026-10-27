@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>J.A.R.V.I.S — JesseOS</title>
+<link rel="icon" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="JARVIS">
+<meta name="theme-color" content="#07090c">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#04060a; --panel:#0a0e14; --line:#1a2433; --line2:#233246;
+  --amber:#ffb454; --amber-dim:#8a6430; --cyan:#38e1ff; --cyan-dim:#1a6d80;
+  --red:#ff4d5e; --green:#3dff8e; --text:#c8d6e5; --dim:#5d7290;
+  --mono:'Share Tech Mono',ui-monospace,Menlo,monospace;
+  --disp:'Rajdhani','Avenir Next',system-ui,sans-serif;
+  /* fluid type scale — everything grows with the screen */
+  --fs-huge:clamp(30px,2.6vw,60px);
+  --fs-big:clamp(20px,1.6vw,36px);
+  --fs-body:clamp(16px,1.2vw,27px);
+  --fs-small:clamp(12px,.95vw,21px);
+  --fs-tiny:clamp(10px,.75vw,17px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--bg); color:var(--text); font-family:var(--disp);
+  overflow:hidden; display:flex; flex-direction:column; cursor:default;
+}
+body::before{ /* layered grid: fine + major lines */
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image:
+    linear-gradient(rgba(56,225,255,.028) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(56,225,255,.028) 1px,transparent 1px),
+    linear-gradient(rgba(56,225,255,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(56,225,255,.05) 1px,transparent 1px);
+  background-size:3.2vmin 3.2vmin,3.2vmin 3.2vmin,16vmin 16vmin,16vmin 16vmin;
+}
+body::after{ /* scanlines */
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:60; opacity:.3;
+  background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(0,0,0,.11) 2px 4px);
+}
+#vignette{position:fixed; inset:0; pointer-events:none; z-index:1;
+  background:radial-gradient(ellipse 75% 70% at 50% 42%,transparent 55%,rgba(0,0,0,.55) 100%);}
+#sweep{ /* slow radar sweep — transform-only, GPU-composited */
+  position:fixed; top:0; bottom:0; width:22vw; z-index:1; pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(56,225,255,.045),rgba(255,180,84,.05),transparent);
+  animation:sweep 11s linear infinite;
+}
+@keyframes sweep{from{transform:translateX(-25vw)}to{transform:translateX(125vw)}}
+.corner{position:fixed; width:4.5vmin; height:4.5vmin; z-index:5; pointer-events:none; opacity:.75}
+.corner.tl{top:1vmin;left:1vmin;border-top:2px solid var(--amber);border-left:2px solid var(--amber)}
+.corner.tr{top:1vmin;right:1vmin;border-top:2px solid var(--amber);border-right:2px solid var(--amber)}
+.corner.bl{bottom:1vmin;left:1vmin;border-bottom:2px solid var(--amber);border-left:2px solid var(--amber)}
+.corner.br{bottom:1vmin;right:1vmin;border-bottom:2px solid var(--amber);border-right:2px solid var(--amber)}
+
+/* ---------- header ---------- */
+header{
+  display:flex; align-items:center; justify-content:space-between; gap:2vw;
+  padding:1.1vh 2.2vw; border-bottom:1px solid var(--line); z-index:4;
+  background:linear-gradient(180deg,rgba(20,28,40,.7),rgba(10,14,20,.4));
+}
+.brand{display:flex; align-items:baseline; gap:1vw}
+.brand h1{
+  font-weight:700; letter-spacing:.5em; font-size:var(--fs-big);
+  color:var(--amber); text-shadow:0 0 18px rgba(255,180,84,.55);
+}
+.brand span{font-family:var(--mono); font-size:var(--fs-tiny); color:var(--dim); letter-spacing:.25em}
+#hstatus{font-family:var(--mono); font-size:var(--fs-tiny); letter-spacing:.3em; color:var(--cyan-dim)}
+#hstatus b{color:var(--green); font-weight:400; animation:blink 2.4s infinite}
+@keyframes blink{50%{opacity:.35}}
+
+/* ---------- layout ---------- */
+main{flex:1; display:flex; min-height:0; z-index:2; position:relative}
+#center{flex:1; display:flex; flex-direction:column; align-items:center; min-height:0; min-width:0}
+
+aside{display:flex; flex-direction:column; gap:1.4vh; overflow-y:auto; scrollbar-width:none; padding:1.6vh 0}
+#widgets{flex:0 0 clamp(250px,19vw,460px); padding-left:1.4vw; padding-right:.4vw}
+#syspanel{flex:0 0 clamp(240px,16.5vw,420px); padding-right:1.4vw; padding-left:.4vw}
+.tile{
+  border:1px solid var(--line); background:linear-gradient(180deg,rgba(14,20,29,.88),rgba(9,13,19,.88));
+  padding:1.4vh 1vw; position:relative;
+  clip-path:polygon(1.2vmin 0,100% 0,100% calc(100% - 1.2vmin),calc(100% - 1.2vmin) 100%,0 100%,0 1.2vmin);
+  animation:fadeup .3s ease;
+}
+.tile h3{
+  font-family:var(--mono); font-size:var(--fs-tiny); letter-spacing:.35em; color:var(--dim);
+  border-bottom:1px solid var(--line); padding-bottom:.8vh; margin-bottom:1vh; font-weight:400;
+}
+.tile h3::before{content:'◢ '; color:var(--amber); font-size:.8em}
+.tile .big{font-size:var(--fs-huge); font-weight:600; color:var(--cyan); line-height:1.05; text-shadow:0 0 16px rgba(56,225,255,.4)}
+.tile .big.amber{color:var(--amber); text-shadow:0 0 16px rgba(255,180,84,.4)}
+.tile .sub{font-family:var(--mono); font-size:var(--fs-tiny); color:var(--dim); margin-top:.5vh; letter-spacing:.05em}
+.tile .row{display:flex; justify-content:space-between; font-family:var(--mono); font-size:var(--fs-small); margin-top:.6vh; color:var(--text)}
+.tile .row .r{color:var(--dim)}
+.up{color:var(--green) !important}
+.down{color:var(--red) !important}
+.tile .empty{font-family:var(--mono); font-size:var(--fs-tiny); color:#3a4b62; line-height:1.7}
+.tile .stamp{font-family:var(--mono); font-size:calc(var(--fs-tiny) * .85); color:#3a4b62; letter-spacing:.1em; margin-top:.7vh; opacity:.85}
+
+/* system panel */
+#bigClock{font-family:var(--mono); font-size:clamp(34px,3vw,72px); color:var(--amber); text-shadow:0 0 18px rgba(255,180,84,.5); letter-spacing:.06em; line-height:1}
+#bigDate{margin-top:.5vh}
+.bar{margin-top:1vh}
+.bar .lbl{display:flex; justify-content:space-between; font-family:var(--mono); font-size:var(--fs-tiny); color:var(--dim); margin-bottom:.4vh}
+.bar .lbl b{color:var(--cyan); font-weight:400}
+.bar .track{height:.9vh; background:rgba(56,225,255,.08); border:1px solid var(--line); position:relative; overflow:hidden}
+.bar .fill{position:absolute; inset:0 auto 0 0; width:0%; background:linear-gradient(90deg,var(--cyan-dim),var(--cyan)); transition:width .8s ease; box-shadow:0 0 8px rgba(56,225,255,.5)}
+.bar.warn .fill{background:linear-gradient(90deg,#804020,var(--amber))}
+#ops{display:flex; flex-direction:column; gap:.5vh; max-height:30vh; overflow:hidden}
+#ops div{font-family:var(--mono); font-size:var(--fs-tiny); color:var(--dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; animation:fadeup .25s ease}
+#ops div b{color:var(--amber); font-weight:400}
+
+/* ---------- orb ---------- */
+#orbWrap{position:relative; flex:0 0 auto; margin-top:.6vh}
+canvas#orb{display:block}
+#orbState{
+  position:absolute; left:50%; bottom:-.4vh; transform:translateX(-50%);
+  font-family:var(--mono); font-size:var(--fs-tiny); letter-spacing:.55em; color:var(--cyan-dim);
+  text-transform:uppercase; white-space:nowrap;
+}
+
+/* ---------- transcript ---------- */
+#log{
+  flex:1; width:min(1400px,62vw); overflow-y:auto; min-height:0;
+  padding:1vh .5vw 2.5vh; scrollbar-width:thin; scrollbar-color:var(--line) transparent;
+  mask-image:linear-gradient(180deg,transparent 0,#000 20px);
+}
+.msg{margin:1.4vh 0; display:flex; flex-direction:column; animation:fadeup .25s ease}
+@keyframes fadeup{from{opacity:0; transform:translateY(8px)}to{opacity:1}}
+.msg .who{font-family:var(--mono); font-size:var(--fs-tiny); letter-spacing:.35em; margin-bottom:.5vh}
+.msg.user .who{color:var(--amber)}
+.msg.ai .who{color:var(--cyan)}
+.msg.sys .who{color:var(--dim)}
+.msg .body{
+  font-size:var(--fs-body); line-height:1.55; white-space:pre-wrap; word-wrap:break-word;
+  border-left:3px solid var(--line); padding:.8vh 1vw; background:rgba(13,18,25,.55);
+}
+.msg.user .body{border-color:var(--amber-dim)}
+.msg.ai .body{border-color:var(--cyan-dim)}
+.msg.sys .body{color:var(--dim); font-family:var(--mono); font-size:var(--fs-small)}
+.tools{display:flex; flex-wrap:wrap; gap:.6vh .4vw; margin:.8vh 0 0 1vw}
+.chip{
+  font-family:var(--mono); font-size:var(--fs-tiny); color:var(--amber);
+  border:1px solid var(--amber-dim); padding:.3vh .6vw; border-radius:2px;
+  background:rgba(255,180,84,.05); max-width:30vw; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  animation:fadeup .2s ease;
+}
+.chip::before{content:'▸ '; color:var(--cyan)}
+.meta{font-family:var(--mono); font-size:var(--fs-tiny); color:var(--dim); margin:.5vh 0 0 1vw}
+
+/* ---------- input bar ---------- */
+#bar{
+  display:flex; align-items:center; gap:1vw; width:min(1400px,62vw);
+  margin:0 auto 1.8vh; padding:1.2vh 1.2vw; border:1px solid var(--line2);
+  background:linear-gradient(180deg,rgba(16,22,32,.92),rgba(10,14,20,.92));
+  clip-path:polygon(1.6vmin 0,100% 0,100% calc(100% - 1.6vmin),calc(100% - 1.6vmin) 100%,0 100%,0 1.6vmin);
+  z-index:3; box-shadow:0 0 30px rgba(56,225,255,.06);
+}
+#micBtn{
+  width:clamp(48px,4.2vw,92px); height:clamp(48px,4.2vw,92px); border-radius:50%;
+  border:2px solid var(--cyan-dim);
+  background:radial-gradient(circle at 50% 40%,rgba(56,225,255,.2),rgba(10,14,20,.9));
+  color:var(--cyan); font-size:clamp(20px,1.8vw,40px); cursor:pointer; flex:0 0 auto;
+  transition:box-shadow .15s,border-color .15s;
+}
+#micBtn.rec{border-color:var(--red); color:var(--red); box-shadow:0 0 28px rgba(255,77,94,.65); animation:pulse 1s infinite}
+@keyframes pulse{50%{box-shadow:0 0 44px rgba(255,77,94,.95)}}
+#input{
+  flex:1; background:transparent; border:none; outline:none; color:var(--text);
+  font-family:var(--disp); font-size:clamp(18px,1.4vw,32px); letter-spacing:.02em;
+}
+#input::placeholder{color:var(--dim); font-family:var(--mono); font-size:clamp(13px,1vw,22px); letter-spacing:.12em}
+.btn{
+  font-family:var(--mono); font-size:var(--fs-tiny); letter-spacing:.18em; cursor:pointer;
+  color:var(--dim); background:none; border:1px solid var(--line); padding:1vh .8vw;
+  transition:color .15s,border-color .15s; white-space:nowrap;
+}
+.btn:hover{color:var(--cyan); border-color:var(--cyan-dim)}
+.btn.on{color:var(--amber); border-color:var(--amber-dim)}
+.btn.danger:hover{color:var(--red); border-color:var(--red)}
+#hint{
+  text-align:center; font-family:var(--mono); font-size:var(--fs-tiny); color:#2c3a4e;
+  letter-spacing:.3em; padding-bottom:1vh; z-index:2;
+}
+/* ---------- sleep mode ---------- */
+#sleepOverlay{
+  position:fixed; inset:0; background:#000; z-index:100; display:flex;
+  flex-direction:column; align-items:center; justify-content:center; gap:2vh;
+  opacity:0; pointer-events:none; transition:opacity 1.8s ease;
+}
+#sleepOverlay.on{opacity:1; pointer-events:auto}
+#sleepClock{
+  font-family:var(--mono); font-size:clamp(40px,5vw,120px); color:#1c2a3a;
+  letter-spacing:.08em; animation:breathe 6s ease-in-out infinite;
+}
+#sleepHint{font-family:var(--mono); font-size:var(--fs-tiny); color:#101a26; letter-spacing:.4em}
+@keyframes breathe{50%{opacity:.35}}
+
+#wakeDot{ /* wake-word listener status in header */
+  font-family:var(--mono); font-size:var(--fs-tiny); letter-spacing:.2em; color:var(--dim);
+}
+#wakeDot.live{color:var(--cyan)}
+@media(max-width:980px){
+  #widgets,#syspanel{display:none}
+  #log,#bar{width:94vw}
+  .brand h1{letter-spacing:.3em}
+  #hint{display:none}
+}
+</style>
+</head>
+<body>
+<div id="vignette"></div><div id="sweep"></div>
+<div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+
+<header>
+  <div class="brand"><h1>J.A.R.V.I.S</h1><span>// JESSEOS TACTICAL INTERFACE v2</span></div>
+  <div style="display:flex;gap:2vw;align-items:center">
+    <span id="wakeDot">◌ WAKE WORD OFF</span>
+    <span id="hstatus"><b>●</b> ALL SYSTEMS NOMINAL</span>
+  </div>
+</header>
+<div id="sleepOverlay"><div id="sleepClock">--:--</div><div id="sleepHint">SAY "HEY JARVIS"</div></div>
+
+<main>
+  <aside id="widgets">
+    <div class="tile" id="wBank"><h3>UP BANK</h3><div class="empty">LINK PENDING</div></div>
+    <div class="tile" id="wPortfolio"><h3>PORTFOLIO · STAKE</h3><div class="empty">AWAITING HOLDINGS</div></div>
+    <div class="tile" id="wWeather"><h3>WEATHER</h3><div class="empty">—</div></div>
+    <div class="tile" id="wCal"><h3>AGENDA</h3><div class="empty">—</div></div>
+  </aside>
+
+  <section id="center">
+    <div id="orbWrap">
+      <canvas id="orb"></canvas>
+      <div id="orbState">standby</div>
+    </div>
+    <div id="log"></div>
+  </section>
+
+  <aside id="syspanel">
+    <div class="tile"><h3>CHRONO</h3><div id="bigClock">--:--:--</div><div class="sub" id="bigDate">—</div></div>
+    <div class="tile"><h3>SYSTEM</h3>
+      <div class="bar" id="barCpu"><div class="lbl"><span>CPU</span><b>—</b></div><div class="track"><div class="fill"></div></div></div>
+      <div class="bar" id="barMem"><div class="lbl"><span>MEMORY</span><b>—</b></div><div class="track"><div class="fill"></div></div></div>
+      <div class="bar" id="barDisk"><div class="lbl"><span>DISK</span><b>—</b></div><div class="track"><div class="fill"></div></div></div>
+      <div class="row" style="margin-top:1.2vh"><span class="sub">POWER</span><span class="sub" id="sPwr">—</span></div>
+      <div class="row"><span class="sub">UPTIME</span><span class="sub" id="sUp">—</span></div>
+      <div class="row"><span class="sub">NODE</span><span class="sub" id="sHost">—</span></div>
+      <div class="row"><span class="sub">SESSION</span><span class="sub" id="sSess">—</span></div>
+    </div>
+    <div class="tile"><h3>OPS LOG</h3><div id="ops"><div>▸ awaiting directives…</div></div></div>
+  </aside>
+</main>
+
+<div id="bar">
+  <button id="micBtn" title="Hold to talk (or hold Space)">🎙</button>
+  <input id="input" type="text" placeholder="ISSUE DIRECTIVE…" autocomplete="off">
+  <button class="btn" id="sendBtn">EXEC</button>
+  <button class="btn danger" id="stopBtn">ABORT</button>
+  <button class="btn on" id="voiceBtn">VOICE</button>
+  <button class="btn" id="fastBtn" title="Route to Haiku for instant answers (no deep work)">FAST</button>
+  <button class="btn" id="newBtn">NEW&nbsp;SESSION</button>
+</div>
+<div id="hint">HOLD SPACE OR MIC TO SPEAK · ENTER TO EXECUTE · FAST = INSTANT ANSWERS · LOCALHOST:1963 · FULL AUTONOMY</div>
+
+<script>
+'use strict';
+/* ============================== state ============================== */
+const S = {
+  mode: 'idle',        // idle | listening | thinking | speaking
+  level: 0,            // 0..1 audio level driving the orb
+  voiceOn: true,
+  fastOn: false,
+  busy: false,
+  asleep: false,
+  autoRec: false,      // current recording was started by wake word (auto-stop on silence)
+};
+const $ = (id) => document.getElementById(id);
+const log = $('log');
+
+/* ============================== orb (big-screen, CPU-friendly) ============================== */
+const cv = $('orb'), cx = cv.getContext('2d');
+function sizeOrb() {
+  // hero orb: ~40% of viewport height, raster capped at 640px for CPU sanity
+  const disp = Math.max(220, Math.min(window.innerHeight * 0.40, 720));
+  const raster = Math.min(640, Math.round(disp));
+  cv.width = raster; cv.height = raster;
+  cv.style.width = disp + 'px'; cv.style.height = disp + 'px';
+}
+sizeOrb();
+addEventListener('resize', sizeOrb);
+let t = 0, lastFrame = 0;
+const COLORS = { idle:'#38e1ff', listening:'#ffb454', thinking:'#ffb454', speaking:'#38e1ff' };
+function drawOrb(ts) {
+  if (S.asleep) { requestAnimationFrame(drawOrb); return; } // no rendering while asleep
+  const active = S.mode !== 'idle' || S.level > 0.02;
+  const minInterval = active ? 33 : 83; // 30fps active / 12fps idle
+  if (ts - lastFrame < minInterval) { requestAnimationFrame(drawOrb); return; }
+  lastFrame = ts;
+  t += S.mode === 'thinking' ? 0.045 : 0.012;
+  const w = cv.width, h = cv.height, cxp = w/2, cyp = h/2;
+  cx.clearRect(0,0,w,h);
+  const col = COLORS[S.mode] || COLORS.idle;
+  const base = h * 0.26;
+  const lvl = S.level;
+
+  // outer segmented rings
+  for (let r = 0; r < 3; r++) {
+    const rad = base * (1.18 + r*0.30) + Math.sin(t*2 + r)*2;
+    const segs = 14 + r*8, gap = 0.25;
+    cx.save(); cx.translate(cxp,cyp); cx.rotate(t * (r%2? -0.5 : 0.35) * (r+1)*0.4);
+    cx.strokeStyle = col; cx.globalAlpha = 0.18 - r*0.04; cx.lineWidth = (3-r)*1.6;
+    for (let i=0;i<segs;i++){
+      const a0 = (i/segs)*Math.PI*2, a1 = a0 + (Math.PI*2/segs)*(1-gap);
+      cx.beginPath(); cx.arc(0,0,rad,a0,a1); cx.stroke();
+    }
+    cx.restore();
+  }
+  // tick marks ring
+  cx.save(); cx.translate(cxp,cyp); cx.rotate(-t*0.2);
+  cx.strokeStyle = col; cx.globalAlpha = 0.3; cx.lineWidth = 1.5;
+  for (let i=0;i<60;i++){
+    const a = (i/60)*Math.PI*2, len = i%5===0 ? base*0.09 : base*0.045;
+    const r0 = base*1.08;
+    cx.beginPath();
+    cx.moveTo(Math.cos(a)*r0, Math.sin(a)*r0);
+    cx.lineTo(Math.cos(a)*(r0+len), Math.sin(a)*(r0+len));
+    cx.stroke();
+  }
+  cx.restore();
+  // reactive waveform ring (double-stroke glow — no shadowBlur)
+  cx.save(); cx.translate(cxp,cyp);
+  cx.beginPath();
+  const pts = 90;
+  for (let i=0;i<=pts;i++){
+    const a = (i/pts)*Math.PI*2;
+    const n = Math.sin(a*7 + t*6) * 0.5 + Math.sin(a*13 - t*9) * 0.5;
+    const r = base * (0.92 + n * (0.03 + lvl*0.22));
+    const x = Math.cos(a)*r, y = Math.sin(a)*r;
+    i ? cx.lineTo(x,y) : cx.moveTo(x,y);
+  }
+  cx.closePath();
+  cx.strokeStyle = col; cx.globalAlpha = 0.18; cx.lineWidth = 6; cx.stroke();
+  cx.globalAlpha = 0.9; cx.lineWidth = 2; cx.stroke();
+  cx.restore();
+  // core glow
+  const g = cx.createRadialGradient(cxp,cyp,0,cxp,cyp,base*0.85);
+  const a = 0.22 + lvl*0.5 + (S.mode==='thinking' ? (Math.sin(t*8)*0.08+0.08) : 0);
+  g.addColorStop(0, col + 'ff'); g.addColorStop(0.25, col + '55'); g.addColorStop(1, 'transparent');
+  cx.globalAlpha = Math.min(1, a);
+  cx.fillStyle = g;
+  cx.beginPath(); cx.arc(cxp,cyp,base*0.85,0,Math.PI*2); cx.fill();
+  cx.globalAlpha = 1;
+  S.level *= 0.92;
+  requestAnimationFrame(drawOrb);
+}
+requestAnimationFrame(drawOrb);
+function setMode(m, label) {
+  S.mode = m;
+  $('orbState').textContent = label || {idle:'standby', listening:'listening', thinking:'processing', speaking:'speaking'}[m];
+}
+
+/* ============================== ops log ============================== */
+function opsLog(html) {
+  const ops = $('ops');
+  const d = document.createElement('div');
+  const ts = new Date().toTimeString().slice(0,5);
+  d.innerHTML = `<b>${ts}</b> ${html}`;
+  ops.prepend(d);
+  while (ops.children.length > 10) ops.removeChild(ops.lastChild);
+}
+
+/* ============================== transcript ============================== */
+function addMsg(cls, who, text) {
+  const d = document.createElement('div');
+  d.className = 'msg ' + cls;
+  d.innerHTML = `<div class="who">${who}</div><div class="body"></div>`;
+  d.querySelector('.body').textContent = text || '';
+  log.appendChild(d);
+  log.scrollTop = log.scrollHeight;
+  return d;
+}
+function addChip(container, name, detail) {
+  let tools = container.querySelector(':scope > .tools');
+  if (!tools) { tools = document.createElement('div'); tools.className='tools'; container.appendChild(tools); }
+  const c = document.createElement('div');
+  c.className = 'chip'; c.textContent = `${name}${detail ? ' · ' + detail : ''}`; c.title = detail || name;
+  tools.appendChild(c);
+  log.scrollTop = log.scrollHeight;
+  opsLog(`▸ ${name}${detail ? ' · ' + detail.slice(0, 40) : ''}`);
+}
+
+/* ============================== ask (SSE over fetch) ============================== */
+async function ask(text, fromVoice = false) {
+  if (S.busy || !text.trim()) return;
+  S.busy = true;
+  addMsg('user', 'JESSE', text);
+  opsLog('◈ directive issued');
+  const aiMsg = addMsg('ai', 'JARVIS', '');
+  const bodyEl = aiMsg.querySelector('.body');
+  setMode('thinking');
+  let fullText = '';
+  let streamBuf = '';
+  const render = () => {
+    bodyEl.textContent = fullText + (streamBuf ? (fullText ? '\n\n' : '') + streamBuf : '');
+    log.scrollTop = log.scrollHeight;
+  };
+  try {
+    const resp = await fetch('/api/ask', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ text, fast: S.fastOn }),
+    });
+    if (resp.status === 409) { bodyEl.textContent = '⚠ A task is already running. ABORT it first.'; S.busy=false; setMode('idle'); return; }
+    const reader = resp.body.getReader();
+    const dec = new TextDecoder();
+    let buf = '';
+    for(;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream:true });
+      let i;
+      while ((i = buf.indexOf('\n\n')) >= 0) {
+        const raw = buf.slice(0, i); buf = buf.slice(i+2);
+        if (!raw.startsWith('data: ')) continue;
+        let ev; try { ev = JSON.parse(raw.slice(6)); } catch { continue; }
+        if (ev.type === 'delta') {
+          streamBuf += ev.text;
+          S.level = Math.min(1, S.level + 0.15);
+          render();
+        } else if (ev.type === 'text') {
+          fullText += (fullText ? '\n\n' : '') + ev.text;
+          streamBuf = '';
+          render();
+          S.level = Math.min(1, S.level + 0.4);
+        } else if (ev.type === 'tool') {
+          addChip(aiMsg, ev.name, ev.detail);
+          S.level = Math.min(1, S.level + 0.25);
+        } else if (ev.type === 'done') {
+          const meta = document.createElement('div');
+          meta.className = 'meta';
+          meta.textContent = `✓ ${(ev.ms/1000).toFixed(1)}s · ${ev.turns} turn${ev.turns>1?'s':''}${ev.cost ? ' · $' + ev.cost.toFixed(3) : ''}`;
+          aiMsg.appendChild(meta);
+          opsLog(`✓ complete · ${(ev.ms/1000).toFixed(1)}s`);
+          if (!fullText && ev.result) { fullText = ev.result; bodyEl.textContent = fullText; }
+        } else if (ev.type === 'error' || ev.type === 'info') {
+          addMsg('sys', 'SYSTEM', ev.text);
+        }
+        log.scrollTop = log.scrollHeight;
+      }
+    }
+  } catch (e) {
+    addMsg('sys', 'SYSTEM', 'Link failure: ' + e.message);
+  }
+  S.busy = false;
+  if (S.voiceOn && fullText) await speak(fullText);
+  setMode('idle');
+  // conversation mode: after a spoken exchange, listen for the follow-up
+  if (fromVoice && S.voiceOn) autoListen();
+}
+
+/* ============================== TTS (chunked pipeline) ============================== */
+let audioCtx;
+function splitForTTS(text, maxLen = 220) {
+  const sentences = text.match(/[^.!?\n]+[.!?]*\s*/g) || [text];
+  const chunks = [];
+  let cur = '';
+  for (const s of sentences) {
+    if ((cur + s).length > maxLen && cur) { chunks.push(cur.trim()); cur = ''; }
+    cur += s;
+  }
+  if (cur.trim()) chunks.push(cur.trim());
+  return chunks;
+}
+function fetchTTS(text) {
+  return fetch('/api/speak', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ text }) })
+    .then(r => r.status === 200 ? r.blob() : null).catch(() => null);
+}
+function playBlob(blob) {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(blob);
+    const audio = new Audio(url);
+    try {
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      const src = audioCtx.createMediaElementSource(audio);
+      const an = audioCtx.createAnalyser(); an.fftSize = 256;
+      src.connect(an); an.connect(audioCtx.destination);
+      const data = new Uint8Array(an.frequencyBinCount);
+      const tick = () => {
+        if (audio.paused || audio.ended) return;
+        an.getByteFrequencyData(data);
+        let sum = 0; for (let i=0;i<data.length;i++) sum += data[i];
+        S.level = Math.min(1, (sum / data.length) / 90);
+        requestAnimationFrame(tick);
+      };
+      audio.onplay = tick;
+    } catch {}
+    audio.onended = () => { URL.revokeObjectURL(url); resolve(); };
+    audio.onerror = () => { URL.revokeObjectURL(url); resolve(); };
+    audio.play().catch(resolve);
+  });
+}
+async function speak(text) {
+  try {
+    setMode('speaking');
+    const chunks = splitForTTS(text);
+    let next = fetchTTS(chunks[0]);
+    for (let i = 0; i < chunks.length; i++) {
+      const blob = await next;
+      next = i + 1 < chunks.length ? fetchTTS(chunks[i + 1]) : null;
+      if (blob) await playBlob(blob);
+    }
+  } catch {}
+}
+
+/* ============================== mic / push-to-talk ============================== */
+let mediaStream, recorder, chunks = [], micAnalyser, micData;
+async function startRec() {
+  if (recorder || S.busy) return;
+  try {
+    mediaStream = await navigator.mediaDevices.getUserMedia({ audio: {
+      echoCancellation: true, noiseSuppression: true, autoGainControl: true,
+    }});
+  } catch { addMsg('sys','SYSTEM','Microphone access denied. Enable it in browser settings.'); return; }
+  chunks = [];
+  recorder = new MediaRecorder(mediaStream, { mimeType: MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : '' });
+  recorder.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+  recorder.start();
+  audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+  const src = audioCtx.createMediaStreamSource(mediaStream);
+  micAnalyser = audioCtx.createAnalyser(); micAnalyser.fftSize = 256;
+  src.connect(micAnalyser);
+  micData = new Uint8Array(micAnalyser.frequencyBinCount);
+  const t0 = Date.now();
+  let lastLoud = Date.now(), spoke = false;
+  const meter = () => {
+    if (!recorder) return;
+    micAnalyser.getByteFrequencyData(micData);
+    let sum = 0; for (let i=0;i<micData.length;i++) sum += micData[i];
+    const lvl = Math.min(1, (sum / micData.length) / 55); // sensitive gain
+    S.level = lvl;
+    // hands-free mode: stop after ~1.6s of silence following speech; give up
+    // quietly if nothing was said within 6s; hard cap 12s
+    if (S.autoRec) {
+      const now = Date.now();
+      if (lvl > 0.09) { lastLoud = now; spoke = true; }
+      if (!spoke && now - t0 > 6000) { cancelRec(); return; }
+      if ((spoke && now - lastLoud > 1600) || now - t0 > 12000) { stopRec(); return; }
+    }
+    requestAnimationFrame(meter);
+  };
+  meter();
+  $('micBtn').classList.add('rec');
+  setMode('listening');
+}
+function cancelRec() { // stop + discard, no transcription (nothing was said)
+  if (!recorder) return;
+  const rec = recorder; recorder = null;
+  S.autoRec = false;
+  $('micBtn').classList.remove('rec');
+  try { rec.stop(); } catch {}
+  try { mediaStream.getTracks().forEach(tr => tr.stop()); } catch {}
+  chunks = [];
+  setMode('idle');
+}
+function listenChime() { // short soft ping = "your turn"
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = 'sine'; o.frequency.value = 1040;
+    g.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.12, audioCtx.currentTime + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.25);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(); o.stop(audioCtx.currentTime + 0.28);
+  } catch {}
+}
+async function autoListen() { // hands-free capture with silence handling
+  S.autoRec = true;
+  listenChime();
+  await startRec();
+  if (!recorder) S.autoRec = false;
+}
+async function stopRec() {
+  if (!recorder) return;
+  const rec = recorder; recorder = null;
+  S.autoRec = false;
+  $('micBtn').classList.remove('rec');
+  setMode('thinking', 'transcribing');
+  const stopped = new Promise(r => { rec.onstop = r; });
+  rec.stop();
+  await stopped;
+  mediaStream.getTracks().forEach(tr => tr.stop());
+  const blob = new Blob(chunks, { type: 'audio/webm' });
+  if (blob.size < 2000) { setMode('idle'); return; }
+  try {
+    const resp = await fetch('/api/transcribe', { method:'POST', headers:{'Content-Type':'application/octet-stream'}, body: blob });
+    const j = await resp.json();
+    const heard = (j.text || '').trim();
+    // ignore empty / non-speech artifacts ("[BLANK_AUDIO]", lone punctuation…)
+    if (heard && !/^[\[\(\.\,\s\]\)]*$/.test(heard) && !/blank_audio|inaudible/i.test(heard)) {
+      $('input').value = heard;
+      sendVoice();
+    } else setMode('idle');
+  } catch { addMsg('sys','SYSTEM','Transcription failed.'); setMode('idle'); }
+}
+
+/* ============================== controls ============================== */
+function send() {
+  const v = $('input').value.trim();
+  if (!v) return;
+  $('input').value = '';
+  ask(v, false);
+}
+function sendVoice() { // voice-originated: reply spoken + auto-listen for follow-up
+  const v = $('input').value.trim();
+  if (!v) return;
+  $('input').value = '';
+  ask(v, true);
+}
+$('sendBtn').onclick = send;
+$('input').addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
+$('stopBtn').onclick = async () => { await fetch('/api/stop', { method:'POST' }); addMsg('sys','SYSTEM','Task aborted.'); opsLog('✕ aborted'); S.busy=false; setMode('idle'); };
+$('voiceBtn').onclick = () => { S.voiceOn = !S.voiceOn; $('voiceBtn').classList.toggle('on', S.voiceOn); };
+$('fastBtn').onclick = () => { S.fastOn = !S.fastOn; $('fastBtn').classList.toggle('on', S.fastOn); };
+$('newBtn').onclick = async () => { await fetch('/api/new-session', { method:'POST' }); log.innerHTML=''; addMsg('sys','SYSTEM','New session initialized. Context cleared.'); opsLog('◌ new session'); };
+
+const micBtn = $('micBtn');
+micBtn.addEventListener('mousedown', startRec);
+micBtn.addEventListener('touchstart', e => { e.preventDefault(); startRec(); });
+['mouseup','mouseleave'].forEach(ev => micBtn.addEventListener(ev, stopRec));
+micBtn.addEventListener('touchend', e => { e.preventDefault(); stopRec(); });
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space' && document.activeElement !== $('input') && !e.repeat) { e.preventDefault(); startRec(); }
+});
+document.addEventListener('keyup', e => { if (e.code === 'Space' && document.activeElement !== $('input')) { e.preventDefault(); stopRec(); } });
+
+/* ============================== stats + clock ============================== */
+function setBar(id, pctVal, txt) {
+  const el = $(id);
+  el.querySelector('.fill').style.width = Math.min(100, Math.max(2, pctVal)) + '%';
+  el.querySelector('.lbl b').textContent = txt;
+  el.classList.toggle('warn', pctVal > 85);
+}
+async function pollStats() {
+  try {
+    const j = await (await fetch('/api/stats')).json();
+    setBar('barCpu', j.cpu, j.cpu + '%');
+    const memUsedPct = Math.round((1 - j.memFreeGB / j.memGB) * 100);
+    setBar('barMem', memUsedPct, j.memFreeGB + 'G FREE');
+    setBar('barDisk', j.diskPct ?? 0, (j.diskPct ?? '—') + '%');
+    $('sPwr').textContent = j.battery != null ? j.battery + '%' : 'AC POWER';
+    $('sUp').textContent = j.uptimeH + ' H';
+    $('sHost').textContent = (j.host || '—').toUpperCase().slice(0, 18);
+    $('sSess').textContent = j.session ? j.session.toUpperCase() : 'NEW';
+  } catch {}
+}
+setInterval(pollStats, 5000); pollStats();
+setInterval(() => {
+  const d = new Date();
+  $('bigClock').textContent = d.toTimeString().slice(0,8);
+  $('bigDate').textContent = d.toDateString().toUpperCase();
+}, 1000);
+
+/* ============================== widgets ============================== */
+const money = (n, cur) => (cur === 'AUD' ? 'A$' : cur === 'USD' ? '$' : (cur || '') + ' ') +
+  n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const pct = (n) => (n >= 0 ? '+' : '') + n.toFixed(2) + '%';
+const ago = (ms) => { // "just now" / "12s ago" / "3m ago" / "1h ago"
+  const s = Math.max(0, Math.round((Date.now() - ms) / 1000));
+  if (s < 3) return 'just now';
+  if (s < 60) return s + 's ago';
+  const m = Math.round(s / 60); if (m < 60) return m + 'm ago';
+  return Math.round(m / 60) + 'h ago';
+};
+let pfAsOf = 0; // epoch ms the shown portfolio prices were fetched
+// live ticker: keep the "updated Xs ago" line counting even between polls
+setInterval(() => { const el = $('pfAge'); if (el && pfAsOf) el.textContent = 'updated ' + ago(pfAsOf); }, 1000);
+
+async function pollWidgets() {
+  let j;
+  try { j = await (await fetch('/api/widgets')).json(); } catch { return; }
+
+  const b = j.bank || {};
+  $('wBank').innerHTML = '<h3>UP BANK</h3>' + (b.error === 'no-token'
+    ? '<div class="empty">NO TOKEN — get one at api.up.com.au</div>'
+    : b.error ? `<div class="empty">LINK ERROR · ${b.error}</div>`
+    : `<div class="big amber">${money(b.total, 'AUD')}</div>` +
+      (b.accounts || []).map(a => `<div class="row"><span>${a.name}</span><span class="r">${money(a.value,'AUD')}</span></div>`).join(''));
+
+  const p = j.portfolio || {};
+  const a = p.aud;
+  if (p.asOf) pfAsOf = p.asOf;
+  $('wPortfolio').innerHTML = '<h3>PORTFOLIO · STAKE</h3>' + (p.error
+    ? '<div class="empty">Tell JARVIS your holdings —<br>"I own 10 AAPL and 5 NVDA"</div>'
+    : (a ? `<div class="big">${money(a.total, 'AUD')}</div><div class="sub">US ${money(p.total, 'USD')} · FX ${(1/a.rate).toFixed(4)}</div>`
+         : `<div class="big">${money(p.total, p.currency)}</div>`) +
+      `<div class="sub ${p.dayChange >= 0 ? 'up' : 'down'}">${p.dayChange >= 0 ? '▲' : '▼'} ${money(Math.abs(a ? a.dayChange : p.dayChange), a ? 'AUD' : p.currency)} · ${pct(p.dayPct)} TODAY</div>` +
+      (p.gain != null ? `<div class="sub ${p.gain >= 0 ? 'up' : 'down'}">TOTAL P/L ${money(a ? a.gain : p.gain, a ? 'AUD' : p.currency)}${p.gainPct != null ? ' · ' + pct(p.gainPct) : ''}</div>` : '') +
+      (p.rows || []).map(r => r.error
+        ? `<div class="row"><span>${r.sym}</span><span class="r">ERR</span></div>`
+        : `<div class="row"><span>${r.sym} ×${r.qty}</span><span class="${r.dayPct >= 0 ? 'up' : 'down'}">${pct(r.dayPct)}</span></div>`).join('') +
+      (p.error ? '' : `<div class="stamp" id="pfAge">updated ${p.asOf ? ago(p.asOf) : 'just now'}</div>`));
+
+  const w = j.weather || {};
+  $('wWeather').innerHTML = '<h3>WEATHER · ' + (w.city || '—') + '</h3>' + (w.error
+    ? `<div class="empty">${w.error}</div>`
+    : `<div class="big">${w.temp}°</div><div class="sub">${w.desc} · H ${w.hi}° L ${w.lo}°</div>`);
+
+  const c = j.calendar || {};
+  $('wCal').innerHTML = '<h3>AGENDA' + (c.src === 'google' ? ' · GCAL' : '') + '</h3>' + (c.error === 'no-source'
+    ? '<div class="empty">Paste your Google Calendar<br>secret iCal address to JARVIS</div>'
+    : c.error ? `<div class="empty">${c.error}</div>`
+    : (c.events && c.events.length
+        ? c.events.map(e => `<div class="row"><span>${e}</span></div>`).join('')
+        : '<div class="empty">CLEAR SCHEDULE</div>'));
+}
+setInterval(pollWidgets, 20000); pollWidgets(); // 20s — portfolio is near-live
+// Chrome throttles/pauses timers when the app window is occluded or the display
+// sleeps — so refresh the moment we're visible/focused again, don't wait 20s.
+document.addEventListener('visibilitychange', () => { if (!document.hidden) pollWidgets(); });
+window.addEventListener('focus', pollWidgets);
+
+/* ============================== sleep mode ============================== */
+const SLEEP_AFTER = 20 * 60 * 1000; // 20 min after last activity
+let lastActivity = Date.now();
+function enterSleep() {
+  if (S.asleep || S.busy || S.mode !== 'idle') return;
+  S.asleep = true;
+  $('sleepOverlay').classList.add('on');
+}
+function wakeUp(voice) {
+  lastActivity = Date.now();
+  if (!S.asleep) return;
+  S.asleep = false;
+  $('sleepOverlay').classList.remove('on');
+  if (voice) fetch('/api/wake', { method: 'POST' }).catch(() => {}); // wake physical display
+}
+['mousemove', 'mousedown', 'keydown', 'touchstart', 'wheel'].forEach((ev) =>
+  document.addEventListener(ev, () => { const was = S.asleep; lastActivity = Date.now(); if (was) wakeUp(false); }, { passive: true }));
+setInterval(() => { if (Date.now() - lastActivity > SLEEP_AFTER) enterSleep(); }, 15000);
+setInterval(() => { if (S.asleep) $('sleepClock').textContent = new Date().toTimeString().slice(0, 5); }, 5000);
+
+/* ============================== wake word: "hey jarvis" ============================== */
+// Pre-fetch greetings so the response is instant
+const greetings = {};
+(async () => {
+  for (const g of ['morning', 'afternoon', 'evening']) {
+    greetings[g] = await fetchTTS(`Good ${g}, Sir.`);
+  }
+})();
+function greetingNow() {
+  const h = new Date().getHours();
+  return h < 12 ? 'morning' : h < 18 ? 'afternoon' : 'evening';
+}
+
+let rec2 = null, wakeRestartTimer = null;
+function startWakeEngine() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { $('wakeDot').textContent = '◌ WAKE WORD UNSUPPORTED'; return; }
+  if (rec2) return;
+  const r = new SR();
+  rec2 = r;
+  r.continuous = true; r.interimResults = true; r.lang = 'en-AU';
+  r.onresult = (e) => {
+    // ignore while JARVIS is talking/listening/working — don't hear ourselves
+    if (S.busy || S.mode === 'speaking' || S.mode === 'listening' || recorder) return;
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const txt = e.results[i][0].transcript.toLowerCase();
+      if (/\b(hey|hay|a|hi|ok|okay)?\s*(jarvis|jarvus|jervis|travis)\b/.test(txt)) {
+        onWakeWord();
+        return;
+      }
+    }
+  };
+  r.onend = () => { rec2 = null; clearTimeout(wakeRestartTimer); wakeRestartTimer = setTimeout(startWakeEngine, 800); };
+  r.onerror = () => {}; // onend fires after and restarts
+  try { r.start(); $('wakeDot').textContent = '◉ WAKE WORD LIVE'; $('wakeDot').classList.add('live'); }
+  catch { rec2 = null; wakeRestartTimer = setTimeout(startWakeEngine, 3000); }
+}
+async function onWakeWord() {
+  try { rec2 && rec2.abort(); } catch {}
+  wakeUp(true);
+  opsLog('◉ wake word detected');
+  // instant greeting, then hands-free listen
+  const blob = greetings[greetingNow()];
+  setMode('speaking');
+  if (blob) await playBlob(blob);
+  await autoListen();
+}
+startWakeEngine();
+
+/* ============================== boot ============================== */
+(async () => {
+  const lines = ['ARC-LINK ESTABLISHED · CLAUDE CLI BRIDGE ACTIVE',
+                 'VOICE STACK: WHISPER (STT) · EDGE-NEURAL (TTS)',
+                 'AUTONOMY: FULL · SCOPE: LOCALHOST',
+                 'ALL SYSTEMS NOMINAL. GOOD ' + (new Date().getHours() < 12 ? 'MORNING' : new Date().getHours() < 18 ? 'AFTERNOON' : 'EVENING') + ', SIR.'];
+  for (const l of lines) { addMsg('sys','SYSTEM', l); await new Promise(r => setTimeout(r, 180)); }
+})();
+</script>
+</body>
+</html>

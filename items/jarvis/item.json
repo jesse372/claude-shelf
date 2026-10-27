@@ -1,0 +1,27 @@
+{
+  "slug": "jarvis",
+  "title": "J.A.R.V.I.S: an Iron Man-style voice HUD for Claude",
+  "emoji": "🦾",
+  "type": "tool",
+  "summary": "A JARVIS/Batcomputer-style dashboard for your Mac. Talk or type, and Claude Code does the work with full tool access. Push-to-talk with local Whisper, spoken replies, a live arc-reactor orb and system readouts.",
+  "how_to_use": "node server.js, then open http://localhost:1963. Read README.md first: it runs Claude with permissions skipped, so keep it local only.",
+  "requires": "macOS, Node, Claude Code CLI, whisper.cpp + a model (not included, see README), edge-tts.",
+  "tags": [],
+  "link": "",
+  "created": "2026-07-22T14:01:21+08:00",
+  "updated": "2026-07-24T20:17:18+08:00",
+  "version": 1,
+  "useful": 4,
+  "files": [
+    ".gitignore",
+    "README.md",
+    "gcal_today.py",
+    "icons/apple-touch-icon.png",
+    "icons/favicon.svg",
+    "icons/head_snippet.html",
+    "jarvis-stt.sh",
+    "public/index.html",
+    "server.js"
+  ],
+  "zip": "items/jarvis/jarvis.zip"
+}
