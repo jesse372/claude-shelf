@@ -127,7 +127,7 @@ function card(it) {
     el("span", { class: "badge", text: TYPES[it.type] || it.type }),
     isNew(it.updated) ? el("span", { class: "badge new", text: it.version > 1 ? "Updated" : "New" }) : null,
     el("span", { text: fmt(it.updated) + (it.version > 1 ? ` · v${it.version}` : "") }));
-  const c = el("article", { class: "card" },
+  const c = el("article", { class: "card", id: it.slug },
     el("div", { class: "top" }, el("div", { class: "emoji", text: it.emoji || "✨" }),
       el("div", {}, el("h2", { text: it.title }), meta)),
     el("p", { class: "summary", text: it.summary }));
@@ -178,6 +178,7 @@ document.getElementById("all").addEventListener("click", (e) => {
 fetch("items.json", { cache: "no-store" }).then(r => r.json()).then(d => {
   items = (d.items || []).sort((a, b) => (b.updated || "").localeCompare(a.updated || ""));
   chips(); render();
+  if (location.hash) document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView({ behavior: "smooth", block: "center" });
 }).catch(() => { document.getElementById("empty").hidden = false; });
 </script>
 </body>

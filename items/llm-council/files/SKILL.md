@@ -493,7 +493,7 @@ By default the council runs entirely with sub-agents inside one model — no API
 If you'd rather run the 5 advisors as genuinely different models (closer to Karpathy's original), you can — but you must supply your OWN API keys. NEVER hardcode a key in this skill or anywhere on disk. Read keys from environment variables, or from your own secret manager.
 
 
-Set your own keys as environment variables (see `~/JesseOS/workspace/security/README.md`):
+Set your own keys as environment variables:
 
 ```bash
 export ANTHROPIC_API_KEY="..."   # your own key
