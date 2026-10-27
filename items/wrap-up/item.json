@@ -1,6 +1,6 @@
 {
   "slug": "wrap-up",
-  "title": "Wrap-up: the end-of-project checklist",
+  "title": "Project Wrap-Up Checklist",
   "emoji": "✅",
   "type": "skill",
   "summary": "Before Claude calls anything 'done', it checks for things that will break silently later (expired logins, jobs that stopped running, untested cron paths), hardens them, saves reusable skills and writes notes to memory.",
@@ -11,7 +11,7 @@
   "created": "2026-06-29T02:07:26+08:00",
   "updated": "2026-06-29T02:07:26+08:00",
   "version": 1,
-  "useful": 4,
+  "useful": 2,
   "files": [
     "SKILL.md",
     "WRAP-UP-PROTOCOL.md",

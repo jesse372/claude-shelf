@@ -1,6 +1,6 @@
 {
   "slug": "mac-headless-setup",
-  "title": "Headless Mac setup for remote Claude",
+  "title": "Headless Mac Setup",
   "emoji": "🖥️",
   "type": "skill",
   "summary": "The full checklist for running Claude on a Mac mini you don't sit at: installs, daemon PATH fixes, macOS privacy permissions (TCC) and remote-access checks.",

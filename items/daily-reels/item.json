@@ -1,6 +1,6 @@
 {
   "slug": "daily-reels",
-  "title": "Daily Reels: an Instagram reel every day, automatically",
+  "title": "Daily Instagram Reels",
   "emoji": "🎞️",
   "type": "skill",
   "summary": "Renders a branded 9:16 reel plus caption every day from photo albums and film clips, a week ahead, into a synced folder ready to post.",
@@ -11,7 +11,7 @@
   "created": "2026-10-22T04:00:01+08:00",
   "updated": "2026-10-26T04:00:00+08:00",
   "version": 1,
-  "useful": 2,
+  "useful": 4,
   "files": [
     "SKILL.md"
   ],

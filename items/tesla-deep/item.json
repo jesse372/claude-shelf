@@ -1,6 +1,6 @@
 {
   "slug": "tesla-deep",
-  "title": "Tesla Deep: CAN-bus telemetry for a Model 3",
+  "title": "Tesla CAN-Bus Dashboard",
   "emoji": "⚡",
   "type": "tool",
   "summary": "Decodes 2,700 signals off a Tesla Model 3's vehicle bus: individual cell voltages, motor and inverter temps, real pack capacity, power analytics, all in a live web dashboard.",
@@ -11,7 +11,7 @@
   "created": "2026-09-21T17:06:27+08:00",
   "updated": "2026-09-21T17:10:13+08:00",
   "version": 1,
-  "useful": 3,
+  "useful": 5,
   "files": [
     ".gitignore",
     "README.md",

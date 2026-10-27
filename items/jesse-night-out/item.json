@@ -1,6 +1,6 @@
 {
   "slug": "jesse-night-out",
-  "title": "JESSE: Night Out, a 3D neon-city browser game",
+  "title": "Night Out 3D Game",
   "emoji": "🌃",
   "type": "website",
   "summary": "A GTA-style night out in the browser: drivable Ferrari, animated character, neon city with enterable pubs and clubs, traffic and pedestrians, a minimap, procedural audio, and a drunk meter that ends badly at 100%.",
@@ -11,7 +11,7 @@
   "created": "2026-07-20T04:00:02+08:00",
   "updated": "2026-10-25T04:00:18+08:00",
   "version": 1,
-  "useful": 3,
+  "useful": 4,
   "files": [
     "NIGHT_SUMMARY.md",
     "assets/city/Textures/colormap.png",

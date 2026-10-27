@@ -1,6 +1,6 @@
 {
   "slug": "boat-day",
-  "title": "Boat Day: is it a good morning for the boat?",
+  "title": "Boat Weather Forecast",
   "emoji": "🚤",
   "type": "skill",
   "summary": "Grades the next 7 mornings as GREAT/GOOD/MARGINAL/NO for boating, using two weather models for wind and gusts, swell and chop, plus Bureau of Meteorology coastal warnings. It can email you when a good day is coming.",
@@ -11,7 +11,7 @@
   "created": "2026-10-14T04:00:05+08:00",
   "updated": "2026-10-14T04:00:05+08:00",
   "version": 1,
-  "useful": 2,
+  "useful": 1,
   "files": [
     "SKILL.md"
   ],

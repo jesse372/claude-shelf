@@ -1,6 +1,6 @@
 {
   "slug": "voice",
-  "title": "Voice: Claude talks and listens",
+  "title": "Text to Speech",
   "emoji": "🗣️",
   "type": "skill",
   "summary": "Free text-to-speech with natural Microsoft neural voices (falls back to the Mac's built-in voice offline), plus offline transcription of voice notes and recordings with Whisper.",
@@ -11,7 +11,7 @@
   "created": "2026-06-29T05:08:07+08:00",
   "updated": "2026-06-29T05:08:07+08:00",
   "version": 1,
-  "useful": 4,
+  "useful": 1,
   "files": [
     "SKILL.md",
     "scripts/dictate.sh",

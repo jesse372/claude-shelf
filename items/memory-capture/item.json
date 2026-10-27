@@ -1,6 +1,6 @@
 {
   "slug": "memory-capture",
-  "title": "Memory Capture: Claude remembers past sessions",
+  "title": "Session Memory",
   "emoji": "🧠",
   "type": "skill",
   "summary": "Automatically turns finished Claude Code (and Codex) sessions into short, durable decision notes, so later you can ask 'what did we decide about X?' and get an answer.",
@@ -11,7 +11,7 @@
   "created": "2026-06-29T02:07:26+08:00",
   "updated": "2026-06-29T02:07:26+08:00",
   "version": 1,
-  "useful": 4,
+  "useful": 3,
   "files": [
     "SKILL.md",
     "com.jesse.memcapture.plist",

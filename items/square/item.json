@@ -1,6 +1,6 @@
 {
   "slug": "square",
-  "title": "Square catalogue sync",
+  "title": "Square Price Sync",
   "emoji": "🟦",
   "type": "skill",
   "summary": "Keeps your Square booking prices in sync with your website: reads both, shows the differences, and pushes changes only when you confirm.",
@@ -11,7 +11,7 @@
   "created": "2026-09-19T04:00:02+08:00",
   "updated": "2026-09-19T04:00:02+08:00",
   "version": 1,
-  "useful": 2,
+  "useful": 4,
   "files": [
     "SETUP.md",
     "SKILL.md",

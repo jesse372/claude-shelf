@@ -1,6 +1,6 @@
 {
   "slug": "luxe-beauty-yanchep",
-  "title": "Luxe Beauty Yanchep website",
+  "title": "Luxe Beauty Website",
   "emoji": "💅",
   "type": "website",
   "summary": "A full local-business site built with Claude for a beauty salon: services and prices, aftercare guides, SEO pages for each treatment and suburb, and a gallery.",
@@ -11,6 +11,6 @@
   "created": "2026-09-03T17:48:01+08:00",
   "updated": "2026-09-29T18:15:37+08:00",
   "version": 1,
-  "useful": 2,
+  "useful": 4,
   "files": []
 }

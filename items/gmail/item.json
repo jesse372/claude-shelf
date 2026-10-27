@@ -1,6 +1,6 @@
 {
   "slug": "gmail",
-  "title": "Gmail from Claude (draft, then you confirm)",
+  "title": "Gmail Assistant",
   "emoji": "✉️",
   "type": "skill",
   "summary": "Search, read, summarise and draft replies in your Gmail from the command line. Claude can write anything, but nothing sends until you explicitly confirm.",
@@ -11,7 +11,7 @@
   "created": "2026-08-16T04:00:00+08:00",
   "updated": "2026-10-14T04:00:05+08:00",
   "version": 1,
-  "useful": 4,
+  "useful": 3,
   "files": [
     "SKILL.md",
     "scripts/gmail.py",

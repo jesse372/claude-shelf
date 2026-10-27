@@ -1,11 +1,11 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-10-27T16:38:46+00:00",
+  "updated": "2026-10-27T16:41:06+00:00",
   "items": [
     {
       "slug": "share-with-friend",
-      "title": "Claude Shelf: make your own version of this site",
+      "title": "Claude Shelf",
       "emoji": "🧰",
       "type": "skill",
       "summary": "The skill behind this site. One command publishes anything you build with Claude: it strips secrets and private info, builds a zip and install prompt, updates the feed and pushes to GitHub Pages.",
@@ -27,11 +27,11 @@
       ],
       "skill_name": "share-with-friend",
       "zip": "items/share-with-friend/share-with-friend.zip",
-      "install_prompt": "Please install the Claude Code skill \"Claude Shelf: make your own version of this site\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/share-with-friend/share-with-friend.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/share-with-friend/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+      "install_prompt": "Please install the Claude Code skill \"Claude Shelf\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/share-with-friend/share-with-friend.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/share-with-friend/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "sculpt",
-      "title": "Sculpt: cull, edit and retouch wedding photos",
+      "title": "Sculpt Photo Editor",
       "emoji": "✨",
       "type": "tool",
       "summary": "A browser app for photographers: AI-assisted culling, Lightroom-style colour profiles baked into GPU LUTs, retouching, and delivery straight to Pixieset galleries.",
@@ -42,7 +42,7 @@
       "created": "2026-10-08T11:01:27+08:00",
       "updated": "2026-10-28T00:26:13+08:00",
       "version": 1,
-      "useful": 3,
+      "useful": 5,
       "files": [
         ".gitignore",
         "README.md",
@@ -103,11 +103,11 @@
         "setup.sh"
       ],
       "zip": "items/sculpt/sculpt.zip",
-      "install_prompt": "Please set up \"Sculpt: cull, edit and retouch wedding photos\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/sculpt/sculpt.zip and unzip it to ~/claude-shelf/sculpt/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Run ./setup.sh then Sculpt.command (or python3 server.py) and open it in Chrome. README.md has the details."
+      "install_prompt": "Please set up \"Sculpt Photo Editor\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/sculpt/sculpt.zip and unzip it to ~/claude-shelf/sculpt/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Run ./setup.sh then Sculpt.command (or python3 server.py) and open it in Chrome. README.md has the details."
     },
     {
       "slug": "daily-reels",
-      "title": "Daily Reels: an Instagram reel every day, automatically",
+      "title": "Daily Instagram Reels",
       "emoji": "🎞️",
       "type": "skill",
       "summary": "Renders a branded 9:16 reel plus caption every day from photo albums and film clips, a week ahead, into a synced folder ready to post.",
@@ -118,17 +118,17 @@
       "created": "2026-10-22T04:00:01+08:00",
       "updated": "2026-10-26T04:00:00+08:00",
       "version": 1,
-      "useful": 2,
+      "useful": 4,
       "files": [
         "SKILL.md"
       ],
       "skill_name": "daily-reels",
       "zip": "items/daily-reels/daily-reels.zip",
-      "install_prompt": "Please install the Claude Code skill \"Daily Reels: an Instagram reel every day, automatically\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/daily-reels/daily-reels.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/daily-reels/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+      "install_prompt": "Please install the Claude Code skill \"Daily Instagram Reels\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/daily-reels/daily-reels.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/daily-reels/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "jesse-night-out",
-      "title": "JESSE: Night Out, a 3D neon-city browser game",
+      "title": "Night Out 3D Game",
       "emoji": "🌃",
       "type": "website",
       "summary": "A GTA-style night out in the browser: drivable Ferrari, animated character, neon city with enterable pubs and clubs, traffic and pedestrians, a minimap, procedural audio, and a drunk meter that ends badly at 100%.",
@@ -139,7 +139,7 @@
       "created": "2026-07-20T04:00:02+08:00",
       "updated": "2026-10-25T04:00:18+08:00",
       "version": 1,
-      "useful": 3,
+      "useful": 4,
       "files": [
         "NIGHT_SUMMARY.md",
         "assets/city/Textures/colormap.png",
@@ -166,11 +166,11 @@
         "index.html"
       ],
       "zip": "items/jesse-night-out/jesse-night-out.zip",
-      "install_prompt": "Please set up \"JESSE: Night Out, a 3D neon-city browser game\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/jesse-night-out/jesse-night-out.zip and unzip it to ~/claude-shelf/jesse-night-out/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Open index.html in a browser (it loads ~4 MB of 3D models from CDNs the first time)."
+      "install_prompt": "Please set up \"Night Out 3D Game\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/jesse-night-out/jesse-night-out.zip and unzip it to ~/claude-shelf/jesse-night-out/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Open index.html in a browser (it loads ~4 MB of 3D models from CDNs the first time)."
     },
     {
       "slug": "jessechance-com",
-      "title": "jessechance.com: Jesse's wedding photography site",
+      "title": "Jesse Chance Photography Website",
       "emoji": "📸",
       "type": "website",
       "summary": "Jesse's business site, rebuilt with Claude as a fast static site with no framework or CMS: galleries, films, packages, venue pages and a booking form.",
@@ -181,13 +181,13 @@
       "created": "2026-08-08T16:11:04+08:00",
       "updated": "2026-10-19T19:15:20+08:00",
       "version": 1,
-      "useful": 2,
+      "useful": 5,
       "files": [],
       "install_prompt": null
     },
     {
       "slug": "wedding-jobs-bot",
-      "title": "Wedding Jobs Bot (Google Apps Script)",
+      "title": "Wedding Jobs Bot",
       "emoji": "💍",
       "type": "script",
       "summary": "Reads booking emails from Studio Ninja, logs each wedding job to a Google Sheet, works out team pay from the package, and builds a ready-to-send WhatsApp message for the crew.",
@@ -205,11 +205,11 @@
         "SETUP.md"
       ],
       "zip": "items/wedding-jobs-bot/wedding-jobs-bot.zip",
-      "install_prompt": "Please set up \"Wedding Jobs Bot (Google Apps Script)\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/wedding-jobs-bot/wedding-jobs-bot.zip and unzip it to ~/claude-shelf/wedding-jobs-bot/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Follow SETUP.md (about 5 minutes): paste Code.gs into script.google.com, fill in your packages and run setup."
+      "install_prompt": "Please set up \"Wedding Jobs Bot\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/wedding-jobs-bot/wedding-jobs-bot.zip and unzip it to ~/claude-shelf/wedding-jobs-bot/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Follow SETUP.md (about 5 minutes): paste Code.gs into script.google.com, fill in your packages and run setup."
     },
     {
       "slug": "boat-day",
-      "title": "Boat Day: is it a good morning for the boat?",
+      "title": "Boat Weather Forecast",
       "emoji": "🚤",
       "type": "skill",
       "summary": "Grades the next 7 mornings as GREAT/GOOD/MARGINAL/NO for boating, using two weather models for wind and gusts, swell and chop, plus Bureau of Meteorology coastal warnings. It can email you when a good day is coming.",
@@ -220,17 +220,17 @@
       "created": "2026-10-14T04:00:05+08:00",
       "updated": "2026-10-14T04:00:05+08:00",
       "version": 1,
-      "useful": 2,
+      "useful": 1,
       "files": [
         "SKILL.md"
       ],
       "skill_name": "boat-day",
       "zip": "items/boat-day/boat-day.zip",
-      "install_prompt": "Please install the Claude Code skill \"Boat Day: is it a good morning for the boat?\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/boat-day/boat-day.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/boat-day/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+      "install_prompt": "Please install the Claude Code skill \"Boat Weather Forecast\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/boat-day/boat-day.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/boat-day/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "gmail",
-      "title": "Gmail from Claude (draft, then you confirm)",
+      "title": "Gmail Assistant",
       "emoji": "✉️",
       "type": "skill",
       "summary": "Search, read, summarise and draft replies in your Gmail from the command line. Claude can write anything, but nothing sends until you explicitly confirm.",
@@ -241,7 +241,7 @@
       "created": "2026-08-16T04:00:00+08:00",
       "updated": "2026-10-14T04:00:05+08:00",
       "version": 1,
-      "useful": 4,
+      "useful": 3,
       "files": [
         "SKILL.md",
         "scripts/gmail.py",
@@ -249,11 +249,11 @@
       ],
       "skill_name": "gmail",
       "zip": "items/gmail/gmail.zip",
-      "install_prompt": "Please install the Claude Code skill \"Gmail from Claude (draft, then you confirm)\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/gmail/gmail.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/gmail/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+      "install_prompt": "Please install the Claude Code skill \"Gmail Assistant\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/gmail/gmail.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/gmail/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "telly",
-      "title": "Telly: prank the tap-list TVs",
+      "title": "Tap List TV Pranks",
       "emoji": "📺",
       "type": "skill",
       "summary": "Mess with a bar's tap-list TV screens in real time: scramble every word, handwrite a message across the screen, or put a photo up.",
@@ -271,11 +271,11 @@
       ],
       "skill_name": "telly",
       "zip": "items/telly/telly.zip",
-      "install_prompt": "Please install the Claude Code skill \"Telly: prank the tap-list TVs\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/telly/telly.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/telly/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+      "install_prompt": "Please install the Claude Code skill \"Tap List TV Pranks\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/telly/telly.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/telly/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "beer-tap-list",
-      "title": "Beer Tap List: a TV tap-list display for a bar",
+      "title": "Tap List TV Display",
       "emoji": "🍺",
       "type": "website",
       "summary": "A tap-list screen for a TV or Fire Stick that auto-refreshes and rotates pages, plus a dead-simple phone editor for the brewer, a Cloudflare Worker backend and a Fire TV app that boots straight into it.",
@@ -286,7 +286,7 @@
       "created": "2026-07-25T15:55:35+08:00",
       "updated": "2026-10-03T23:42:58+08:00",
       "version": 1,
-      "useful": 3,
+      "useful": 5,
       "files": [
         ".claude/settings.json",
         ".gitignore",
@@ -372,11 +372,11 @@
         "worker/wrangler.toml"
       ],
       "zip": "items/beer-tap-list/beer-tap-list.zip",
-      "install_prompt": "Please set up \"Beer Tap List: a TV tap-list display for a bar\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/beer-tap-list/beer-tap-list.zip and unzip it to ~/claude-shelf/beer-tap-list/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: See README.md. The TV opens index.html and the brewer edits at edit.html."
+      "install_prompt": "Please set up \"Tap List TV Display\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/beer-tap-list/beer-tap-list.zip and unzip it to ~/claude-shelf/beer-tap-list/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: See README.md. The TV opens index.html and the brewer edits at edit.html."
     },
     {
       "slug": "auth-framework",
-      "title": "Auth Framework: logins that renew before they expire",
+      "title": "Login Keepalive",
       "emoji": "🔐",
       "type": "skill",
       "summary": "One place that tracks every token, session and cookie your automations depend on, and refreshes them (or warns you) before they expire, instead of breaking silently.",
@@ -396,11 +396,11 @@
       ],
       "skill_name": "auth-framework",
       "zip": "items/auth-framework/auth-framework.zip",
-      "install_prompt": "Please install the Claude Code skill \"Auth Framework: logins that renew before they expire\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/auth-framework/auth-framework.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/auth-framework/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+      "install_prompt": "Please install the Claude Code skill \"Login Keepalive\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/auth-framework/auth-framework.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/auth-framework/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "instagram-to-gbp",
-      "title": "Instagram → Google Business Profile auto-poster",
+      "title": "Instagram to Google Business",
       "emoji": "📍",
       "type": "script",
       "summary": "A Zapier recipe that mirrors every new Instagram post to your Google Business Profile as a 'What's new' post, with hashtags stripped and Reels skipped. Good for local SEO.",
@@ -411,17 +411,17 @@
       "created": "2026-10-01T18:39:43+08:00",
       "updated": "2026-10-01T18:40:32+08:00",
       "version": 1,
-      "useful": 3,
+      "useful": 2,
       "files": [
         "RUNBOOK.md",
         "clean-caption.js"
       ],
       "zip": "items/instagram-to-gbp/instagram-to-gbp.zip",
-      "install_prompt": "Please set up \"Instagram → Google Business Profile auto-poster\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/instagram-to-gbp/instagram-to-gbp.zip and unzip it to ~/claude-shelf/instagram-to-gbp/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Follow RUNBOOK.md step by step. clean-caption.js is the Zapier code step."
+      "install_prompt": "Please set up \"Instagram to Google Business\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/instagram-to-gbp/instagram-to-gbp.zip and unzip it to ~/claude-shelf/instagram-to-gbp/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Follow RUNBOOK.md step by step. clean-caption.js is the Zapier code step."
     },
     {
       "slug": "luxe-beauty-yanchep",
-      "title": "Luxe Beauty Yanchep website",
+      "title": "Luxe Beauty Website",
       "emoji": "💅",
       "type": "website",
       "summary": "A full local-business site built with Claude for a beauty salon: services and prices, aftercare guides, SEO pages for each treatment and suburb, and a gallery.",
@@ -432,13 +432,13 @@
       "created": "2026-09-03T17:48:01+08:00",
       "updated": "2026-09-29T18:15:37+08:00",
       "version": 1,
-      "useful": 2,
+      "useful": 4,
       "files": [],
       "install_prompt": null
     },
     {
       "slug": "memory",
-      "title": "Memory: tiny capture + recall commands",
+      "title": "Simple Memory",
       "emoji": "📝",
       "type": "skill",
       "summary": "The simplest long-term memory for agents: one command to save a decision, one to search past notes. Shared by Claude and Codex.",
@@ -449,7 +449,7 @@
       "created": "2026-06-29T01:45:57+08:00",
       "updated": "2026-09-24T10:11:50+08:00",
       "version": 1,
-      "useful": 3,
+      "useful": 1,
       "files": [
         "SKILL.md",
         "capture.sh",
@@ -457,11 +457,11 @@
       ],
       "skill_name": "memory",
       "zip": "items/memory/memory.zip",
-      "install_prompt": "Please install the Claude Code skill \"Memory: tiny capture + recall commands\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/memory/memory.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/memory/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+      "install_prompt": "Please install the Claude Code skill \"Simple Memory\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/memory/memory.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/memory/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "project-backup",
-      "title": "Project Backup: every project gets a private GitHub repo",
+      "title": "Project Backup",
       "emoji": "💾",
       "type": "skill",
       "summary": "At the start of any project, Claude initialises git, writes a sensible .gitignore (keeps secrets and huge files out), creates a PRIVATE GitHub repo and registers it for nightly automatic backup.",
@@ -472,7 +472,7 @@
       "created": "2026-06-29T02:07:26+08:00",
       "updated": "2026-09-24T04:00:18+08:00",
       "version": 1,
-      "useful": 4,
+      "useful": 2,
       "files": [
         "SKILL.md",
         "launchagents/com.jesse.project-backup.plist",
@@ -481,11 +481,11 @@
       ],
       "skill_name": "project-backup",
       "zip": "items/project-backup/project-backup.zip",
-      "install_prompt": "Please install the Claude Code skill \"Project Backup: every project gets a private GitHub repo\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/project-backup/project-backup.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/project-backup/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+      "install_prompt": "Please install the Claude Code skill \"Project Backup\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/project-backup/project-backup.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/project-backup/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "tesla-deep",
-      "title": "Tesla Deep: CAN-bus telemetry for a Model 3",
+      "title": "Tesla CAN-Bus Dashboard",
       "emoji": "⚡",
       "type": "tool",
       "summary": "Decodes 2,700 signals off a Tesla Model 3's vehicle bus: individual cell voltages, motor and inverter temps, real pack capacity, power analytics, all in a live web dashboard.",
@@ -496,7 +496,7 @@
       "created": "2026-09-21T17:06:27+08:00",
       "updated": "2026-09-21T17:10:13+08:00",
       "version": 1,
-      "useful": 3,
+      "useful": 5,
       "files": [
         ".gitignore",
         "README.md",
@@ -523,11 +523,11 @@
         "web/static/sw.js"
       ],
       "zip": "items/tesla-deep/tesla-deep.zip",
-      "install_prompt": "Please set up \"Tesla Deep: CAN-bus telemetry for a Model 3\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/tesla-deep/tesla-deep.zip and unzip it to ~/claude-shelf/tesla-deep/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: See README.md and docs/HARDWARE.md for the adapter you need, then ./run.sh."
+      "install_prompt": "Please set up \"Tesla CAN-Bus Dashboard\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/tesla-deep/tesla-deep.zip and unzip it to ~/claude-shelf/tesla-deep/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: See README.md and docs/HARDWARE.md for the adapter you need, then ./run.sh."
     },
     {
       "slug": "square",
-      "title": "Square catalogue sync",
+      "title": "Square Price Sync",
       "emoji": "🟦",
       "type": "skill",
       "summary": "Keeps your Square booking prices in sync with your website: reads both, shows the differences, and pushes changes only when you confirm.",
@@ -538,7 +538,7 @@
       "created": "2026-09-19T04:00:02+08:00",
       "updated": "2026-09-19T04:00:02+08:00",
       "version": 1,
-      "useful": 2,
+      "useful": 4,
       "files": [
         "SETUP.md",
         "SKILL.md",
@@ -550,11 +550,11 @@
       ],
       "skill_name": "square",
       "zip": "items/square/square.zip",
-      "install_prompt": "Please install the Claude Code skill \"Square catalogue sync\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/square/square.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/square/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+      "install_prompt": "Please install the Claude Code skill \"Square Price Sync\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/square/square.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/square/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "meta-ads",
-      "title": "Meta Ads from Claude",
+      "title": "Meta Ads Manager",
       "emoji": "📣",
       "type": "skill",
       "summary": "Run Facebook/Instagram ads from the command line: duplicate campaigns, change budgets, pause and resume, and pull cost-per-lead reports. Every change is shown as a plan first and only applied when you confirm.",
@@ -575,11 +575,11 @@
       ],
       "skill_name": "meta-ads",
       "zip": "items/meta-ads/meta-ads.zip",
-      "install_prompt": "Please install the Claude Code skill \"Meta Ads from Claude\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/meta-ads/meta-ads.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/meta-ads/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+      "install_prompt": "Please install the Claude Code skill \"Meta Ads Manager\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/meta-ads/meta-ads.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/meta-ads/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "anotherlife",
-      "title": "AnotherLife: a BitLife-style life simulator",
+      "title": "AnotherLife Life Simulator",
       "emoji": "🎲",
       "type": "tool",
       "summary": "A text-based life sim. You're born at random somewhere in the world and live one year at a time with careers, fame, storylines that pay off decades later, and premium modes like Mafia, Royalty and Fighter. Runs in a browser, builds for Android.",
@@ -590,7 +590,7 @@
       "created": "2026-09-06T07:48:36+08:00",
       "updated": "2026-09-12T12:47:46+08:00",
       "version": 1,
-      "useful": 3,
+      "useful": 5,
       "files": [
         ".gitignore",
         "README.md",
@@ -644,11 +644,11 @@
         "www/styles.css"
       ],
       "zip": "items/anotherlife/anotherlife.zip",
-      "install_prompt": "Please set up \"AnotherLife: a BitLife-style life simulator\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/anotherlife/anotherlife.zip and unzip it to ~/claude-shelf/anotherlife/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Run npm start and open http://localhost:8777 to play (or open www/index.html). README.md covers building the Android app."
+      "install_prompt": "Please set up \"AnotherLife Life Simulator\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/anotherlife/anotherlife.zip and unzip it to ~/claude-shelf/anotherlife/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Run npm start and open http://localhost:8777 to play (or open www/index.html). README.md covers building the Android app."
     },
     {
       "slug": "browser-probe",
-      "title": "Browser Probe: let Claude actually look at your web app",
+      "title": "Browser Tester",
       "emoji": "🔍",
       "type": "skill",
       "summary": "Claude drives a real headless Chrome so it can screenshot every screen of your web app, catch JavaScript errors, and spot bugs that only show up on screen. No Playwright or Puppeteer needed.",
@@ -659,7 +659,7 @@
       "created": "2026-09-11T04:00:00+08:00",
       "updated": "2026-09-11T04:00:00+08:00",
       "version": 1,
-      "useful": 4,
+      "useful": 2,
       "files": [
         "SKILL.md",
         "scripts/cdp.mjs",
@@ -668,11 +668,11 @@
       ],
       "skill_name": "browser-probe",
       "zip": "items/browser-probe/browser-probe.zip",
-      "install_prompt": "Please install the Claude Code skill \"Browser Probe: let Claude actually look at your web app\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/browser-probe/browser-probe.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/browser-probe/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+      "install_prompt": "Please install the Claude Code skill \"Browser Tester\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/browser-probe/browser-probe.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/browser-probe/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "luke-site",
-      "title": "LUKE: Single, Fabulous, Accepting Applications",
+      "title": "Luke's Dating Page",
       "emoji": "😎",
       "type": "website",
       "summary": "A joke 'dating profile' website made for a mate. Proof you can make a ridiculous, polished site for a laugh in one evening.",
@@ -683,13 +683,13 @@
       "created": "2026-09-01T21:51:40+08:00",
       "updated": "2026-09-02T16:31:38+08:00",
       "version": 1,
-      "useful": 1,
+      "useful": 2,
       "files": [],
       "install_prompt": null
     },
     {
       "slug": "ai-video-pipeline",
-      "title": "AI Video Pipeline: one prompt to a YouTube script",
+      "title": "AI Video Pipeline",
       "emoji": "🎬",
       "type": "skill",
       "summary": "Research a topic, fact-check every claim, write the script in your voice, and chunk it for voice cloning. Later stages render avatar video with motion graphics and QC it visually.",
@@ -700,7 +700,7 @@
       "created": "2026-07-29T04:00:03+08:00",
       "updated": "2026-07-29T04:00:03+08:00",
       "version": 1,
-      "useful": 3,
+      "useful": 4,
       "files": [
         "SKILL.md",
         "scripts/01-brief.sh",
@@ -713,11 +713,11 @@
       ],
       "skill_name": "ai-video-pipeline",
       "zip": "items/ai-video-pipeline/ai-video-pipeline.zip",
-      "install_prompt": "Please install the Claude Code skill \"AI Video Pipeline: one prompt to a YouTube script\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/ai-video-pipeline/ai-video-pipeline.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/ai-video-pipeline/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+      "install_prompt": "Please install the Claude Code skill \"AI Video Pipeline\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/ai-video-pipeline/ai-video-pipeline.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/ai-video-pipeline/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "media-inbox",
-      "title": "Media Inbox: get a video to Claude and transcribe it",
+      "title": "Video Transcriber",
       "emoji": "📥",
       "type": "skill",
       "summary": "Paste a Google Drive share link, any public video URL, or a local file path, and Claude downloads it and transcribes it offline. It's for when your chat app can't upload files.",
@@ -737,11 +737,11 @@
       ],
       "skill_name": "media-inbox",
       "zip": "items/media-inbox/media-inbox.zip",
-      "install_prompt": "Please install the Claude Code skill \"Media Inbox: get a video to Claude and transcribe it\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/media-inbox/media-inbox.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/media-inbox/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+      "install_prompt": "Please install the Claude Code skill \"Video Transcriber\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/media-inbox/media-inbox.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/media-inbox/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "jarvis",
-      "title": "J.A.R.V.I.S: an Iron Man-style voice HUD for Claude",
+      "title": "Jarvis Voice Assistant",
       "emoji": "🦾",
       "type": "tool",
       "summary": "A JARVIS/Batcomputer-style dashboard for your Mac. Talk or type, and Claude Code does the work with full tool access. Push-to-talk with local Whisper, spoken replies, a live arc-reactor orb and system readouts.",
@@ -752,7 +752,7 @@
       "created": "2026-07-22T14:01:21+08:00",
       "updated": "2026-07-24T20:17:18+08:00",
       "version": 1,
-      "useful": 4,
+      "useful": 5,
       "files": [
         ".gitignore",
         "README.md",
@@ -765,11 +765,11 @@
         "server.js"
       ],
       "zip": "items/jarvis/jarvis.zip",
-      "install_prompt": "Please set up \"J.A.R.V.I.S: an Iron Man-style voice HUD for Claude\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/jarvis/jarvis.zip and unzip it to ~/claude-shelf/jarvis/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: node server.js, then open http://localhost:1963. Read README.md first: it runs Claude with permissions skipped, so keep it local only."
+      "install_prompt": "Please set up \"Jarvis Voice Assistant\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/jarvis/jarvis.zip and unzip it to ~/claude-shelf/jarvis/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: node server.js, then open http://localhost:1963. Read README.md first: it runs Claude with permissions skipped, so keep it local only."
     },
     {
       "slug": "pub-club-vice-coast",
-      "title": "Pub Club: Vice Coast (browser pub-crawl game)",
+      "title": "Pub Club Driving Game",
       "emoji": "🌴",
       "type": "website",
       "summary": "A GTA 6-flavoured browser game: drive (and drift) around Vice Coast, find the flashing bars, drink, jack cars and try to survive the pub crawl. Works with keyboard or touch controls, all in one HTML file.",
@@ -780,17 +780,17 @@
       "created": "2026-07-17T20:39:23+08:00",
       "updated": "2026-07-17T20:51:10+08:00",
       "version": 1,
-      "useful": 2,
+      "useful": 4,
       "files": [
         ".gitignore",
         "index.html"
       ],
       "zip": "items/pub-club-vice-coast/pub-club-vice-coast.zip",
-      "install_prompt": "Please set up \"Pub Club: Vice Coast (browser pub-crawl game)\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/pub-club-vice-coast/pub-club-vice-coast.zip and unzip it to ~/claude-shelf/pub-club-vice-coast/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Open index.html. WASD to drive, Space to drift, F to get in/out, E to drink. On a phone, use the on-screen controls."
+      "install_prompt": "Please set up \"Pub Club Driving Game\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/pub-club-vice-coast/pub-club-vice-coast.zip and unzip it to ~/claude-shelf/pub-club-vice-coast/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Open index.html. WASD to drive, Space to drift, F to get in/out, E to drink. On a phone, use the on-screen controls."
     },
     {
       "slug": "sick-karnt-tours",
-      "title": "Sick Karnt Tours: Vietnam motorbike tour landing page",
+      "title": "Motorbike Tour Website",
       "emoji": "🏍️",
       "type": "website",
       "summary": "A one-page landing site for a 7-day off-road motorcycle expedition in Vietnam: itinerary, pricing and booking call-to-action.",
@@ -801,18 +801,18 @@
       "created": "2026-07-12T04:00:06+08:00",
       "updated": "2026-07-12T04:00:06+08:00",
       "version": 1,
-      "useful": 2,
+      "useful": 3,
       "files": [
         "apple-touch-icon.png",
         "favicon.svg",
         "index.html"
       ],
       "zip": "items/sick-karnt-tours/sick-karnt-tours.zip",
-      "install_prompt": "Please set up \"Sick Karnt Tours: Vietnam motorbike tour landing page\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/sick-karnt-tours/sick-karnt-tours.zip and unzip it to ~/claude-shelf/sick-karnt-tours/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Open index.html. Swap in your own trip details."
+      "install_prompt": "Please set up \"Motorbike Tour Website\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/sick-karnt-tours/sick-karnt-tours.zip and unzip it to ~/claude-shelf/sick-karnt-tours/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Open index.html. Swap in your own trip details."
     },
     {
       "slug": "soundboks-landing",
-      "title": "Soundboks sale landing page",
+      "title": "Soundboks Sales Page",
       "emoji": "🔊",
       "type": "website",
       "summary": "A single-product sales page (a $199 Soundboks 4 deal) with a hero image, specs and call-to-action. Use it as a quick template for selling one thing.",
@@ -823,7 +823,7 @@
       "created": "2026-07-09T19:13:05+08:00",
       "updated": "2026-07-09T23:00:35+08:00",
       "version": 1,
-      "useful": 1,
+      "useful": 2,
       "files": [
         "index.html",
         "product.png",
@@ -832,11 +832,11 @@
         "icons/head_snippet.html"
       ],
       "zip": "items/soundboks-landing/soundboks-landing.zip",
-      "install_prompt": "Please set up \"Soundboks sale landing page\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/soundboks-landing/soundboks-landing.zip and unzip it to ~/claude-shelf/soundboks-landing/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Open index.html and replace the product, price and contact."
+      "install_prompt": "Please set up \"Soundboks Sales Page\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/soundboks-landing/soundboks-landing.zip and unzip it to ~/claude-shelf/soundboks-landing/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Open index.html and replace the product, price and contact."
     },
     {
       "slug": "voice",
-      "title": "Voice: Claude talks and listens",
+      "title": "Text to Speech",
       "emoji": "🗣️",
       "type": "skill",
       "summary": "Free text-to-speech with natural Microsoft neural voices (falls back to the Mac's built-in voice offline), plus offline transcription of voice notes and recordings with Whisper.",
@@ -847,7 +847,7 @@
       "created": "2026-06-29T05:08:07+08:00",
       "updated": "2026-06-29T05:08:07+08:00",
       "version": 1,
-      "useful": 4,
+      "useful": 1,
       "files": [
         "SKILL.md",
         "scripts/dictate.sh",
@@ -857,7 +857,7 @@
       ],
       "skill_name": "voice",
       "zip": "items/voice/voice.zip",
-      "install_prompt": "Please install the Claude Code skill \"Voice: Claude talks and listens\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/voice/voice.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/voice/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+      "install_prompt": "Please install the Claude Code skill \"Text to Speech\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/voice/voice.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/voice/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "llm-council",
@@ -872,7 +872,7 @@
       "created": "2026-06-29T02:07:26+08:00",
       "updated": "2026-06-29T02:07:26+08:00",
       "version": 1,
-      "useful": 5,
+      "useful": 3,
       "files": [
         "SKILL.md"
       ],
@@ -882,7 +882,7 @@
     },
     {
       "slug": "loop-contract",
-      "title": "Loop Contract: turn a recurring task into a proper loop",
+      "title": "Recurring Task Setup",
       "emoji": "🔁",
       "type": "skill",
       "summary": "Before a recurring job ever runs, Claude writes a contract for it: the goal, the scope, a checker that proves it worked, a budget, and when to stop and ask you. Pairs with Pipeline QC.",
@@ -893,7 +893,7 @@
       "created": "2026-06-29T02:07:26+08:00",
       "updated": "2026-06-29T02:07:26+08:00",
       "version": 1,
-      "useful": 3,
+      "useful": 2,
       "files": [
         "SKILL.md",
         "scripts/new-loop.sh",
@@ -901,11 +901,11 @@
       ],
       "skill_name": "loop-contract",
       "zip": "items/loop-contract/loop-contract.zip",
-      "install_prompt": "Please install the Claude Code skill \"Loop Contract: turn a recurring task into a proper loop\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/loop-contract/loop-contract.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/loop-contract/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+      "install_prompt": "Please install the Claude Code skill \"Recurring Task Setup\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/loop-contract/loop-contract.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/loop-contract/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "mac-headless-setup",
-      "title": "Headless Mac setup for remote Claude",
+      "title": "Headless Mac Setup",
       "emoji": "🖥️",
       "type": "skill",
       "summary": "The full checklist for running Claude on a Mac mini you don't sit at: installs, daemon PATH fixes, macOS privacy permissions (TCC) and remote-access checks.",
@@ -923,11 +923,11 @@
       ],
       "skill_name": "mac-headless-setup",
       "zip": "items/mac-headless-setup/mac-headless-setup.zip",
-      "install_prompt": "Please install the Claude Code skill \"Headless Mac setup for remote Claude\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/mac-headless-setup/mac-headless-setup.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/mac-headless-setup/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+      "install_prompt": "Please install the Claude Code skill \"Headless Mac Setup\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/mac-headless-setup/mac-headless-setup.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/mac-headless-setup/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "memory-capture",
-      "title": "Memory Capture: Claude remembers past sessions",
+      "title": "Session Memory",
       "emoji": "🧠",
       "type": "skill",
       "summary": "Automatically turns finished Claude Code (and Codex) sessions into short, durable decision notes, so later you can ask 'what did we decide about X?' and get an answer.",
@@ -938,7 +938,7 @@
       "created": "2026-06-29T02:07:26+08:00",
       "updated": "2026-06-29T02:07:26+08:00",
       "version": 1,
-      "useful": 4,
+      "useful": 3,
       "files": [
         "SKILL.md",
         "com.jesse.memcapture.plist",
@@ -948,11 +948,11 @@
       ],
       "skill_name": "memory-capture",
       "zip": "items/memory-capture/memory-capture.zip",
-      "install_prompt": "Please install the Claude Code skill \"Memory Capture: Claude remembers past sessions\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/memory-capture/memory-capture.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/memory-capture/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+      "install_prompt": "Please install the Claude Code skill \"Session Memory\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/memory-capture/memory-capture.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/memory-capture/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "pipeline-qc",
-      "title": "Pipeline QC: automations that fix themselves",
+      "title": "Self-Healing Automations",
       "emoji": "🩺",
       "type": "skill",
       "summary": "A framework that checks every stage of a recurring automation and repairs failures itself. It does a simple fix first, then lets Claude attempt a repair (kept only if the check goes green), and only pings you if both fail.",
@@ -963,7 +963,7 @@
       "created": "2026-06-29T02:07:26+08:00",
       "updated": "2026-06-29T02:07:26+08:00",
       "version": 1,
-      "useful": 4,
+      "useful": 3,
       "files": [
         "SKILL.md",
         "scripts/qc-heartbeat-watchdog.sh",
@@ -973,11 +973,11 @@
       ],
       "skill_name": "pipeline-qc",
       "zip": "items/pipeline-qc/pipeline-qc.zip",
-      "install_prompt": "Please install the Claude Code skill \"Pipeline QC: automations that fix themselves\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/pipeline-qc/pipeline-qc.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/pipeline-qc/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+      "install_prompt": "Please install the Claude Code skill \"Self-Healing Automations\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/pipeline-qc/pipeline-qc.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/pipeline-qc/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "scout",
-      "title": "Scout: search everywhere at once",
+      "title": "Multi-Source Search",
       "emoji": "🛰️",
       "type": "skill",
       "summary": "When you ask Claude to 'check everywhere', it sends parallel searchers across repos, notes, drives and the web, then gives you ONE combined answer instead of searching one place at a time.",
@@ -988,17 +988,17 @@
       "created": "2026-06-29T02:07:26+08:00",
       "updated": "2026-06-29T02:07:26+08:00",
       "version": 1,
-      "useful": 4,
+      "useful": 1,
       "files": [
         "SKILL.md"
       ],
       "skill_name": "scout",
       "zip": "items/scout/scout.zip",
-      "install_prompt": "Please install the Claude Code skill \"Scout: search everywhere at once\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/scout/scout.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/scout/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+      "install_prompt": "Please install the Claude Code skill \"Multi-Source Search\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/scout/scout.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/scout/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "skill-curator",
-      "title": "Skill Curator: your skills improve themselves weekly",
+      "title": "Skill Curator",
       "emoji": "🧑‍🔧",
       "type": "skill",
       "summary": "A weekly pass that mines your recent sessions for new reusable skills, tests and improves existing ones, archives dead ones and posts a digest.",
@@ -1009,7 +1009,7 @@
       "created": "2026-06-29T02:07:26+08:00",
       "updated": "2026-06-29T02:07:26+08:00",
       "version": 1,
-      "useful": 3,
+      "useful": 2,
       "files": [
         "SKILL.md",
         "com.jesse.skillcurator.plist",
@@ -1018,11 +1018,11 @@
       ],
       "skill_name": "skill-curator",
       "zip": "items/skill-curator/skill-curator.zip",
-      "install_prompt": "Please install the Claude Code skill \"Skill Curator: your skills improve themselves weekly\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/skill-curator/skill-curator.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/skill-curator/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+      "install_prompt": "Please install the Claude Code skill \"Skill Curator\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/skill-curator/skill-curator.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/skill-curator/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "web-essentials",
-      "title": "Web Essentials: favicon + iPhone home-screen icon",
+      "title": "Website Icons",
       "emoji": "📱",
       "type": "skill",
       "summary": "A checklist Claude follows on every website it builds: a favicon, a proper iPhone Add-to-Home-Screen icon, and the right meta tags. Includes a script that turns any emoji into all the icons in one command.",
@@ -1033,18 +1033,18 @@
       "created": "2026-06-29T02:07:26+08:00",
       "updated": "2026-06-29T02:07:26+08:00",
       "version": 1,
-      "useful": 4,
+      "useful": 1,
       "files": [
         "SKILL.md",
         "scripts/emoji_icon.py"
       ],
       "skill_name": "web-essentials",
       "zip": "items/web-essentials/web-essentials.zip",
-      "install_prompt": "Please install the Claude Code skill \"Web Essentials: favicon + iPhone home-screen icon\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/web-essentials/web-essentials.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/web-essentials/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+      "install_prompt": "Please install the Claude Code skill \"Website Icons\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/web-essentials/web-essentials.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/web-essentials/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "wrap-up",
-      "title": "Wrap-up: the end-of-project checklist",
+      "title": "Project Wrap-Up Checklist",
       "emoji": "✅",
       "type": "skill",
       "summary": "Before Claude calls anything 'done', it checks for things that will break silently later (expired logins, jobs that stopped running, untested cron paths), hardens them, saves reusable skills and writes notes to memory.",
@@ -1055,7 +1055,7 @@
       "created": "2026-06-29T02:07:26+08:00",
       "updated": "2026-06-29T02:07:26+08:00",
       "version": 1,
-      "useful": 4,
+      "useful": 2,
       "files": [
         "SKILL.md",
         "WRAP-UP-PROTOCOL.md",
@@ -1064,11 +1064,11 @@
       ],
       "skill_name": "wrap-up",
       "zip": "items/wrap-up/wrap-up.zip",
-      "install_prompt": "Please install the Claude Code skill \"Wrap-up: the end-of-project checklist\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/wrap-up/wrap-up.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/wrap-up/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+      "install_prompt": "Please install the Claude Code skill \"Project Wrap-Up Checklist\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/wrap-up/wrap-up.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/wrap-up/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "jesseos-starter",
-      "title": "JesseOS starter: one brain for Claude Code + Codex",
+      "title": "Claude + Codex Setup",
       "emoji": "🧠",
       "type": "tool",
       "summary": "The setup Jesse runs on his Mac: Claude Code and Codex share the same skills, memory and standing instructions, with nightly private GitHub backup, safe auto-updates that roll back bad versions, a login-expiry watchdog and a bounded Claude/Codex handoff tool.",
@@ -1079,7 +1079,7 @@
       "created": "2026-06-29T01:45:57+08:00",
       "updated": "2026-06-29T01:45:57+08:00",
       "version": 1,
-      "useful": 5,
+      "useful": 4,
       "files": [
         "README.md",
         "install.sh",
@@ -1107,7 +1107,7 @@
         "workspace/update/update.sh"
       ],
       "zip": "items/jesseos-starter/jesseos-starter.zip",
-      "install_prompt": "Please set up \"JesseOS starter: one brain for Claude Code + Codex\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/jesseos-starter/jesseos-starter.zip and unzip it to ~/claude-shelf/jesseos-starter/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Unzip, read README.md, run ./install.sh (it never overwrites your files). Then fill in vault/00-context and add skills from this shelf."
+      "install_prompt": "Please set up \"Claude + Codex Setup\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/jesseos-starter/jesseos-starter.zip and unzip it to ~/claude-shelf/jesseos-starter/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Unzip, read README.md, run ./install.sh (it never overwrites your files). Then fill in vault/00-context and add skills from this shelf."
     }
   ]
 }

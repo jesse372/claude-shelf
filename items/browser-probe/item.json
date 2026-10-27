@@ -1,6 +1,6 @@
 {
   "slug": "browser-probe",
-  "title": "Browser Probe: let Claude actually look at your web app",
+  "title": "Browser Tester",
   "emoji": "🔍",
   "type": "skill",
   "summary": "Claude drives a real headless Chrome so it can screenshot every screen of your web app, catch JavaScript errors, and spot bugs that only show up on screen. No Playwright or Puppeteer needed.",
@@ -11,7 +11,7 @@
   "created": "2026-09-11T04:00:00+08:00",
   "updated": "2026-09-11T04:00:00+08:00",
   "version": 1,
-  "useful": 4,
+  "useful": 2,
   "files": [
     "SKILL.md",
     "scripts/cdp.mjs",

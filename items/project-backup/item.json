@@ -1,6 +1,6 @@
 {
   "slug": "project-backup",
-  "title": "Project Backup: every project gets a private GitHub repo",
+  "title": "Project Backup",
   "emoji": "💾",
   "type": "skill",
   "summary": "At the start of any project, Claude initialises git, writes a sensible .gitignore (keeps secrets and huge files out), creates a PRIVATE GitHub repo and registers it for nightly automatic backup.",
@@ -11,7 +11,7 @@
   "created": "2026-06-29T02:07:26+08:00",
   "updated": "2026-09-24T04:00:18+08:00",
   "version": 1,
-  "useful": 4,
+  "useful": 2,
   "files": [
     "SKILL.md",
     "launchagents/com.jesse.project-backup.plist",

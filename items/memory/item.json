@@ -1,6 +1,6 @@
 {
   "slug": "memory",
-  "title": "Memory: tiny capture + recall commands",
+  "title": "Simple Memory",
   "emoji": "📝",
   "type": "skill",
   "summary": "The simplest long-term memory for agents: one command to save a decision, one to search past notes. Shared by Claude and Codex.",
@@ -11,7 +11,7 @@
   "created": "2026-06-29T01:45:57+08:00",
   "updated": "2026-09-24T10:11:50+08:00",
   "version": 1,
-  "useful": 3,
+  "useful": 1,
   "files": [
     "SKILL.md",
     "capture.sh",

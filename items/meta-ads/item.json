@@ -1,6 +1,6 @@
 {
   "slug": "meta-ads",
-  "title": "Meta Ads from Claude",
+  "title": "Meta Ads Manager",
   "emoji": "📣",
   "type": "skill",
   "summary": "Run Facebook/Instagram ads from the command line: duplicate campaigns, change budgets, pause and resume, and pull cost-per-lead reports. Every change is shown as a plan first and only applied when you confirm.",

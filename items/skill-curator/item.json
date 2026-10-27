@@ -1,6 +1,6 @@
 {
   "slug": "skill-curator",
-  "title": "Skill Curator: your skills improve themselves weekly",
+  "title": "Skill Curator",
   "emoji": "🧑‍🔧",
   "type": "skill",
   "summary": "A weekly pass that mines your recent sessions for new reusable skills, tests and improves existing ones, archives dead ones and posts a digest.",
@@ -11,7 +11,7 @@
   "created": "2026-06-29T02:07:26+08:00",
   "updated": "2026-06-29T02:07:26+08:00",
   "version": 1,
-  "useful": 3,
+  "useful": 2,
   "files": [
     "SKILL.md",
     "com.jesse.skillcurator.plist",

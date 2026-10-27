@@ -1,6 +1,6 @@
 {
   "slug": "ai-video-pipeline",
-  "title": "AI Video Pipeline: one prompt to a YouTube script",
+  "title": "AI Video Pipeline",
   "emoji": "🎬",
   "type": "skill",
   "summary": "Research a topic, fact-check every claim, write the script in your voice, and chunk it for voice cloning. Later stages render avatar video with motion graphics and QC it visually.",
@@ -11,7 +11,7 @@
   "created": "2026-07-29T04:00:03+08:00",
   "updated": "2026-07-29T04:00:03+08:00",
   "version": 1,
-  "useful": 3,
+  "useful": 4,
   "files": [
     "SKILL.md",
     "scripts/01-brief.sh",

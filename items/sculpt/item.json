@@ -1,6 +1,6 @@
 {
   "slug": "sculpt",
-  "title": "Sculpt: cull, edit and retouch wedding photos",
+  "title": "Sculpt Photo Editor",
   "emoji": "✨",
   "type": "tool",
   "summary": "A browser app for photographers: AI-assisted culling, Lightroom-style colour profiles baked into GPU LUTs, retouching, and delivery straight to Pixieset galleries.",
@@ -11,7 +11,7 @@
   "created": "2026-10-08T11:01:27+08:00",
   "updated": "2026-10-28T00:26:13+08:00",
   "version": 1,
-  "useful": 3,
+  "useful": 5,
   "files": [
     ".gitignore",
     "README.md",

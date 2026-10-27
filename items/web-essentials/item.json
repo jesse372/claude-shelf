@@ -1,6 +1,6 @@
 {
   "slug": "web-essentials",
-  "title": "Web Essentials: favicon + iPhone home-screen icon",
+  "title": "Website Icons",
   "emoji": "📱",
   "type": "skill",
   "summary": "A checklist Claude follows on every website it builds: a favicon, a proper iPhone Add-to-Home-Screen icon, and the right meta tags. Includes a script that turns any emoji into all the icons in one command.",
@@ -11,7 +11,7 @@
   "created": "2026-06-29T02:07:26+08:00",
   "updated": "2026-06-29T02:07:26+08:00",
   "version": 1,
-  "useful": 4,
+  "useful": 1,
   "files": [
     "SKILL.md",
     "scripts/emoji_icon.py"

@@ -1,6 +1,6 @@
 {
   "slug": "sick-karnt-tours",
-  "title": "Sick Karnt Tours: Vietnam motorbike tour landing page",
+  "title": "Motorbike Tour Website",
   "emoji": "🏍️",
   "type": "website",
   "summary": "A one-page landing site for a 7-day off-road motorcycle expedition in Vietnam: itinerary, pricing and booking call-to-action.",
@@ -11,7 +11,7 @@
   "created": "2026-07-12T04:00:06+08:00",
   "updated": "2026-07-12T04:00:06+08:00",
   "version": 1,
-  "useful": 2,
+  "useful": 3,
   "files": [
     "apple-touch-icon.png",
     "favicon.svg",

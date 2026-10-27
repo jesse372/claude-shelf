@@ -1,6 +1,6 @@
 {
   "slug": "jesseos-starter",
-  "title": "JesseOS starter: one brain for Claude Code + Codex",
+  "title": "Claude + Codex Setup",
   "emoji": "🧠",
   "type": "tool",
   "summary": "The setup Jesse runs on his Mac: Claude Code and Codex share the same skills, memory and standing instructions, with nightly private GitHub backup, safe auto-updates that roll back bad versions, a login-expiry watchdog and a bounded Claude/Codex handoff tool.",
@@ -11,7 +11,7 @@
   "created": "2026-06-29T01:45:57+08:00",
   "updated": "2026-06-29T01:45:57+08:00",
   "version": 1,
-  "useful": 5,
+  "useful": 4,
   "files": [
     "README.md",
     "install.sh",

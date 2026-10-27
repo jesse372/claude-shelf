@@ -1,6 +1,6 @@
 {
   "slug": "wedding-jobs-bot",
-  "title": "Wedding Jobs Bot (Google Apps Script)",
+  "title": "Wedding Jobs Bot",
   "emoji": "💍",
   "type": "script",
   "summary": "Reads booking emails from Studio Ninja, logs each wedding job to a Google Sheet, works out team pay from the package, and builds a ready-to-send WhatsApp message for the crew.",

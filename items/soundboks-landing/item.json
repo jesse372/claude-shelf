@@ -1,6 +1,6 @@
 {
   "slug": "soundboks-landing",
-  "title": "Soundboks sale landing page",
+  "title": "Soundboks Sales Page",
   "emoji": "🔊",
   "type": "website",
   "summary": "A single-product sales page (a $199 Soundboks 4 deal) with a hero image, specs and call-to-action. Use it as a quick template for selling one thing.",
@@ -11,7 +11,7 @@
   "created": "2026-07-09T19:13:05+08:00",
   "updated": "2026-07-09T23:00:35+08:00",
   "version": 1,
-  "useful": 1,
+  "useful": 2,
   "files": [
     "index.html",
     "product.png",

@@ -1,6 +1,6 @@
 {
   "slug": "scout",
-  "title": "Scout: search everywhere at once",
+  "title": "Multi-Source Search",
   "emoji": "🛰️",
   "type": "skill",
   "summary": "When you ask Claude to 'check everywhere', it sends parallel searchers across repos, notes, drives and the web, then gives you ONE combined answer instead of searching one place at a time.",
@@ -11,7 +11,7 @@
   "created": "2026-06-29T02:07:26+08:00",
   "updated": "2026-06-29T02:07:26+08:00",
   "version": 1,
-  "useful": 4,
+  "useful": 1,
   "files": [
     "SKILL.md"
   ],

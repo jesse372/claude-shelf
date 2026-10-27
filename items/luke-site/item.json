@@ -1,6 +1,6 @@
 {
   "slug": "luke-site",
-  "title": "LUKE: Single, Fabulous, Accepting Applications",
+  "title": "Luke's Dating Page",
   "emoji": "😎",
   "type": "website",
   "summary": "A joke 'dating profile' website made for a mate. Proof you can make a ridiculous, polished site for a laugh in one evening.",
@@ -11,6 +11,6 @@
   "created": "2026-09-01T21:51:40+08:00",
   "updated": "2026-09-02T16:31:38+08:00",
   "version": 1,
-  "useful": 1,
+  "useful": 2,
   "files": []
 }

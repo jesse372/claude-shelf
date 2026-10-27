@@ -1,6 +1,6 @@
 {
   "slug": "beer-tap-list",
-  "title": "Beer Tap List: a TV tap-list display for a bar",
+  "title": "Tap List TV Display",
   "emoji": "🍺",
   "type": "website",
   "summary": "A tap-list screen for a TV or Fire Stick that auto-refreshes and rotates pages, plus a dead-simple phone editor for the brewer, a Cloudflare Worker backend and a Fire TV app that boots straight into it.",
@@ -11,7 +11,7 @@
   "created": "2026-07-25T15:55:35+08:00",
   "updated": "2026-10-03T23:42:58+08:00",
   "version": 1,
-  "useful": 3,
+  "useful": 5,
   "files": [
     ".claude/settings.json",
     ".gitignore",

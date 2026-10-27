@@ -1,6 +1,6 @@
 {
   "slug": "anotherlife",
-  "title": "AnotherLife: a BitLife-style life simulator",
+  "title": "AnotherLife Life Simulator",
   "emoji": "🎲",
   "type": "tool",
   "summary": "A text-based life sim. You're born at random somewhere in the world and live one year at a time with careers, fame, storylines that pay off decades later, and premium modes like Mafia, Royalty and Fighter. Runs in a browser, builds for Android.",
@@ -11,7 +11,7 @@
   "created": "2026-09-06T07:48:36+08:00",
   "updated": "2026-09-12T12:47:46+08:00",
   "version": 1,
-  "useful": 3,
+  "useful": 5,
   "files": [
     ".gitignore",
     "README.md",

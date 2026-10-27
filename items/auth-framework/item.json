@@ -1,6 +1,6 @@
 {
   "slug": "auth-framework",
-  "title": "Auth Framework: logins that renew before they expire",
+  "title": "Login Keepalive",
   "emoji": "🔐",
   "type": "skill",
   "summary": "One place that tracks every token, session and cookie your automations depend on, and refreshes them (or warns you) before they expire, instead of breaking silently.",

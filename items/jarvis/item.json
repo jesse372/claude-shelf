@@ -1,6 +1,6 @@
 {
   "slug": "jarvis",
-  "title": "J.A.R.V.I.S: an Iron Man-style voice HUD for Claude",
+  "title": "Jarvis Voice Assistant",
   "emoji": "🦾",
   "type": "tool",
   "summary": "A JARVIS/Batcomputer-style dashboard for your Mac. Talk or type, and Claude Code does the work with full tool access. Push-to-talk with local Whisper, spoken replies, a live arc-reactor orb and system readouts.",
@@ -11,7 +11,7 @@
   "created": "2026-07-22T14:01:21+08:00",
   "updated": "2026-07-24T20:17:18+08:00",
   "version": 1,
-  "useful": 4,
+  "useful": 5,
   "files": [
     ".gitignore",
     "README.md",

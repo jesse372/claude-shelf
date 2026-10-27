@@ -1,6 +1,6 @@
 {
   "slug": "share-with-friend",
-  "title": "Claude Shelf: make your own version of this site",
+  "title": "Claude Shelf",
   "emoji": "🧰",
   "type": "skill",
   "summary": "The skill behind this site. One command publishes anything you build with Claude: it strips secrets and private info, builds a zip and install prompt, updates the feed and pushes to GitHub Pages.",

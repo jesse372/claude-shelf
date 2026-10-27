@@ -1,6 +1,6 @@
 {
   "slug": "media-inbox",
-  "title": "Media Inbox: get a video to Claude and transcribe it",
+  "title": "Video Transcriber",
   "emoji": "📥",
   "type": "skill",
   "summary": "Paste a Google Drive share link, any public video URL, or a local file path, and Claude downloads it and transcribes it offline. It's for when your chat app can't upload files.",
