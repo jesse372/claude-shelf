@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copy to ~/Library/LaunchAgents/com.jesse.<pipeline>-qc.plist, edit <…>, then:
+     launchctl load ~/Library/LaunchAgents/com.jesse.<pipeline>-qc.plist
+     Tip: a SEPARATE plist with the "--deep" arg once/day catches session/auth expiry.
+     Schedule QC shortly AFTER the workflow's own runs (so it grades fresh output).
+     NOTE: set PATH below to include wherever `claude` and `node` live on this box
+     (find them with `dirname "$(command -v claude)"` / `dirname "$(command -v node)"`). -->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.jesse.PIPELINE-qc</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>~/PIPELINE-DIR/PIPELINE-qc.sh</string>
+        <!-- <string>--deep</string>  (uncomment in the daily deep variant) -->
+    </array>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>HOME</key><string>~</string>
+        <key>PATH</key><string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
+    <key>StartCalendarInterval</key>
+    <array>
+        <dict><key>Hour</key><integer>16</integer><key>Minute</key><integer>30</integer></dict>
+        <dict><key>Hour</key><integer>22</integer><key>Minute</key><integer>30</integer></dict>
+    </array>
+    <key>StandardOutPath</key><string>~/PIPELINE-DIR/qc.cron.log</string>
+    <key>StandardErrorPath</key><string>~/PIPELINE-DIR/qc.cron.log</string>
+</dict>
+</plist>

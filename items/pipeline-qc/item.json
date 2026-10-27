@@ -1,0 +1,24 @@
+{
+  "slug": "pipeline-qc",
+  "title": "Pipeline QC: automations that fix themselves",
+  "emoji": "🩺",
+  "type": "skill",
+  "summary": "A framework that checks every stage of a recurring automation and repairs failures itself. It does a simple fix first, then lets Claude attempt a repair (kept only if the check goes green), and only pings you if both fail.",
+  "how_to_use": "Ask Claude: \"add a self-healing QC loop to this pipeline\" or \"make this workflow monitor itself\". It wires your stages into qc-lib.sh.",
+  "requires": "macOS/Linux bash and Claude Code. Notifications are pluggable (desktop by default).",
+  "tags": [],
+  "link": "",
+  "created": "2026-06-29T02:07:26+08:00",
+  "updated": "2026-06-29T02:07:26+08:00",
+  "version": 1,
+  "useful": 4,
+  "files": [
+    "SKILL.md",
+    "scripts/qc-heartbeat-watchdog.sh",
+    "scripts/qc-lib.sh",
+    "templates/com.jesse.PIPELINE-qc.plist",
+    "templates/example-qc.sh"
+  ],
+  "skill_name": "pipeline-qc",
+  "zip": "items/pipeline-qc/pipeline-qc.zip"
+}
