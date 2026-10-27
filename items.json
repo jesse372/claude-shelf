@@ -1,7 +1,7 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-10-27T16:35:32+00:00",
+  "updated": "2026-10-27T16:35:34+00:00",
   "items": [
     {
       "slug": "daily-reels",
@@ -314,6 +314,28 @@
       "skill_name": "loop-contract",
       "zip": "items/loop-contract/loop-contract.zip",
       "install_prompt": "Please install the Claude Code skill \"Loop Contract: turn a recurring task into a proper loop\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/loop-contract/loop-contract.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/loop-contract/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+    },
+    {
+      "slug": "mac-headless-setup",
+      "title": "Headless Mac setup for remote Claude",
+      "emoji": "🖥️",
+      "type": "skill",
+      "summary": "The full checklist for running Claude on a Mac mini you don't sit at: installs, daemon PATH fixes, macOS privacy permissions (TCC) and remote-access checks.",
+      "how_to_use": "Say \"set up this Mac as a headless worker\" or \"remote access is broken\".",
+      "requires": "macOS.",
+      "tags": [],
+      "link": "",
+      "created": "2026-06-29T02:07:26+08:00",
+      "updated": "2026-06-29T02:07:26+08:00",
+      "version": 1,
+      "useful": 2,
+      "files": [
+        "SKILL.md",
+        "scripts/tcc-audit.sh"
+      ],
+      "skill_name": "mac-headless-setup",
+      "zip": "items/mac-headless-setup/mac-headless-setup.zip",
+      "install_prompt": "Please install the Claude Code skill \"Headless Mac setup for remote Claude\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/mac-headless-setup/mac-headless-setup.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/mac-headless-setup/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "memory-capture",

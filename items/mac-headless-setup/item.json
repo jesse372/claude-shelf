@@ -1,0 +1,21 @@
+{
+  "slug": "mac-headless-setup",
+  "title": "Headless Mac setup for remote Claude",
+  "emoji": "🖥️",
+  "type": "skill",
+  "summary": "The full checklist for running Claude on a Mac mini you don't sit at: installs, daemon PATH fixes, macOS privacy permissions (TCC) and remote-access checks.",
+  "how_to_use": "Say \"set up this Mac as a headless worker\" or \"remote access is broken\".",
+  "requires": "macOS.",
+  "tags": [],
+  "link": "",
+  "created": "2026-06-29T02:07:26+08:00",
+  "updated": "2026-06-29T02:07:26+08:00",
+  "version": 1,
+  "useful": 2,
+  "files": [
+    "SKILL.md",
+    "scripts/tcc-audit.sh"
+  ],
+  "skill_name": "mac-headless-setup",
+  "zip": "items/mac-headless-setup/mac-headless-setup.zip"
+}
