@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choose a new password — On Tap</title>
+<link rel="icon" href="favicon.svg">
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--bg:#0e0c0a;--line:rgba(226,197,140,.16);--cream:#f6ecd8;--muted:#a3937a;
+        --gold:#e3ad42;--bad:#e2705c;
+        --serif:'Bitter',Georgia,serif;
+        --sans:'Barlow',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+        --cond:'Barlow Condensed','Barlow',Arial,sans-serif}
+  html,body{min-height:100%}
+  body{background:radial-gradient(120% 70% at 50% -10%,#2b231b 0,rgba(43,35,27,0) 70%),#0e0c0a;
+       color:var(--cream);font-family:var(--sans);display:flex;align-items:center;
+       justify-content:center;padding:24px 16px;-webkit-font-smoothing:antialiased}
+  .card{width:100%;max-width:420px}
+  h1{font-family:var(--serif);font-weight:700;font-size:25px;text-align:center;line-height:1.2}
+  .sub{text-align:center;color:var(--muted);font-size:15px;margin-top:8px;line-height:1.5}
+  label{display:block;font-family:var(--cond);font-weight:600;letter-spacing:.14em;
+        text-transform:uppercase;font-size:12px;color:var(--muted);margin:18px 0 6px}
+  input{width:100%;font-size:17px;padding:13px 14px;border-radius:10px;
+        background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--cream)}
+  button{width:100%;margin-top:20px;font-weight:700;font-size:17px;padding:14px;
+         border-radius:10px;border:none;background:var(--gold);color:#1a1408;cursor:pointer}
+  button[disabled]{opacity:.55;cursor:default}
+  .msg{margin-top:14px;font-size:15px;line-height:1.5;min-height:22px}
+  .msg.err{color:var(--bad)} .msg.ok{color:var(--gold)}
+  .fine{margin-top:18px;color:var(--muted);font-size:13px;line-height:1.6;text-align:center}
+  a{color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1 id="head">Choose a new password</h1>
+  <div class="sub" id="sub">You'll be signed out everywhere else.</div>
+  <form id="form">
+    <label for="email">Your email</label>
+    <input id="email" type="email" autocomplete="username" required placeholder="you@brewery.com">
+    <label for="pw">New password</label>
+    <input id="pw" type="password" autocomplete="new-password" required placeholder="At least 10 characters">
+    <button id="go" type="submit">Set the new password</button>
+  </form>
+  <div class="msg" id="msg"></div>
+  <div class="fine"><a href="signin.html">Back to signing in</a></div>
+</div>
+<script src="config.js"></script>
+<script src="authkey.js"></script>
+<script>
+(function(){
+  "use strict";
+  var el=function(i){return document.getElementById(i);};
+  var token=(/[?&]token=([^&]+)/.exec(location.search||"")||[])[1];
+  if(token) token=decodeURIComponent(token);
+
+  function say(t,k){ var m=el("msg"); m.textContent=t||""; m.className="msg"+(k?" "+k:""); }
+
+  if(!ONTAP.accountsEnabled()){
+    el("form").style.display="none";
+    say("Accounts aren't switched on yet.","err"); return;
+  }
+  if(!token){
+    el("form").style.display="none";
+    say("This link is incomplete — ask for a new one from the sign-in page.","err");
+    return;
+  }
+
+  /* The email is needed because it salts the key derivation: the same password must
+     produce the same key here as it will at sign-in. */
+  el("form").addEventListener("submit",function(ev){
+    ev.preventDefault();
+    var email=el("email").value.trim(), pw=el("pw").value;
+    if(pw.length<10){ say("Use at least 10 characters.","err"); return; }
+    el("go").disabled=true;
+    say("Securing your new password…");
+    AuthKey.derive(email,pw).then(function(key){
+      return fetch(ONTAP.api()+"/v1/reset/confirm",{
+        method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({token:token,authKey:key})
+      });
+    }).then(function(r){
+      return r.json().catch(function(){return {};}).then(function(j){
+        if(!r.ok) throw new Error(j.error||"That didn't work.");
+        say("Done — you can sign in with the new password.","ok");
+        setTimeout(function(){ location.replace("signin.html"); },1400);
+      });
+    }).catch(function(e){
+      el("go").disabled=false;
+      say(e.message||String(e),"err");
+    });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>On Tap</title>
+<meta name="theme-color" content="#0e0c0a">
+<link rel="icon" href="favicon.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="On Tap">
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+  /* The phone menu behind the QR code on the board. Same list, same colours, but
+     laid out for a thumb rather than a room: one column, real scrolling, tap sizes
+     that survive being read one-handed in a dark bar. */
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0e0c0a; --line:rgba(226,197,140,.14); --line-strong:rgba(226,197,140,.30);
+    --cream:#f6ecd8; --muted:#a3937a; --dim:#7d7060; --gold:#e3ad42;
+    --serif:'Bitter',Georgia,'Times New Roman',serif;
+    --sans:'Barlow',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+    --cond:'Barlow Condensed','Barlow',Arial Narrow,Arial,sans-serif;
+  }
+  html,body{background:var(--bg);color:var(--cream);font-family:var(--sans);
+            -webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+  body{
+    background:
+      radial-gradient(130% 60% at 50% -10%, #2b231b 0%, rgba(43,35,27,0) 70%),
+      #0e0c0a;
+    min-height:100vh;min-height:100dvh;
+    padding:20px 16px calc(28px + env(safe-area-inset-bottom));
+  }
+  .wrap{max-width:640px;margin:0 auto}
+
+  header{text-align:center;padding-bottom:16px;position:relative;margin-bottom:6px}
+  header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
+    background:linear-gradient(90deg,var(--gold),rgba(227,173,66,.06))}
+  .mark img{display:block;max-width:70%;max-height:96px;margin:0 auto 8px;object-fit:contain}
+  .mark .emoji{font-size:40px;line-height:1;display:block;margin-bottom:4px}
+  h1{font-family:var(--serif);font-weight:700;font-size:27px;line-height:1.1}
+  .tagline{font-family:var(--cond);font-weight:600;color:var(--gold);
+    letter-spacing:.16em;text-transform:uppercase;font-size:12px;margin-top:5px}
+
+  #happy{
+    display:none;margin:14px 0 2px;text-align:center;
+    background:var(--gold);color:#1a1408;border-radius:8px;padding:9px 10px;
+    font-family:var(--cond);font-weight:600;text-transform:uppercase;
+    letter-spacing:.2em;text-indent:.2em;font-size:16px;
+  }
+  #happy.on{display:block}
+
+  .sect{font-family:var(--cond);font-weight:600;color:var(--gold);
+    letter-spacing:.24em;text-transform:uppercase;font-size:13px;
+    margin:22px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line-strong)}
+
+  .beer{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+  .beer.out{opacity:.45}
+  .num{
+    flex:0 0 auto;width:28px;height:28px;border-radius:50%;
+    border:1px solid var(--line-strong);color:var(--gold);
+    font-family:var(--cond);font-weight:600;font-size:14px;
+    display:flex;align-items:center;justify-content:center;margin-top:2px;
+  }
+  .swatch{flex:0 0 auto;width:6px;border-radius:3px;background:var(--beer,#e3ad42)}
+  .info{flex:1 1 auto;min-width:0}
+  .name{font-family:var(--serif);font-weight:700;font-size:19px;line-height:1.2}
+  .style{font-family:var(--cond);font-weight:600;color:var(--gold);
+    letter-spacing:.1em;text-transform:uppercase;font-size:12.5px;margin-top:2px}
+  .notes{color:var(--muted);font-size:14px;line-height:1.4;margin-top:5px}
+  .meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:7px;align-items:baseline}
+  .meta span{font-family:var(--cond);font-weight:600;color:var(--dim);
+    letter-spacing:.12em;text-transform:uppercase;font-size:12px}
+  .meta b{font-family:var(--sans);font-weight:700;color:var(--cream);font-size:14px}
+  .badge{
+    display:inline-block;font-family:var(--cond);font-weight:600;font-size:11.5px;
+    letter-spacing:.16em;text-transform:uppercase;padding:3px 8px;border-radius:5px;
+    border:1px solid currentColor;margin-top:7px;
+  }
+  .badge.coming{color:#79b39c}
+  .badge.kicked{color:#8b8172}
+  .badge.low{color:#eb9a3c}
+  .badge.guest{color:var(--dim)}
+
+  .prices{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:9px;align-items:baseline}
+  .price{display:flex;align-items:baseline;gap:5px}
+  .price b{font-family:var(--sans);font-weight:700;color:var(--gold);font-size:19px;
+    font-variant-numeric:tabular-nums}
+  .price.happy b{color:#f3c969}
+  .price s{color:var(--dim);font-size:13px;text-decoration:line-through}
+  .price i{font-family:var(--cond);font-style:normal;font-weight:600;color:var(--muted);
+    letter-spacing:.14em;text-transform:uppercase;font-size:11.5px}
+
+  .thumb{flex:0 0 auto;width:54px;height:54px;border-radius:8px;object-fit:cover;
+         background:rgba(255,255,255,.05);border:1px solid var(--line)}
+  .custom{margin-top:7px;font-size:13px;color:var(--muted);line-height:1.55}
+  .custom b{color:var(--cream);font-weight:600}
+  .xitem{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);align-items:baseline}
+  .xitem .xn{flex:1 1 auto;min-width:0}
+  .xitem .xname{font-family:var(--serif);font-weight:700;font-size:17px}
+  .xitem .xd{color:var(--muted);font-size:13.5px;margin-top:3px;line-height:1.4}
+  .xitem .xp{flex:0 0 auto;font-family:var(--sans);font-weight:700;color:var(--gold);font-size:17px}
+  footer{margin-top:26px;text-align:center;color:var(--dim);
+    font-family:var(--cond);letter-spacing:.18em;text-transform:uppercase;font-size:11.5px}
+  .msg{text-align:center;color:var(--muted);padding:40px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="mark" id="mark"></div>
+    <h1 id="brewery">Loading…</h1>
+    <div class="tagline" id="tagline"></div>
+  </header>
+  <div id="happy"></div>
+  <div id="list"><div class="msg">Loading the tap list…</div></div>
+  <footer id="foot"></footer>
+</div>
+
+<script src="taplib.js"></script>
+<script src="icons.js"></script>
+<script>
+(function(){
+  "use strict";
+  /* Staging (/next/) sets this to "../" so the menu shows the live beer list. */
+  var DATA_BASE = "";
+
+  /* Matches the board: ?demo=business reads the demo list instead of the real one.
+     The parameter picks from a list, it is never used as a path. */
+  var DEMOS = { business: "business-taps.json" };
+  function dataFile(){
+    var m = /[?&]demo=([a-z]+)/i.exec(location.search || "");
+    return (m && DEMOS[m[1].toLowerCase()]) || "taps.json";
+  }
+
+
+  /* ---- pricing, mirroring the board so the two can never disagree ---- */
+  /* One copy of these lives in taplib.js — see the note there. */
+  var T = window.TapLib;
+  var DEFAULT_SIZES = T.DEFAULT_SIZES;
+  function esc(s){ return T.esc(s); }
+  function has(v){ return T.has(v); }
+  function nonZero(v){ return T.nonZero(v); }
+  function money(c, v){ return T.money(c, v); }
+  function hhmmToMin(v){ return T.hhmmToMin(v); }
+  function prettyTime(v){ return T.prettyTime(v); }
+  function pricing(){ return T.pricing(data); }
+  function happyActive(){ return T.happyActive(data); }
+  function happyPrice(id){ return T.happyPrice(data, id); }
+  var el = function(id){ return document.getElementById(id); };
+  function comingText(t){ return T.comingText(t); }
+  var data = null;
+
+
+  function pricesHTML(t){
+    var pr = pricing();
+    if(!pr.on) return "";
+    var live = happyActive(), out = [], i, sz, v, hp;
+    for(i = 0; i < pr.sizes.length; i++){
+      sz = pr.sizes[i];
+      v  = t.prices ? t.prices[sz.id] : null;
+      if(v == null || String(v).trim() === "") continue;
+      hp = live ? happyPrice(sz.id) : null;
+      var label = '<i>' + esc(sz.name || (sz.ml ? sz.ml + "ml" : "")) + '</i>';
+      if(hp != null && Number(hp) < Number(v)){
+        out.push('<span class="price happy"><b>' + esc(money(pr.currency, hp)) + '</b><s>' +
+                 esc(money(pr.currency, v)) + '</s>' + label + '</span>');
+      } else {
+        out.push('<span class="price"><b>' + esc(money(pr.currency, v)) + '</b>' + label + '</span>');
+      }
+    }
+    return out.length ? '<div class="prices">' + out.join("") + '</div>' : "";
+  }
+
+  function beerHTML(t){
+    var level  = Math.max(0, Math.min(100, Number(t.level) || 0));
+    var status = t.status || "pouring";
+    var kicked = status === "kicked" || (status === "pouring" && level <= 0);
+    var coming = status === "coming";
+
+    var badge = "";
+    if(coming)           badge = '<div class="badge coming">' + esc(comingText(t)) + '</div>';
+    else if(kicked)      badge = '<div class="badge kicked">Kicked</div>';
+    else if(level <= 20) badge = '<div class="badge low">Almost Gone</div>';
+
+    var meta = [];
+    if(has(t.abv))     meta.push('<span><b>' + esc(String(t.abv).trim()) + '%</b> ABV</span>');
+    if(nonZero(t.ibu)) meta.push('<span><b>' + esc(String(t.ibu).trim()) + '</b> IBU</span>');
+    if(nonZero(t.srm)) meta.push('<span><b>' + esc(t.srm) + '</b> SRM</span>');
+
+    var customs = (Array.isArray(t.custom) ? t.custom : []).filter(function(c){
+      return has(c && c.k) || has(c && c.v);
+    });
+    return '<div class="beer' + (kicked ? " out" : "") + '" style="--beer:' + esc(t.color || "#e3ad42") + '">' +
+      '<div class="num">' + esc(t.num != null ? t.num : "") + '</div>' +
+      '<div class="swatch"></div>' +
+      (has(t.image) ? '<img class="thumb" alt="" src="' + esc(t.image) +
+        '" onerror="this.style.display=\'none\'">' : '') +
+      '<div class="info">' +
+        '<div class="name">' + esc(t.name || "Untitled") + '</div>' +
+        (has(t.style) ? '<div class="style">' + esc(String(t.style).trim()) + '</div>' : '') +
+        (has(t.notes) ? '<div class="notes">' + esc(String(t.notes).trim()) + '</div>' : '') +
+        (meta.length ? '<div class="meta">' + meta.join("") + '</div>' : '') +
+        (customs.length ? '<div class="custom">' + customs.map(function(c){
+            return (has(c.k) ? '<b>' + esc(c.k) + ':</b> ' : '') + esc(c.v || "");
+          }).join("<br>") + '</div>' : '') +
+        pricesHTML(t) +
+        (t.guest ? '<div class="badge guest">Guest</div> ' : '') + badge +
+      '</div>' +
+    '</div>';
+  }
+
+  function render(){
+    if(!data) return;
+
+    var mark = el("mark");
+    if(data.logo){
+      mark.innerHTML = "";
+      var img = document.createElement("img");
+      img.alt = ""; img.src = data.logo;
+      mark.appendChild(img);
+    } else {
+      mark.innerHTML = '<span class="emoji">🍺</span>';
+    }
+    el("brewery").textContent = data.logo && data.logoOnly ? "" : (data.brewery || "On Tap");
+    el("brewery").style.display = (data.logo && data.logoOnly) ? "none" : "";
+    el("tagline").textContent = data.tagline || "";
+
+    var pr = pricing(), hb = el("happy");
+    if(pr.on && happyActive()){
+      var til = prettyTime(pr.happy && pr.happy.to);
+      hb.textContent = ((pr.happy && pr.happy.label) || "Happy Hour") + (til ? " — until " + til : "");
+      hb.className = "on";
+    } else hb.className = "";
+
+    var taps = (data.taps || []).filter(function(t){ return String(t.name || "").trim() !== ""; });
+    /* The tap number decides the running order, not the order they happen to sit in
+       the file. Otherwise renumbering a beer in the editor moves nothing out here. */
+    taps.sort(function(a, b){
+      return (Number(a.num) || 9999) - (Number(b.num) || 9999);
+    });
+    if(data.hideKicked){
+      taps = taps.filter(function(t){
+        return !(t.status === "kicked" || (t.status !== "coming" && (Number(t.level) || 0) <= 0));
+      });
+    }
+    var pouring = taps.filter(function(t){ return t.status !== "coming"; });
+    var coming  = taps.filter(function(t){ return t.status === "coming"; });
+
+    var html = "";
+    if(!taps.length){
+      html = '<div class="msg">Nothing on tap right now. Check back soon 🍺</div>';
+    } else {
+      html += pouring.map(beerHTML).join("");
+      if(coming.length){
+        html += '<div class="sect">Coming Soon</div>' + coming.map(beerHTML).join("");
+      }
+    }
+    /* Food and merch are not poured, so they sit under their own headings with a
+       plain price rather than pour sizes. */
+    var ex = data.extras;
+    if(ex && ex.on && Array.isArray(ex.groups)){
+      var cur = pricing().currency;
+      ex.groups.forEach(function(g){
+        var items = (g.items || []).filter(function(i){ return String(i.name || "").trim() !== ""; });
+        if(!items.length) return;
+        html += '<div class="sect">' + esc(g.name || "Also available") + '</div>' +
+          items.map(function(i){
+            return '<div class="xitem"><div class="xn">' +
+              '<div class="xname">' + esc(i.name) + '</div>' +
+              (has(i.desc) ? '<div class="xd">' + esc(i.desc) + '</div>' : '') +
+            '</div>' +
+            (i.price != null && String(i.price).trim() !== ''
+              ? '<div class="xp">' + esc(money(cur, i.price)) + '</div>' : '') +
+            '</div>';
+          }).join("");
+      });
+    }
+
+    el("list").innerHTML = html;
+
+    var n = pouring.filter(function(t){
+      return !(t.status === "kicked" || (Number(t.level) || 0) <= 0);
+    }).length;
+    el("foot").textContent = n + (n === 1 ? " beer pouring" : " beers pouring");
+  }
+
+  var lastStamp = null;
+  function load(){
+    var x = new XMLHttpRequest();
+    x.open("GET", DATA_BASE + dataFile() + "?t=" + Date.now(), true);
+    x.timeout = 12000;
+    x.onload = function(){
+      if(x.status < 200 || x.status >= 300) return;
+      var j; try { j = JSON.parse(x.responseText); } catch(e){ return; }
+      var stamp = JSON.stringify(j);
+      if(stamp === lastStamp) return;
+      lastStamp = stamp; data = j; render();
+    };
+    x.onerror = x.ontimeout = function(){};
+    x.send();
+  }
+  load();
+  setInterval(load, 60000);
+  /* Coming back to the page after a while should not show a stale list. */
+  document.addEventListener("visibilitychange", function(){
+    if(!document.hidden) load();
+  }, false);
+  /* Happy hour turns over on the clock, not on a data change. */
+  setInterval(function(){ if(data) render(); }, 60000);
+})();
+</script>
+</body>
+</html>

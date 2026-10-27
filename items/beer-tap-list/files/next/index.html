@@ -1,0 +1,1799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>On Tap</title>
+<meta name="theme-color" content="#0e0c0a">
+<link rel="icon" href="favicon.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="On Tap">
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+  /* NOTE ON BROWSER SUPPORT
+     This runs on Fire TV's Silk browser, which is an old Chromium. Deliberately avoided:
+     `inset:` shorthand, `clamp()`, `aspect-ratio`, container queries, CSS nesting.
+     Everything below is long-hand and safe. */
+
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0e0c0a;
+    --line:rgba(226,197,140,.14);
+    --line-strong:rgba(226,197,140,.30);
+    --cream:#f6ecd8;
+    --muted:#a3937a;
+    --dim:#7d7060;
+    --gold:#e3ad42;
+    --serif:'Bitter',Georgia,'Times New Roman',serif;
+    --sans:'Barlow',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+    --cond:'Barlow Condensed','Barlow',Arial Narrow,Arial,sans-serif;
+    --s:1;
+    --pad:calc(3.4 * var(--u));
+    /* --u  = one unit along the board's OWN vertical axis
+       --uw = one unit along its horizontal axis
+       Rotating swaps them, so every size below stays correct. */
+    --u:1vh;
+    --uw:1vw;
+  }
+  body.rot90,body.rot270{--u:1vw;--uw:1vh}
+
+  /* ================= background presets =================
+     All deliberately dark — the board is light text, so contrast comes first. */
+  body.bg-charcoal{
+    background:
+      radial-gradient(130% 95% at 50% -28%, #2b231b 0%, rgba(43,35,27,0) 68%),
+      radial-gradient(80% 60% at 100% 110%, #1d1813 0%, rgba(29,24,19,0) 70%),
+      #0e0c0a;
+  }
+  body.bg-chalk{
+    background:
+      radial-gradient(90% 70% at 28% 18%, rgba(255,255,255,.05) 0%, rgba(255,255,255,0) 62%),
+      radial-gradient(80% 65% at 78% 82%, rgba(255,255,255,.035) 0%, rgba(255,255,255,0) 66%),
+      linear-gradient(180deg,#1a2420 0%,#131b18 100%),
+      #131b18;
+  }
+  body.bg-oak{
+    background:
+      repeating-linear-gradient(90deg,
+        rgba(0,0,0,.20) 0px, rgba(0,0,0,.20) 3px,
+        rgba(255,255,255,.020) 3px, rgba(255,255,255,.020) 7px,
+        rgba(0,0,0,.11) 7px, rgba(0,0,0,.11) 13px,
+        rgba(255,255,255,.010) 13px, rgba(255,255,255,.010) 22px),
+      radial-gradient(120% 90% at 50% 0%, #452c1a 0%, rgba(69,44,26,0) 70%),
+      linear-gradient(180deg,#33200f 0%,#20130a 62%,#170d06 100%),
+      #20130a;
+  }
+  body.bg-slate{
+    background:
+      radial-gradient(120% 90% at 18% -5%, #2b3238 0%, rgba(43,50,56,0) 62%),
+      radial-gradient(90% 70% at 95% 105%, #232a30 0%, rgba(35,42,48,0) 68%),
+      linear-gradient(180deg,#191d21 0%,#0f1215 100%),
+      #0f1215;
+  }
+  body.bg-copper{
+    background:
+      linear-gradient(135deg, rgba(227,173,66,.11) 0%, rgba(227,173,66,0) 42%),
+      radial-gradient(115% 90% at 72% -12%, #3d2c18 0%, rgba(61,44,24,0) 66%),
+      linear-gradient(180deg,#1b150d 0%,#100b06 100%),
+      #100b06;
+  }
+  /* photo: a scrim keeps the text readable whatever they upload */
+  body.bg-photo{background-color:#0e0c0a;background-size:cover;background-position:center;
+                background-repeat:no-repeat;background-attachment:scroll}
+  /* Over a photo the cards go near-solid, so a busy picture can't wreck contrast.
+     The photo still shows through the gaps between cards. */
+  body.bg-photo .tap{
+    background:linear-gradient(180deg,rgba(12,10,8,.86),rgba(12,10,8,.78));
+    border-color:rgba(226,197,140,.22);
+  }
+  /* Night dimming — a veil over everything, so the background dims with the
+     content rather than staying bright behind it. Sits outside .screen so it
+     works the same when the board is rotated. */
+  #dimveil{
+    position:fixed;left:0;top:0;right:0;bottom:0;
+    background:#000;opacity:0;pointer-events:none;z-index:80;
+    -webkit-transition:opacity 3s ease;transition:opacity 3s ease;
+  }
+  body.dimmed #dimveil{opacity:.58}
+
+  html,body{height:100%}
+  body{
+    background:var(--bg);          /* replaced by a .bg-* preset at render time */
+    color:var(--cream);
+    font-family:var(--sans);
+    overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  .screen{
+    height:100vh;height:100dvh;
+    padding:var(--pad) calc(var(--pad) * 1.45);
+    display:flex;flex-direction:column;
+  }
+
+  /* ---- rotation, for a TV/monitor mounted on its side ----
+     The board is drawn at swapped dimensions, then turned to match the panel. */
+  body.rot90 .screen,body.rot270 .screen{
+    position:absolute;top:0;left:0;
+    width:100vh;height:100vw;
+    -webkit-transform-origin:0 0;transform-origin:0 0;
+  }
+  body.rot90 .screen{
+    -webkit-transform:rotate(90deg) translate(0,-100%);
+    transform:rotate(90deg) translate(0,-100%);
+  }
+  body.rot270 .screen{
+    -webkit-transform:rotate(-90deg) translate(-100%,0);
+    transform:rotate(-90deg) translate(-100%,0);
+  }
+  body.rot180 .screen{
+    -webkit-transform:rotate(180deg);transform:rotate(180deg);
+  }
+  /* A portrait board is much narrower, so the header has to give ground:
+     smaller type, and the name is allowed to wrap rather than truncate. */
+  body.rot90 h1,body.rot270 h1{
+    font-size:calc(3.5 * var(--u));white-space:normal;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  }
+  body.rot90 .tagline,body.rot270 .tagline{
+    font-size:calc(1.65 * var(--u));letter-spacing:.18em;
+  }
+  body.rot90 .ontap,body.rot270 .ontap{
+    font-size:calc(2.5 * var(--u));letter-spacing:.28em;text-indent:.28em;
+  }
+  body.rot90 .clock,body.rot270 .clock{font-size:calc(1.7 * var(--u))}
+  body.rot90 .mark img,body.rot270 .mark img{height:calc(6.4 * var(--u))}
+  body.rot90 .mark.sz-s img,body.rot270 .mark.sz-s img{height:calc(4.8 * var(--u))}
+  body.rot90 .mark.sz-l img,body.rot270 .mark.sz-l img{height:calc(9 * var(--u))}
+  body.rot90 #fshint,body.rot270 #fshint{
+    font-size:calc(1.5 * var(--u));
+    padding:calc(.95 * var(--u)) calc(1.6 * var(--u));
+  }
+
+  /* ================= header ================= */
+  header{
+    flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;
+    gap:calc(2.5 * var(--uw));padding-bottom:calc(1.9 * var(--u));position:relative;
+  }
+  header::after{  /* gold rule that fades out to the right */
+    content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
+    background:linear-gradient(90deg,var(--gold) 0%,rgba(227,173,66,.35) 45%,rgba(227,173,66,.06) 100%);
+  }
+  .brand{display:flex;align-items:center;gap:calc(1.5 * var(--uw));min-width:0}
+  /* centred banner logo across the top */
+  body.banner header{display:block;text-align:center;position:relative}
+  body.banner .brand{display:block}
+  body.banner .mark{line-height:0}
+  body.banner .mark img{height:auto;max-height:calc(13 * var(--u));max-width:82vw;margin:0 auto}
+  body.banner .right{position:absolute;right:0;bottom:calc(2.2 * var(--u));text-align:right}
+  body.banner .ontap{display:none}
+  .mark{line-height:0;flex:0 0 auto;font-size:calc(6 * var(--u))}
+  .mark img{display:block;max-width:calc(30 * var(--uw));object-fit:contain;height:calc(8.5 * var(--u))}
+  .mark.sz-s img{height:calc(6 * var(--u))}
+  .mark.sz-l img{height:calc(12.5 * var(--u))}
+  .names{min-width:0}
+  h1{
+    font-family:var(--serif);font-weight:700;
+    font-size:calc(5 * var(--u));line-height:1.02;letter-spacing:-.005em;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .tagline{
+    font-family:var(--cond);font-weight:500;font-size:calc(2.1 * var(--u));
+    color:var(--muted);letter-spacing:.3em;text-transform:uppercase;margin-top:calc(.7 * var(--u));
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .right{text-align:right;flex:0 0 auto}
+  .ontap{
+    font-family:var(--cond);font-weight:600;font-size:calc(3.6 * var(--u));
+    letter-spacing:.42em;text-indent:.42em;
+    color:var(--gold);text-transform:uppercase;line-height:1;
+  }
+  .clock{
+    font-family:var(--cond);font-weight:500;font-size:calc(2.1 * var(--u));color:var(--muted);
+    margin-top:calc(.9 * var(--u));letter-spacing:.16em;
+  }
+
+  /* ================= grid ================= */
+  /* Happy hour bar. Sits between the header and the beers and only exists while the
+     window is open — the cards give up the space and fitToCards resizes to suit. */
+  #happybar{
+    flex:0 0 auto;display:none;margin-top:calc(1.6 * var(--u));
+    text-align:center;background:var(--gold);color:#1a1408;
+    font-family:var(--cond);font-weight:600;text-transform:uppercase;
+    font-size:calc(3.1 * var(--u));letter-spacing:.28em;text-indent:.28em;
+    padding:calc(.85 * var(--u)) 0;border-radius:calc(.8 * var(--u));
+  }
+  #happybar.on{display:block}
+
+  /* Food/merch screens: a heading, then a simple priced list. Deliberately plainer
+     than a beer card — these have no glass, no ABV and no keg behind them. */
+  .page.xpage{display:block;overflow:hidden}
+  .xlist{margin-top:calc(2 * var(--u))}
+  .xrow{display:flex;align-items:baseline;gap:calc(2 * var(--uw));
+        padding:calc(1.6 * var(--u)) 0;border-bottom:1px solid var(--line)}
+  .xrow .xn{flex:1 1 auto;min-width:0}
+  .xrow .xname{font-family:var(--serif);font-weight:700;
+               font-size:calc((3.1 * var(--u)) * var(--s));line-height:1.2}
+  .xrow .xd{font-family:var(--sans);color:var(--muted);
+            font-size:calc((1.95 * var(--u)) * var(--s));margin-top:calc(.4 * var(--u))}
+  .xrow .xp{flex:0 0 auto;font-family:var(--sans);font-weight:700;color:var(--gold);
+            font-size:calc((3 * var(--u)) * var(--s));font-variant-numeric:tabular-nums}
+
+  main{flex:1 1 auto;min-height:0;position:relative;padding-top:calc(2.1 * var(--u))}
+  .page{
+    position:absolute;top:calc(2.1 * var(--u));right:0;bottom:0;left:0;
+    display:grid;gap:calc(1.5 * var(--u)) calc(2 * var(--uw));
+    opacity:0;transition:opacity .8s ease;pointer-events:none;
+  }
+  .page.on{opacity:1}
+
+  /* ================= tap card ================= */
+  .tap{
+    position:relative;overflow:hidden;min-height:0;
+    background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.008));
+    border:1px solid var(--line);border-radius:calc(1.5 * var(--u));
+    padding:calc((1.7 * var(--u)) * var(--s)) calc((2.1 * var(--u)) * var(--s));
+    padding-left:calc((2.4 * var(--u)) * var(--s));
+    display:flex;align-items:center;gap:calc((1.9 * var(--u)) * var(--s));
+  }
+  .tap::before{  /* colour spine, tinted per beer */
+    content:"";position:absolute;top:0;bottom:0;left:0;width:calc(.55 * var(--u));
+    background:var(--beer,#e3ad42);opacity:.85;
+  }
+  /* Kicked is genuinely gone, so it may fade into the background. A beer that is
+     coming gets no dimming and no tint — it renders exactly like every other card,
+     and the page heading is what marks it out. */
+  .tap.out{opacity:.4}
+  .tap.out::before{opacity:.3}
+
+  /* Heading for a page holding nothing but upcoming beers. A solid gold bar, so it
+     carries the length of the room. text-indent cancels the trailing letter-space,
+     which would otherwise sit the text slightly left of true centre. */
+  .pagehead{
+    grid-column:1/-1;align-self:end;text-align:center;
+    background:var(--gold);color:#1a1408;
+    font-family:var(--cond);font-weight:600;text-transform:uppercase;
+    font-size:calc(3.9 * var(--u));
+    letter-spacing:.3em;text-indent:.3em;
+    padding:calc(1 * var(--u)) 0;
+    border-radius:calc(.8 * var(--u));
+  }
+
+  /* tap number */
+  .numbadge{
+    flex:0 0 auto;
+    width:calc((5.6 * var(--u)) * var(--s));height:calc((5.6 * var(--u)) * var(--s));
+    border:1px solid var(--line-strong);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--cond);font-weight:600;
+    font-size:calc((3.2 * var(--u)) * var(--s));color:var(--gold);
+    letter-spacing:.02em;
+  }
+
+  /* glass */
+  .glasssvg{width:100%;height:100%;display:block;color:var(--cream);opacity:.93}
+  .glass.shaped{
+    background:none;border:none;border-radius:0;overflow:visible;max-height:100%;
+    width:calc((6.4 * var(--u)) * var(--s));height:calc((13.5 * var(--u)) * var(--s));
+  }
+  /* Artwork in place of the glass. A can or a label is squarer than a glass, so the
+     box widens to suit; it keeps the same height so nothing else on the card moves. */
+  .glass.hasart{
+    /* A can is roughly half as wide as it is tall. Wider than this and a tall label
+       floats in dead space; narrower and a square one shrinks below the glass it
+       replaced. object-fit never crops, so nothing is lost either way. */
+    width:calc((7.6 * var(--u)) * var(--s));
+    background:none;border-color:transparent;
+  }
+  .glass.hasart svg{visibility:hidden}
+  .art{
+    position:absolute;left:0;top:0;right:0;bottom:0;
+    width:100%;height:100%;object-fit:contain;
+  }
+
+  .glass{
+    flex:0 0 auto;
+    width:calc((4.8 * var(--u)) * var(--s));height:calc((13 * var(--u)) * var(--s));max-height:100%;
+    border:1px solid var(--line);border-radius:calc(.5 * var(--u)) calc(.5 * var(--u)) calc(.9 * var(--u)) calc(.9 * var(--u));
+    background:rgba(255,255,255,.055);
+    position:relative;overflow:hidden;
+    display:flex;flex-direction:column;justify-content:flex-end;
+  }
+  .foam{flex:0 0 auto;height:calc(.85 * var(--u));width:100%;
+        background:linear-gradient(180deg,#fffdf7,#eee0c6)}
+  .fill{width:100%;transition:height .7s ease;
+        box-shadow:inset 0 calc(.5 * var(--u)) calc(1.3 * var(--u)) rgba(255,255,255,.22)}
+
+  /* text block */
+  .body{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;justify-content:center;
+        gap:calc(.45 * var(--u))}
+  .namerow{display:flex;align-items:center;gap:calc((1.15 * var(--u)) * var(--s));min-width:0}
+  .ico{flex:0 0 auto;color:var(--gold);
+       width:calc((3.9 * var(--u)) * var(--s));height:calc((3.9 * var(--u)) * var(--s))}
+  .guest{
+    flex:0 0 auto;
+    font-family:var(--cond);font-weight:600;
+    font-size:calc(1.5 * var(--u) * var(--s));
+    letter-spacing:.2em;text-transform:uppercase;color:var(--dim);
+    border:1px solid rgba(226,197,140,.28);
+    border-radius:calc(.45 * var(--u));
+    padding:calc(.3 * var(--u)) calc(.85 * var(--u));
+    white-space:nowrap;
+  }
+  .name{
+    flex:1 1 auto;min-width:0;
+    font-family:var(--serif);font-weight:700;
+    font-size:calc((3.4 * var(--u)) * var(--s));line-height:1.08;letter-spacing:-.004em;
+    /* A long name wraps to a second line instead of being cut off — the card has
+       the height for it, and half a beer name is no use from across the room.
+       -webkit-line-clamp is already relied on for the rotated heading, so it is
+       safe on Fire TV's Silk. */
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+    white-space:normal;overflow:hidden;
+  }
+  .style{
+    font-family:var(--cond);font-weight:600;
+    font-size:calc((2.15 * var(--u)) * var(--s));color:var(--gold);
+    letter-spacing:.19em;text-transform:uppercase;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .notes{
+    font-family:var(--sans);font-weight:400;
+    font-size:calc((2.05 * var(--u)) * var(--s));color:var(--muted);line-height:1.36;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  }
+
+  /* Prices (business mode). The amount is the loud part and the pour name is a
+     quiet label beside it, so the row scans as money first from across the room.
+     Wraps rather than shrinks, because an unreadable price is worse than two lines. */
+  /* A priced card wraps, letting the price row take a full-width line of its own
+     below the beer and its stats. Notes give way to one line to pay for it. */
+  /* Prices occupy the tasting note's line, so a priced card has exactly the same
+     shape as an ordinary one — same glass, same rows, same beers per screen. */
+  .tap.priced .notes{display:none}
+  .prices{
+    display:flex;flex-wrap:wrap;align-items:baseline;
+    gap:calc((.25 * var(--u)) * var(--s)) calc((1.9 * var(--u)) * var(--s));
+  }
+  .price{display:flex;align-items:baseline;gap:calc((.62 * var(--u)) * var(--s))}
+  .price b{
+    font-family:var(--sans);font-weight:700;color:var(--gold);
+    font-size:calc((2.45 * var(--u)) * var(--s));line-height:1.2;
+    font-variant-numeric:tabular-nums;
+  }
+  /* A discounted pour shows the new price with the old one struck through beside it. */
+  .price.happy b{color:#f3c969}
+  .price s{
+    font-family:var(--sans);font-weight:600;color:var(--dim);
+    font-size:calc((1.7 * var(--u)) * var(--s));
+    text-decoration:line-through;margin-left:calc((.35 * var(--u)) * var(--s));
+  }
+  .price i{
+    font-family:var(--cond);font-style:normal;font-weight:600;color:var(--muted);
+    font-size:calc((1.42 * var(--u)) * var(--s));
+    letter-spacing:.16em;text-transform:uppercase;
+  }
+
+  /* stats */
+  .stats{flex:0 0 auto;display:flex;align-items:center;gap:calc((1.9 * var(--u)) * var(--s))}
+  .stat{text-align:center}
+  .stat .v{
+    font-family:var(--sans);font-weight:600;
+    font-size:calc((3.2 * var(--u)) * var(--s));line-height:1;
+    font-variant-numeric:tabular-nums;
+  }
+  .stat .k{
+    font-family:var(--cond);font-weight:500;
+    font-size:calc((1.45 * var(--u)) * var(--s));color:var(--dim);
+    letter-spacing:.24em;text-transform:uppercase;margin-top:calc(.5 * var(--u));
+  }
+  .badge{
+    font-family:var(--cond);font-weight:600;
+    font-size:calc((1.5 * var(--u)) * var(--s));letter-spacing:.19em;text-transform:uppercase;
+    padding:calc(.6 * var(--u)) calc(1.1 * var(--u));border-radius:calc(.5 * var(--u));border:1px solid currentColor;white-space:nowrap;
+  }
+  .badge.low{color:#eb9a3c}
+  .badge.kicked{color:#8b8172}
+  .badge.coming{color:#79b39c}
+
+  /* ================= footer ================= */
+  footer{
+    flex:0 0 auto;margin-top:calc(1.5 * var(--u));padding-top:calc(1.4 * var(--u));border-top:1px solid var(--line);
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:var(--cond);font-weight:500;
+    font-size:calc(1.75 * var(--u));color:var(--dim);letter-spacing:.2em;text-transform:uppercase;
+  }
+  .dots{display:flex;gap:calc(1 * var(--u));align-items:center}
+  .dot{width:calc(1 * var(--u));height:calc(1 * var(--u));border-radius:50%;background:rgba(246,236,216,.2);
+       transition:background .5s ease}
+  .dot.on{background:var(--gold)}
+
+  .msg{
+    position:absolute;top:0;right:0;bottom:0;left:0;
+    display:flex;align-items:center;justify-content:center;
+    text-align:center;font-size:calc(3.2 * var(--u));color:var(--muted);padding:calc(6 * var(--u));line-height:1.55;
+  }
+
+  /* the immature bit */
+  #rain{
+    position:fixed;left:0;top:0;right:0;bottom:0;
+    pointer-events:none;z-index:9000;overflow:hidden;display:none;
+  }
+  #rain.on{display:block}
+  .drop{
+    position:absolute;top:0;color:var(--cream);opacity:.9;
+    animation-name:fall;animation-timing-function:linear;animation-fill-mode:forwards;
+  }
+  .drop svg{display:block;width:100%;height:auto}
+  @keyframes fall{
+    from{transform:translateY(-20vh) rotate(0deg)}
+    to  {transform:translateY(115vh) rotate(var(--spin,360deg))}
+  }
+
+  #histgag{
+    position:fixed;left:50%;top:50%;z-index:9600;display:none;
+    -webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);
+    width:76vw;max-width:1180px;background:#fff;border-radius:10px;overflow:hidden;
+    box-shadow:0 3vh 9vh rgba(0,0,0,.8);
+    color:#202124;font-family:-apple-system,Arial,sans-serif;
+  }
+  #histgag.on{display:block}
+  #histgag .hbar{background:#dee1e6;padding:.9vh 1.4vh 0;display:flex;align-items:flex-end;gap:.7vh}
+  #histgag .htab{background:#fff;border-radius:.9vh .9vh 0 0;padding:.9vh 1.8vh;font-size:1.4vh;
+                 display:flex;gap:.9vh;align-items:center}
+  #histgag .hdot{width:1.5vh;height:1.5vh;border-radius:.35vh;background:#4285f4;display:inline-block}
+  #histgag .hurl{padding:1.1vh 1.8vh;display:flex;align-items:center;gap:1.2vh;border-bottom:1px solid #e8eaed;color:#5f6368;font-size:1.5vh}
+  #histgag .hbox{flex:1;background:#f1f3f4;border-radius:1.8vh;padding:.8vh 1.6vh;color:#3c4043}
+  #histgag h3{padding:1.6vh 3vh .4vh;font-size:2.4vh;font-weight:500}
+  #histgag .hday{padding:0 3vh 1.4vh;color:#5f6368;font-size:1.4vh}
+  #histgag .hrows{padding:0 3vh 2.2vh}
+  #histgag .hrow{display:flex;align-items:center;gap:1.6vh;padding:1vh 0;border-bottom:1px solid #f1f3f4;font-size:1.65vh}
+  #histgag .htime{color:#5f6368;font-size:1.4vh;width:8vh;flex:0 0 auto}
+  #histgag .hfav{width:1.8vh;height:1.8vh;border-radius:50%;background:#dadce0;flex:0 0 auto}
+  #histgag .htitle{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #histgag .hsite{color:#5f6368;font-size:1.4vh}
+
+  /* Explicit edges rather than inset: Fire OS webviews are old. */
+  #stillgag{
+    position:fixed;left:0;top:0;right:0;bottom:0;z-index:9700;display:none;
+    background:rgba(0,0,0,.78);align-items:center;justify-content:center;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  #stillgag.on{display:flex}
+  #stillgag .sbox{text-align:center;padding:0 4vh;max-width:78vw}
+  #stillgag .stitle{color:#fff;font-size:5.2vh;font-weight:400;line-height:1.2;margin:0 0 1.6vh}
+  #stillgag .ssub{color:#b3b3b3;font-size:2.4vh;margin:0 0 4.4vh;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #stillgag .srow{display:flex;gap:1.6vh;justify-content:center}
+  #stillgag .sbtn{
+    font-size:2.2vh;padding:1.3vh 3.8vh;border-radius:.4vh;
+    border:1px solid transparent;background:#fff;color:#000;font-weight:500;
+  }
+  #stillgag .sbtn.alt{background:transparent;color:#d2d2d2;border-color:#8c8c8c}
+  #stillgag .scount{color:#7a7a7a;font-size:1.8vh;margin-top:3.2vh;height:2.4vh}
+
+  /* Crayon on the whole TV. Paper underneath so the colours read from the far
+     side of the room; explicit edges again for the Fire OS webview. */
+  #scribgag{
+    position:fixed;left:0;top:0;right:0;bottom:0;z-index:9750;display:none;
+    background:#fffdf3;opacity:0;transition:opacity .3s linear;
+  }
+  #scribgag.on{display:block;opacity:1}
+  #scribgag svg{display:block;width:100%;height:100%}
+  /* Every stroke is pathLength="100", so one keyframe draws any length of line. */
+  #scribgag path{
+    fill:none;stroke-linecap:round;stroke-linejoin:round;
+    stroke-dasharray:100;stroke-dashoffset:100;
+    animation-name:crayon;animation-duration:.5s;
+    animation-timing-function:ease-out;animation-fill-mode:forwards;
+  }
+  @keyframes crayon{to{stroke-dashoffset:0}}
+
+  /* Somebody writes a word across the telly in ink. The word comes with the
+     signal, so it is whatever was typed on the laptop. */
+  #writegag{
+    position:fixed;left:0;top:0;right:0;bottom:0;z-index:9760;display:none;
+    background:#fffdf3;opacity:0;transition:opacity .5s linear;
+    -webkit-box-align:center;-webkit-box-pack:center;align-items:center;justify-content:center;
+  }
+  #writegag.on{display:flex;opacity:1}
+  #writegag .wtilt{-webkit-transform:rotate(-5deg);transform:rotate(-5deg);position:relative}
+  /* The clip grows left to right, so the word appears as the pen moves. */
+  #writegag .wclip{overflow:hidden;width:0;white-space:nowrap}
+  /* Padding keeps the script's swashes inside the clip. */
+  #writegag .wword{padding:.08em .3em .12em .2em;
+    font-family:"Dancing Script","Brush Script MT","Segoe Script",cursive;font-weight:700;
+    color:#1d2f6f;line-height:1.35;white-space:nowrap;display:inline-block;
+  }
+  #writegag svg{position:absolute;left:4%;width:92%;bottom:-2vh;height:8vh;overflow:visible}
+  #writegag path{
+    fill:none;stroke:#1d2f6f;stroke-linecap:round;stroke-width:1.4;
+    stroke-dasharray:100;stroke-dashoffset:100;opacity:0;
+  }
+  /* A photo, held up to the room. Picture comes from the worker, not the repo. */
+  #photogag{
+    position:fixed;left:0;top:0;right:0;bottom:0;z-index:9770;display:none;
+    background:radial-gradient(ellipse at center,#5a0000 0%,#1a0000 70%,#000 100%);
+    flex-direction:column;align-items:center;justify-content:center;
+  }
+  #photogag.on{display:flex}
+  #photogag .pframe{height:88vh;background:#fff;padding:1.2vh;
+    -webkit-transform:rotate(-2deg);transform:rotate(-2deg);box-shadow:0 2vh 6vh rgba(0,0,0,.7)}
+  #photogag.cap .pframe{height:76vh}
+  #photogag .pframe img{display:block;height:100%;width:auto}
+  #photogag .pcap{font-family:"Dancing Script",cursive;font-weight:700;color:#fff;
+    font-size:9vh;line-height:1.1;margin-top:2vh;white-space:nowrap}
+  #writegag path.go{transition:stroke-dashoffset .9s ease-out;stroke-dashoffset:0;opacity:1}
+
+  /* Unmistakably not the live board. Sits inside .screen so it rotates with it. */
+  #previewbadge{
+    position:absolute;left:calc(2.6 * var(--u));top:calc(2.6 * var(--u));z-index:60;display:none;
+    background:#b4462e;color:#fff;
+    font-family:var(--cond);font-weight:600;
+    font-size:calc(1.8 * var(--u));letter-spacing:.14em;text-transform:uppercase;
+    padding:calc(.75 * var(--u)) calc(1.5 * var(--u));border-radius:calc(.6 * var(--u));
+    box-shadow:0 calc(.5 * var(--u)) calc(1.6 * var(--u)) rgba(0,0,0,.55);
+  }
+
+  #fshint{
+    position:absolute;right:calc(2.6 * var(--u));bottom:calc(2.6 * var(--u));z-index:50;
+    background:rgba(227,173,66,.95);color:#1a1408;
+    font-family:var(--cond);font-weight:600;
+    font-size:calc(2 * var(--u));letter-spacing:.1em;text-transform:uppercase;
+    padding:calc(1.3 * var(--u)) calc(2.1 * var(--u));border-radius:calc(.8 * var(--u));
+    box-shadow:0 calc(.6 * var(--u)) calc(2 * var(--u)) rgba(0,0,0,.55);
+    transition:opacity .6s ease;
+  }
+  #fshint.gone{opacity:0;pointer-events:none}
+</style>
+</head>
+<body>
+<div class="screen">
+  <header>
+    <div class="brand">
+      <div class="mark" id="mark">🍺</div>
+      <div class="names">
+        <h1 id="brewery">Loading…</h1>
+        <div class="tagline" id="tagline"></div>
+      </div>
+    </div>
+    <div class="right">
+      <div class="ontap">On Tap</div>
+      <div class="clock" id="clock"></div>
+    </div>
+  </header>
+
+  <div id="happybar" aria-hidden="true"></div>
+  <main id="main"></main>
+
+  <footer>
+    <div id="foot-left">&nbsp;</div>
+    <div class="dots" id="dots"></div>
+  </footer>
+
+  <div id="fshint">Press OK for full screen</div>
+  <div id="previewbadge" aria-hidden="true">Preview &mdash; not published</div>
+  </div>
+</div>
+
+<!-- 2x2 silent loop. Playing video is what actually stops Fire TV sleeping;
+     it is invisible and costs ~2KB. -->
+<div id="rain" aria-hidden="true"></div>
+<div id="histgag" aria-hidden="true">
+  <div class="hbar"><div class="htab"><span class="hdot"></span>History</div></div>
+  <div class="hurl"><span>&#8592; &#8594; &#8635;</span><div class="hbox">chrome://history</div></div>
+  <h3>History</h3>
+  <div class="hday" id="histday"></div>
+  <div class="hrows" id="histrows"></div>
+</div>
+<div id="stillgag" aria-hidden="true">
+  <div class="sbox">
+    <div class="stitle">Are you still drinking?</div>
+    <div class="ssub" id="stillsub"></div>
+    <div class="srow">
+      <span class="sbtn">Continue</span>
+      <span class="sbtn alt">Exit</span>
+    </div>
+    <div class="scount" id="stillcount"></div>
+  </div>
+</div>
+<div id="scribgag" aria-hidden="true"></div>
+<div id="writegag" aria-hidden="true"></div>
+<div id="photogag" aria-hidden="true"></div>
+<div id="dimveil"></div>
+
+<video id="awake" muted loop playsinline webkit-playsinline preload="auto"
+       aria-hidden="true" tabindex="-1"
+       style="position:fixed;left:0;bottom:0;width:1px;height:1px;opacity:.01;
+              pointer-events:none;z-index:-1">
+  <source src="keepawake.mp4" type="video/mp4">
+  <source src="keepawake.webm" type="video/webm">
+</video>
+
+<script src="taplib.js"></script>
+<script src="icons.js?v=1785156305"></script>
+<script>
+(function(){
+  "use strict";
+
+  /* Never let the TV go blank, even if taps.json is unreachable. */
+  var FALLBACK = {
+    brewery:"Home Brew", tagline:"", showClock:true, perPage:"auto", rotateSeconds:20,
+    hideKicked:false, logo:"",
+    taps:[{num:1,name:"Tap list unavailable",style:"Check back shortly",abv:"",ibu:"",
+           notes:"The tap list could not be loaded.",color:"#e3ad42",icon:"",level:0,status:"pouring"}]
+  };
+
+  var el = function(id){ return document.getElementById(id); };
+  var data = null, pages = [], pageIndex = 0, rotateTimer = null, lastStamp = "";
+
+  function chunk(arr, n){
+    var out = [], i;
+    for(i = 0; i < arr.length; i += n) out.push(arr.slice(i, i + n));
+    return out.length ? out : [[]];
+  }
+
+  /* ---------- clock ---------- */
+  function tickClock(){
+    if(!data || data.showClock === false){ el("clock").textContent = ""; return; }
+    var d = new Date(), h = d.getHours(), m = d.getMinutes();
+    var ap = h >= 12 ? "PM" : "AM";
+    h = h % 12; if(h === 0) h = 12;
+    el("clock").textContent = h + ":" + (m < 10 ? "0" + m : m) + " " + ap;
+  }
+  setInterval(tickClock, 15000);
+
+  /* ---------- one card ---------- */
+
+  /* One copy of these lives in taplib.js. Three pages used to carry their own, which
+     is how a stale preview page drifted out of step for a day without anyone noticing. */
+  var T = window.TapLib;
+  var DEFAULT_SIZES = T.DEFAULT_SIZES;
+  function esc(s){ return T.esc(s); }
+  function money(c, v){ return T.money(c, v); }
+  function prettyTime(v){ return T.prettyTime(v); }
+  function pricing(){ return T.pricing(data); }
+  function happyActive(){ return T.happyActive(data); }
+  function happyPrice(id){ return T.happyPrice(data, id); }
+  function comingText(t){ return T.comingText(t); }
+
+  /* ---------- business mode: pour sizes and prices ----------
+     Sizes are whatever the venue calls them. Prices live on each beer, keyed by
+     the size's id, so renaming "Middy" to "Pot" or reordering sizes never
+     detaches a price from the pour it belongs to. */
+
+  /* ---------- happy hour ----------
+     Minutes since midnight, so a window that runs past midnight (22:00-01:00) is
+     just "start > end", rather than needing date arithmetic. */
+  /* $13 rather than $13.00, but $7.50 keeps its cents — how a menu is written. */
+  function priceHTML(t){
+    var pr = pricing();
+    if(!pr.on) return "";
+    var happy = happyActive();
+    var cells = [], i, sz, v, hp;
+    for(i = 0; i < pr.sizes.length; i++){
+      sz = pr.sizes[i];
+      v  = t.prices ? t.prices[sz.id] : null;
+      /* A pour with no price for this beer is simply left off, so a keg sold only
+         by the pint does not show two blank columns. */
+      if(v == null || String(v).trim() === "") continue;
+      /* Happy hour only discounts a pour the beer is actually sold in, so it can
+         never invent a price for a size this keg is not poured in. */
+      hp = happy ? happyPrice(sz.id) : null;
+      if(hp != null && Number(hp) < Number(v)){
+        cells.push('<span class="price happy"><b>' + esc(money(pr.currency, hp)) + '</b>' +
+                   '<s>' + esc(money(pr.currency, v)) + '</s><i>' +
+                   esc(sz.name || (sz.ml ? sz.ml + "ml" : "")) + '</i></span>');
+      } else {
+        cells.push('<span class="price"><b>' + esc(money(pr.currency, v)) + '</b><i>' +
+                   esc(sz.name || (sz.ml ? sz.ml + "ml" : "")) + '</i></span>');
+      }
+    }
+    return cells.length ? '<div class="prices">' + cells.join("") + '</div>' : "";
+  }
+
+
+  function tapHTML(t){
+    var level  = Math.max(0, Math.min(100, levelFor(t)));
+    var status = t.status || "pouring";
+    var kicked = status === "kicked" || (levelsTracked() && status === "pouring" && level <= 0);
+    var coming = status === "coming";
+    var color  = t.color || "#e3ad42";
+
+    var badge = "";
+    if(coming)           badge = '<div class="badge coming">' + esc(comingText(t)) + '</div>';
+    else if(kicked)      badge = '<div class="badge kicked">Kicked</div>';
+    else if(levelsTracked() && level <= 20) badge = '<div class="badge low">Almost Gone</div>';
+
+    /* Blank means "not entered" - leave it off entirely.
+       A zero IBU or SRM tells nobody anything either, so that goes too. A zero
+       ABV is kept, because "0%" is a genuine claim about a drink. */
+    function has(v){ return String(v == null ? "" : v).trim() !== ""; }
+    function nonZero(v){
+      if(!has(v)) return false;
+      var num = parseFloat(String(v).replace(/[^0-9.\-]/g, ""));
+      return isNaN(num) ? true : num !== 0;
+    }
+
+    /* Badge goes FIRST so the ABV/IBU/SRM columns stay hard right and line up
+       across every card, the same way the GUEST chip sits ahead of them. */
+    var stats = badge;
+    if(has(t.abv))     stats += '<div class="stat"><div class="v">' + esc(String(t.abv).trim()) + '%</div><div class="k">ABV</div></div>';
+    if(nonZero(t.ibu)) stats += '<div class="stat"><div class="v">' + esc(String(t.ibu).trim()) + '</div><div class="k">IBU</div></div>';
+    if(nonZero(t.srm)) stats += '<div class="stat"><div class="v">' + esc(t.srm) + '</div><div class="k">SRM</div></div>';
+
+    /* A beer that is coming pours FULL — it is a keg waiting to be tapped, and an
+       empty glass under a Coming Soon banner reads as though it has already gone.
+       Kicked stays empty, because that one really is finished. */
+    var shown = kicked ? 0 : (coming ? 100 : level);
+
+    /* Artwork is opt-in for the whole board, and only where a beer actually has some —
+       so a venue that has photographed half its range does not get half a board of
+       gaps. The rest keep their glass. */
+    var art = !!(data.artwork && has(t.image));
+
+    /* The price row is a sibling of the text column, not a child of it, so it can
+       wrap onto its own full-width line under the whole card. Inside .body it was
+       trapped in the narrow text column and three pours spilled over two lines. */
+    var priceRow = priceHTML(t);
+
+    return '' +
+      '<div class="tap' + (kicked ? " out" : "") + (priceRow ? " priced" : "") +
+           '" style="--beer:' + esc(color) + '">' +
+        '<div class="numbadge">' + esc(t.num != null ? t.num : "") + '</div>' +
+        '<div class="glass shaped' + (art ? " hasart" : "") + '">' +
+          (window.glassSVG ? window.glassSVG(window.glassFor ? window.glassFor(t) : t.icon, shown, color, (t.num != null ? t.num : "x")) : "") +
+          /* The artwork sits over the glass rather than replacing it, so a link that
+             404s or a wifi drop removes itself and the glass is simply there again.
+             A card with a hole in it is worse than a card with a glass on it. */
+          (art ? '<img class="art" alt="" src="' + esc(t.image) +
+                 '" onerror="this.parentNode.className=this.parentNode.className.replace(\' hasart\',\'\');this.remove();">' : '') +
+        '</div>' +
+        '<div class="body">' +
+          '<div class="namerow">' +
+            (window.beerIconSVG ? window.beerIconSVG(t.icon, "ico") : "") +
+            '<div class="name">' + esc(t.name || "Untitled") + '</div>' +
+            (t.guest ? '<div class="guest">Guest</div>' : '') +
+          '</div>' +
+          (has(t.style) ? '<div class="style">' + esc(String(t.style).trim()) + '</div>' : '') +
+          (has(t.notes) ? '<div class="notes">' + esc(String(t.notes).trim()) + '</div>' : '') +
+          priceRow +
+        '</div>' +
+        '<div class="stats">' + stats + '</div>' +
+      '</div>';
+  }
+
+  /* ---------- night dimming ---------- */
+  function applyDim(){
+    if(!data || !data.dimAtNight){ document.body.className = bodyClass; return; }
+    var from = Number(data.dimFrom); if(isNaN(from)) from = 22;
+    var to   = Number(data.dimTo);   if(isNaN(to))   to   = 7;
+    var h = new Date().getHours();
+    var night = (from === to) ? false
+              : (from < to ? (h >= from && h < to) : (h >= from || h < to));
+    document.body.className = bodyClass + (night ? " dimmed" : "");
+  }
+  var bodyClass = "";
+  setInterval(applyDim, 60000);
+
+  /* ---------- render ---------- */
+  function render(){
+    var main = el("main");
+
+    /* screen rotation, for a panel mounted on its side */
+    var rot = Number(data.rotate) || 0;
+    if(rot !== 90 && rot !== 180 && rot !== 270) rot = 0;
+
+    var bg = data.bg || "charcoal";
+    if(!/^(charcoal|chalk|oak|slate|copper|photo)$/.test(bg)) bg = "charcoal";
+    bodyClass = (rot ? "rot" + rot + " " : "") + "bg-" + bg + (data.logoBanner ? " banner" : "");
+    document.body.className = bodyClass;
+    applyDim();
+    applyBgPhoto(bg);
+
+    /* header logo */
+    var mark = el("mark");
+    var size = (data.logoSize === "s" || data.logoSize === "l") ? data.logoSize : "m";
+    mark.className = "mark sz-" + size;
+    if(data.logo){
+      var img = new Image();
+      img.alt = "";
+      img.onerror = function(){ mark.className = "mark"; mark.textContent = "🍺"; };
+      img.src = data.logo;
+      mark.innerHTML = "";
+      mark.appendChild(img);
+    } else {
+      mark.className = "mark";
+      mark.textContent = "🍺";
+    }
+
+    var hideName = !!(data.logo && data.logoOnly);
+    el("brewery").style.display = hideName ? "none" : "";
+    el("brewery").textContent = data.brewery || "On Tap";
+    el("tagline").textContent = data.tagline || "";
+    tickClock();
+
+    var taps = (data.taps || []).slice();
+    /* The tap number decides the running order, not the order they happen to sit in
+       the file. Otherwise renumbering a beer in the editor moves nothing out here. */
+    taps.sort(function(a, b){
+      return (Number(a.num) || 9999) - (Number(b.num) || 9999);
+    });
+
+    /* A half-added beer with no name has nothing to show — and with pagination it
+       would otherwise rotate in as a blank "Untitled" card. Skip it. */
+    taps = taps.filter(function(t){ return String(t.name || "").trim() !== ""; });
+
+    if(data.hideKicked){
+      taps = taps.filter(function(t){
+        return !(t.status === "kicked" || (levelsTracked() && t.status !== "coming" && levelFor(t) <= 0));
+      });
+    }
+
+    if(!taps.length){
+      main.innerHTML = '<div class="msg">Nothing on tap right now.<br>Check back soon 🍺</div>';
+      el("dots").innerHTML = ""; el("foot-left").textContent = "";
+      if(rotateTimer) clearInterval(rotateTimer);
+      return;
+    }
+
+    /* "auto" fits everything on one screen up to 8, so it only paginates when it must. */
+    var perPage = data.perPage;
+    /* Business mode is the ordinary board with prices — same beers per screen. */
+    var maxPer = 8;
+    if(perPage === "auto" || perPage == null || !Number(perPage)){
+      perPage = Math.min(maxPer, taps.length);
+    }
+    perPage = Math.max(1, Math.min(maxPer, Number(perPage)));
+
+    pages = chunk(taps, perPage);
+
+    /* Food and merch, if the venue wants them on the TV, ride along as extra pages
+       rather than crowding the beers. Each section becomes its own screen. */
+    var extraPages = [];
+    var ex = data.extras;
+    if(ex && ex.on && ex.showOnTV && Array.isArray(ex.groups)){
+      ex.groups.forEach(function(g){
+        var items = (g.items || []).filter(function(i){ return String(i.name || "").trim() !== ""; });
+        while(items.length){
+          extraPages.push({ name: g.name || "Also available", items: items.slice(0, 8) });
+          items = items.slice(8);
+        }
+      });
+    }
+
+    /* A rotated (portrait) board is narrow — one column reads far better there. */
+    var portrait = (rot === 90 || rot === 270);
+
+    /* Card size is set ONCE, from the fullest page, and every page reuses it — a
+       short last page must not grow its cards to fill the space, or the same beer
+       changes size as the board rotates. */
+    var cols  = (portrait || perPage <= 3) ? 1 : 2;
+    var rows  = Math.ceil(perPage / cols);
+    /* Fill the card height properly — 4 rows still needs to read from the sofa.
+       This is only a starting point; fitToCards settles the final size. */
+    var scale = Math.max(portrait ? 0.5 : 0.78, Math.min(1.3, 3.6 / rows));
+
+    main.innerHTML = pages.map(function(p, i){
+      /* A page of nothing but upcoming beers is a section, not a short tap list,
+         so it gets a heading and reads left-to-right under it. */
+      var allComing = p.length > 0 && p.every(function(t){ return t.status === "coming"; });
+      var full      = p.length === perPage;
+      /* Card height is pinned to what a FULL page produces, written as a share of
+         the page rather than 1fr. That way a heading can sit above the cards while
+         they keep exactly the height they have on page one, and the leftover space
+         collects harmlessly at the bottom instead of inflating the cards. */
+      var rowH = 'calc((100% - ' + ((rows - 1) * 1.5) + ' * var(--u)) / ' + rows + ')';
+      return '<div class="page' + (i === 0 ? " on" : "") + '" style="' +
+        'grid-template-columns:repeat(' + cols + ',1fr);' +
+        'grid-template-rows:' + (allComing
+          ? 'auto repeat(' + Math.ceil(p.length / cols) + ',' + rowH + ')'
+          : 'repeat(' + rows + ',1fr)') + ';' +
+        (allComing ? 'align-content:start;' : '') +
+        /* Fill down the left column first, then the right — so the taps read
+           1,2,3,4 down one side and 5,6,7,8 down the other. Single-column
+           (portrait) layouts must stay row-flow or everything lands in one row.
+           A part-full page also flows by row, so its cards spread across rather
+           than stacking in column one and stranding half the screen. */
+        'grid-auto-flow:' + (cols > 1 && full ? "column" : "row") + ';' +
+        '--s:' + scale.toFixed(3) + '">' +
+        (allComing ? '<div class="pagehead">Coming Soon</div>' : '') +
+        p.map(tapHTML).join("") + '</div>';
+    }).join("");
+
+    if(extraPages.length){
+      var cur = pricing().currency;
+      main.innerHTML += extraPages.map(function(pg){
+        return '<div class="page xpage" style="--s:' + scale.toFixed(3) + '">' +
+          '<div class="pagehead">' + esc(pg.name) + '</div>' +
+          '<div class="xlist">' + pg.items.map(function(i){
+            return '<div class="xrow">' +
+              '<div class="xn"><div class="xname">' + esc(i.name) + '</div>' +
+              (String(i.desc || "").trim() ? '<div class="xd">' + esc(i.desc) + '</div>' : '') +
+              '</div>' +
+              (i.price != null && String(i.price).trim() !== ''
+                ? '<div class="xp">' + esc(money(cur, i.price)) + '</div>' : '') +
+            '</div>';
+          }).join("") + '</div></div>';
+      }).join("");
+      pages = pages.concat(extraPages);      /* so the dots and rotation count them */
+    }
+
+    el("dots").innerHTML = pages.length > 1
+      ? pages.map(function(_, i){ return '<div class="dot' + (i === 0 ? " on" : "") + '"></div>'; }).join("")
+      : "";
+
+    var pouring = taps.filter(function(t){
+      return t.status !== "coming" && !(t.status === "kicked" || (levelsTracked() && levelFor(t) <= 0));
+    }).length;
+    el("foot-left").textContent = pouring + (pouring === 1 ? " beer pouring" : " beers pouring");
+
+    var hb = el("happybar");
+    if(hb){
+      var pr2 = pricing(), on2 = pr2.on && happyActive();
+      hb.className = on2 ? "on" : "";
+      if(on2){
+        var lbl = (pr2.happy && pr2.happy.label) || "Happy Hour";
+        var til = prettyTime(pr2.happy && pr2.happy.to);
+        hb.textContent = lbl + (til ? " \u2014 until " + til : "");
+      }
+    }
+
+    pageIndex = 0;
+    startRotate(Math.max(6, Number(data.rotateSeconds) || 20));
+    fitToCards(scale, false);
+  }
+
+  /* ---------- make sure nothing is ever clipped ----------
+     Card height is fixed by the grid, but what goes in a card is not: a long name
+     wraps, prices add a line, a note runs on. Rather than guess a scale that suits
+     the content we happen to have today, shrink until it genuinely fits.
+
+     One scale is applied to EVERY page, not per page, so a beer is never a
+     different size on one screen than another. */
+  function fitToCards(startScale, allowGrow){
+    var STEP = 0.035, FLOOR = 0.5, CEIL = 1.9;
+    function overflowing(){
+      var t = main.querySelectorAll(".tap"), i;
+      for(i = 0; i < t.length; i++){
+        if(t[i].scrollHeight - t[i].clientHeight > 1) return true;
+      }
+      return false;
+    }
+    function run(){
+      var pages = main.querySelectorAll(".page"), guard = 0;
+      var s = Number(startScale) || 1;
+      function apply(v){
+        for(var i = 0; i < pages.length; i++) pages[i].style.setProperty("--s", v.toFixed(3));
+      }
+      /* Start clean — this may be a re-run after the fonts arrived. */
+      var cards = main.querySelectorAll(".tap"), i;
+      for(i = 0; i < cards.length; i++) cards[i].style.removeProperty("--s");
+      apply(s);
+
+      /* Climb while EVERY card still fits, then take back the overshoot. */
+      if(allowGrow){
+        while(guard++ < 30 && s < CEIL && !overflowing()){ s += STEP; apply(s); }
+        if(overflowing()){ s -= STEP; apply(s); }
+      }
+
+      /* One scale for the whole board, never per card.
+         Shrinking only the cards that need it kept the type as large as possible, but
+         it meant two beers on the same screen could end up different sizes — a beer
+         with one price staying big while its neighbours with three shrank. Consistency
+         reads better than squeezing out the last few pixels, so the board now settles
+         on a single size and every card wears it.
+
+         The cost is that one very long name can pull the whole screen down a step.
+         That is the trade, taken deliberately. */
+      while(guard++ < 40 && s > FLOOR && overflowing()){ s -= STEP; apply(s); }
+    }
+    /* Web fonts change every measurement, so wait for them where the browser
+       supports it, and measure again on the next frame regardless. */
+    if(document.fonts && document.fonts.ready && document.fonts.ready.then){
+      document.fonts.ready.then(function(){ setTimeout(run, 0); });
+    }
+    setTimeout(run, 60);
+  }
+
+  function startRotate(seconds){
+    if(rotateTimer) clearInterval(rotateTimer);
+    if(pages.length < 2) return;
+    rotateTimer = setInterval(function(){
+      var ps = document.querySelectorAll(".page"), ds = document.querySelectorAll(".dot");
+      if(!ps.length) return;
+      if(ps[pageIndex]) ps[pageIndex].classList.remove("on");
+      if(ds[pageIndex]) ds[pageIndex].classList.remove("on");
+      pageIndex = (pageIndex + 1) % ps.length;
+      if(ps[pageIndex]) ps[pageIndex].classList.add("on");
+      if(ds[pageIndex]) ds[pageIndex].classList.add("on");
+    }, seconds * 1000);
+  }
+
+  /* ---------- background photo ----------
+     Kept out of taps.json so the every-60s poll stays a couple of KB.
+     Re-fetched only when bgV changes. */
+  var bgPhotoData = null, bgPhotoV = null, bgPhotoPending = false;
+
+  function paintBgPhoto(){
+    if(bgPhotoData){
+      document.body.style.backgroundImage =
+        "linear-gradient(rgba(14,12,10,.74),rgba(14,12,10,.80)), url('" + bgPhotoData + "')";
+    }
+  }
+
+  function applyBgPhoto(bg){
+    if(bg !== "photo"){
+      document.body.style.backgroundImage = "";
+      return;
+    }
+    var want = String(data.bgV || "");
+    if(bgPhotoData && bgPhotoV === want){ paintBgPhoto(); return; }
+    if(bgPhotoPending) return;
+    bgPhotoPending = true;
+
+    var x = new XMLHttpRequest();
+    x.open("GET", DATA_BASE + "bgphoto.json?v=" + encodeURIComponent(want), true);
+    x.timeout = 20000;
+    x.onload = function(){
+      bgPhotoPending = false;
+      if(x.status >= 200 && x.status < 300){
+        try {
+          var j = JSON.parse(x.responseText);
+          if(j && j.photo){ bgPhotoData = j.photo; bgPhotoV = want; paintBgPhoto(); }
+        } catch(e){}
+      }
+    };
+    x.onerror = x.ontimeout = function(){ bgPhotoPending = false; };
+    x.send();
+  }
+
+  /* ---------- keg level sensors ----------
+     Anything that can make an HTTP request can report a level; the Worker turns
+     litres or kilograms into a percentage. The board simply prefers a fresh reading
+     over the slider, and falls back to the slider the moment one goes quiet — so a
+     flat battery leaves the board working exactly as it did before. */
+  var WORKER_BASE = "https://ontap-publish.madlad-taps.workers.dev";
+  var SENSOR      = {};
+
+  /* Keg levels are off until someone connects something that actually measures one.
+     The slider was never kept up to date — every tap sat on a round number — so a
+     board showing "half full" was decorating a guess. With nothing connected the
+     glasses simply draw full and nothing claims to know what is left. */
+  function sensorCfg(){
+    var c = (data && data.sensors) || {};
+    return {
+      on: !!c.on,
+      url: String(c.url || "").trim() || (WORKER_BASE + "/levels"),
+      staleMs: (Number(c.staleHours) > 0 ? Number(c.staleHours) : 6) * 3600 * 1000
+    };
+  }
+  function levelsTracked(){ return sensorCfg().on; }
+
+  function levelFor(t){
+    if(!levelsTracked()) return 100;      /* not measuring — draw it full, claim nothing */
+    var s = SENSOR[String(t.num)];
+    if(s && isFinite(s.pct) && (Date.now() - s.at) < sensorCfg().staleMs) return s.pct;
+    return Number(t.level) || 0;          /* connected, but this tap isn't reporting */
+  }
+
+  var pollLevels = null;
+  (function(){
+    var last = "";
+    function poll(){
+      /* Nothing connected means nothing to ask. This also keeps the board from
+         calling an endpoint that may not exist and logging an error every minute. */
+      if(!levelsTracked()) return;
+      var x = new XMLHttpRequest();
+      x.open("GET", sensorCfg().url + "?t=" + Date.now(), true);
+      x.timeout = 8000;
+      x.onload = function(){
+        if(x.status < 200 || x.status >= 300) return;
+        var j; try { j = JSON.parse(x.responseText); } catch(e){ return; }
+        if(!j || !j.taps) return;
+        var stamp = JSON.stringify(j.taps);
+        if(stamp === last) return;
+        last = stamp; SENSOR = j.taps;
+        if(data) render();               /* a level moved — redraw the glasses */
+      };
+      x.onerror = x.ontimeout = function(){};
+      x.send();
+    }
+    pollLevels = poll;
+    poll();
+    setInterval(poll, 60000);
+  })();
+
+  /* ---------- load + refresh ----------
+     ?demo=business reads a separate file, so the business version can be looked at
+     on a real screen without touching the board this site actually runs. Only that
+     one name is accepted — the parameter picks from a list, it is not a path. */
+  /* Where the beer list lives, relative to this page. The staging copy under /next/
+     sets this to "../" so it reads the LIVE list — new code, real beers. stage.sh
+     and promote.sh flip this one line; nothing else about the file changes.
+     build.txt is deliberately NOT prefixed, so each deployment self-updates against
+     its own stamp rather than fighting the other one. */
+  var DATA_BASE = "../";
+  var STAGING   = true;
+
+  var DEMOS = { business: "business-taps.json" };
+  function dataFile(){
+    var m = /[?&]demo=([a-z]+)/i.exec(location.search || "");
+    return DATA_BASE + ((m && DEMOS[m[1].toLowerCase()]) || "taps.json");
+  }
+
+  /* ?preview=1 renders the editor's UNPUBLISHED draft instead of the live file, so a
+     change can be seen on the real board before anyone else sees it. The editor and
+     the board are the same origin, so its draft is simply readable from here. */
+  var PREVIEW   = /[?&]preview=1/.test(location.search || "");
+  var DRAFT_KEY = "tapdraft.v1";
+  function draftData(){
+    try {
+      var raw = localStorage.getItem(DRAFT_KEY);
+      if(!raw) return null;
+      var d = JSON.parse(raw);
+      return (d && d.data) ? d.data : null;
+    } catch(e){ return null; }
+  }
+
+  /* Neither a demo nor a preview may poison the cache the real board falls back to. */
+  var CACHE_KEY = "tapcache.v1" +
+    (PREVIEW ? ".preview" : (dataFile() === DATA_BASE + "taps.json" ? "" : ".demo"));
+
+  function load(){
+    var url = dataFile() + "?t=" + Date.now();
+    var done = false;
+
+    function apply(json){
+      if(done) return; done = true;
+      var stamp = JSON.stringify(json);
+      /* Keep the last good list so a boot before the wifi is up still shows beers. */
+      try { localStorage.setItem(CACHE_KEY, stamp); } catch(e){}
+      if(stamp === lastStamp) return;      /* unchanged - don't restart the rotation */
+      lastStamp = stamp; data = json; render();
+      if(pollLevels) pollLevels();
+    }
+    function fail(){
+      if(done) return; done = true;
+      if(data) return;                     /* already showing something - leave it */
+      var cached = null;
+      try { cached = localStorage.getItem(CACHE_KEY); } catch(e){}
+      if(cached){
+        try { data = JSON.parse(cached); lastStamp = cached; render(); return; } catch(e){}
+      }
+      data = FALLBACK; render();
+    }
+
+    /* A draft beats the network entirely. If there is no draft the published list is
+       fetched as usual, so the preview still shows the board rather than nothing. */
+    if(PREVIEW){
+      var draft = draftData();
+      if(draft){ apply(draft); return; }
+    }
+
+    try {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", url, true);
+      xhr.timeout = 12000;
+      xhr.onload = function(){
+        if(xhr.status >= 200 && xhr.status < 300){
+          try { apply(JSON.parse(xhr.responseText)); } catch(e){ fail(); }
+        } else fail();
+      };
+      xhr.onerror = xhr.ontimeout = fail;
+      xhr.send();
+    } catch(e){ fail(); }
+  }
+
+  load();
+  setInterval(load, 60000);
+
+  /* Prices change on the clock, but render() only runs when the data changes — so
+     watch for the window opening or closing and redraw on the transition. */
+  (function(){
+    var was = null;
+    setInterval(function(){
+      if(!data) return;
+      var now = pricing().on && happyActive();
+      if(was === null){ was = now; return; }
+      if(now !== was){ was = now; render(); }
+    }, 20000);
+  })();
+
+  /* In preview, follow the editor live. The storage event fires in OTHER tabs, which
+     is exactly the case here — edit in one tab, watch it change in this one. The slow
+     poll is a safety net for browsers that hold the event back. */
+  function paintBadge(){
+    var pb = el("previewbadge");
+    if(!pb) return;
+    /* Once the draft is published there is nothing left to preview, and the page is
+       showing exactly what everyone else sees — so the badge goes. Without this it
+       lingered on a tab left open and looked like the board had got stuck. */
+    var showing = STAGING || (PREVIEW && draftData());
+    pb.textContent = STAGING ? "Staging — not the live board" : "Preview — not published";
+    pb.style.display = showing ? "block" : "none";
+  }
+  paintBadge();
+  if(PREVIEW){
+    window.addEventListener("storage", function(e){
+      if(!e || e.key === DRAFT_KEY){ load(); paintBadge(); }
+    }, false);
+    setInterval(function(){ load(); paintBadge(); }, 2000);
+  }
+
+  /* ---------- pick up new versions of this page by itself ----------
+     BUILD is baked into whatever page is actually running. build.txt on the
+     server says what the current build is. If they differ, this page is stale
+     and reloads. Unlike comparing ETags, this cannot be fooled by a cached
+     page, because BUILD travels with the page itself. */
+  var BUILD = "20261003-234258";
+
+  (function(){
+    function check(){
+      var x = new XMLHttpRequest();
+      x.open("GET", "build.txt?v=" + Date.now(), true);
+      x.timeout = 10000;
+      x.onload = function(){
+        if(x.status < 200 || x.status >= 300) return;
+        var latest = (x.responseText || "").trim();
+        if(latest && latest !== BUILD){ location.reload(); }
+      };
+      x.onerror = x.ontimeout = function(){};
+      x.send();
+    }
+    check();
+    setInterval(check, 60000);
+    document.addEventListener("visibilitychange", function(){
+      if(!document.hidden) check();
+    }, false);
+  })();
+
+  /* ---------- the immature bit ----------
+     Fired from the laptop. The Worker hands out a counter alongside the
+     timestamp, so every screen runs the same gag and each press moves on
+     to the next one. */
+  (function(){
+    var wrap = el("rain");
+    if(!wrap) return;
+
+    var SIGNAL_URL = "https://ontap-publish.madlad-taps.workers.dev/laugh";
+    var POLL_MS = 3000;
+    var lastSeen = null, running = false;
+
+    function done(ms){ setTimeout(function(){ running = false; }, ms); }
+
+    /* 1 - the doodle shower */
+    function gagDoodles(){
+      wrap.innerHTML = ""; wrap.className = "on";
+      var doodle = window.DOODLE || "", i, d;
+      for(i = 0; i < 60; i++){
+        d = document.createElement("div");
+        d.className = "drop";
+        d.style.left = (Math.random() * 97) + "vw";
+        d.style.width = (26 + Math.random() * 44) + "px";
+        d.style.animationDuration = (2.4 + Math.random() * 3.0) + "s";
+        d.style.animationDelay = (Math.random() * 6.5) + "s";
+        d.style.setProperty("--spin", (Math.random() * 1440 - 720).toFixed(0) + "deg");
+        d.innerHTML = doodle;
+        wrap.appendChild(d);
+      }
+      setTimeout(function(){ wrap.className = ""; wrap.innerHTML = ""; }, 10000);
+      done(10500);
+    }
+
+    /* 6 - somebody's browsing history, briefly */
+    var HIST = [
+      ["9:38 pm", "how to tell if a keg has gone off", "google.com"],
+      ["9:44 pm", "is it normal to name your kegerator", "reddit.com"],
+      [null, "pornhub.com"],
+      [null, "pornhub.com"],
+      ["9:58 pm", "can my wife see what i search on the wifi", "google.com"],
+      [null, "pornhub.com"],
+      ["10:04 pm", "does incognito actually work", "google.com"],
+      [null, "pornhub.com"],
+      ["10:12 pm", "clear router history telstra", "whirlpool.net.au"],
+      [null, "pornhub.com"],
+      ["10:31 pm", "how to delete browsing history", "google.com"]
+    ];
+    var REDT = ["9:51 pm", "9:53 pm", "10:01 pm", "10:07 pm", "10:19 pm"];
+    function gagHistory(){
+      var box = el("histgag");
+      if(!box){ done(400); return; }
+      var day = new Date();
+      el("histday").textContent = "Today \u2014 " +
+        day.toLocaleDateString(undefined, {weekday:"long", day:"numeric", month:"long", year:"numeric"});
+      var r = 0;
+      el("histrows").innerHTML = HIST.map(function(h){
+        if(h[0] === null){
+          /* title reads like the other rows, no censor bars */
+          var t = REDT[r++] || "9:59 pm";
+          return '<div class="hrow"><span class="htime">' + t + '</span><span class="hfav"></span>' +
+                 '<span class="htitle">Pornhub.com</span>' +
+                 '<span class="hsite">' + esc(h[1]) + '</span></div>';
+        }
+        return '<div class="hrow"><span class="htime">' + esc(h[0]) + '</span><span class="hfav"></span>' +
+               '<span class="htitle">' + esc(h[1]) + '</span>' +
+               '<span class="hsite">' + esc(h[2]) + '</span></div>';
+      }).join("");
+      box.className = "on";
+      /* Long enough for a room to notice, read it, and start pointing. */
+      setTimeout(function(){ box.className = ""; }, 15000);
+      done(15600);
+    }
+
+    /* 3 - netflix asks the room a fair question */
+    function gagStill(){
+      var box = el("stillgag");
+      if(!box){ done(400); return; }
+
+      /* Name a beer that is actually pouring, the way Netflix names the show.
+         Falls back through: live taps -> any named tap -> nothing at all. */
+      var taps = (data && data.taps) || [], live = [], i, t, label = "";
+      for(i = 0; i < taps.length; i++){
+        t = taps[i];
+        if(!t || String(t.name || "").trim() === "") continue;
+        if(t.status === "kicked" || t.status === "coming") continue;
+        if((Number(t.level) || 0) <= 0 && t.status !== "on") continue;
+        live.push(t);
+      }
+      if(!live.length){
+        for(i = 0; i < taps.length; i++){
+          t = taps[i];
+          if(t && String(t.name || "").trim() !== "") live.push(t);
+        }
+      }
+      if(live.length){
+        t = live[Math.floor(Math.random() * live.length)];
+        label = String(t.name || "").trim();
+        if(t.num) label += " · Tap " + t.num;
+      }
+      el("stillsub").textContent = label;
+
+      var n = 5;
+      el("stillcount").textContent = "Resuming in " + n;
+      box.className = "on";
+
+      var tick = setInterval(function(){
+        n--;
+        el("stillcount").textContent = n > 0 ? "Resuming in " + n : "";
+        if(n <= 0) clearInterval(tick);
+      }, 1000);
+
+      setTimeout(function(){
+        clearInterval(tick);
+        box.className = "";
+        el("stillcount").textContent = "";
+      }, 6000);
+      done(6600);
+    }
+
+    /* 4 - somebody's four-year-old got hold of the telly.
+       Everything is generated, so no two firings scribble the same way. The
+       name goes on last, in one crayon, with the R backwards. */
+    function gagScribble(){
+      var box = el("scribgag");
+      if(!box){ done(400); return; }
+
+      var W = 160, H = 90;                 /* 16:9, sliced to cover any screen */
+      var CRAYON = ["#e4322b","#f2701c","#f5c518","#3f9e4d","#2f7fd1",
+                    "#7b4fc0","#e2589b","#8b5a2b","#1b1b1b"];
+      var parts = [];
+
+      function r(a, b){ return a + Math.random() * (b - a); }
+      function ri(a, b){ return Math.floor(r(a, b + 1)); }
+      function n(v){ return Math.round(v * 10) / 10; }
+      function crayon(){ return CRAYON[ri(0, CRAYON.length - 1)]; }
+
+      function stroke(d, col, w, delay, op){
+        parts.push('<path pathLength="100" d="' + d + '" stroke="' + col +
+                   '" stroke-width="' + n(w) + '" opacity="' + n(op) +
+                   '" style="animation-delay:' + n(delay) + 's"/>');
+      }
+
+      /* The tight loop-de-loop. An arc that ends short of its own diameter
+         has to loop back on itself to get there, which is exactly the shape. */
+      function loops(){
+        var x = r(-6, 118), y = r(8, 82), k = ri(5, 13),
+            rx = r(2.2, 5), ry = r(3, 7), step = rx * r(1.3, 1.9),
+            d = "M" + n(x) + " " + n(y), i;
+        for(i = 0; i < k; i++){
+          d += "a" + n(rx) + " " + n(ry) + " 0 1 1 " +
+               n(step) + " " + n(r(-1.6, 1.6));
+        }
+        return d;
+      }
+
+      /* Sharp back-and-forth, the kind done with the whole arm. */
+      function zig(){
+        var x = r(-6, 132), y = r(4, 78), k = ri(4, 11),
+            d = "M" + n(x) + " " + n(y), up = 1, i;
+        for(i = 0; i < k; i++){
+          up = -up;
+          d += "l" + n(r(4, 13)) + " " + n(up * r(8, 26));
+        }
+        return d;
+      }
+
+      /* Colouring in: rows that never quite line up and always overshoot. */
+      function hatch(){
+        var x = r(2, 118), y = r(8, 58), w = r(14, 40), rows = ri(4, 10),
+            gap = r(2, 4.5), d = "M" + n(x) + " " + n(y), dir = 1, i;
+        for(i = 0; i < rows; i++){
+          d += "l" + n(dir * (w + r(-5, 5))) + " " + n(r(-2, 2));
+          d += "l" + n(r(-3, 3)) + " " + n(gap);
+          dir = -dir;
+        }
+        return d;
+      }
+
+      /* A long wander across the screen with no plan at all. */
+      function wander(){
+        var x = r(0, W), y = r(0, H), d = "M" + n(x) + " " + n(y),
+            k = ri(3, 7), i, x1, y1, x2, y2;
+        for(i = 0; i < k; i++){
+          x1 = x + r(-30, 30); y1 = y + r(-25, 25);
+          x = Math.max(-6, Math.min(W + 6, x + r(-42, 42)));
+          y = Math.max(-6, Math.min(H + 6, y + r(-32, 32)));
+          x2 = x + r(-30, 30); y2 = y + r(-25, 25);
+          d += "C" + n(x1) + " " + n(y1) + " " + n(x2) + " " + n(y2) +
+               " " + n(x) + " " + n(y);
+        }
+        return d;
+      }
+
+      /* There is always a sun in the corner. */
+      function sun(){
+        var cx = Math.random() < .5 ? r(9, 17) : r(143, 151), cy = r(7, 13),
+            rad = r(5, 7.5), out = [], i, a, far;
+        out.push("M" + n(cx - rad) + " " + n(cy) +
+                 "c" + n(r(-1, 1)) + " " + n(-rad * 1.45) + " " +
+                 n(rad * 2 + r(-1, 1)) + " " + n(-rad * 1.45) + " " +
+                 n(rad * 2) + " " + n(r(-1, 1)) +
+                 "c" + n(r(-1, 1)) + " " + n(rad * 1.45) + " " +
+                 n(-rad * 2 + r(-1, 1)) + " " + n(rad * 1.45) + " " +
+                 n(-rad * 2) + " " + n(r(-1, 1)));
+        for(i = 0; i < 8; i++){
+          a = i * Math.PI / 4 + r(-.18, .18);
+          far = rad + r(4, 6.5);
+          out.push("M" + n(cx + Math.cos(a) * (rad + 1.4)) + " " +
+                        n(cy + Math.sin(a) * (rad + 1.4)) +
+                   "L" + n(cx + Math.cos(a) * far) + " " +
+                        n(cy + Math.sin(a) * far));
+        }
+        return out;
+      }
+
+      /* Letters drawn stroke by stroke the way a kid builds them, in a
+         100 x 120 box each. Two goes at A so the pair don't match. */
+      var GLYPH = {
+        A1: ["M10 116 C20 82 30 48 44 12",
+             "M44 14 C56 50 66 84 78 118",
+             "M24 80 C40 74 54 78 68 76"],
+        A2: ["M14 118 C24 84 34 46 46 14",
+             "M46 16 C56 52 68 82 82 116",
+             "M26 86 C42 82 58 84 72 80"],
+        R:  ["M16 14 C14 48 17 82 15 114",
+             "M16 16 C52 10 74 22 70 40 C67 56 40 60 16 58",
+             "M30 58 C44 78 58 96 74 116"],
+        I:  ["M46 16 C50 50 44 84 48 112",
+             "M28 16 C42 12 60 15 70 13",
+             "M26 114 C42 110 60 116 72 112"]
+      };
+
+      /* Starts big and confident, then shrinks and sags as the room runs out.
+         The R is mirrored, because of course it is. */
+      var NAME = [
+        {g:"A1", x:24,  y:24, s:.315, rot:-7,  flip:false},
+        {g:"R",  x:60,  y:20, s:.335, rot:5,   flip:true},
+        {g:"I",  x:96,  y:29, s:.265, rot:-4,  flip:false},
+        {g:"A2", x:114, y:33, s:.245, rot:11,  flip:false}
+      ];
+
+      /* ---- lay it all down ---- */
+      var t = 0, i, j, list, col, w;
+
+      var SCRAWL = [loops, zig, hatch, wander];
+      for(i = 0; i < 22; i++){
+        stroke(SCRAWL[ri(0, SCRAWL.length - 1)](),
+               crayon(), r(1.1, 2.6), t, r(.75, .95));
+        t += r(.07, .16);
+      }
+
+      list = sun(); col = "#f5c518";
+      for(i = 0; i < list.length; i++){
+        stroke(list[i], col, r(1.4, 2.2), t, .9);
+        t += .05;
+      }
+      var backdrop = parts.join("");        /* everything under the name */
+
+      /* One crayon for the name — a kid picks a favourite and commits. Dark
+         end of the box only: yellow on paper cannot be read across a pub. */
+      t = Math.max(t + .4, 3.1);
+      col = ["#e4322b","#3f9e4d","#2f7fd1","#7b4fc0","#8b5a2b","#1b1b1b"][ri(0, 5)];
+      var letters = "";
+      for(i = 0; i < NAME.length; i++){
+        var L = NAME[i], tr;
+        if(L.flip){
+          /* Mirror about the glyph's own box so it stays put, only backwards. */
+          tr = "translate(" + L.x + "," + L.y + ") rotate(" + L.rot + ") scale(" +
+               (-L.s) + "," + L.s + ") translate(-100,0)";
+        } else {
+          tr = "translate(" + L.x + "," + L.y + ") rotate(" + L.rot + ") scale(" + L.s + ")";
+        }
+        w = 3 / L.s;                       /* even weight once it is scaled down */
+        parts = [];                        /* stroke() writes here; drain per letter */
+        list = GLYPH[L.g];
+        for(j = 0; j < list.length; j++){
+          stroke(list[j], col, w * r(.86, 1.14), t, .95);
+          /* Nothing a kid draws meets up neatly, so shove each stroke off its
+             mark on the way past. */
+          parts.push('<g transform="translate(' + n(r(-4, 4)) + ',' + n(r(-4, 4)) +
+                     ') rotate(' + n(r(-3, 3)) + ' 50 60)">' + parts.pop() + '</g>');
+          t += r(.2, .3);
+        }
+        letters += '<g transform="' + tr + '">' + parts.join("") + "</g>";
+      }
+
+      box.innerHTML =
+        '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid slice">' +
+        backdrop + letters + "</svg>";
+
+      box.className = "on";
+      setTimeout(function(){ box.className = ""; box.innerHTML = ""; }, 10800);
+      done(11400);
+    }
+
+    /* 5 - a word handwritten across the telly. Not in the rotation: it only
+       runs when the signal carries text (POST /laugh {"text":"...","secs":30}).
+       The script font is fetched now, so it is already cached when it fires. */
+    (function(){
+      var l = document.createElement("link");
+      l.rel = "stylesheet";
+      l.href = "https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap";
+      document.head.appendChild(l);
+    })();
+
+    function gagWrite(text, secs){
+      var box = el("writegag");
+      if(!box){ done(400); return; }
+      secs = Math.max(5, Math.min(120, Number(secs) || 30));
+
+      function go(){
+        box.innerHTML =
+          '<div class="wtilt"><div class="wclip"><span class="wword"></span></div>' +
+          '<svg viewBox="0 0 100 10" preserveAspectRatio="none">' +
+          '<path pathLength="100" d="M2 6 C25 1 60 10 98 3"/></svg></div>';
+        var tilt = box.querySelector(".wtilt"), clip = box.querySelector(".wclip"),
+            word = box.querySelector(".wword"), line = box.querySelector("path");
+        word.textContent = text;
+        box.className = "on";
+
+        /* As big as the screen allows, then shrink to fit a long name. */
+        var fs = window.innerHeight * .34, max = window.innerWidth * .86, w;
+        word.style.fontSize = fs + "px";
+        w = word.offsetWidth;
+        if(w > max){ word.style.fontSize = (fs * max / w) + "px"; w = word.offsetWidth; }
+        tilt.style.width = w + "px";      /* fixed, so the word grows from the left */
+
+        /* Pen speed: about four letters a second. */
+        var pen = Math.max(1.6, Math.min(6, text.length * .4));
+        setTimeout(function(){
+          void clip.offsetWidth;
+          clip.style.transition = "width " + pen + "s linear";
+          clip.style.width = w + "px";
+        }, 600);
+        setTimeout(function(){ line.setAttribute("class", "go"); }, (pen + .8) * 1000);
+      }
+
+      var started = false;
+      function once(){ if(!started){ started = true; go(); } }
+      try {
+        if(document.fonts && document.fonts.load){
+          document.fonts.load('700 40px "Dancing Script"', text).then(once, once);
+          setTimeout(once, 3000);
+        } else once();
+      } catch(e){ once(); }
+
+      setTimeout(function(){ box.className = ""; box.innerHTML = ""; }, secs * 1000);
+      done(secs * 1000 + 600);
+    }
+
+    /* 6 - a photo, staged with POST /laughimg and fired with {"img":true}.
+       Shown only once it has loaded, so nobody sees half a picture. */
+    function gagPhoto(t, secs, caption){
+      var box = el("photogag");
+      if(!box){ done(400); return; }
+      secs = Math.max(5, Math.min(120, Number(secs) || 30));
+      var img = new Image(), settled = false;
+      img.onload = function(){
+        if(settled) return;
+        settled = true;
+        box.innerHTML = '<div class="pframe"></div>' + (caption ? '<div class="pcap"></div>' : '');
+        box.querySelector(".pframe").appendChild(img);
+        if(caption) box.querySelector(".pcap").textContent = caption;
+        box.className = caption ? "on cap" : "on";
+        setTimeout(function(){ box.className = ""; box.innerHTML = ""; }, secs * 1000);
+        done(secs * 1000 + 600);
+      };
+      img.onerror = function(){ if(!settled){ settled = true; done(200); } };
+      setTimeout(function(){ if(!settled){ settled = true; done(0); } }, 15000);
+      img.src = SIGNAL_URL + "img?t=" + encodeURIComponent(t);
+    }
+
+    /* 7 - every word on the board scrambles its letters, then snaps back.
+       Fired with {"fx":"jumble","secs":2}. Same letters, same length, so
+       nothing on the board moves; only the spelling goes. */
+    function gagJumble(secs){
+      secs = Math.max(1, Math.min(30, Number(secs) || 2));
+      var nodes = [], orig = [], last = [], n, w, tick;
+      w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+        acceptNode: function(t){
+          var p = t.parentNode && t.parentNode.nodeName;
+          if(p === "SCRIPT" || p === "STYLE" || p === "NOSCRIPT") return NodeFilter.FILTER_REJECT;
+          return /[A-Za-z0-9]{2}/.test(t.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+        }
+      }, false);
+      while((n = w.nextNode())){ nodes.push(n); orig.push(n.nodeValue); }
+
+      /* Random letters, not an anagram: a shuffled word keeps its shape and
+         reads as unchanged from across a room. Case and digits are kept, so
+         line lengths barely move. */
+      var UP = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", LO = "abcdefghijklmnopqrstuvwxyz";
+      function pick(set){ return set.charAt(Math.floor(Math.random() * set.length)); }
+      function swapChar(c){
+        if(c >= "A" && c <= "Z") return pick(UP);
+        if(c >= "a" && c <= "z") return pick(LO);
+        return pick("0123456789");
+      }
+      function scramble(){
+        for(var i = 0; i < nodes.length; i++){
+          var v = orig[i].replace(/[A-Za-z0-9]/g, swapChar);
+          nodes[i].nodeValue = v; last[i] = v;
+        }
+      }
+      report = "jumble:" + nodes.length;
+      scramble();
+      tick = setInterval(scramble, 140);
+      setTimeout(function(){
+        clearInterval(tick);
+        /* Put back only what is still ours: if the board redrew a node in the
+           meantime, its new text is already right. */
+        for(var i = 0; i < nodes.length; i++){
+          if(nodes[i].nodeValue === last[i]) nodes[i].nodeValue = orig[i];
+        }
+        report = "jumble-done:" + nodes.length;
+      }, secs * 1000);
+      done(secs * 1000 + 300);
+    }
+
+    var GAGS = [gagDoodles, gagHistory, gagStill, gagScribble];
+
+    /* What the last signal actually did on this screen. Rides along on the next
+       poll (&r=...) so `wrangler tail` shows it — the only way to see inside a TV. */
+    var report = "";
+
+    function runGag(n, j){
+      if(running || !data){ report = running ? "busy" : "nodata"; return; }
+      running = true;
+      var idx = ((Number(n) || 0) % GAGS.length + GAGS.length) % GAGS.length;
+      try {
+        if(j && j.fx === "jumble"){
+          gagJumble(j.secs);
+        } else if(j && j.img){
+          gagPhoto(j.t, j.secs, typeof j.text === "string" ? j.text.trim().slice(0, 40) : "");
+        } else if(j && typeof j.text === "string" && j.text.trim()){
+          gagWrite(j.text.trim().slice(0, 40), j.secs);
+        } else {
+          GAGS[idx]();
+        }
+      } catch(e){ running = false; report = "err:" + String(e && e.message || e).slice(0, 120); }
+    }
+
+    function poll(){
+      var x = new XMLHttpRequest();
+      x.open("GET", SIGNAL_URL + "?t=" + Date.now() +
+             "&build=" + encodeURIComponent(BUILD) + "&gags=" + GAGS.length +
+             (report ? "&r=" + encodeURIComponent(report) : ""), true);
+      x.timeout = 8000;
+      x.onload = function(){
+        if(x.status < 200 || x.status >= 300) return;
+        var j = null;
+        try { j = JSON.parse(x.responseText); } catch(e){ return; }
+        if(!j) return;
+        if(lastSeen === null){ lastSeen = j.t; return; }   /* first read just syncs */
+        if(j.t && j.t !== lastSeen){ lastSeen = j.t; runGag(j.n, j); }
+      };
+      x.onerror = x.ontimeout = function(){};
+      x.send();
+    }
+
+    poll();
+    setInterval(poll, POLL_MS);
+  })();
+
+  /* ---------- keep the screen awake ----------
+     Two independent mechanisms, because Fire TV sleeps at the OS level and
+     neither approach is guaranteed on every Fire OS build:
+       1. the standard Screen Wake Lock API
+       2. a silent looping video, which Android treats as active playback     */
+  var wakeLock = null;
+
+  function requestWakeLock(){
+    if(!navigator.wakeLock || !navigator.wakeLock.request) return;
+    try {
+      navigator.wakeLock.request("screen").then(function(lock){
+        wakeLock = lock;
+        lock.addEventListener("release", function(){ wakeLock = null; });
+      })["catch"](function(){ /* not permitted - the video fallback covers it */ });
+    } catch(e){}
+  }
+
+  function nudgeVideo(){
+    var v = el("awake");
+    if(!v) return;
+    try {
+      var pr = v.play();
+      if(pr && pr["catch"]) pr["catch"](function(){});   /* needs a gesture - retried on OK */
+    } catch(e){}
+  }
+
+  function keepAwake(){ requestWakeLock(); nudgeVideo(); }
+
+  keepAwake();
+  /* Re-arm: locks are dropped whenever the page is backgrounded, and some
+     builds quietly stop the video. Cheap to check. */
+  document.addEventListener("visibilitychange", function(){
+    if(!document.hidden) keepAwake();
+  }, false);
+  var av = el("awake");
+  if(av){
+    av.addEventListener("pause", nudgeVideo, false);
+    av.addEventListener("ended", nudgeVideo, false);
+  }
+  setInterval(function(){
+    if(!wakeLock) requestWakeLock();
+    if(av && av.paused) nudgeVideo();
+  }, 30000);
+
+  /* ---------- full screen ----------
+     Inside the Fire TV app we're already fullscreen with no address bar,
+     so the prompt and the fullscreen request are both pointless there. */
+  var inApp = /[?&]app=1\b/.test(location.search);
+  var hint = el("fshint"), hintTimer = null;
+  if(inApp && hint){ hint.parentNode.removeChild(hint); hint = null; }
+
+  function isFullscreen(){
+    return !!(document.fullscreenElement || document.webkitFullscreenElement ||
+              document.webkitIsFullScreen || document.mozFullScreenElement);
+  }
+  function hideHint(){
+    if(!hint) return;
+    hint.className = "gone";
+    if(hintTimer){ clearTimeout(hintTimer); hintTimer = null; }
+  }
+  function goFullscreen(){
+    var d = document.documentElement;
+    var fn = d.requestFullscreen || d.webkitRequestFullscreen ||
+             d.webkitRequestFullScreen || d.mozRequestFullScreen || d.msRequestFullscreen;
+    if(!inApp && fn){ try { fn.call(d); } catch(e){} }
+    hideHint();
+    keepAwake();          /* the OK press is the user gesture autoplay may need */
+  }
+
+  document.addEventListener("click", goFullscreen, false);
+  document.addEventListener("keydown", function(e){
+    var k = e.keyCode;
+    if(k === 13 || k === 32 || k === 179 || k === 85) goFullscreen();
+  }, false);
+  ["fullscreenchange","webkitfullscreenchange","mozfullscreenchange"].forEach(function(ev){
+    document.addEventListener(ev, function(){ if(isFullscreen()) hideHint(); }, false);
+  });
+  if(hint){
+    if(isFullscreen()) hideHint();
+    else hintTimer = setTimeout(hideHint, 30000);
+  }
+})();
+</script>
+</body>
+</html>

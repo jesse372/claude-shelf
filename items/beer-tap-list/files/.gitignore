@@ -1,0 +1,7 @@
+.DS_Store
+firetv-app/build/
+firetv-app/keystore.jks
+worker/.dev.vars
+worker/.wrangler/
+worker/node_modules/
+__pycache__/

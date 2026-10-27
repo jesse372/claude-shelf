@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sign in — On Tap</title>
+<meta name="theme-color" content="#0e0c0a">
+<link rel="icon" href="favicon.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0e0c0a; --line:rgba(226,197,140,.16); --cream:#f6ecd8; --muted:#a3937a;
+    --dim:#7d7060; --gold:#e3ad42; --bad:#e2705c;
+    --serif:'Bitter',Georgia,serif;
+    --sans:'Barlow',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+    --cond:'Barlow Condensed','Barlow',Arial Narrow,Arial,sans-serif;
+  }
+  html,body{min-height:100%}
+  body{
+    background:radial-gradient(120% 70% at 50% -10%, #2b231b 0%, rgba(43,35,27,0) 70%),#0e0c0a;
+    color:var(--cream);font-family:var(--sans);
+    display:flex;align-items:center;justify-content:center;
+    padding:24px 16px calc(24px + env(safe-area-inset-bottom));
+    -webkit-font-smoothing:antialiased;
+  }
+  .card{width:100%;max-width:420px}
+  .mark{text-align:center;font-size:44px;line-height:1;margin-bottom:10px}
+  h1{font-family:var(--serif);font-weight:700;font-size:27px;text-align:center;line-height:1.15}
+  .sub{text-align:center;color:var(--muted);font-size:15px;margin-top:8px;line-height:1.5}
+
+  .tabs{display:flex;gap:8px;margin:22px 0 18px}
+  .tabs button{
+    flex:1 1 0;font-family:var(--cond);font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;font-size:13px;padding:11px 6px;border-radius:9px;cursor:pointer;
+    background:transparent;color:var(--muted);border:1px solid var(--line);
+  }
+  .tabs button.on{background:var(--gold);border-color:var(--gold);color:#1a1408}
+
+  label{display:block;font-family:var(--cond);font-weight:600;letter-spacing:.14em;
+        text-transform:uppercase;font-size:12px;color:var(--muted);margin:14px 0 6px}
+  input{
+    width:100%;font-family:var(--sans);font-size:17px;padding:13px 14px;border-radius:10px;
+    background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--cream);
+  }
+  input:focus{outline:2px solid var(--gold);outline-offset:1px}
+  .go{
+    width:100%;margin-top:20px;font-family:var(--sans);font-weight:700;font-size:17px;
+    padding:14px;border-radius:10px;border:none;background:var(--gold);color:#1a1408;cursor:pointer;
+  }
+  .go[disabled]{opacity:.55;cursor:default}
+  .msg{margin-top:14px;font-size:15px;line-height:1.5;min-height:22px}
+  .msg.err{color:var(--bad)}
+  .msg.ok{color:var(--gold)}
+  .fine{margin-top:18px;color:var(--dim);font-size:13px;line-height:1.6;text-align:center}
+  .fine a{color:var(--muted)}
+  .off{border:1px solid var(--line);border-radius:12px;padding:18px;margin-top:18px;
+       color:var(--muted);font-size:15px;line-height:1.6}
+  .off code{background:rgba(255,255,255,.06);padding:2px 6px;border-radius:5px;font-size:13px}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="mark">🍺</div>
+  <h1>On Tap</h1>
+  <div class="sub" id="sub">Your tap list, on any screen.</div>
+
+  <div id="live" style="display:none">
+    <div class="tabs">
+      <button id="tab-in" class="on" type="button">Sign in</button>
+      <button id="tab-up" type="button">Create an account</button>
+    </div>
+
+    <form id="form" autocomplete="on">
+      <div id="namewrap" style="display:none">
+        <label for="brewery">Brewery or venue name</label>
+        <input id="brewery" type="text" autocomplete="organization" placeholder="Mad Lad Brewing">
+      </div>
+      <label for="email">Email</label>
+      <input id="email" type="email" autocomplete="username" required placeholder="you@brewery.com">
+      <label for="password">Password</label>
+      <input id="password" type="password" autocomplete="current-password" required
+             placeholder="At least 10 characters">
+      <button class="go" id="go" type="submit">Sign in</button>
+    </form>
+    <div class="msg" id="msg"></div>
+    <div class="fine" style="margin-top:14px">
+      <a href="#" id="forgot">Forgotten your password?</a>
+    </div>
+    <div class="fine">
+      Your password never leaves this device — it is turned into a key here first.
+      That takes a moment on older phones.
+    </div>
+  </div>
+
+  <div class="off" id="off" style="display:none">
+    <strong>Accounts aren’t switched on yet.</strong><br>
+    The board and editor work as they always have. To turn accounts on, deploy the
+    <code>api/</code> Worker and set <code>apiBase</code> in <code>config.js</code>.
+    <div style="margin-top:12px"><a href="edit.html">Go to the editor →</a></div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="authkey.js"></script>
+<script>
+(function(){
+  "use strict";
+  var el = function(id){ return document.getElementById(id); };
+  var TOKEN_KEY = "ontap.session.v1";
+  var mode = "in";
+  /* An invitation link lands here. Whether they already have an account or not, the
+     token is redeemed straight after signing in, so the link works either way. */
+  var invite = (/[?&]invite=([^&]+)/.exec(location.search || "") || [])[1];
+  if(invite) invite = decodeURIComponent(invite);
+
+  if(invite){
+    el("sub").textContent = "You've been invited to help run a tap list. " +
+      "Sign in, or create an account with the email it was sent to.";
+  }
+
+  if(!ONTAP.accountsEnabled()){
+    el("off").style.display = "block";
+    return;
+  }
+  el("live").style.display = "block";
+
+  /* Already signed in? Don't make them do it again. */
+  try {
+    var saved = JSON.parse(localStorage.getItem(TOKEN_KEY) || "null");
+    if(saved && saved.token && saved.expires > Date.now() && !invite){
+      location.replace("edit.html");
+      return;
+    }
+  } catch(e){}
+
+  function setMode(m){
+    mode = m;
+    el("tab-in").className = m === "in" ? "on" : "";
+    el("tab-up").className = m === "up" ? "on" : "";
+    el("namewrap").style.display = m === "up" ? "" : "none";
+    el("brewery").required = m === "up";
+    el("go").textContent = m === "up" ? "Create the account" : "Sign in";
+    el("password").setAttribute("autocomplete", m === "up" ? "new-password" : "current-password");
+    say("");
+  }
+  el("tab-in").onclick = function(){ setMode("in"); };
+  el("tab-up").onclick = function(){ setMode("up"); };
+
+  function say(text, kind){
+    var m = el("msg");
+    m.textContent = text || "";
+    m.className = "msg" + (kind ? " " + kind : "");
+  }
+
+  function post(path, payload){
+    return fetch(ONTAP.api() + path, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    }).then(function(r){
+      return r.json().catch(function(){ return {}; }).then(function(j){
+        if(!r.ok) throw new Error(j.error || ("Something went wrong (" + r.status + ")"));
+        return j;
+      });
+    });
+  }
+
+  el("form").addEventListener("submit", function(ev){
+    ev.preventDefault();
+    var email = el("email").value.trim();
+    var password = el("password").value;
+    var brewery = el("brewery").value.trim();
+
+    if(mode === "up" && password.length < 10){
+      say("Use at least 10 characters — this is the key to your prices.", "err");
+      return;
+    }
+    el("go").disabled = true;
+    /* Deriving the key takes a second or two on a phone, and a button that looks
+       stuck is how people press it twice. */
+    say("Securing your password…");
+
+    AuthKey.derive(email, password)
+      .then(function(key){
+        say(mode === "up" ? "Creating your account…" : "Signing in…");
+        return post(mode === "up" ? "/v1/signup" : "/v1/login",
+          mode === "up" ? { email: email, authKey: key, brewery: brewery }
+                        : { email: email, authKey: key });
+      })
+      .then(function(j){
+        try {
+          localStorage.setItem(TOKEN_KEY, JSON.stringify({
+            token: j.token, expires: j.expires,
+            email: email, brewery: j.brewery || null
+          }));
+        } catch(e){
+          throw new Error("This browser won't let the site remember you (private mode?).");
+        }
+        if(!invite){
+          say("Done — opening the editor…", "ok");
+          location.replace("edit.html");
+          return;
+        }
+        say("Accepting the invitation…");
+        return fetch(ONTAP.api() + "/v1/invites/accept", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": "Bearer " + j.token },
+          body: JSON.stringify({ token: invite })
+        }).then(function(r){
+          return r.json().catch(function(){ return {}; }).then(function(a){
+            if(!r.ok) throw new Error(a.error || "That invitation could not be used.");
+            /* Open the venue they were invited to, not whichever came first. */
+            try {
+              if(a.brewery && a.brewery.id) localStorage.setItem("ontap.venue.v1", a.brewery.id);
+            } catch(e){}
+            say("You're in — opening the editor…", "ok");
+            location.replace("edit.html");
+          });
+        });
+      })
+      .catch(function(err){
+        el("go").disabled = false;
+        say(err.message || String(err), "err");
+      });
+  });
+
+  el("forgot").addEventListener("click", function(ev){
+    ev.preventDefault();
+    var email = el("email").value.trim();
+    if(!email){ say("Type your email above first.", "err"); el("email").focus(); return; }
+    fetch(ONTAP.api() + "/v1/reset/request", {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ email: email })
+    }).then(function(){
+      /* Deliberately the same message whether or not that address has an account. */
+      say("If there's an account for that address, a reset link is on its way.", "ok");
+    }).catch(function(){
+      say("Couldn't reach the service.", "err");
+    });
+  });
+
+  setMode("in");
+})();
+</script>
+</body>
+</html>

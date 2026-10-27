@@ -1,0 +1,6 @@
+/* Self-hosted so the TV never waits on an external font server. SIL OFL 1.1. */
+@font-face{font-family:'Bitter';font-style:normal;font-weight:700;font-display:swap;src:url('Bitter-700.woff2') format('woff2');}
+@font-face{font-family:'Barlow Condensed';font-style:normal;font-weight:500;font-display:swap;src:url('BarlowCondensed-500.woff2') format('woff2');}
+@font-face{font-family:'Barlow Condensed';font-style:normal;font-weight:600;font-display:swap;src:url('BarlowCondensed-600.woff2') format('woff2');}
+@font-face{font-family:'Barlow';font-style:normal;font-weight:400;font-display:swap;src:url('Barlow-400.woff2') format('woff2');}
+@font-face{font-family:'Barlow';font-style:normal;font-weight:600;font-display:swap;src:url('Barlow-600.woff2') format('woff2');}

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hall of Fame — On Tap</title>
+<meta name="theme-color" content="#0e0c0a">
+<link rel="icon" href="favicon.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+  /* Everything ever poured, rebuilt from the history of taps.json by hall.py. */
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0e0c0a; --line:rgba(226,197,140,.14); --line-strong:rgba(226,197,140,.30);
+    --cream:#f6ecd8; --muted:#a3937a; --dim:#7d7060; --gold:#e3ad42;
+    --serif:'Bitter',Georgia,'Times New Roman',serif;
+    --sans:'Barlow',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+    --cond:'Barlow Condensed','Barlow',Arial Narrow,Arial,sans-serif;
+  }
+  html,body{background:var(--bg);color:var(--cream);font-family:var(--sans);
+            -webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+  body{
+    background:radial-gradient(130% 60% at 50% -10%, #2b231b 0%, rgba(43,35,27,0) 70%),#0e0c0a;
+    min-height:100vh;padding:22px 16px calc(30px + env(safe-area-inset-bottom));
+  }
+  .wrap{max-width:760px;margin:0 auto}
+
+  header{text-align:center;padding-bottom:16px;position:relative;margin-bottom:18px}
+  header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
+    background:linear-gradient(90deg,var(--gold),rgba(227,173,66,.06))}
+  h1{font-family:var(--serif);font-weight:700;font-size:30px;line-height:1.1}
+  .sub{font-family:var(--cond);font-weight:600;color:var(--gold);letter-spacing:.2em;
+       text-transform:uppercase;font-size:12px;margin-top:6px}
+
+  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:26px}
+  .tile{border:1px solid var(--line);border-radius:10px;padding:14px 14px 12px;
+        background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.008))}
+  .tile b{display:block;font-family:var(--sans);font-weight:700;font-size:26px;
+          color:var(--gold);font-variant-numeric:tabular-nums;line-height:1.1}
+  .tile span{display:block;font-family:var(--cond);font-weight:600;color:var(--dim);
+             letter-spacing:.18em;text-transform:uppercase;font-size:11.5px;margin-top:5px}
+  .tile em{display:block;font-style:normal;color:var(--cream);font-size:15px;
+           font-family:var(--serif);font-weight:700;line-height:1.25}
+
+  .beer{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+  .swatch{flex:0 0 auto;width:6px;border-radius:3px;background:var(--beer,#e3ad42)}
+  .info{flex:1 1 auto;min-width:0}
+  .name{font-family:var(--serif);font-weight:700;font-size:19px;line-height:1.2}
+  .style{font-family:var(--cond);font-weight:600;color:var(--gold);letter-spacing:.1em;
+         text-transform:uppercase;font-size:12.5px;margin-top:2px}
+  .runs{color:var(--muted);font-size:13.5px;margin-top:6px;line-height:1.5}
+  .runs b{color:var(--cream);font-weight:600}
+  .chip{display:inline-block;font-family:var(--cond);font-weight:600;font-size:11px;
+        letter-spacing:.16em;text-transform:uppercase;padding:2px 7px;border-radius:5px;
+        border:1px solid currentColor;color:var(--dim);margin-left:6px}
+  .right{flex:0 0 auto;text-align:right}
+  .days{font-family:var(--sans);font-weight:700;font-size:20px;color:var(--gold);
+        font-variant-numeric:tabular-nums}
+  .dl{font-family:var(--cond);font-weight:600;color:var(--dim);letter-spacing:.16em;
+      text-transform:uppercase;font-size:11px}
+  footer{margin-top:24px;text-align:center;color:var(--dim);font-family:var(--cond);
+         letter-spacing:.16em;text-transform:uppercase;font-size:11.5px;line-height:1.8}
+  .msg{text-align:center;color:var(--muted);padding:40px 0;line-height:1.6}
+  a{color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Hall of Fame</h1>
+    <div class="sub" id="sub">Everything ever poured</div>
+  </header>
+  <div class="tiles" id="tiles"></div>
+  <div id="list"><div class="msg">Loading…</div></div>
+  <footer id="foot"></footer>
+</div>
+<script>
+(function(){
+  "use strict";
+  var DATA_BASE = "../";
+  var el = function(id){ return document.getElementById(id); };
+  function esc(s){
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+      return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c];
+    });
+  }
+  function nice(d){
+    var t = new Date(d + "T00:00:00");
+    if(isNaN(t.getTime())) return d;
+    return t.toLocaleDateString(undefined, { day:"numeric", month:"short", year:"numeric" });
+  }
+  function plural(n, one, many){ return n + " " + (n === 1 ? one : many); }
+
+  function render(h){
+    var beers = h.beers || [];
+    if(!beers.length){
+      el("list").innerHTML = '<div class="msg">No beers recorded yet.<br>' +
+        'The hall fills itself from the tap list&rsquo;s own history as kegs come and go.</div>';
+      return;
+    }
+
+    var longest = beers[0];                       /* hall.py sorts by days */
+    var strongest = beers.slice().sort(function(a,b){
+      return (parseFloat(b.abv) || 0) - (parseFloat(a.abv) || 0);
+    })[0];
+    var styles = {};
+    beers.forEach(function(b){
+      var s = String(b.style || "").trim(); if(s) styles[s] = (styles[s] || 0) + 1;
+    });
+    var topStyle = Object.keys(styles).sort(function(a,b){ return styles[b] - styles[a]; })[0];
+
+    el("tiles").innerHTML =
+      '<div class="tile"><b>' + (h.totals.beers || 0) + '</b><span>Beers poured</span></div>' +
+      '<div class="tile"><b>' + (h.totals.days || 0) + '</b><span>Tap-days</span></div>' +
+      '<div class="tile"><em>' + esc(longest.name) + '</em><span>Longest serving &middot; ' +
+        plural(longest.days, "day", "days") + '</span></div>' +
+      (strongest && parseFloat(strongest.abv) ?
+        '<div class="tile"><em>' + esc(strongest.name) + '</em><span>Strongest &middot; ' +
+        esc(strongest.abv) + '%</span></div>' : '') +
+      /* Only worth showing once a style has actually been repeated — with one of each
+         "most brewed" is just whichever happened to sort first. */
+      (topStyle && styles[topStyle] > 1 ?
+        '<div class="tile"><em>' + esc(topStyle) + '</em><span>Most brewed &middot; ' +
+        plural(styles[topStyle], "time", "times") + '</span></div>' : '');
+
+    el("list").innerHTML = beers.map(function(b){
+      var runs = (b.runs || []).map(function(r){
+        return r.from === r.to ? nice(r.from) : nice(r.from) + " &ndash; " + nice(r.to);
+      }).join("<br>");
+      return '<div class="beer" style="--beer:' + esc(b.color || "#e3ad42") + '">' +
+        '<div class="swatch"></div>' +
+        '<div class="info">' +
+          '<div class="name">' + esc(b.name) +
+            (b.guest ? '<span class="chip">Guest</span>' : '') +
+            (b.times > 1 ? '<span class="chip">' + b.times + '&times; tapped</span>' : '') +
+          '</div>' +
+          (b.style ? '<div class="style">' + esc(b.style) +
+            (b.abv ? ' &middot; ' + esc(b.abv) + '%' : '') + '</div>' : '') +
+          '<div class="runs">' + runs + '</div>' +
+        '</div>' +
+        '<div class="right"><div class="days">' + b.days + '</div><div class="dl">days</div></div>' +
+      '</div>';
+    }).join("");
+
+    el("foot").innerHTML = "Rebuilt from the tap list&rsquo;s own history" +
+      (h.generated ? " &middot; up to " + esc(nice(h.generated)) : "");
+  }
+
+  var x = new XMLHttpRequest();
+  x.open("GET", DATA_BASE + "hall.json?t=" + Date.now(), true);
+  x.timeout = 12000;
+  x.onload = function(){
+    if(x.status < 200 || x.status >= 300){ fail(); return; }
+    try { render(JSON.parse(x.responseText)); } catch(e){ fail(); }
+  };
+  x.onerror = x.ontimeout = fail;
+  function fail(){
+    el("list").innerHTML = '<div class="msg">The hall hasn&rsquo;t been built yet.<br>' +
+      'Run <code>python3 hall.py</code> to rebuild it from the tap list&rsquo;s history.</div>';
+  }
+  x.send();
+})();
+</script>
+</body>
+</html>

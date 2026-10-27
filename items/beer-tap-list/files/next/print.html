@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Print the tap list</title>
+<link rel="icon" href="favicon.svg">
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+  /* A printable menu. Ink on paper wants the opposite of a TV in a dark room:
+     black on white, no gradients, and nothing that costs a cartridge to render. */
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --ink:#14110d; --soft:#6b6154; --rule:#d8d0c2; --gold:#8a6a1f;
+    --serif:'Bitter',Georgia,'Times New Roman',serif;
+    --sans:'Barlow',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+    --cond:'Barlow Condensed','Barlow',Arial Narrow,Arial,sans-serif;
+  }
+  html,body{background:#f4f1ea;color:var(--ink);font-family:var(--sans)}
+
+  /* on-screen controls, never printed */
+  .bar{
+    position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid var(--rule);
+    padding:12px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;
+  }
+  .bar h2{font-family:var(--cond);font-weight:600;letter-spacing:.14em;
+          text-transform:uppercase;font-size:14px;color:var(--soft);margin-right:auto}
+  .bar button{
+    font-family:var(--sans);font-weight:600;font-size:15px;padding:9px 16px;
+    border-radius:8px;border:1px solid var(--ink);background:var(--ink);color:#fff;cursor:pointer;
+  }
+  .bar label{font-size:14px;display:flex;align-items:center;gap:7px;cursor:pointer}
+
+  .sheet{
+    background:#fff;max-width:210mm;min-height:297mm;margin:18px auto;padding:18mm 16mm;
+    box-shadow:0 2px 18px rgba(0,0,0,.12);
+  }
+
+  header{text-align:center;border-bottom:2px solid var(--ink);padding-bottom:10mm;margin-bottom:8mm}
+  /* Logos here are drawn for a dark board, so they are usually cream — which prints
+     as almost nothing on white paper. Rendering it solid keeps the shape and puts
+     ink on the page. Switchable, for anyone whose logo is already dark. */
+  header img{max-width:60%;max-height:28mm;object-fit:contain;margin:0 auto 4mm;display:block}
+  .darklogo header img{filter:brightness(0)}
+  h1{font-family:var(--serif);font-weight:700;font-size:30pt;line-height:1.1}
+  .tagline{font-family:var(--cond);font-weight:600;letter-spacing:.22em;text-transform:uppercase;
+           font-size:10pt;color:var(--soft);margin-top:3mm}
+
+  .happy{border:1.5pt solid var(--gold);color:var(--gold);text-align:center;
+         font-family:var(--cond);font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+         font-size:12pt;padding:3mm;margin-bottom:6mm}
+
+  .sect{font-family:var(--cond);font-weight:600;letter-spacing:.24em;text-transform:uppercase;
+        font-size:10pt;color:var(--soft);margin:8mm 0 3mm;padding-bottom:1.5mm;
+        border-bottom:1px solid var(--rule)}
+
+  /* A beer must not be split across two sheets — half a beer reads as a mistake. */
+  .beer{display:flex;gap:5mm;padding:4mm 0;border-bottom:1px solid var(--rule);
+        break-inside:avoid;page-break-inside:avoid}
+  .num{font-family:var(--cond);font-weight:600;font-size:13pt;color:var(--soft);
+       width:8mm;flex:0 0 auto;padding-top:1mm}
+  .info{flex:1 1 auto;min-width:0}
+  .name{font-family:var(--serif);font-weight:700;font-size:15pt;line-height:1.2}
+  .style{font-family:var(--cond);font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+         font-size:9.5pt;color:var(--gold);margin-top:1mm}
+  .notes{font-size:10pt;color:var(--soft);margin-top:1.5mm;line-height:1.4}
+  .meta{font-family:var(--cond);font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+        font-size:9pt;color:var(--soft);margin-top:1.5mm}
+  .prices{flex:0 0 auto;text-align:right;padding-top:1mm;white-space:nowrap}
+  .prices div{margin-bottom:1mm}
+  .prices b{font-family:var(--sans);font-weight:700;font-size:13pt}
+  .prices s{color:var(--soft);font-size:9.5pt;margin-right:2mm}
+  .prices i{font-family:var(--cond);font-style:normal;font-weight:600;font-size:8.5pt;
+            letter-spacing:.14em;text-transform:uppercase;color:var(--soft);margin-left:2mm}
+
+  .foot{margin-top:10mm;padding-top:5mm;border-top:1px solid var(--rule);
+        display:flex;align-items:center;justify-content:space-between;gap:8mm}
+  .foot .t{font-family:var(--cond);letter-spacing:.16em;text-transform:uppercase;
+           font-size:9pt;color:var(--soft);line-height:1.7}
+  .qr{text-align:center;flex:0 0 auto}
+  .qr img{width:26mm;height:26mm;display:block}
+  .qr span{font-family:var(--cond);font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+           font-size:8pt;color:var(--soft);display:block;margin-top:1.5mm}
+  .thumb{flex:0 0 auto;width:18mm;height:18mm;object-fit:cover;border:1px solid var(--rule)}
+  .custom{font-family:var(--cond);letter-spacing:.06em;font-size:9pt;color:var(--soft);
+          margin-top:1.5mm;line-height:1.5}
+  .custom b{color:var(--ink);font-weight:600}
+  .xitem{display:flex;gap:5mm;padding:2.6mm 0;border-bottom:1px solid var(--rule);
+         break-inside:avoid;page-break-inside:avoid}
+  .xitem .xn{flex:1 1 auto}
+  .xitem .xname{font-family:var(--serif);font-weight:700;font-size:12.5pt}
+  .xitem .xd{font-size:9.5pt;color:var(--soft);margin-top:1mm}
+  .xitem .xp{flex:0 0 auto;font-family:var(--sans);font-weight:700;font-size:12pt}
+  .noqr .qr{display:none}
+
+  /* Compact: the same menu, scaled. Most sizes here are in points, which do not
+     inherit from an em scale — zoom is what actually shrinks a pt-sized layout, and
+     it reflows properly so pagination follows. Nothing is dropped, only tightened. */
+  .sheet.compact{zoom:.78}
+  .compact h1{font-size:24pt}
+  .compact header{padding-bottom:6mm;margin-bottom:5mm}
+  .compact header img{max-height:20mm;margin-bottom:3mm}
+  .compact .beer{padding:2.6mm 0}
+  .compact .name{font-size:13pt}
+  .compact .prices b{font-size:11.5pt}
+  .compact .prices div{margin-bottom:.4mm}
+  .compact .happy{padding:2mm;margin-bottom:4mm;font-size:10.5pt}
+  .compact .sect{margin:5mm 0 2mm}
+  .compact .foot{margin-top:6mm;padding-top:3mm}
+  .compact .qr img{width:22mm;height:22mm}
+
+  @media print{
+    /* Letter is shorter than A4, so "auto" lets the browser use whatever is loaded
+       rather than forcing a size that spills onto a second sheet. */
+    @page{ size:auto; margin:12mm }
+    html,body{background:#fff}
+    .bar{display:none}
+    .sheet{box-shadow:none;margin:0;padding:0;max-width:none;min-height:0}
+  }
+</style>
+</head>
+<body>
+<div class="bar">
+  <h2>Printable menu</h2>
+  <label><input type="checkbox" id="wantqr" checked> Include the QR code</label>
+  <label><input type="checkbox" id="darklogo" checked> Darken the logo for paper</label>
+  <label><input type="checkbox" id="compact"> Fit more on a page</label>
+  <button id="go">Print / Save as PDF</button>
+</div>
+
+<div class="sheet" id="sheet">
+  <header>
+    <div id="logo"></div>
+    <h1 id="brewery">Loading…</h1>
+    <div class="tagline" id="tagline"></div>
+  </header>
+  <div id="happy"></div>
+  <div id="list"></div>
+  <div class="foot">
+    <div class="t" id="foott"></div>
+    <div class="qr" id="qr"></div>
+  </div>
+</div>
+
+<script src="taplib.js"></script>
+<script>
+(function(){
+  "use strict";
+  var DATA_BASE = "../";
+  var el = function(id){ return document.getElementById(id); };
+  var DEMOS = { business: "business-taps.json" };
+  function dataFile(){
+    var m = /[?&]demo=([a-z]+)/i.exec(location.search || "");
+    return (m && DEMOS[m[1].toLowerCase()]) || "taps.json";
+  }
+
+  /* One copy of these lives in taplib.js — see the note there. */
+  var T = window.TapLib;
+  function esc(s){ return T.esc(s); }
+  function has(v){ return T.has(v); }
+  function nonZero(v){ return T.nonZero(v); }
+  function money(c, v){ return T.money(c, v); }
+  function hhmmToMin(v){ return T.hhmmToMin(v); }
+  function prettyTime(v){ return T.prettyTime(v); }
+  function pricing(){ return T.pricing(data); }
+  var data = null;
+
+  function priceRows(t){
+    var pr = pricing();
+    if(!pr.on) return "";
+    /* Paper has no clock, so a printed menu shows the everyday price and lists happy
+       hour separately in the banner. A discount printed as though permanent is a
+       promise the bar has to keep all week. */
+    var out = [];
+    pr.sizes.forEach(function(sz){
+      var v = t.prices ? t.prices[sz.id] : null;
+      if(v == null || String(v).trim() === "") return;
+      out.push('<div><b>' + esc(money(pr.currency, v)) + '</b><i>' +
+               esc(sz.name || (sz.ml ? sz.ml + "ml" : "")) + '</i></div>');
+    });
+    return out.length ? '<div class="prices">' + out.join("") + '</div>' : "";
+  }
+
+  function beerHTML(t){
+    var meta = [];
+    if(has(t.abv))     meta.push(esc(String(t.abv).trim()) + "% ABV");
+    if(nonZero(t.ibu)) meta.push(esc(String(t.ibu).trim()) + " IBU");
+    if(t.guest)        meta.push("Guest");
+    var customs = (Array.isArray(t.custom) ? t.custom : []).filter(function(c){
+      return has(c && c.k) || has(c && c.v);
+    });
+    return '<div class="beer">' +
+      '<div class="num">' + esc(t.num != null ? t.num : "") + '</div>' +
+      (has(t.image) ? '<img class="thumb" alt="" src="' + esc(t.image) +
+        '" onerror="this.style.display=\'none\'">' : '') +
+      '<div class="info">' +
+        '<div class="name">' + esc(t.name || "Untitled") + '</div>' +
+        (has(t.style) ? '<div class="style">' + esc(String(t.style).trim()) + '</div>' : '') +
+        (has(t.notes) ? '<div class="notes">' + esc(String(t.notes).trim()) + '</div>' : '') +
+        (meta.length ? '<div class="meta">' + meta.join(" &middot; ") + '</div>' : '') +
+        (customs.length ? '<div class="custom">' + customs.map(function(c){
+            return (has(c.k) ? '<b>' + esc(c.k) + ':</b> ' : '') + esc(c.v || "");
+          }).join("<br>") + '</div>' : '') +
+      '</div>' + priceRows(t) +
+    '</div>';
+  }
+
+  function render(){
+    if(!data) return;
+    if(data.logo){
+      el("logo").innerHTML = '<img alt="" src="' + esc(data.logo) + '">';
+    }
+    el("brewery").textContent = data.brewery || "On Tap";
+    el("brewery").style.display = (data.logo && data.logoOnly) ? "none" : "";
+    el("tagline").textContent = data.tagline || "";
+
+    var pr = pricing(), h = pr.happy;
+    el("happy").innerHTML = (pr.on && h && h.on && hhmmToMin(h.from) !== null)
+      ? '<div class="happy">' + esc(h.label || "Happy Hour") + " &middot; " +
+        esc(prettyTime(h.from)) + " to " + esc(prettyTime(h.to)) + '</div>'
+      : "";
+
+    var taps = (data.taps || []).filter(function(t){ return String(t.name||"").trim() !== ""; });
+    /* The tap number decides the running order, not the order they happen to sit in
+       the file. Otherwise renumbering a beer in the editor moves nothing out here. */
+    taps.sort(function(a, b){
+      return (Number(a.num) || 9999) - (Number(b.num) || 9999);
+    });
+    /* Anything not actually pouring has no place on a printed menu — by the time it is
+       on the wall a kicked keg is just a customer asking for a beer you cannot serve. */
+    var pouring = taps.filter(function(t){
+      return t.status !== "coming" &&
+             !(t.status === "kicked" || (data.sensors && data.sensors.on && (Number(t.level)||0) <= 0));
+    });
+    var coming = taps.filter(function(t){ return t.status === "coming"; });
+
+    var out = pouring.map(beerHTML).join("") +
+      (coming.length ? '<div class="sect">Coming Soon</div>' + coming.map(beerHTML).join("") : "");
+
+    var ex = data.extras;
+    if(ex && ex.on && Array.isArray(ex.groups)){
+      var cur = pricing().currency;
+      ex.groups.forEach(function(g){
+        var items = (g.items || []).filter(function(i){ return String(i.name || "").trim() !== ""; });
+        if(!items.length) return;
+        out += '<div class="sect">' + esc(g.name || "Also available") + '</div>' +
+          items.map(function(i){
+            return '<div class="xitem"><div class="xn">' +
+              '<div class="xname">' + esc(i.name) + '</div>' +
+              (has(i.desc) ? '<div class="xd">' + esc(i.desc) + '</div>' : '') +
+            '</div>' +
+            (i.price != null && String(i.price).trim() !== ''
+              ? '<div class="xp">' + esc(money(cur, i.price)) + '</div>' : '') +
+            '</div>';
+          }).join("");
+      });
+    }
+    el("list").innerHTML = out;
+
+    el("foott").innerHTML = esc(data.brewery || "") +
+      (data.tagline ? "<br>" + esc(data.tagline) : "");
+
+    el("qr").innerHTML = '<img alt="" src="menu-qr.svg" ' +
+      'onerror="this.parentNode.style.display=\'none\'">' +
+      '<span>Scan for the live list</span>';
+    applyOpts();
+  }
+  function applyOpts(){
+    el("sheet").className = "sheet" +
+      (el("wantqr").checked ? "" : " noqr") +
+      (el("darklogo").checked ? " darklogo" : "") +
+      (el("compact").checked ? " compact" : "");
+  }
+  el("wantqr").addEventListener("change", applyOpts);
+  el("darklogo").addEventListener("change", applyOpts);
+  el("compact").addEventListener("change", applyOpts);
+  el("go").addEventListener("click", function(){ window.print(); });
+
+  var x = new XMLHttpRequest();
+  x.open("GET", DATA_BASE + dataFile() + "?t=" + Date.now(), true);
+  x.onload = function(){
+    if(x.status < 200 || x.status >= 300) return;
+    try { data = JSON.parse(x.responseText); render(); } catch(e){}
+  };
+  x.send();
+})();
+</script>
+</body>
+</html>

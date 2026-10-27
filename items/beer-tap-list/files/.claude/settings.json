@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./bgphoto.json)",
+      "Read(./next/**)",
+      "Read(./__pycache__/**)",
+      "Read(./firetv-app/build/**)",
+      "Read(./fonts/**)",
+      "Read(./*.apk)",
+      "Read(./*.mp4)",
+      "Read(./*.webm)",
+      "Read(./apple-touch-icon.png)"
+    ],
+    "allow": [
+      "Bash(jq:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(./stage.sh)",
+      "Bash(./bump.sh)",
+      "Bash(wc:*)"
+    ]
+  }
+}

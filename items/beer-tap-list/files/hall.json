@@ -1,0 +1,170 @@
+{
+  "generated": "2026-07-29",
+  "beers": [
+    {
+      "name": "Lemon, Lime Bitters",
+      "style": "Boozy Soft Drink",
+      "abv": "6",
+      "ibu": "0",
+      "srm": 3,
+      "color": "#e8b3c8",
+      "notes": "",
+      "guest": true,
+      "runs": [
+        {
+          "from": "2026-07-26",
+          "to": "2026-07-29"
+        }
+      ],
+      "times": 1,
+      "days": 4,
+      "first": "2026-07-26",
+      "last": "2026-07-29"
+    },
+    {
+      "name": "Bush Chook",
+      "style": "Light Lager",
+      "abv": "4.4",
+      "ibu": "18",
+      "srm": 2,
+      "color": "#FFD878",
+      "notes": "Light, crisp and easy. ",
+      "guest": false,
+      "runs": [
+        {
+          "from": "2026-07-26",
+          "to": "2026-07-29"
+        }
+      ],
+      "times": 1,
+      "days": 4,
+      "first": "2026-07-26",
+      "last": "2026-07-29"
+    },
+    {
+      "name": "Coconut Porter",
+      "style": "English Porter",
+      "abv": "4.3",
+      "ibu": "52",
+      "srm": 30,
+      "color": "#5E0B00",
+      "notes": "Chris's Beer",
+      "guest": false,
+      "runs": [
+        {
+          "from": "2026-07-26",
+          "to": "2026-07-29"
+        }
+      ],
+      "times": 1,
+      "days": 4,
+      "first": "2026-07-26",
+      "last": "2026-07-29"
+    },
+    {
+      "name": "Prysma in the Galaxy",
+      "style": "New England IPA",
+      "abv": "6.2",
+      "ibu": "32",
+      "srm": 7,
+      "color": "#F39C00",
+      "notes": "Used Prysma Galaxy",
+      "guest": false,
+      "runs": [
+        {
+          "from": "2026-07-26",
+          "to": "2026-07-29"
+        }
+      ],
+      "times": 1,
+      "days": 4,
+      "first": "2026-07-26",
+      "last": "2026-07-29"
+    },
+    {
+      "name": "Munich Helles HC",
+      "style": "International Lager",
+      "abv": "5",
+      "ibu": "18",
+      "srm": 2,
+      "color": "#FFD878",
+      "notes": "",
+      "guest": false,
+      "runs": [
+        {
+          "from": "2026-07-26",
+          "to": "2026-07-29"
+        }
+      ],
+      "times": 1,
+      "days": 4,
+      "first": "2026-07-26",
+      "last": "2026-07-29"
+    },
+    {
+      "name": "Krush Pacific Ale",
+      "style": "Pacific Ale",
+      "abv": "4.6",
+      "ibu": "25",
+      "srm": 2,
+      "color": "#FFD878",
+      "notes": "Bready malt, clean lager finish. Lagering now.",
+      "guest": false,
+      "runs": [
+        {
+          "from": "2026-07-26",
+          "to": "2026-07-29"
+        }
+      ],
+      "times": 1,
+      "days": 4,
+      "first": "2026-07-26",
+      "last": "2026-07-29"
+    },
+    {
+      "name": "Blueberry Mango Sour",
+      "style": "Catalina Sour",
+      "abv": "5",
+      "ibu": "5",
+      "srm": "",
+      "color": "#e8b3c8",
+      "notes": "",
+      "guest": false,
+      "runs": [
+        {
+          "from": "2026-07-26",
+          "to": "2026-07-29"
+        }
+      ],
+      "times": 1,
+      "days": 4,
+      "first": "2026-07-26",
+      "last": "2026-07-29"
+    },
+    {
+      "name": "Coopers Lager",
+      "style": "Pale Lager",
+      "abv": "4.5",
+      "ibu": "35",
+      "srm": 3,
+      "color": "#FFCA5A",
+      "notes": "",
+      "guest": true,
+      "runs": [
+        {
+          "from": "2026-07-26",
+          "to": "2026-07-29"
+        }
+      ],
+      "times": 1,
+      "days": 4,
+      "first": "2026-07-26",
+      "last": "2026-07-29"
+    }
+  ],
+  "totals": {
+    "beers": 8,
+    "days": 32,
+    "guest": 2
+  }
+}

@@ -1,0 +1,2292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Edit the Tap List</title>
+<meta name="theme-color" content="#f6f1e7">
+<link rel="icon" href="favicon.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Edit Taps">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#f6f1e7; --card:#fff; --ink:#241d15; --muted:#7a6c58;
+    --line:#e0d5c2; --gold:#b07c1c; --green:#2e7d4f; --red:#b23b3b;
+  }
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    font-size:18px;line-height:1.4;padding-bottom:78px;
+  }
+  .wrap{max-width:860px;margin:0 auto;padding:14px 18px}
+
+  /* ---------- top bar ---------- */
+  .top{
+    background:#241d15;color:#f4e9d5;padding:9px 18px;
+    box-shadow:0 2px 12px rgba(0,0,0,.18);
+  }
+  .top .wrap{padding:0 18px;display:flex;align-items:center;gap:14px}
+  .top h1{font-family:Georgia,serif;font-size:19px;font-weight:700;flex:1 1 auto;
+          white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  h2{font-family:Georgia,serif;font-size:20px;margin:16px 0 9px}
+
+  /* ---------- buttons ---------- */
+  button{
+    font:inherit;font-weight:600;cursor:pointer;border:2px solid transparent;
+    border-radius:11px;padding:11px 16px;background:#efe6d5;color:var(--ink);
+    transition:filter .15s ease;
+  }
+  button:hover{filter:brightness(.95)}
+  button:active{transform:translateY(1px)}
+  .btn-primary{background:var(--green);color:#fff;font-size:17px;padding:12px 22px;white-space:nowrap}
+  .btn-ghost{background:transparent;border-color:var(--line);color:var(--ink)}
+  .btn-ghost-light{background:transparent;border-color:#5a4c3a;color:#f4e9d5}
+  .btn-danger{background:transparent;border-color:#e5c4c4;color:var(--red);padding:10px 14px}
+  .btn-sm{padding:9px 13px;font-size:16px;border-radius:9px}
+  button:disabled{opacity:.5;cursor:not-allowed}
+
+  /* ---------- cards ---------- */
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:15px;margin-bottom:12px;box-shadow:0 1px 3px rgba(60,45,20,.06);
+  }
+  .card.kicked{background:#faf7f1;opacity:.85}
+  .card-head{display:flex;align-items:center;gap:10px;margin-bottom:11px;flex-wrap:wrap}
+  .card-head .taplabel{font-size:13px;font-weight:700;letter-spacing:.09em;
+                       text-transform:uppercase;color:var(--muted);flex:0 0 auto}
+  .card-head input.tapno[type=number]{
+    background:#241d15;color:#f4e9d5;border-radius:10px;font-weight:700;
+    width:58px;height:40px;font-size:17px;text-align:center;
+    border:2px solid #241d15;flex:0 0 auto;padding:0;
+  }
+  .card-head .spacer{flex:1 1 auto}
+
+  label{display:block;font-size:13px;font-weight:700;letter-spacing:.09em;
+        text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+  input[type=text],input[type=number],textarea,select{
+    font:inherit;width:100%;padding:10px 12px;border:2px solid var(--line);
+    border-radius:10px;background:#fffdf9;color:var(--ink);
+  }
+  input:focus,textarea:focus,select:focus{outline:none;border-color:var(--gold)}
+  textarea{resize:vertical;min-height:52px}
+  .field{margin-bottom:11px}
+  .row{display:flex;gap:14px;flex-wrap:wrap}
+  .row>.field{flex:1 1 150px;margin-bottom:11px}
+
+  /* ---------- SRM colour spectrum ---------- */
+  .srmwrap{border:2px solid var(--line);border-radius:12px;padding:10px;background:#fffdf9}
+  .srmstrip{display:flex;flex-wrap:wrap;gap:3px}
+  .srm{
+    width:34px;height:40px;border-radius:6px;border:3px solid transparent;padding:0;
+    cursor:pointer;box-shadow:inset 0 0 0 1px rgba(0,0,0,.22);
+    font-size:11px;font-weight:700;line-height:1;
+    display:flex;align-items:flex-end;justify-content:center;padding-bottom:3px;
+  }
+  .srm.on{border-color:var(--ink);box-shadow:inset 0 0 0 1px rgba(0,0,0,.35)}
+  .srmlabel{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    margin-top:9px;font-size:15px;color:var(--muted);
+  }
+  .srmchip{
+    width:34px;height:34px;border-radius:8px;flex:0 0 auto;
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,.25);
+  }
+  .srmval{font-weight:700;color:var(--ink);font-size:17px}
+  .srmother{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
+  .srmother .cap{font-size:13px;font-weight:700;letter-spacing:.06em;
+                 text-transform:uppercase;color:var(--muted)}
+  .sw{
+    width:38px;height:38px;border-radius:9px;border:3px solid transparent;
+    cursor:pointer;box-shadow:inset 0 0 0 1px rgba(0,0,0,.18);padding:0;
+  }
+  .sw.on{border-color:var(--ink)}
+
+  /* ---------- recipe library ---------- */
+  .libbar{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+  .libbar button{flex:1 1 200px}
+  .libpick{
+    position:fixed;left:0;right:0;top:0;bottom:0;z-index:60;
+    background:rgba(36,29,21,.55);display:none;
+    align-items:center;justify-content:center;padding:18px;
+  }
+  .libpick.open{display:flex}
+  .libbox{
+    background:var(--card);border-radius:16px;max-width:620px;width:100%;
+    max-height:82vh;overflow:auto;padding:18px;
+  }
+  .libbox h3{font-family:Georgia,serif;font-size:21px;margin-bottom:4px}
+  .librow{
+    display:flex;align-items:center;gap:12px;padding:11px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .librow:last-child{border-bottom:none}
+  .libdot{width:26px;height:26px;border-radius:7px;flex:0 0 auto;
+          box-shadow:inset 0 0 0 1px rgba(0,0,0,.25)}
+  .libinfo{flex:1 1 auto;min-width:0}
+  .libname{font-weight:700}
+  .libmeta{font-size:14px;color:var(--muted)}
+  .libempty{color:var(--muted);padding:14px 0}
+
+  /* ---------- icon picker ---------- */
+  .icons{display:flex;gap:9px;flex-wrap:wrap}
+  .ic{
+    width:50px;height:50px;border:2px solid var(--line);border-radius:11px;
+    background:#fffdf9;color:var(--gold);padding:0;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .ic svg{width:28px;height:28px}
+  .ic.on{border-color:var(--ink);background:#fdf3df}
+  .ic.none{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.04em}
+
+  /* ---------- logo ---------- */
+  .logorow{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
+  .logoprev{
+    width:190px;height:95px;flex:0 0 auto;border:2px dashed var(--line);border-radius:12px;
+    background:#241d15;color:#8b7c66;font-size:14px;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;
+  }
+  .logoprev img{max-width:100%;max-height:100%;object-fit:contain;display:block}
+
+  /* ---------- level slider ---------- */
+  input[type=range]{width:100%;height:32px;accent-color:var(--gold)}
+  .levelrow{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .levelval{font-weight:700;font-size:20px;min-width:62px;text-align:right}
+  .quick{display:flex;gap:8px;flex-wrap:wrap}
+
+  /* ---------- publish bar ---------- */
+  .publishbar{
+    position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:2px solid var(--line);
+    padding:8px 18px;z-index:30;box-shadow:0 -4px 18px rgba(60,45,20,.10);
+  }
+  .publishbar .wrap{padding:0 18px;display:flex;align-items:center;gap:12px}
+  .status{flex:1 1 auto;font-size:15px;color:var(--muted);min-width:0;
+          overflow:hidden;text-overflow:ellipsis}
+  .status.ok{color:var(--green);font-weight:600}
+  .status.err{color:var(--red);font-weight:600}
+
+
+  /* ---------- misc ---------- */
+  .note{background:#fdf6e6;border:1px solid #ecdcb8;border-radius:12px;padding:14px 16px;
+        font-size:16px;color:#6b5834;margin-bottom:16px}
+  .banner{background:#fff6d8;border:2px solid var(--gold);border-radius:12px;padding:14px 16px;
+          display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+  .banner .t{flex:1 1 200px}
+  .banner.danger{background:#fdecec;border-color:var(--red)}
+  .setupstate{font-weight:700}
+  .setupstate.ok{color:var(--green)}
+  .setupstate.bad{color:var(--red)}
+  details{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:0;margin-bottom:16px}
+  summary{padding:18px 20px;cursor:pointer;font-weight:700;font-size:18px;list-style:none}
+  summary::-webkit-details-marker{display:none}
+  summary::before{content:"▸ ";color:var(--gold)}
+  details[open] summary::before{content:"▾ "}
+  details .inner{padding:0 20px 20px}
+  .hint{font-size:14px;color:var(--muted);margin-top:6px}
+  code{background:#efe6d5;padding:2px 6px;border-radius:5px;font-size:15px}
+  /* business mode: pour sizes and per-beer prices */
+  .groupbox{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+  .grouphead{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+  .grouphead input{flex:1 1 auto;font-weight:700}
+  .itemrow{display:flex;gap:10px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+  .itemrow .iname{flex:2 1 160px;min-width:0}
+  .itemrow .idesc{flex:3 1 220px;min-width:0}
+  .itemrow .iprice{flex:0 0 110px}
+  .muted{color:var(--muted);font-weight:400}
+  .sizerow{display:flex;gap:10px;align-items:center;margin-bottom:9px}
+  .sizerow .sname{flex:2 1 130px;min-width:0}
+  .sizerow .sml{flex:1 1 90px;max-width:130px}
+  .sizerow .sunit{color:var(--muted);font-size:15px;flex:0 0 auto}
+  .pricegrid{display:flex;gap:12px;flex-wrap:wrap}
+  .pricecell{display:flex;flex-direction:column;gap:5px;flex:1 1 120px;min-width:0}
+  .plab{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .checkline{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .checkline input{width:24px;height:24px;accent-color:var(--gold);flex:0 0 auto}
+  .checkline label{margin:0;text-transform:none;font-size:17px;letter-spacing:0;
+                   color:var(--ink);font-weight:500}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="wrap">
+    <h1>🍺 Edit the Tap List</h1>
+    <button class="btn-ghost-light btn-sm" id="preview">See the TV screen</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div id="draftbanner" style="display:none" class="banner">
+    <div class="t"><strong>You have unpublished changes</strong> from <span id="drafttime"></span>.</div>
+    <button class="btn-sm" id="draft-restore">Use those</button>
+    <button class="btn-sm btn-ghost" id="draft-discard">Throw them away</button>
+  </div>
+
+  <div id="staleban" style="display:none" class="banner">
+    <div class="t"><strong>The tap list was changed somewhere else</strong>
+      <span id="staletime"></span>. Publishing now would undo it.</div>
+    <button class="btn-sm" id="stale-reload">Load the new one</button>
+    <button class="btn-sm btn-ghost" id="stale-ignore">Keep mine</button>
+  </div>
+
+  <div id="loginbox" style="display:none" class="banner">
+    <div class="t">
+      <strong>Sign in to publish.</strong>
+      Enter the password to send changes to the TV.
+    </div>
+    <input type="password" id="pw" placeholder="Password" autocomplete="current-password"
+           style="max-width:200px;width:auto">
+    <button class="btn-sm" id="pwgo">Sign in</button>
+    <span class="hint" id="pwmsg" style="margin:0;align-self:center"></span>
+  </div>
+
+  <div id="setupbanner" style="display:none" class="banner danger">
+    <div class="t">
+      <strong>Publishing isn't set up on this computer.</strong>
+      Your changes can't reach the TV until it is — ask Jesse for the access token.
+    </div>
+    <button class="btn-sm" id="setupfix">Fix it</button>
+  </div>
+
+  <h2>The beers</h2>
+  <div id="taps"></div>
+  <div class="libbar">
+    <button id="add" style="padding:13px;font-size:18px;border:2px dashed var(--line)">
+      + Add another beer
+    </button>
+    <button id="fromlib" class="btn-ghost" style="padding:13px;font-size:18px">
+      + From my recipes
+    </button>
+  </div>
+
+  <div class="libpick" id="libpick">
+    <div class="libbox">
+      <h3>My recipes</h3>
+      <div class="hint" style="margin-bottom:10px">
+        Beers you've brewed before. Removing a beer saves it here automatically.
+      </div>
+      <div id="liblist"></div>
+      <div style="margin-top:16px;text-align:right">
+        <button class="btn-ghost" id="libclose">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <h2>Screen settings</h2>
+  <details>
+    <summary>Brewery name, clock, and layout</summary>
+    <div class="inner">
+      <div class="field">
+        <label for="brewery">Name at the top of the TV</label>
+        <input type="text" id="brewery" placeholder="Dad's Garage Brewing">
+      </div>
+      <div class="field">
+        <label for="tagline">Small line underneath (optional)</label>
+        <input type="text" id="tagline" placeholder="Home Brewed · Always Cold">
+      </div>
+      <div class="field">
+        <label for="bg">Background</label>
+        <select id="bg">
+          <option value="charcoal">Charcoal (default)</option>
+          <option value="chalk">Chalkboard</option>
+          <option value="oak">Oak barrel</option>
+          <option value="slate">Slate</option>
+          <option value="copper">Copper</option>
+          <option value="photo">My own photo…</option>
+        </select>
+        <div id="bgphotorow" style="display:none;margin-top:12px">
+          <div class="logorow">
+            <div class="logoprev" id="bgprev">No photo yet</div>
+            <div style="flex:1 1 240px">
+              <input type="file" id="bgfile" accept="image/*" style="display:none">
+              <button class="btn-ghost" id="bgpick">Choose a photo…</button>
+              <div class="hint">
+                The photo is darkened automatically so the beer names stay readable.
+                A wide, not-too-busy picture works best.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Logo at the top of the TV screen</label>
+        <div class="logorow">
+          <div class="logoprev" id="logoprev">No logo yet</div>
+          <div style="flex:1 1 240px">
+            <input type="file" id="logofile" accept="image/*" style="display:none">
+            <button class="btn-ghost" id="logopick">Choose a picture…</button>
+            <button class="btn-danger" id="logoclear" style="display:none">Remove</button>
+            <div id="logosizerow" style="display:none;margin-top:12px">
+              <label for="logoSize">Logo size on the TV</label>
+              <select id="logoSize" style="max-width:220px">
+                <option value="s">Small</option>
+                <option value="m">Medium</option>
+                <option value="l">Large</option>
+              </select>
+            </div>
+            <div class="hint">
+              A PNG or JPG from the laptop. It's shrunk automatically, so any size is fine —
+              a wide logo looks best. Leave it empty to show the 🍺 instead.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="perPage">Beers shown per screen</label>
+          <select id="perPage">
+            <option value="auto">Auto — fit them all (recommended)</option>
+            <option value="2">2 — biggest text</option>
+            <option value="4">4 — big text</option>
+            <option value="6">6</option>
+            <option value="8">8 — smallest text</option>
+          </select>
+          <div class="hint">
+            Auto shows every beer on one screen (up to 8) at the largest text that fits.
+            Beyond that, the extras rotate onto a second screen.
+          </div>
+        </div>
+        <div class="field">
+          <label for="rotateSeconds">Seconds per screen</label>
+          <input type="number" id="rotateSeconds" min="6" max="120" step="1">
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="rotate">Screen rotation</label>
+          <select id="rotate">
+            <option value="0">Normal (widescreen)</option>
+            <option value="90">Rotated — turn right ↻</option>
+            <option value="270">Rotated — turn left ↺</option>
+            <option value="180">Upside down</option>
+          </select>
+          <div class="hint">
+            For a TV or monitor mounted on its side. If the first rotated option comes out
+            upside down, pick the other one.
+          </div>
+        </div>
+      </div>
+      <div class="checkline">
+        <input type="checkbox" id="logoOnly">
+        <label for="logoOnly">My logo already has the name in it — don't show the text name too</label>
+      </div>
+      <div class="checkline">
+        <input type="checkbox" id="dimAtNight">
+        <label for="dimAtNight">Dim the screen late at night</label>
+      </div>
+      <div class="row" id="dimrow" style="display:none">
+        <div class="field"><label for="dimFrom">Dim from</label><select id="dimFrom"><option value="0">12am</option><option value="1">1am</option><option value="2">2am</option><option value="3">3am</option><option value="4">4am</option><option value="5">5am</option><option value="6">6am</option><option value="7">7am</option><option value="8">8am</option><option value="9">9am</option><option value="10">10am</option><option value="11">11am</option><option value="12">12pm</option><option value="13">1pm</option><option value="14">2pm</option><option value="15">3pm</option><option value="16">4pm</option><option value="17">5pm</option><option value="18">6pm</option><option value="19">7pm</option><option value="20">8pm</option><option value="21">9pm</option><option value="22">10pm</option><option value="23">11pm</option></select></div>
+        <div class="field"><label for="dimTo">Back to normal at</label><select id="dimTo"><option value="0">12am</option><option value="1">1am</option><option value="2">2am</option><option value="3">3am</option><option value="4">4am</option><option value="5">5am</option><option value="6">6am</option><option value="7">7am</option><option value="8">8am</option><option value="9">9am</option><option value="10">10am</option><option value="11">11am</option><option value="12">12pm</option><option value="13">1pm</option><option value="14">2pm</option><option value="15">3pm</option><option value="16">4pm</option><option value="17">5pm</option><option value="18">6pm</option><option value="19">7pm</option><option value="20">8pm</option><option value="21">9pm</option><option value="22">10pm</option><option value="23">11pm</option></select></div>
+      </div>
+      <div class="checkline">
+        <input type="checkbox" id="showClock"><label for="showClock">Show the clock in the corner</label>
+      </div>
+      <div class="checkline">
+        <input type="checkbox" id="hideKicked"><label for="hideKicked">Hide empty kegs from the TV completely</label>
+      </div>
+      <div class="checkline">
+        <input type="checkbox" id="artwork"><label for="artwork">Show each beer&rsquo;s artwork on the TV instead of a glass</label>
+      </div>
+      <div class="hint" id="artworkhint" style="margin:-8px 0 14px">Beers without a picture keep
+        their glass. Add pictures further down, on each beer.</div>
+      <div class="checkline">
+        <input type="checkbox" id="sensorsOn"><label for="sensorsOn">I have keg level sensors connected</label>
+      </div>
+      <div id="sensorrow" style="display:none">
+        <div class="field" style="margin-bottom:0">
+          <label for="sensorUrl">Where the levels come from (optional)</label>
+          <input type="text" id="sensorUrl" placeholder="Leave blank to use the built-in service">
+          <div class="hint">Load cells, flow meters, a Plaato, Home Assistant, an ESP32 &mdash;
+            anything that can send a reading. See <strong>SENSORS.md</strong> for how to point
+            yours at the board. Until something is connected the TV shows full glasses and
+            doesn&rsquo;t claim to know what&rsquo;s left.</div>
+        </div>
+      </div>
+      <div class="checkline" id="pricingline">
+        <input type="checkbox" id="pricingOn"><label for="pricingOn">Business mode &mdash; show prices on the TV</label>
+      </div>
+      <div id="pricingrow" style="display:none">
+        <div class="field" style="margin-bottom:0">
+          <label>Pour sizes</label>
+          <div id="sizes"></div>
+          <button class="btn-sm btn-ghost" type="button" id="addsize">+ Add a size</button>
+          <div class="hint">Call them whatever you like &mdash; Middy, Pot, Half, Sleeve. The
+            millilitres are yours to set too. Each beer&rsquo;s prices are set on its own card below.</div>
+        </div>
+
+        <div class="checkline" style="margin-top:16px">
+          <input type="checkbox" id="happyOn"><label for="happyOn">Happy hour</label>
+        </div>
+        <div id="happyrow" style="display:none">
+          <div class="row">
+            <div class="field"><label for="happyFrom">From</label>
+              <input type="time" id="happyFrom"></div>
+            <div class="field"><label for="happyTo">Until</label>
+              <input type="time" id="happyTo"></div>
+            <div class="field"><label for="happyLabel">Wording on the TV</label>
+              <input type="text" id="happyLabel" placeholder="Happy Hour"></div>
+          </div>
+          <div class="field">
+            <label>Days</label>
+            <div id="happydays" class="quick"></div>
+            <div class="hint">None selected means every day.</div>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label>Happy hour prices</label>
+            <div id="happyprices" class="pricegrid"></div>
+            <div class="hint">Leave one blank and that pour keeps its normal price. A beer
+              that isn&rsquo;t sold in a size stays unpriced in it, discount or not.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <details id="setup">
+    <summary id="setupsummary">⚙️ One-time setup</summary>
+    <div class="inner">
+      <div class="note">
+        This is what lets the Publish button send your changes to the TV.
+        It only needs to be filled in once, on this laptop.
+      </div>
+      <div class="row">
+        <div class="field"><label for="gh-owner">GitHub username</label>
+          <input type="text" id="gh-owner" placeholder="yourusername"></div>
+        <div class="field"><label for="gh-repo">Repository name</label>
+          <input type="text" id="gh-repo" placeholder="beer-tap-list"></div>
+      </div>
+      <div class="field">
+        <label for="gh-token">Access token</label>
+        <input type="text" id="gh-token" placeholder="github_pat_..." autocomplete="off" spellcheck="false">
+        <div class="hint">Stays on this laptop only. Needs <code>Contents: Read and write</code> on that one repository.</div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="gh-branch">Branch</label>
+          <input type="text" id="gh-branch" placeholder="main"></div>
+        <div class="field" style="display:flex;align-items:flex-end">
+          <button class="btn-ghost" id="gh-test" style="width:100%">Test the connection</button>
+        </div>
+      </div>
+      <div id="gh-testresult" class="hint"></div>
+
+      <div id="relinkbox" style="display:none;margin-top:18px">
+        <div class="note" style="margin-bottom:10px">
+          <strong>Bookmark this link.</strong> If you ever clear your browsing history,
+          this page forgets its settings. Opening this bookmark sets it all up again
+          in one click — nothing to type.
+        </div>
+        <label for="relink">Your setup link</label>
+        <input type="text" id="relink" readonly onclick="this.select()"
+               style="font-size:14px" spellcheck="false">
+        <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn-ghost btn-sm" id="relinkcopy">Copy link</button>
+          <span class="hint" id="relinkmsg" style="margin:0;align-self:center"></span>
+        </div>
+      </div>
+      <hr style="border:none;border-top:1px solid var(--line);margin:22px 0">
+      <button class="btn-ghost" id="download">No internet? Download the taps.json file instead</button>
+    </div>
+  </details>
+
+  <div style="margin:26px 0 10px;text-align:center">
+    <button class="btn-ghost" id="laugh">Want a laugh?</button>
+    <div class="hint" id="laughmsg" style="margin-top:6px">&nbsp;</div>
+  </div>
+
+</div>
+
+<div class="wrap">
+  <details id="teamsec" style="display:none">
+    <summary>&#128101; Your team &amp; venues</summary>
+    <div class="pad">
+      <div class="field">
+        <label>Venues on this account</label>
+        <div id="venuelist"></div>
+        <div class="itemrow" style="margin-top:10px">
+          <input class="iname" type="text" id="newvenue" placeholder="Add another venue&hellip;">
+          <button class="btn-sm btn-ghost" type="button" id="addvenue">Add</button>
+        </div>
+      </div>
+      <div class="field" id="teamwrap">
+        <label>People who can edit <span id="teamfor" class="muted"></span></label>
+        <div id="teamlist"></div>
+        <div class="itemrow" style="margin-top:10px">
+          <input class="iname" type="email" id="inviteemail" placeholder="their@email.com">
+          <button class="btn-sm btn-ghost" type="button" id="doinvite">Invite</button>
+        </div>
+        <div class="hint">Owners can invite people and add venues. Staff can edit the tap
+          list but not the team.</div>
+      </div>
+    </div>
+  </details>
+
+  <details id="extras">
+    <summary>🍟 Food &amp; merch <span class="muted" id="extrascount"></span></summary>
+    <div class="pad">
+      <div class="checkline">
+        <input type="checkbox" id="extrasOn"><label for="extrasOn">Show food, merch and other non-beer items</label>
+      </div>
+      <div id="extrasrow" style="display:none">
+        <div class="checkline">
+          <input type="checkbox" id="extrasTV"><label for="extrasTV">Also show them on the TV, on a screen of their own</label>
+        </div>
+        <div id="groups"></div>
+        <button class="btn-sm btn-ghost" type="button" id="addgroup">+ Add a section</button>
+        <div class="hint">A section is a heading like Kitchen, Snacks or Merch, with items under it.
+          Prices are plain numbers &mdash; these aren&rsquo;t poured, so they have no pour sizes.</div>
+      </div>
+    </div>
+  </details>
+</div>
+
+<div class="publishbar">
+  <div class="wrap">
+    <div class="status" id="status">Ready.</div>
+    <button class="btn-ghost" id="revert">Undo changes</button>
+    <button class="btn-ghost" id="preview">Preview</button>
+    <button class="btn-ghost" id="printmenu">Print menu</button>
+    <select id="venue" style="display:none;max-width:190px"></select>
+    <span id="whoami" style="display:none;font-size:14px;color:var(--muted)"></span>
+    <button class="btn-ghost" id="signout" style="display:none">Sign out</button>
+    <button class="btn-primary" id="publish">Publish to the TV</button>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="icons.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  /* When this is set, the editor publishes through the Worker using a password
+     and the GitHub token is never in the browser at all. Empty = old behaviour. */
+  var WORKER_URL = "https://ontap-publish.madlad-taps.workers.dev";
+
+  /* Staging under /next/ sets this to "../" so it edits the LIVE list. Publish paths
+     stay bare on purpose — the Worker only accepts taps.json and bgphoto.json. */
+  var DATA_BASE = "../";
+
+  /* ---------- which backend are we editing? ----------
+     Two, deliberately. A brewery with an account edits its own board through the api
+     Worker. Everyone else — including the shed board this started as — keeps
+     publishing a single taps.json to GitHub exactly as before, for free. One editor,
+     so a feature never has to be written twice. */
+  var TOKEN_KEY = "ontap.session.v1";
+  function apiSession(){
+    if(!window.ONTAP || !ONTAP.accountsEnabled()) return null;
+    try {
+      var s = JSON.parse(localStorage.getItem(TOKEN_KEY) || "null");
+      return (s && s.token && s.expires > Date.now()) ? s : null;
+    } catch(e){ return null; }
+  }
+  function usingApi(){ return !!apiSession(); }
+  var apiRev = null;          /* the revision this tab loaded, for the 409 check */
+
+  function apiFetch(path, opts){
+    var s = apiSession();
+    opts = opts || {};
+    opts.headers = opts.headers || {};
+    opts.headers["Authorization"] = "Bearer " + s.token;
+    if(opts.body) opts.headers["Content-Type"] = "application/json";
+    return fetch(ONTAP.api() + path, opts).then(function(r){
+      return r.json().catch(function(){ return {}; }).then(function(j){
+        return { status: r.status, ok: r.ok, body: j };
+      });
+    });
+  }
+  function signOut(){
+    try { localStorage.removeItem(TOKEN_KEY); } catch(e){}
+    location.replace("signin.html");
+  }
+  /* True only in the /next/ copy. Staging shares one beer list and one gag signal
+     with the live board, so the two buttons that reach out are guarded there. */
+  var STAGING   = true;
+  var DRAFT_KEY = "tapdraft.v1", CFG_KEY = "tapcfg.v1", PW_KEY = "tappw.v1";
+
+  function getPw(){ try { return localStorage.getItem(PW_KEY) || ""; } catch(e){ return ""; } }
+  function setPw(v){ try { localStorage.setItem(PW_KEY, v); } catch(e){} }
+  function clearPw(){ try { localStorage.removeItem(PW_KEY); } catch(e){} }
+
+  function workerPost(route, payload, cb){
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", WORKER_URL + route, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.timeout = 60000;
+    xhr.onload = function(){
+      var j = null;
+      try { j = JSON.parse(xhr.responseText); } catch(e){}
+      cb(null, xhr.status, j);
+    };
+    xhr.onerror = xhr.ontimeout = function(){
+      cb(new Error("Couldn't reach the tap list service — is the laptop online?"));
+    };
+    xhr.send(JSON.stringify(payload));
+  }
+
+  function showLogin(msg){
+    $("loginbox").style.display = "flex";
+    $("setupbanner").style.display = "none";
+    if(msg) $("pwmsg").textContent = msg;
+  }
+  function hideLogin(){ $("loginbox").style.display = "none"; }
+  var linkSetupApplied = false;
+
+  /* ---------------- one-click setup link ----------------
+     edit.html#setup=<base64 json> configures this browser in one visit.
+     It's in the hash, so it is never sent to the server, and it's wiped from
+     the address bar immediately so the token isn't left sitting in view. */
+  (function applySetupLink(){
+    var m = /(?:^|[#&])setup=([^&]+)/.exec(location.hash || "");
+    if(!m) return;
+    try {
+      var b64 = decodeURIComponent(m[1]).replace(/-/g, "+").replace(/_/g, "/");
+      while(b64.length % 4) b64 += "=";
+      var bin = atob(b64), bytes = new Uint8Array(bin.length), i;
+      for(i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      var c = JSON.parse(new TextDecoder().decode(bytes));
+      if(c && c.token){
+        localStorage.setItem(CFG_KEY, JSON.stringify({
+          owner:  c.owner  || "",
+          repo:   c.repo   || "",
+          token:  c.token,
+          branch: c.branch || "main"
+        }));
+        linkSetupApplied = true;
+      }
+    } catch(e){ /* malformed link - fall through to the normal banner */ }
+
+    try { history.replaceState(null, "", location.pathname + location.search); }
+    catch(e){ location.hash = ""; }
+  })();
+  /* Non-SRM colours, for fruit beers and sours that the scale doesn't describe. */
+  var COLORS = [
+    ["#e8b3c8","Pink / berry"], ["#c4467a","Raspberry"],
+    ["#8e3b6b","Plum"],         ["#b8324a","Cherry"]
+  ];
+
+  /* The SRM spectrum, 1-40. Numbers are shown on the darker half in cream. */
+  function srmButtons(t){
+    var out = "", i, hex, sel;
+    for(i = 1; i <= 40; i++){
+      hex = window.SRM[i];
+      sel = (Number(t.srm) === i) ? " on" : "";
+      out += '<button class="srm' + sel + '" data-srm="' + i + '" title="SRM ' + i +
+             ' - ' + window.srmName(i) + '" style="background:' + hex +
+             ';color:' + (i >= 14 ? "rgba(255,240,215,.85)" : "rgba(0,0,0,.5)") + '">' + i + '</button>';
+    }
+    return out;
+  }
+
+  var $ = function(id){ return document.getElementById(id); };
+  var data = null, published = null, saveTimer = null;
+
+  function esc(s){
+    return String(s == null ? "" : s)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+  function setStatus(msg, kind){
+    var s = $("status");
+    s.textContent = msg;
+    s.className = "status" + (kind ? " " + kind : "");
+  }
+
+  /* ---------------- config ---------------- */
+  function cfg(){
+    try { return JSON.parse(localStorage.getItem(CFG_KEY)) || {}; } catch(e){ return {}; }
+  }
+  function saveCfg(){
+    var c = {
+      owner:  $("gh-owner").value.trim(),
+      repo:   $("gh-repo").value.trim(),
+      token:  $("gh-token").value.trim(),
+      branch: $("gh-branch").value.trim() || "main"
+    };
+    try { localStorage.setItem(CFG_KEY, JSON.stringify(c)); } catch(e){}
+    return c;
+  }
+  function setupLink(c){
+    try {
+      var json = JSON.stringify({owner:c.owner, repo:c.repo, token:c.token, branch:c.branch || "main"});
+      var bytes = new TextEncoder().encode(json), bin = "", i;
+      for(i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+      var b64 = btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+      return location.origin + location.pathname + "#setup=" + b64;
+    } catch(e){ return ""; }
+  }
+
+  function refreshSetupState(){
+    if(WORKER_URL){
+      /* Password mode: no token, no setup section, nothing to lose. */
+      var setupEl = $("setup");
+      if(setupEl) setupEl.style.display = "none";
+      $("setupbanner").style.display = "none";
+      hideLogin();      /* no sign-in unless the service actually returns a 401 */
+      return;
+    }
+    var c = cfg();
+    var ok = !!(c.owner && c.repo && c.token);
+
+    var box = $("relinkbox");
+    if(box){
+      box.style.display = ok ? "" : "none";
+      if(ok) $("relink").value = setupLink(c);
+    }
+    var banner = $("setupbanner");
+    if(banner) banner.style.display = ok ? "none" : "flex";
+    var sum = $("setupsummary");
+    if(sum){
+      sum.innerHTML = ok
+        ? '⚙️ One-time setup — <span class="setupstate ok">connected as ' +
+          esc(c.owner) + '/' + esc(c.repo) + ' \u2713</span>'
+        : '⚙️ One-time setup — <span class="setupstate bad">not set up on this computer</span>';
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", function(){
+    var b = document.getElementById("relinkcopy");
+    if(!b) return;
+    b.addEventListener("click", function(){
+      var f = document.getElementById("relink");
+      f.select(); f.setSelectionRange(0, 99999);
+      var done = false;
+      try { done = document.execCommand("copy"); } catch(e){}
+      if(navigator.clipboard && !done){
+        navigator.clipboard.writeText(f.value).then(function(){
+          document.getElementById("relinkmsg").textContent = "Copied.";
+        });
+        return;
+      }
+      document.getElementById("relinkmsg").textContent = done ? "Copied." : "Press Ctrl+C / Cmd+C to copy.";
+    });
+  });
+
+  document.addEventListener("DOMContentLoaded", function(){
+    var go = document.getElementById("pwgo"), fld = document.getElementById("pw");
+    if(!go || !fld) return;
+    function attempt(){
+      var v = fld.value.trim();
+      if(!v){ document.getElementById("pwmsg").textContent = "Enter the password."; return; }
+      document.getElementById("pwmsg").textContent = "Checking…";
+      workerPost("/check", { password: v }, function(err, status, j){
+        if(err){ document.getElementById("pwmsg").textContent = err.message; return; }
+        if(status === 200 && j && j.ok){
+          setPw(v); fld.value = "";
+          hideLogin();
+          setStatus("Signed in — you can publish.", "ok");
+        } else {
+          document.getElementById("pwmsg").textContent = "Wrong password.";
+        }
+      });
+    }
+    go.addEventListener("click", attempt);
+    fld.addEventListener("keydown", function(e){ if(e.keyCode === 13) attempt(); });
+  });
+
+  function loadCfg(){
+    var c = cfg();
+    $("gh-owner").value  = c.owner  || "";
+    $("gh-repo").value   = c.repo   || "";
+    $("gh-token").value  = c.token  || "";
+    $("gh-branch").value = c.branch || "main";
+    if(!c.token) $("setup").open = true;   /* nudge Jesse to finish setup */
+    refreshSetupState();
+  }
+  /* ---------------- draft ---------------- */
+  function saveDraft(){
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ at: Date.now(), data: data }));
+    } catch(e){}
+  }
+  function clearDraft(){ try { localStorage.removeItem(DRAFT_KEY); } catch(e){} }
+  function getDraft(){
+    try { return JSON.parse(localStorage.getItem(DRAFT_KEY)); } catch(e){ return null; }
+  }
+  function touched(){
+    if(saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(saveDraft, 400);
+    setStatus("Unpublished changes — hit Publish when you're happy.");
+  }
+
+  /* ---------------- render ---------------- */
+  /* The tap number IS the running order — on the board and in this list. Before, the
+     array position decided the order and the number was just a label, so setting tap 9
+     to 2 renumbered it and left it sitting ninth. */
+  function sortTaps(){
+    data.taps.sort(function(a, b){
+      var x = Number(a.num), y = Number(b.num);
+      if(!isFinite(x)) x = 9999;
+      if(!isFinite(y)) y = 9999;
+      return x - y;
+    });
+  }
+
+  /* Move a tap to a number, shifting everything between out of the way — the way a
+     list reorders, not a swap. Sending 9 to 2 makes the old 2 become 3, 3 become 4,
+     and so on up to the gap the beer left behind. Swapping was simpler but wrong:
+     it left the other eight beers in an order nobody asked for. */
+  function setTapNumber(index, wanted){
+    var t = data.taps[index];
+    if(!t) return;
+
+    var was = Number(t.num);
+    if(!isFinite(was)) was = index + 1;
+
+    /* A number is a position on a wall, so it cannot exceed the taps there are — but a
+       venue numbering its second bar 11 to 20 keeps that, hence the max rather than
+       just the count. */
+    var top = data.taps.length;
+    for(var k = 0; k < data.taps.length; k++){
+      top = Math.max(top, Number(data.taps[k].num) || 0);
+    }
+    var n = Math.max(1, Math.min(top, Math.floor(Number(wanted) || 0)));
+    if(n === was){ sortTaps(); return; }
+
+    for(var j = 0; j < data.taps.length; j++){
+      if(j === index) continue;
+      var v = Number(data.taps[j].num);
+      if(!isFinite(v)) continue;
+      if(n < was && v >= n && v < was)      data.taps[j].num = v + 1;  /* moved up: push down */
+      else if(n > was && v > was && v <= n) data.taps[j].num = v - 1;  /* moved down: pull up */
+    }
+    t.num = n;
+    sortTaps();
+  }
+
+  function blankTap(n){
+    return { num:n, name:"", style:"", abv:"", ibu:"", notes:"",
+             color:window.SRM[6], srm:6, icon:"pint", level:100, status:"pouring" };
+  }
+
+  /* ---------------- logo ---------------- */
+  function renderLogo(){
+    var p = $("logoprev");
+    if(data.logo){
+      p.innerHTML = "";
+      var img = new Image();
+      img.alt = "";
+      img.onerror = function(){ p.textContent = "Couldn't read that picture"; };
+      img.src = data.logo;
+      p.appendChild(img);
+      $("logoclear").style.display = "";
+      $("logosizerow").style.display = "";
+    } else {
+      p.textContent = "No logo yet";
+      $("logoclear").style.display = "none";
+      $("logosizerow").style.display = "none";
+    }
+  }
+
+  function handleLogoFile(file){
+    if(!file) return;
+    if(!/^image\//.test(file.type)){ alert("Please pick a picture file (PNG or JPG)."); return; }
+
+    var reader = new FileReader();
+    reader.onload = function(){
+      var img = new Image();
+      img.onload = function(){
+        /* Shrink to something a TV header can use, so taps.json stays small. */
+        var maxW = 600, maxH = 200;
+        var scale = Math.min(maxW / img.width, maxH / img.height, 1);
+        var w = Math.max(1, Math.round(img.width * scale));
+        var h = Math.max(1, Math.round(img.height * scale));
+
+        var c = document.createElement("canvas");
+        c.width = w; c.height = h;
+        var ctx = c.getContext("2d");
+        ctx.drawImage(img, 0, 0, w, h);
+
+        var out;
+        try { out = c.toDataURL("image/png"); }
+        catch(err){ alert("That picture couldn't be processed. Try a different one."); return; }
+
+        /* A photo as PNG gets huge — flatten onto the TV background and use JPEG instead. */
+        if(out.length > 260000){
+          ctx.globalCompositeOperation = "destination-over";
+          ctx.fillStyle = "#12100e";
+          ctx.fillRect(0, 0, w, h);
+          out = c.toDataURL("image/jpeg", 0.85);
+        }
+
+        data.logo = out;
+        renderLogo();
+        touched();
+      };
+      img.onerror = function(){ alert("That file didn't look like a picture. Try a PNG or JPG."); };
+      img.src = reader.result;
+    };
+    reader.onerror = function(){ alert("Couldn't read that file."); };
+    reader.readAsDataURL(file);
+  }
+
+  $("logopick").addEventListener("click", function(){ $("logofile").click(); });
+  $("logofile").addEventListener("change", function(){
+    handleLogoFile(this.files && this.files[0]);
+    this.value = "";                     /* allow re-picking the same file */
+  });
+  $("logoclear").addEventListener("click", function(){
+    data.logo = ""; renderLogo(); touched();
+  });
+
+  /* ---------------- recipe library ---------------- */
+  var LIB_FIELDS = ["name","style","abv","ibu","notes","color","srm","icon"];
+
+  function recipeOf(t){
+    var r = {}, i;
+    for(i = 0; i < LIB_FIELDS.length; i++) r[LIB_FIELDS[i]] = t[LIB_FIELDS[i]];
+    return r;
+  }
+
+  /* Match on name so rebrewing the same beer updates rather than duplicates. */
+  function libIndexOf(name){
+    var lib = data.library || [], i;
+    for(i = 0; i < lib.length; i++){
+      if(String(lib[i].name || "").toLowerCase() === String(name || "").toLowerCase()) return i;
+    }
+    return -1;
+  }
+
+  function saveToLibrary(t, quiet){
+    if(!t.name){ if(!quiet) alert("Give the beer a name first."); return false; }
+    if(!data.library) data.library = [];
+    var at = libIndexOf(t.name);
+    if(at >= 0) data.library[at] = recipeOf(t);
+    else data.library.push(recipeOf(t));
+    data.library.sort(function(a,b){
+      return String(a.name).toLowerCase() < String(b.name).toLowerCase() ? -1 : 1;
+    });
+    touched();
+    return true;
+  }
+
+  function renderLibrary(){
+    var box = $("liblist");
+    var lib = data.library || [];
+    if(!lib.length){
+      box.innerHTML = '<div class="libempty">Nothing saved yet. Recipes appear here ' +
+                      'when you remove a beer, or press &ldquo;Save recipe&rdquo; on one.</div>';
+      return;
+    }
+    box.innerHTML = lib.map(function(r, i){
+      var meta = [r.style, r.abv ? r.abv + "% ABV" : "", r.ibu ? r.ibu + " IBU" : ""]
+                 .filter(function(x){ return x; }).join("  ·  ");
+      return '<div class="librow">' +
+        '<div class="libdot" style="background:' + esc(r.color || "#e0a63a") + '"></div>' +
+        '<div class="libinfo">' +
+          '<div class="libname">' + esc(r.name) + '</div>' +
+          (meta ? '<div class="libmeta">' + esc(meta) + '</div>' : '') +
+        '</div>' +
+        '<button class="btn-sm" data-libadd="' + i + '">Put on tap</button>' +
+        '<button class="btn-sm btn-danger" data-libdel="' + i + '">Delete</button>' +
+      '</div>';
+    }).join("");
+  }
+
+  $("fromlib").addEventListener("click", function(){
+    renderLibrary();
+    $("libpick").className = "libpick open";
+  });
+  $("libclose").addEventListener("click", function(){ $("libpick").className = "libpick"; });
+  $("libpick").addEventListener("click", function(e){
+    if(e.target === this) this.className = "libpick";      /* click the backdrop to close */
+  });
+
+  $("liblist").addEventListener("click", function(e){
+    var btn = e.target.closest("button"); if(!btn) return;
+
+    if(btn.dataset.libdel != null){
+      var di = Number(btn.dataset.libdel);
+      var rec = (data.library || [])[di];
+      if(!rec) return;
+      if(!confirm('Delete "' + rec.name + '" from your recipes?')) return;
+      data.library.splice(di, 1);
+      renderLibrary(); touched();
+      return;
+    }
+
+    if(btn.dataset.libadd != null){
+      var ai = Number(btn.dataset.libadd);
+      var r = (data.library || [])[ai];
+      if(!r) return;
+      var maxNum = 0;
+      data.taps.forEach(function(t){ maxNum = Math.max(maxNum, Number(t.num) || 0); });
+      var t = blankTap(maxNum + 1);
+      LIB_FIELDS.forEach(function(f){ if(r[f] != null) t[f] = r[f]; });
+      t.level = 100; t.status = "pouring";
+      data.taps.push(t);
+      renderTaps(); touched();
+      $("libpick").className = "libpick";
+      var cards = document.querySelectorAll(".card");
+      var last = cards[cards.length - 1];
+      if(last) last.scrollIntoView({behavior:"smooth", block:"center"});
+      setStatus('Added "' + r.name + '" to the taps.');
+    }
+  });
+
+  /* ---------------- background ---------------- */
+  function renderBg(){
+    var isPhoto = data.bg === "photo";
+    $("bgphotorow").style.display = isPhoto ? "" : "none";
+    var p = $("bgprev");
+    if(data.bgPhoto){
+      p.innerHTML = "";
+      var img = new Image(); img.alt = "";
+      img.onerror = function(){ p.textContent = "Couldn't read that photo"; };
+      img.src = data.bgPhoto;
+      p.appendChild(img);
+    } else {
+      p.textContent = "No photo yet";
+    }
+  }
+
+  function handleBgFile(file){
+    if(!file) return;
+    if(!/^image\//.test(file.type)){ alert("Please pick a picture file (PNG or JPG)."); return; }
+    var reader = new FileReader();
+    reader.onload = function(){
+      var img = new Image();
+      img.onload = function(){
+        /* Big enough for a 1080p TV, small enough to publish quickly. */
+        var maxW = 1600, maxH = 900;
+        var scale = Math.min(maxW / img.width, maxH / img.height, 1);
+        var w = Math.max(1, Math.round(img.width * scale));
+        var h = Math.max(1, Math.round(img.height * scale));
+        var c = document.createElement("canvas");
+        c.width = w; c.height = h;
+        var ctx = c.getContext("2d");
+        ctx.fillStyle = "#0e0c0a"; ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+        var out;
+        try { out = c.toDataURL("image/jpeg", 0.82); }
+        catch(err){ alert("That photo couldn't be processed. Try a different one."); return; }
+        data.bgPhoto = out;
+        renderBg(); touched();
+      };
+      img.onerror = function(){ alert("That file didn't look like a picture. Try a PNG or JPG."); };
+      img.src = reader.result;
+    };
+    reader.onerror = function(){ alert("Couldn't read that file."); };
+    reader.readAsDataURL(file);
+  }
+
+  $("bg").addEventListener("change", function(){
+    data.bg = this.value; renderBg(); touched();
+  });
+  $("bgpick").addEventListener("click", function(){ $("bgfile").click(); });
+  $("bgfile").addEventListener("change", function(){
+    handleBgFile(this.files && this.files[0]);
+    this.value = "";
+  });
+
+  /* ---------------- business mode ----------------
+     Sizes carry a stable id, so renaming "Middy" to "Pot" or reordering the list
+     never detaches a price from the pour it belongs to. */
+  var DEFAULT_SIZES = [
+    { id:"s1", name:"Middy",    ml:285 },
+    { id:"s2", name:"Schooner", ml:425 },
+    { id:"s3", name:"Pint",     ml:570 }
+  ];
+  function pricingObj(){
+    if(!data.pricing || typeof data.pricing !== "object"){
+      data.pricing = { on:false, currency:"$", sizes:JSON.parse(JSON.stringify(DEFAULT_SIZES)) };
+    }
+    if(!Array.isArray(data.pricing.sizes)) data.pricing.sizes = JSON.parse(JSON.stringify(DEFAULT_SIZES));
+    if(!data.pricing.currency) data.pricing.currency = "$";
+    return data.pricing;
+  }
+  function sizeList(){ return pricingObj().sizes; }
+  function extrasObj(){
+    if(!data.extras || typeof data.extras !== "object"){
+      data.extras = { on:false, showOnTV:false, groups:[] };
+    }
+    if(!Array.isArray(data.extras.groups)) data.extras.groups = [];
+    return data.extras;
+  }
+  function newId(p){ return p + Date.now().toString(36) + Math.floor(Math.random()*99); }
+
+  function renderGroups(){
+    var e = extrasObj();
+    $("extrasOn").checked = !!e.on;
+    $("extrasTV").checked = !!e.showOnTV;
+    $("extrasrow").style.display = e.on ? "" : "none";
+    var n = e.groups.reduce(function(a,g){ return a + ((g.items||[]).length); }, 0);
+    $("extrascount").textContent = e.on && n ? "— " + n + (n===1?" item":" items") : "";
+
+    $("groups").innerHTML = e.groups.map(function(g, gi){
+      return '<div class="groupbox" data-g="' + gi + '">' +
+        '<div class="grouphead">' +
+          '<input type="text" placeholder="Section name (Kitchen, Merch…)" ' +
+            'value="' + esc(g.name || "") + '" data-gname="1">' +
+          '<button class="btn-sm btn-ghost" type="button" data-delgroup="1">Remove section</button>' +
+        '</div>' +
+        (g.items || []).map(function(it, ii){
+          return '<div class="itemrow" data-i="' + ii + '">' +
+            '<input class="iname" type="text" placeholder="Name" value="' + esc(it.name || "") + '" data-if="name">' +
+            '<input class="idesc" type="text" placeholder="Description (optional)" value="' + esc(it.desc || "") + '" data-if="desc">' +
+            '<input class="iprice" type="number" min="0" step="0.10" inputmode="decimal" placeholder="Price" ' +
+              'value="' + esc(it.price == null ? "" : it.price) + '" data-if="price">' +
+            '<button class="btn-sm btn-ghost" type="button" data-delitem="1">✕</button>' +
+          '</div>';
+        }).join("") +
+        '<button class="btn-sm btn-ghost" type="button" data-additem="1">+ Add an item</button>' +
+      '</div>';
+    }).join("");
+  }
+
+  function sensorsConnected(){
+    return !!(data.sensors && typeof data.sensors === "object" && data.sensors.on);
+  }
+  var DAY_NAMES = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  function happyObj(){
+    var p = pricingObj();
+    if(!p.happy || typeof p.happy !== "object"){
+      p.happy = { on:false, from:"16:00", to:"18:00", label:"Happy Hour", days:[], prices:{} };
+    }
+    if(!p.happy.prices || typeof p.happy.prices !== "object") p.happy.prices = {};
+    if(!Array.isArray(p.happy.days)) p.happy.days = [];
+    return p.happy;
+  }
+
+  function renderHappy(){
+    var h = happyObj();
+    $("happyOn").checked = !!h.on;
+    $("happyrow").style.display = h.on ? "" : "none";
+    $("happyFrom").value  = h.from  || "16:00";
+    $("happyTo").value    = h.to    || "18:00";
+    $("happyLabel").value = h.label || "";
+    $("happydays").innerHTML = DAY_NAMES.map(function(d, i){
+      var on = h.days.indexOf(i) !== -1;
+      return '<button type="button" class="btn-sm ' + (on ? "btn-primary" : "btn-ghost") +
+             '" data-day="' + i + '">' + d + '</button>';
+    }).join("");
+    $("happyprices").innerHTML = sizeList().map(function(sz){
+      var v = (h.prices[sz.id] != null) ? h.prices[sz.id] : "";
+      return '<div class="pricecell">' +
+        '<span class="plab">' + esc(sz.name || (sz.ml ? sz.ml + "ml" : "Size")) + '</span>' +
+        '<input type="number" min="0" step="0.10" inputmode="decimal" placeholder="\u2014" ' +
+          'value="' + esc(v) + '" data-happy="' + esc(sz.id) + '">' +
+      '</div>';
+    }).join("");
+  }
+  function pricingOn(){ return !!pricingObj().on; }
+
+  function renderSizes(){
+    $("sizes").innerHTML = sizeList().map(function(s, i){
+      return '<div class="sizerow" data-si="' + i + '">' +
+        '<input class="sname" type="text" placeholder="Name (e.g. Middy)" ' +
+          'value="' + esc(s.name || "") + '" data-s="name">' +
+        '<input class="sml" type="number" min="0" step="5" placeholder="ml" ' +
+          'value="' + esc(s.ml == null ? "" : s.ml) + '" data-s="ml">' +
+        '<span class="sunit">ml</span>' +
+        '<button class="btn-sm btn-ghost" type="button" data-rmsize="' + i + '">Remove</button>' +
+      '</div>';
+    }).join("");
+  }
+
+  function renderSettings(){
+    $("brewery").value       = data.brewery || "";
+    $("tagline").value       = data.tagline || "";
+    $("perPage").value       = (data.perPage === "auto" || !data.perPage) ? "auto" : String(data.perPage);
+    $("rotateSeconds").value = data.rotateSeconds || 20;
+    $("showClock").checked   = data.showClock !== false;
+    $("artwork").checked     = !!data.artwork;
+    $("hideKicked").checked  = !!data.hideKicked;
+    $("logoOnly").checked    = !!data.logoOnly;
+    $("logoSize").value      = data.logoSize || "m";
+    $("dimAtNight").checked  = !!data.dimAtNight;
+    $("dimFrom").value       = String(data.dimFrom == null ? 22 : data.dimFrom);
+    $("dimTo").value         = String(data.dimTo   == null ? 7  : data.dimTo);
+    $("dimrow").style.display = data.dimAtNight ? "" : "none";
+    $("rotate").value        = String(Number(data.rotate) || 0);
+    $("bg").value            = data.bg || "charcoal";
+    /* Business mode is offered to everyone — it is simply off until switched on. */
+    var sen = (data.sensors && typeof data.sensors === "object") ? data.sensors : {};
+    $("sensorsOn").checked = !!sen.on;
+    $("sensorrow").style.display = sen.on ? "" : "none";
+    $("sensorUrl").value = sen.url || "";
+    renderHappy();
+    renderGroups();
+    $("pricingOn").checked   = pricingOn();
+    $("pricingrow").style.display = pricingOn() ? "" : "none";
+    renderSizes();
+    renderBg();
+    renderLogo();
+  }
+
+  function renderTaps(){
+    $("taps").innerHTML = data.taps.map(function(t, i){
+      var kicked = t.status === "kicked";
+      return '' +
+      '<div class="card' + (kicked ? " kicked" : "") + '" data-i="' + i + '">' +
+        '<div class="card-head">' +
+          '<span class="taplabel">Tap</span>' +
+          '<input class="tapno" type="number" min="1" value="' + esc(t.num) + '" data-f="num" title="Tap number">' +
+          '<div class="spacer"></div>' +
+          '<button class="btn-sm btn-ghost" data-act="up"'   + (i === 0 ? " disabled" : "") + '>↑</button>' +
+          '<button class="btn-sm btn-ghost" data-act="down"' + (i === data.taps.length - 1 ? " disabled" : "") + '>↓</button>' +
+          '<button class="btn-sm btn-ghost" data-act="lib" title="Save this recipe">Save recipe</button>' +
+          '<button class="btn-sm btn-danger" data-act="del">Remove</button>' +
+        '</div>' +
+
+        '<div class="field"><label>Beer name</label>' +
+          '<input type="text" data-f="name" value="' + esc(t.name) + '" placeholder="Hoppy Days"></div>' +
+
+        '<div class="row">' +
+          '<div class="field" style="flex:2 1 220px"><label>Style</label>' +
+            '<input type="text" data-f="style" value="' + esc(t.style) + '" placeholder="American IPA"></div>' +
+          '<div class="field"><label>ABV %</label>' +
+            '<input type="text" data-f="abv" value="' + esc(t.abv) + '" placeholder="6.8"></div>' +
+          '<div class="field"><label>IBU</label>' +
+            '<input type="text" data-f="ibu" value="' + esc(t.ibu) + '" placeholder="65"></div>' +
+        '</div>' +
+
+        '<div class="field"><label>Tasting notes</label>' +
+          '<textarea data-f="notes" placeholder="Grapefruit and pine, dry bitter finish.">' + esc(t.notes) + '</textarea></div>' +
+
+        '<div class="field"><label>Icon beside the name</label><div class="icons">' +
+          '<button class="ic none' + (!t.icon ? " on" : "") + '" data-icon="">None</button>' +
+          window.BEER_ICONS.map(function(ic){
+            return '<button class="ic' + (t.icon === ic[0] ? " on" : "") + '" data-icon="' + ic[0] +
+                   '" title="' + ic[1] + '">' + window.beerIconSVG(ic[0]) + '</button>';
+          }).join("") +
+        '</div></div>' +
+
+        '<div class="field"><label>Beer colour — SRM</label><div class="srmwrap">' +
+          '<div class="srmstrip">' +
+            srmButtons(t) +
+          '</div>' +
+          '<div class="srmlabel">' +
+            '<div class="srmchip" style="background:' + esc(t.color || "#e0a63a") + '"></div>' +
+            (t.srm ? '<span class="srmval">SRM ' + esc(t.srm) + '</span><span>' +
+                     esc(window.srmName(Number(t.srm))) + '</span>'
+                   : '<span class="srmval">Custom colour</span>') +
+          '</div>' +
+          '<div class="srmother"><span class="cap">Fruit &amp; sour</span>' +
+            COLORS.map(function(c){
+              return '<button class="sw' + (!t.srm && c[0].toLowerCase() === String(t.color).toLowerCase() ? " on" : "") +
+                     '" style="background:' + c[0] + '" data-color="' + c[0] + '" title="' + c[1] + '"></button>';
+            }).join("") +
+          '</div>' +
+        '</div></div>' +
+
+        (sensorsConnected()
+          ? '<div class="field"><label>How much is left in the keg?</label>' +
+          '<div class="levelrow">' +
+            '<input type="range" min="0" max="100" step="5" value="' + (Number(t.level) || 0) + '" data-f="level" style="flex:1 1 220px">' +
+            '<div class="levelval">' + (Number(t.level) || 0) + '%</div>' +
+          '</div>' +
+          '<div class="quick" style="margin-top:8px">' +
+            '<button class="btn-sm btn-ghost" data-level="100">Full</button>' +
+            '<button class="btn-sm btn-ghost" data-level="50">Half</button>' +
+            '<button class="btn-sm btn-ghost" data-level="15">Almost gone</button>' +
+            '<button class="btn-sm btn-ghost" data-level="0">Empty</button>' +
+          '</div>' +
+        '</div>'
+          : '') +
+
+        '<div class="field"><label>Picture (optional)</label>' +
+          '<input type="url" placeholder="https://… link to an image" value="' + esc(t.image || "") + '" data-f="image">' +
+          '<div class="hint">Paste a link to a picture. It shows on the phone and printed menus, ' +
+            'not on the TV &mdash; the board has no room for it.</div></div>' +
+
+        '<div class="field"><label>Extra details (optional)</label>' +
+          '<div class="customs">' +
+            (Array.isArray(t.custom) ? t.custom : []).map(function(c, ci){
+              return '<div class="itemrow" data-c="' + ci + '">' +
+                '<input class="iname" type="text" placeholder="Label (Hops, Malt, Brewed…)" ' +
+                  'value="' + esc(c.k || "") + '" data-cf="k">' +
+                '<input class="idesc" type="text" placeholder="Value" value="' + esc(c.v || "") + '" data-cf="v">' +
+                '<button class="btn-sm btn-ghost" type="button" data-delcustom="1">✕</button>' +
+              '</div>';
+            }).join("") +
+          '</div>' +
+          '<button class="btn-sm btn-ghost" type="button" data-addcustom="1">+ Add a detail</button></div>' +
+
+        (pricingOn()
+          ? '<div class="field"><label>Prices</label><div class="pricegrid">' +
+              sizeList().map(function(s){
+                var v = (t.prices && t.prices[s.id] != null) ? t.prices[s.id] : "";
+                return '<div class="pricecell">' +
+                  '<span class="plab">' + esc(s.name || (s.ml ? s.ml + "ml" : "Size")) + '</span>' +
+                  '<input type="number" min="0" step="0.10" inputmode="decimal" placeholder="—" ' +
+                    'value="' + esc(v) + '" data-price="' + esc(s.id) + '">' +
+                '</div>';
+              }).join("") +
+            '</div><div class="hint">Leave one blank and that pour simply won&rsquo;t show on the TV for this beer.</div></div>'
+          : '') +
+
+        (t.status === "coming"
+          ? '<div class="field"><label>Ready date (optional)</label>' +
+              '<input type="date" data-f="ready" value="' + esc(t.ready || "") + '">' +
+              '<div class="hint">The TV counts down — &ldquo;Ready in 12 days&rdquo;.</div></div>'
+          : '') +
+
+        '<div class="checkline" style="margin:4px 0 11px">' +
+          '<input type="checkbox" id="guest' + i + '" data-f="guest"' + (t.guest ? " checked" : "") + '>' +
+          '<label for="guest' + i + '">Guest beer &mdash; not one of mine</label>' +
+        '</div>' +
+
+        '<div class="field" style="margin-bottom:0"><label>Status</label>' +
+          '<select data-f="status">' +
+            '<option value="pouring"' + (t.status === "pouring" ? " selected" : "") + '>Pouring now</option>' +
+            '<option value="kicked"'  + (t.status === "kicked"  ? " selected" : "") + '>Kicked (keg is empty)</option>' +
+            '<option value="coming"'  + (t.status === "coming"  ? " selected" : "") + '>Coming soon (conditioning)</option>' +
+          '</select></div>' +
+      '</div>';
+    }).join("");
+  }
+
+  function renderAll(){ renderSettings(); renderTaps(); }
+
+  /* ---------------- events ---------------- */
+  /* Settings fields */
+  ["brewery","tagline","rotateSeconds"].forEach(function(id){
+    $(id).addEventListener("input", function(){
+      data[id] = id === "rotateSeconds" ? (Number(this.value) || 20) : this.value;
+      touched();
+    });
+  });
+  $("perPage").addEventListener("change", function(){
+    data.perPage = this.value === "auto" ? "auto" : Number(this.value);
+    touched();
+  });
+  $("showClock").addEventListener("change", function(){ data.showClock = this.checked; touched(); });
+  $("artwork").addEventListener("change", function(){ data.artwork = this.checked; touched(); });
+  $("logoOnly").addEventListener("change", function(){ data.logoOnly = this.checked; touched(); });
+  $("dimAtNight").addEventListener("change", function(){
+    data.dimAtNight = this.checked;
+    $("dimrow").style.display = this.checked ? "" : "none";
+    touched();
+  });
+  $("dimFrom").addEventListener("change", function(){ data.dimFrom = Number(this.value); touched(); });
+  $("dimTo").addEventListener("change", function(){ data.dimTo = Number(this.value); touched(); });
+  $("logoSize").addEventListener("change", function(){ data.logoSize = this.value; touched(); });
+  $("rotate").addEventListener("change", function(){ data.rotate = Number(this.value); touched(); });
+  $("hideKicked").addEventListener("change", function(){ data.hideKicked = this.checked; touched(); });
+
+  /* Business mode */
+  $("pricingOn").addEventListener("change", function(){
+    pricingObj().on = this.checked;
+    $("pricingrow").style.display = this.checked ? "" : "none";
+    renderSizes(); renderTaps(); touched();
+  });
+  $("sizes").addEventListener("input", function(e){
+    var row = e.target.closest(".sizerow"); if(!row) return;
+    var k = e.target.dataset.s; if(!k) return;
+    var s = sizeList()[Number(row.dataset.si)]; if(!s) return;
+    s[k] = k === "ml" ? (Number(e.target.value) || "") : e.target.value;
+    renderTaps();   /* the per-beer price labels follow the size names */
+    renderHappy();
+    touched();
+  });
+  $("sizes").addEventListener("click", function(e){
+    var btn = e.target.closest("[data-rmsize]"); if(!btn) return;
+    var arr = sizeList(), si = Number(btn.dataset.rmsize);
+    var goneId = arr[si] && arr[si].id;
+    arr.splice(si, 1);
+    /* Drop that pour's price from every beer, so removed sizes leave nothing behind. */
+    if(goneId){
+      data.taps.forEach(function(t){ if(t.prices) delete t.prices[goneId]; });
+    }
+    renderSizes(); renderTaps(); touched();
+  });
+  $("extrasOn").addEventListener("change", function(){
+    extrasObj().on = this.checked;
+    $("extrasrow").style.display = this.checked ? "" : "none";
+    renderGroups(); touched();
+  });
+  $("extrasTV").addEventListener("change", function(){
+    extrasObj().showOnTV = this.checked; touched();
+  });
+  $("addgroup").addEventListener("click", function(){
+    extrasObj().groups.push({ id:newId("g"), name:"", items:[] });
+    renderGroups(); touched();
+  });
+  $("groups").addEventListener("input", function(ev){
+    var box = ev.target.closest("[data-g]"); if(!box) return;
+    var g = extrasObj().groups[Number(box.dataset.g)]; if(!g) return;
+    if(ev.target.dataset.gname){ g.name = ev.target.value; touched(); return; }
+    var row = ev.target.closest("[data-i]"); if(!row) return;
+    var it = (g.items || [])[Number(row.dataset.i)]; if(!it) return;
+    var f = ev.target.dataset.if; if(!f) return;
+    if(f === "price"){
+      var raw = String(ev.target.value).trim();
+      if(raw === "") delete it.price; else it.price = Number(raw);
+    } else it[f] = ev.target.value;
+    touched();
+  });
+  $("groups").addEventListener("click", function(ev){
+    var btn = ev.target.closest("button"); if(!btn) return;
+    var box = ev.target.closest("[data-g]"); if(!box) return;
+    var e = extrasObj(), gi = Number(box.dataset.g), g = e.groups[gi]; if(!g) return;
+    if(btn.dataset.delgroup){ e.groups.splice(gi, 1); renderGroups(); touched(); return; }
+    if(btn.dataset.additem){
+      g.items = g.items || [];
+      g.items.push({ id:newId("i"), name:"", desc:"" });
+      renderGroups(); touched(); return;
+    }
+    if(btn.dataset.delitem){
+      var row = ev.target.closest("[data-i]"); if(!row) return;
+      g.items.splice(Number(row.dataset.i), 1);
+      renderGroups(); touched();
+    }
+  });
+
+  $("sensorsOn").addEventListener("change", function(){
+    if(!data.sensors || typeof data.sensors !== "object") data.sensors = {};
+    data.sensors.on = this.checked;
+    $("sensorrow").style.display = this.checked ? "" : "none";
+    renderTaps();          /* the keg slider only means something when measured */
+    touched();
+  });
+  $("sensorUrl").addEventListener("input", function(){
+    if(!data.sensors || typeof data.sensors !== "object") data.sensors = {};
+    data.sensors.url = this.value.trim();
+    touched();
+  });
+
+  $("happyOn").addEventListener("change", function(){
+    happyObj().on = this.checked;
+    $("happyrow").style.display = this.checked ? "" : "none";
+    touched();
+  });
+  ["happyFrom","happyTo","happyLabel"].forEach(function(id){
+    $(id).addEventListener("input", function(){
+      var h = happyObj();
+      h[id === "happyFrom" ? "from" : id === "happyTo" ? "to" : "label"] = this.value;
+      touched();
+    });
+  });
+  $("happydays").addEventListener("click", function(e){
+    var b = e.target.closest("[data-day]"); if(!b) return;
+    var h = happyObj(), d = Number(b.dataset.day), i = h.days.indexOf(d);
+    if(i === -1) h.days.push(d); else h.days.splice(i, 1);
+    h.days.sort(function(a, b2){ return a - b2; });
+    renderHappy(); touched();
+  });
+  $("happyprices").addEventListener("input", function(e){
+    var id = e.target.dataset.happy; if(!id) return;
+    var h = happyObj(), raw = String(e.target.value).trim();
+    if(raw === "") delete h.prices[id]; else h.prices[id] = Number(raw);
+    touched();
+  });
+
+  $("addsize").addEventListener("click", function(){
+    sizeList().push({ id:"s" + Date.now().toString(36), name:"", ml:"" });
+    renderSizes(); renderTaps(); touched();
+  });
+
+  /* Tap fields (delegated so re-renders never lose their wiring) */
+  $("taps").addEventListener("input", function(e){
+    var card = e.target.closest(".card"); if(!card) return;
+    var i = Number(card.dataset.i), f = e.target.dataset.f;
+    /* Prices are keyed by size id, not by field name, so they are handled first. */
+    var cf = e.target.dataset.cf;
+    if(cf){
+      var crow = e.target.closest("[data-c]");
+      if(crow){
+        var arr = data.taps[i].custom = Array.isArray(data.taps[i].custom) ? data.taps[i].custom : [];
+        var rec = arr[Number(crow.dataset.c)];
+        if(rec){ rec[cf] = e.target.value; touched(); }
+      }
+      return;
+    }
+    var pid = e.target.dataset.price;
+    if(pid){
+      var tp = data.taps[i];
+      if(!tp.prices) tp.prices = {};
+      var raw = String(e.target.value).trim();
+      if(raw === "") delete tp.prices[pid];
+      else tp.prices[pid] = Number(raw);
+      touched(); return;
+    }
+    if(f == null) return;
+    if(f === "guest"){
+      data.taps[i].guest = !!e.target.checked;
+      touched(); return;
+    }
+    if(f === "level"){
+      data.taps[i].level = Number(e.target.value);
+      card.querySelector(".levelval").textContent = e.target.value + "%";
+    } else if(f === "num"){
+      /* Left alone entirely while typing. The field holds what is being typed, and the
+         model keeps the OLD number until the change event — which is what makes a swap
+         possible. Writing it here destroyed the very value the swap needs, and produced
+         two taps numbered 2. Reordering per keystroke would also move the card out from
+         under the cursor, and "12" would reorder the moment the 1 landed. */
+    } else {
+      data.taps[i][f] = e.target.value;
+    }
+    touched();
+  });
+
+  $("taps").addEventListener("change", function(e){
+    if(e.target.dataset.f === "guest"){
+      var gcard = e.target.closest(".card"); if(!gcard) return;
+      data.taps[Number(gcard.dataset.i)].guest = !!e.target.checked;
+      touched(); return;
+    }
+    if(e.target.dataset.f === "num"){
+      var ncard = e.target.closest(".card"); if(!ncard) return;
+      var ni = Number(ncard.dataset.i);
+      var moved = data.taps[ni];
+      setTapNumber(ni, e.target.value);
+      renderTaps(); touched();
+      /* Follow the card to where it went, so it is obvious something moved. */
+      var at = data.taps.indexOf(moved);
+      var card = document.querySelector('.card[data-i="' + at + '"]');
+      if(card){
+        card.scrollIntoView({ behavior:"smooth", block:"center" });
+        var f = card.querySelector('[data-f="num"]');
+        if(f) f.focus();
+      }
+      return;
+    }
+    if(e.target.dataset.f !== "status") return;
+    var card = e.target.closest(".card"); if(!card) return;
+    var i = Number(card.dataset.i);
+    data.taps[i].status = e.target.value;
+    if(e.target.value === "kicked") data.taps[i].level = 0;
+    if(e.target.value !== "coming") delete data.taps[i].ready;
+    renderTaps(); touched();
+  });
+
+  $("taps").addEventListener("click", function(e){
+    var btn = e.target.closest("button"); if(!btn) return;
+    var card = e.target.closest(".card"); if(!card) return;
+    var i = Number(card.dataset.i);
+
+    if(btn.dataset.addcustom){
+      var t0 = data.taps[i];
+      t0.custom = Array.isArray(t0.custom) ? t0.custom : [];
+      t0.custom.push({ k:"", v:"" });
+      renderTaps(); touched(); return;
+    }
+    if(btn.dataset.delcustom){
+      var crow2 = e.target.closest("[data-c]");
+      if(crow2 && Array.isArray(data.taps[i].custom)){
+        data.taps[i].custom.splice(Number(crow2.dataset.c), 1);
+        renderTaps(); touched();
+      }
+      return;
+    }
+    if(btn.dataset.srm){
+      var srmN = Number(btn.dataset.srm);
+      data.taps[i].srm = srmN;
+      data.taps[i].color = window.SRM[srmN];
+      renderTaps(); touched(); return;
+    }
+    if(btn.dataset.icon != null){
+      data.taps[i].icon = btn.dataset.icon;
+      var ics = card.querySelectorAll(".ic");
+      for(var j = 0; j < ics.length; j++) ics[j].classList.remove("on");
+      btn.classList.add("on");
+      touched(); return;
+    }
+    if(btn.dataset.color){
+      data.taps[i].color = btn.dataset.color;
+      data.taps[i].srm = null;                 /* not on the SRM scale */
+      renderTaps(); touched(); return;
+    }
+    if(btn.dataset.level != null){
+      var lv = Number(btn.dataset.level);
+      data.taps[i].level = lv;
+      if(lv === 0 && data.taps[i].status === "pouring") data.taps[i].status = "kicked";
+      if(lv > 0  && data.taps[i].status === "kicked")   data.taps[i].status = "pouring";
+      renderTaps(); touched(); return;
+    }
+    var act = btn.dataset.act;
+    if(act === "lib"){
+      if(saveToLibrary(data.taps[i])) setStatus('Saved "' + data.taps[i].name + '" to your recipes.');
+      return;
+    }
+    if(act === "del"){
+      var gone = data.taps[i];
+      var kept = gone.name ? " It's saved in your recipes, so you can put it back later." : "";
+      if(!confirm('Remove "' + (gone.name || "this beer") + '" from the list?' + kept)) return;
+      if(gone.name) saveToLibrary(gone, true);      /* never lose a recipe */
+      data.taps.splice(i, 1); renderTaps(); touched();
+    } else if((act === "up" && i > 0) || (act === "down" && i < data.taps.length - 1)){
+      /* Swap numbers with the neighbour rather than array slots, so the arrows and the
+         number field cannot disagree about the running order. */
+      var other = data.taps[act === "up" ? i - 1 : i + 1];
+      var mine  = data.taps[i];
+      var keep  = mine.num;
+      mine.num = other.num;
+      other.num = keep;
+      sortTaps();
+      renderTaps(); touched();
+    }
+  });
+
+  $("add").addEventListener("click", function(){
+    var maxNum = 0;
+    data.taps.forEach(function(t){ maxNum = Math.max(maxNum, Number(t.num) || 0); });
+    data.taps.push(blankTap(maxNum + 1));
+    renderTaps(); touched();
+    var cards = document.querySelectorAll(".card");
+    var last = cards[cards.length - 1];
+    if(last){ last.scrollIntoView({behavior:"smooth", block:"center"}); last.querySelector('[data-f="name"]').focus(); }
+  });
+
+  /* Preview: write the draft first so the board has the very latest edit even if
+     nothing has been typed yet, then open it in a tab of its own. Reusing the same
+     named window means repeated clicks refresh that tab instead of piling up. */
+  $("preview").addEventListener("click", function(){
+    saveDraft();
+    var w = window.open("index.html?preview=1", "ontappreview");
+    if(w && w.focus) w.focus();
+  });
+
+  (function(){
+    var s = apiSession();
+    if(!s) return;
+    var w = $("whoami");
+    w.textContent = (s.brewery && s.brewery.name ? s.brewery.name + " · " : "") + s.email;
+    w.style.display = "";
+    $("signout").style.display = "";
+    $("signout").addEventListener("click", function(){
+      if(window.confirm("Sign out of this device?")) signOut();
+    });
+  })();
+
+  /* ---------- venues and team (API accounts only) ---------- */
+  var VENUE_KEY = "ontap.venue.v1";
+  var myVenues = [], myVenue = null;
+
+  function chosenVenue(){
+    try { return localStorage.getItem(VENUE_KEY) || ""; } catch(e){ return ""; }
+  }
+  function rememberVenue(v){
+    try { localStorage.setItem(VENUE_KEY, v || ""); } catch(e){}
+  }
+
+  function renderVenues(){
+    var sel = $("venue");
+    if(myVenues.length > 1){
+      sel.innerHTML = myVenues.map(function(b){
+        return '<option value="' + esc(b.id) + '"' +
+          (myVenue && b.id === myVenue.id ? " selected" : "") + '>' + esc(b.name) + '</option>';
+      }).join("");
+      sel.style.display = "";
+    } else {
+      sel.style.display = "none";
+    }
+    $("venuelist").innerHTML = myVenues.map(function(b){
+      return '<div class="itemrow"><span class="iname">' + esc(b.name) +
+        ' <span class="muted">' + esc(b.role) + " · " + esc(b.plan) + '</span></span>' +
+        '<span class="muted" style="font-size:13px">/b/' + esc(b.slug) + '.json</span></div>';
+    }).join("");
+  }
+
+  function loadTeam(){
+    if(!myVenue) return;
+    var owner = myVenue.role === "owner";
+    $("teamfor").textContent = "— " + myVenue.name;
+    $("inviteemail").disabled = !owner;
+    $("doinvite").disabled = !owner;
+    $("newvenue").disabled = !owner;
+    $("addvenue").disabled = !owner;
+    apiFetch("/v1/team?b=" + encodeURIComponent(myVenue.id), { method:"GET" }).then(function(r){
+      if(!r.ok) return;
+      var rows = (r.body.members || []).map(function(m){
+        return '<div class="itemrow"><span class="iname">' + esc(m.email) +
+          ' <span class="muted">' + esc(m.role) + '</span></span>' +
+          (owner && m.role !== "owner"
+            ? '<button class="btn-sm btn-ghost" type="button" data-remove="' + esc(m.id) + '">Remove</button>'
+            : '') + '</div>';
+      });
+      (r.body.invites || []).forEach(function(i){
+        rows.push('<div class="itemrow"><span class="iname">' + esc(i.email) +
+          ' <span class="muted">invited, not yet accepted</span></span></div>');
+      });
+      $("teamlist").innerHTML = rows.join("") || '<div class="hint">Just you, for now.</div>';
+    });
+  }
+
+  function afterSignedInLoad(){
+    apiFetch("/v1/me", { method:"GET" }).then(function(m){
+      if(!m.ok) return;
+      myVenues = m.body.breweries || [];
+      var want = chosenVenue();
+      myVenue = myVenues.filter(function(b){ return b.id === want; })[0] || myVenues[0] || null;
+      if(myVenue) rememberVenue(myVenue.id);
+      $("teamsec").style.display = "";
+      renderVenues();
+      loadTeam();
+    });
+  }
+
+  if(usingApi()){
+    $("venue").addEventListener("change", function(){
+      /* Switching venue reloads, rather than swapping the model underneath an open
+         form — a half-swapped editor is how the wrong beer list gets published. */
+      rememberVenue(this.value);
+      location.reload();
+    });
+    $("addvenue").addEventListener("click", function(){
+      var name = $("newvenue").value.trim();
+      if(!name) return;
+      this.disabled = true;
+      apiFetch("/v1/locations", { method:"POST", body: JSON.stringify({ name: name }) })
+        .then(function(r){
+          $("addvenue").disabled = false;
+          if(!r.ok){ setStatus(r.body.error || "Couldn't add that venue.", "err"); return; }
+          $("newvenue").value = "";
+          rememberVenue(r.body.brewery.id);
+          setStatus("Venue added — opening it…");
+          setTimeout(function(){ location.reload(); }, 500);
+        });
+    });
+    $("doinvite").addEventListener("click", function(){
+      var email = $("inviteemail").value.trim();
+      if(!email || !myVenue) return;
+      this.disabled = true;
+      apiFetch("/v1/invites", { method:"POST",
+        body: JSON.stringify({ brewery: myVenue.id, email: email, role: "staff" }) })
+        .then(function(r){
+          $("doinvite").disabled = false;
+          if(!r.ok){ setStatus(r.body.error || "Couldn't send that invitation.", "err"); return; }
+          $("inviteemail").value = "";
+          /* No email service yet, so hand the owner the link to pass on. Swapping in a
+             sender later changes this message and nothing else. */
+          var link = location.origin + location.pathname.replace(/[^/]*$/, "") +
+                     "signin.html?invite=" + encodeURIComponent(r.body.token);
+          window.prompt("Send this sign-in link to " + r.body.email +
+                        " — it expires in " + r.body.expiresDays + " days.", link);
+          loadTeam();
+        });
+    });
+    $("teamlist").addEventListener("click", function(ev){
+      var b = ev.target.closest("[data-remove]");
+      if(!b || !myVenue) return;
+      if(!window.confirm("Remove this person from " + myVenue.name + "?")) return;
+      apiFetch("/v1/members/remove", { method:"POST",
+        body: JSON.stringify({ brewery: myVenue.id, userId: b.dataset.remove }) })
+        .then(function(r){
+          if(!r.ok){ setStatus(r.body.error || "Couldn't remove them.", "err"); return; }
+          loadTeam();
+        });
+    });
+  }
+
+  $("printmenu").addEventListener("click", function(){
+    /* Prints what is published, not the draft — a menu going on a wall should match
+       what the taps are actually pouring. */
+    var w = window.open("print.html", "ontapprint");
+    if(w && w.focus) w.focus();
+  });
+
+  $("revert").addEventListener("click", function(){
+    if(!confirm("Throw away every change since the last publish?")) return;
+    data = JSON.parse(JSON.stringify(published));
+    clearDraft(); renderAll(); setStatus("Back to what's on the TV right now.");
+  });
+
+  $("preview").addEventListener("click", function(){ window.open("index.html", "_blank"); });
+
+  $("download").addEventListener("click", function(){
+    var blob = new Blob([serialize()], {type:"application/json"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "taps.json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+    setStatus("Downloaded taps.json — upload that file to replace the old one.");
+  });
+
+  /* ---------------- publish ---------------- */
+  var lastWrittenVersion = null;
+  function serialize(){
+    var out = JSON.parse(JSON.stringify(data));
+    delete out.bgPhoto;                 /* lives in bgphoto.json - see publish() */
+    out.updated = new Date().toISOString();
+    lastWrittenVersion = out.updated;   /* so this tab can adopt its own publish */
+    return JSON.stringify(out, null, 2) + "\n";
+  }
+
+  /* After publishing, this tab IS the current version — otherwise it would warn
+     about its own change the next time Publish was pressed. */
+  /* Publishing writes to a repo; a separate GitHub Pages deploy then puts it on the
+     web, and that deploy can fail — it did, with a 500 from GitHub's own API. When it
+     fails and nobody publishes again, the board keeps showing yesterday's beers and
+     says nothing. So after publishing, watch the live file until it actually changes.
+
+     The API path needs none of this: it writes the row the board reads. */
+  function verifyPublished(){
+    if(usingApi()) return;
+    var want = lastWrittenVersion;
+    if(!want) return;
+    var tries = 0;
+
+    (function poll(){
+      tries++;
+      var x = new XMLHttpRequest();
+      x.open("GET", DATA_BASE + "taps.json?nocache=" + Date.now(), true);
+      x.timeout = 8000;
+      x.onload = function(){
+        var got = null;
+        try { got = (JSON.parse(x.responseText) || {}).updated; } catch(e){}
+        if(got === want){
+          setStatus("Published — it's live, and the screens update within a minute.");
+          return;
+        }
+        again();
+      };
+      x.onerror = x.ontimeout = again;
+      x.send();
+
+      function again(){
+        if(tries >= 12){      /* ~90 seconds */
+          setStatus("Saved, but the website hasn't picked it up yet. That is usually " +
+                    "GitHub being slow or having a wobble — wait a minute and press " +
+                    "Publish again. Your changes are not lost.", "err");
+          return;
+        }
+        setStatus("Published — waiting for the website to catch up…");
+        setTimeout(poll, 8000);
+      }
+    })();
+  }
+
+  function adoptPublished(){
+    if(lastWrittenVersion) loadedVersion = lastWrittenVersion;
+    overrideStale = false;
+    var b = document.getElementById("staleban");
+    if(b) b.style.display = "none";
+  }
+  function b64(str){
+    var bytes = new TextEncoder().encode(str), bin = "";
+    for(var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin);
+  }
+  function api(path, opts, cb){
+    var c = cfg();
+    var xhr = new XMLHttpRequest();
+    xhr.open(opts.method || "GET", "https://api.github.com" + path, true);
+    xhr.setRequestHeader("Authorization", "Bearer " + c.token);
+    xhr.setRequestHeader("Accept", "application/vnd.github+json");
+    if(opts.body) xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onload = function(){
+      var json = null;
+      try { json = JSON.parse(xhr.responseText); } catch(e){}
+      cb(null, xhr.status, json);
+    };
+    xhr.onerror = function(){ cb(new Error("Network error — is the laptop online?")); };
+    xhr.send(opts.body ? JSON.stringify(opts.body) : null);
+  }
+
+  /* Write one file: look up its sha (needed to replace), then PUT. */
+  function putFile(path, text, message, cb){
+    var c = cfg();
+    var base = "/repos/" + c.owner + "/" + c.repo + "/contents/" + path;
+    api(base + "?ref=" + encodeURIComponent(c.branch), {}, function(err, status, json){
+      if(err) return cb(err);
+      if(status !== 200 && status !== 404){
+        return cb(new Error("Couldn't reach " + path + " (" + status + "). Check the ⚙️ setup."));
+      }
+      var body = { message: message, content: b64(text), branch: c.branch };
+      if(status === 200 && json && json.sha) body.sha = json.sha;
+      api(base, {method:"PUT", body:body}, function(err2, st2, j2){
+        if(err2) return cb(err2);
+        if(st2 === 200 || st2 === 201) return cb(null);
+        if(st2 === 409) return cb(new Error("Someone else just changed the list. Reload this page and redo your edit."));
+        if(st2 === 401 || st2 === 403) return cb(new Error("Couldn't save — the access token has expired or been revoked. Ask Jesse for a new one."));
+        cb(new Error("GitHub said " + st2 + ": " + ((j2 && j2.message) || "unknown error")));
+      });
+    });
+  }
+
+  $("gh-test").addEventListener("click", function(){
+    var c = saveCfg();
+    var r = $("gh-testresult");
+    if(!c.owner || !c.repo || !c.token){ r.textContent = "Fill in all three boxes first."; return; }
+    r.textContent = "Checking…";
+    api("/repos/" + c.owner + "/" + c.repo, {}, function(err, status, json){
+      if(err){ r.textContent = "✗ " + err.message; return; }
+      if(status === 200){
+        r.textContent = json.permissions && json.permissions.push
+          ? "✓ Connected to " + json.full_name + " — publishing will work."
+          : "✗ Connected, but this token can't write. Give it Contents: Read and write.";
+      } else if(status === 401){ r.textContent = "✗ Token rejected — it's either mistyped or has expired. Make a new one on GitHub and paste it here."; }
+      else if(status === 404){ r.textContent = "✗ Repo not found, or the token isn't allowed to see it."; }
+      else { r.textContent = "✗ GitHub said " + status + ": " + ((json && json.message) || "unknown error"); }
+    });
+  });
+
+  function publishViaWorker(btn){
+    var pw = getPw();   /* usually "" — the service only asks if it's configured to */
+
+    /* Only re-send the photo when it actually changed — it's the big payload. */
+    var photoChanged = data.bg === "photo" && data.bgPhoto &&
+                       data.bgPhoto !== (published && published.bgPhoto);
+    if(photoChanged){
+      data.bgV = String(Date.now());
+      setStatus("Uploading the background photo…");
+    }
+
+    var files = [];
+    if(photoChanged){
+      files.push({ path:"bgphoto.json", content: JSON.stringify({ photo: data.bgPhoto }) + "\n" });
+    }
+    files.push({ path:"taps.json", content: serialize() });   /* after bgV is set */
+
+    workerPost("/publish", { password: pw, message: "Update tap list", files: files },
+      function(err, status, j){
+        btn.disabled = false;
+        if(err){ setStatus(err.message, "err"); return; }
+        if(status === 200 && j && j.ok){
+          published = JSON.parse(JSON.stringify(data));
+          clearDraft();
+          adoptPublished();
+          setStatus("✓ Published! The TV will show it within about a minute.", "ok");
+          verifyPublished();
+          return;
+        }
+        if(status === 401){
+          clearPw();
+          showLogin("That password didn't work — try again.");
+          setStatus("Not signed in.", "err");
+          return;
+        }
+        setStatus((j && j.error) || ("Publishing failed (" + status + ")."), "err");
+      });
+  }
+
+  /* The last line of defence. A tab can sit open for hours; by the time Publish is
+     pressed the list may have moved on twice. Check at the moment it matters, not
+     only on the timer, and make overwriting a decision rather than an accident. */
+  function guardStale(next){
+    /* On the API the server refuses a stale write outright, which is stronger than
+       asking first — so no need to check twice. */
+    if(usingApi()){ next(); return; }
+    if(overrideStale || !loadedVersion) { next(); return; }
+    setStatus("Checking for newer changes…");
+    remoteVersion(function(v){
+      if(!v || v === loadedVersion){ next(); return; }
+      showStale(v);
+      var when = new Date(v).toLocaleTimeString();
+      if(window.confirm(
+          "Someone published a different tap list at " + when + ", after this page " +
+          "was opened.\n\nPublishing now will replace theirs with what is on this " +
+          "screen.\n\nOK to overwrite, or Cancel to load theirs instead.")){
+        overrideStale = true;
+        next();
+      } else {
+        setStatus("Not published — loading the newer list…");
+        setTimeout(function(){ location.reload(); }, 600);
+      }
+    });
+  }
+
+  $("publish").addEventListener("click", function(){
+    /* There is only one beer list, so publishing from staging changes the real
+       board. Ask plainly rather than letting it happen by accident. */
+    if(STAGING && !window.confirm(
+        "This is the STAGING site, but there is only one beer list — publishing " +
+        "will change the real board on the TVs.\n\nPublish for real?")){
+      setStatus("Not published — staging.");
+      return;
+    }
+    var btn = this;
+    guardStale(function(){ doPublish(btn); });
+  });
+
+  function doPublish(self){
+    /* A brewery's board lives in the database. This must come before the GitHub path,
+       or a signed-in venue would publish into somebody else's repo. */
+    if(usingApi()){
+      var btn = self;
+      btn.disabled = true;
+      setStatus("Publishing…");
+      var payload = JSON.parse(serialize());          /* same normalising as the file path */
+      apiFetch("/v1/board", { method:"PUT",
+        body: JSON.stringify({ data: payload, rev: apiRev, brewery: myVenue ? myVenue.id : undefined }) })
+        .then(function(r){
+          btn.disabled = false;
+          if(r.status === 401){ signOut(); return; }
+          if(r.status === 409){
+            /* Someone else saved first. Reuse the banner rather than inventing a
+               second way of saying the same thing. */
+            apiRev = r.body.rev;
+            showStale(null);
+            setStatus("Someone else saved first — load theirs, or press Publish again to replace it.", "err");
+            overrideStale = false;
+            return;
+          }
+          if(!r.ok){ setStatus(r.body.error || "Couldn't publish.", "err"); return; }
+          apiRev = r.body.rev;
+          published = JSON.parse(JSON.stringify(data));
+          clearDraft();
+          adoptPublished();
+      verifyPublished();
+          setStatus("Published — the screens will pick it up within a minute.");
+        })
+        .catch(function(){
+          btn.disabled = false;
+          setStatus("Couldn't reach the service — check your connection.", "err");
+        });
+      return;
+    }
+    if(WORKER_URL){
+      var b = self;
+      b.disabled = true;
+      setStatus("Publishing…");
+      publishViaWorker(b);
+      return;
+    }
+    var c = cfg();
+    if(!c.owner || !c.repo || !c.token){
+      $("setup").open = true;
+      setStatus("Setup isn't finished yet — see the ⚙️ section.", "err");
+      $("setup").scrollIntoView({behavior:"smooth"});
+      return;
+    }
+    var blanks = [];
+    data.taps.forEach(function(t){
+      if(String(t.name || "").trim() === "") blanks.push(t.num);
+    });
+    if(blanks.length){
+      var which = blanks.length === 1 ? ("Tap " + blanks[0] + " has")
+                                      : ("Taps " + blanks.join(", ") + " have");
+      if(!confirm(which + " no beer name yet, so " +
+                  (blanks.length === 1 ? "it" : "they") +
+                  " won't appear on the TV.\n\nPublish anyway?")) return;
+    }
+
+    var btn = this;
+    btn.disabled = true;
+    setStatus("Publishing…");
+
+    function finish(err){
+      btn.disabled = false;
+      if(err){ setStatus(err.message, "err"); return; }
+      published = JSON.parse(JSON.stringify(data));
+      clearDraft();
+      adoptPublished();
+      setStatus("✓ Published! The TV will show it within about a minute.", "ok");
+      verifyPublished();
+    }
+
+    function writeTaps(){
+      setStatus("Publishing…");
+      putFile("taps.json", serialize(), "Update tap list", finish);
+    }
+
+    /* Only re-upload the photo when it actually changed - it's the big payload. */
+    var photoChanged = data.bg === "photo" && data.bgPhoto &&
+                       data.bgPhoto !== (published && published.bgPhoto);
+    if(photoChanged){
+      setStatus("Uploading the background photo…");
+      data.bgV = String(Date.now());
+      putFile("bgphoto.json",
+              JSON.stringify({ photo: data.bgPhoto }) + "\n",
+              "Update background photo",
+              function(err){ if(err) return finish(err); writeTaps(); });
+    } else {
+      writeTaps();
+    }
+  }
+
+  window.addEventListener("beforeunload", function(e){
+    if(JSON.stringify(data) !== JSON.stringify(published)){ e.preventDefault(); e.returnValue = ""; }
+  });
+
+  /* ---------------- strictly for the father-in-law ----------------
+     This does nothing here — it tells the TV to do it. */
+  (function(){
+    var btn = $("laugh"), msg = $("laughmsg");
+    if(!btn) return;
+    btn.addEventListener("click", function(){
+      /* One gag signal serves every screen, so firing it from staging would set the
+         real TVs off. There is no reason to want that, so it is simply blocked. */
+      if(STAGING){
+        msg.textContent = "Disabled on staging — this would fire on the real TVs.";
+        return;
+      }
+      if(!WORKER_URL){ msg.textContent = "Not connected."; return; }
+      btn.disabled = true;
+      msg.textContent = "Go and look at the telly…";
+      workerPost("/laugh", {}, function(err, status){
+        if(err || status !== 200) msg.textContent = "Couldn't reach the TV.";
+        setTimeout(function(){
+          btn.disabled = false;
+          msg.innerHTML = "&nbsp;";
+        }, 11000);
+      });
+    });
+  })();
+
+  /* ---------------- boot ---------------- */
+  function normalize(json){
+    json = json || {};
+    json.taps = Array.isArray(json.taps) ? json.taps : [];
+    json.taps = json.taps.map(function(t, i){
+      return {
+        num: Number(t.num) || (i + 1),
+        name: t.name || "", style: t.style || "",
+        abv: t.abv == null ? "" : String(t.abv),
+        ibu: t.ibu == null ? "" : String(t.ibu),
+        notes: t.notes || "",
+        color: t.color || "#e0a63a",
+        srm: t.srm ? Number(t.srm) : null,
+        ready: t.ready || "",
+        guest: !!t.guest,
+        icon: t.icon || "",
+        level: Number(t.level) || 0,
+        status: t.status || "pouring"
+      };
+    });
+    if(json.logo == null) json.logo = "";
+    if(json.perPage == null) json.perPage = "auto";
+    if(!json.logoSize) json.logoSize = "m";
+    if(!json.bg) json.bg = "charcoal";
+    if(!Array.isArray(json.library)) json.library = [];
+    if(json.dimAtNight == null) json.dimAtNight = false;
+    if(json.dimFrom == null) json.dimFrom = 22;
+    if(json.dimTo == null) json.dimTo = 7;
+    json.rotate = Number(json.rotate) || 0;
+    if(json.rotateSeconds == null) json.rotateSeconds = 20;
+    if(json.showClock == null) json.showClock = true;
+    if(!json.pricing || typeof json.pricing !== "object") json.pricing = {};
+    json.pricing.on = !!json.pricing.on;
+    if(!json.pricing.currency) json.pricing.currency = "$";
+    if(!Array.isArray(json.pricing.sizes) || !json.pricing.sizes.length){
+      json.pricing.sizes = JSON.parse(JSON.stringify(DEFAULT_SIZES));
+    }
+    return json;
+  }
+
+  /* The version of the list this tab started from. taps.json carries an "updated"
+     stamp written on every publish, which makes a cheap and exact version marker. */
+  var loadedVersion = null;
+  var overrideStale = false;
+
+  function remoteVersion(cb){
+    var x = new XMLHttpRequest();
+    x.open("GET", DATA_BASE + "taps.json?t=" + Date.now(), true);
+    x.timeout = 10000;
+    x.onload = function(){
+      if(x.status < 200 || x.status >= 300){ cb(null); return; }
+      try { cb((JSON.parse(x.responseText) || {}).updated || null); }
+      catch(e){ cb(null); }
+    };
+    x.onerror = x.ontimeout = function(){ cb(null); };
+    x.send();
+  }
+
+  /* Someone else published while this tab was open. Say so rather than letting a
+     stale copy quietly overwrite their work — which is exactly what kept happening. */
+  function showStale(when){
+    if(overrideStale) return;
+    $("staleban").style.display = "flex";
+    $("staletime").textContent = when ? "at " + new Date(when).toLocaleTimeString() : "";
+  }
+  function watchForChanges(){
+    setInterval(function(){
+      if(overrideStale) return;
+      remoteVersion(function(v){
+        if(v && loadedVersion && v !== loadedVersion) showStale(v);
+      });
+    }, 60000);
+  }
+
+  function boot(json){
+    published = normalize(json);
+    if(published && Array.isArray(published.taps)){
+      published.taps.sort(function(a, b){
+        return (Number(a.num) || 9999) - (Number(b.num) || 9999);
+      });
+    }
+    loadedVersion = json && json.updated ? json.updated : null;
+    data = JSON.parse(JSON.stringify(published));
+
+    var d = getDraft();
+    if(d && d.data && JSON.stringify(normalize(d.data)) !== JSON.stringify(published)){
+      $("draftbanner").style.display = "flex";
+      $("drafttime").textContent = new Date(d.at).toLocaleString();
+      $("draft-restore").onclick = function(){
+        data = normalize(d.data); renderAll();
+        $("draftbanner").style.display = "none";
+        setStatus("Restored your unpublished changes.");
+      };
+      $("draft-discard").onclick = function(){
+        clearDraft(); $("draftbanner").style.display = "none";
+      };
+    }
+
+    $("stale-reload").onclick = function(){ location.reload(); };
+    $("stale-ignore").onclick = function(){
+      overrideStale = true;
+      $("staleban").style.display = "none";
+      setStatus("Keeping your version — publishing will replace theirs.");
+    };
+    watchForChanges();
+
+    loadCfg();
+    ["gh-owner","gh-repo","gh-token","gh-branch"].forEach(function(id){
+      $(id).addEventListener("input", function(){ saveCfg(); refreshSetupState(); });
+    });
+    $("setupfix").addEventListener("click", function(){
+      $("setup").open = true;
+      $("setup").scrollIntoView({behavior:"smooth", block:"start"});
+    });
+
+    renderAll();
+    if(linkSetupApplied){
+      setStatus("\u2713 Publishing is now set up on this computer. You're good to go.", "ok");
+    } else {
+      setStatus("Ready.");
+    }
+
+    /* Pull the existing background photo in separately, so the preview shows it
+       and we don't needlessly re-upload it on the next publish. */
+    if(data.bg === "photo" && !data.bgPhoto){
+      var bx = new XMLHttpRequest();
+      bx.open("GET", DATA_BASE + "bgphoto.json?t=" + Date.now(), true);
+      bx.onload = function(){
+        if(bx.status < 200 || bx.status >= 300) return;
+        try {
+          var j = JSON.parse(bx.responseText);
+          if(j && j.photo){
+            data.bgPhoto = j.photo;
+            published.bgPhoto = j.photo;   /* matches -> publish won't re-send it */
+            renderBg();
+          }
+        } catch(e){}
+      };
+      bx.send();
+    }
+  }
+
+  var xhr = new XMLHttpRequest();
+  if(usingApi()){
+    /* A brewery's list lives in the database, not in a repo. */
+    var want = chosenVenue();
+    apiFetch("/v1/board" + (want ? "?b=" + encodeURIComponent(want) : ""), { method:"GET" }).then(function(r){
+      if(r.status === 401){ signOut(); return; }
+      if(!r.ok){ setStatus(r.body.error || "Couldn't load your tap list.", "err"); return; }
+      apiRev = r.body.rev;
+      boot(r.body.data);
+      setStatus("Ready.");
+      afterSignedInLoad();
+    }).catch(function(){
+      setStatus("Couldn't reach the service — check your connection.", "err");
+    });
+    return;
+  }
+  xhr.open("GET", DATA_BASE + "taps.json?t=" + Date.now(), true);
+  xhr.onload = function(){
+    var json = null;
+    try { json = JSON.parse(xhr.responseText); } catch(e){}
+    boot(json || { brewery:"Home Brew", taps:[blankTap(1)] });
+  };
+  xhr.onerror = function(){ boot({ brewery:"Home Brew", taps:[blankTap(1)] }); };
+  xhr.send();
+})();
+</script>
+</body>
+</html>

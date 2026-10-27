@@ -1,0 +1,17 @@
+name = "ontap-api"
+main = "src/index.js"
+compatibility_date = "2026-01-01"
+workers_dev = true
+
+# Which sites may call this. "*" only while developing.
+[vars]
+ALLOWED_ORIGINS = "https://jesse372.github.io"
+SITE_BASE = "https://jesse372.github.io/beer-tap-list"
+
+# Secrets (wrangler secret put): RESEND_KEY, MAIL_FROM, STRIPE_WEBHOOK_SECRET, STRIPE_KEY
+# With STRIPE_WEBHOOK_SECRET unset the webhook refuses everything, which is the safe default.
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ontap"
+database_id = "placeholder-until-wrangler-d1-create"
