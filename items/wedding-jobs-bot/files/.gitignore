@@ -1,0 +1,16 @@
+# large/binary (regenerate; never in git)
+*.bin
+*.mp4
+*.mov
+*.wav
+*.zip
+# secrets (keep in your secret manager; source at runtime)
+.env
+.secrets.sh
+.cf_token
+*token*.txt
+# noise
+*.log
+.DS_Store
+node_modules/
+__pycache__/

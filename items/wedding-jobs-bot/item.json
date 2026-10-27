@@ -1,0 +1,21 @@
+{
+  "slug": "wedding-jobs-bot",
+  "title": "Wedding Jobs Bot (Google Apps Script)",
+  "emoji": "💍",
+  "type": "script",
+  "summary": "Reads booking emails from Studio Ninja, logs each wedding job to a Google Sheet, works out team pay from the package, and builds a ready-to-send WhatsApp message for the crew.",
+  "how_to_use": "Follow SETUP.md (about 5 minutes): paste Code.gs into script.google.com, fill in your packages and run setup.",
+  "requires": "A Google account. Built around Studio Ninja's email format.",
+  "tags": [],
+  "link": "",
+  "created": "2026-10-19T19:03:00+08:00",
+  "updated": "2026-10-19T19:03:00+08:00",
+  "version": 1,
+  "useful": 3,
+  "files": [
+    ".gitignore",
+    "Code.gs",
+    "SETUP.md"
+  ],
+  "zip": "items/wedding-jobs-bot/wedding-jobs-bot.zip"
+}
