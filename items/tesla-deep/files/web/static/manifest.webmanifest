@@ -1,0 +1,14 @@
+{
+  "name": "Tesla Deep — 2019 Model 3 Performance",
+  "short_name": "Tesla Deep",
+  "description": "Deep CAN-bus telemetry and power analytics",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0c10",
+  "theme_color": "#0a0c10",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "/static/icons/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "/static/icons/apple-touch-icon.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

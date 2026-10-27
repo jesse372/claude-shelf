@@ -1,7 +1,7 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-10-27T16:35:41+00:00",
+  "updated": "2026-10-27T16:35:44+00:00",
   "items": [
     {
       "slug": "share-with-friend",
@@ -186,6 +186,48 @@
       "skill_name": "project-backup",
       "zip": "items/project-backup/project-backup.zip",
       "install_prompt": "Please install the Claude Code skill \"Project Backup: every project gets a private GitHub repo\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/project-backup/project-backup.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/project-backup/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+    },
+    {
+      "slug": "tesla-deep",
+      "title": "Tesla Deep: CAN-bus telemetry for a Model 3",
+      "emoji": "⚡",
+      "type": "tool",
+      "summary": "Decodes 2,700 signals off a Tesla Model 3's vehicle bus: individual cell voltages, motor and inverter temps, real pack capacity, power analytics, all in a live web dashboard.",
+      "how_to_use": "See README.md and docs/HARDWARE.md for the adapter you need, then ./run.sh.",
+      "requires": "A Tesla Model 3/Y, a CAN adapter (see docs/HARDWARE.md), Python 3.",
+      "tags": [],
+      "link": "",
+      "created": "2026-09-21T17:06:27+08:00",
+      "updated": "2026-09-21T17:10:13+08:00",
+      "version": 1,
+      "useful": 3,
+      "files": [
+        ".gitignore",
+        "README.md",
+        "data/Model3CAN.dbc",
+        "docs/HARDWARE.md",
+        "docs/POWER.md",
+        "docs/launch.png",
+        "pyproject.toml",
+        "run.sh",
+        "server/analytics.py",
+        "server/app.py",
+        "server/config.py",
+        "server/decoder.py",
+        "server/limits.py",
+        "server/sources.py",
+        "server/store.py",
+        "web/index.html",
+        "web/static/app.css",
+        "web/static/app.js",
+        "web/static/icons/apple-touch-icon.png",
+        "web/static/icons/favicon.svg",
+        "web/static/icons/head_snippet.html",
+        "web/static/manifest.webmanifest",
+        "web/static/sw.js"
+      ],
+      "zip": "items/tesla-deep/tesla-deep.zip",
+      "install_prompt": "Please set up \"Tesla Deep: CAN-bus telemetry for a Model 3\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/tesla-deep/tesla-deep.zip and unzip it to ~/claude-shelf/tesla-deep/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: See README.md and docs/HARDWARE.md for the adapter you need, then ./run.sh."
     },
     {
       "slug": "square",

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tesla Deep — 2019 Model 3 Performance</title>
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Ctext%20x%3D%2750%27%20y%3D%2754%27%20font-size%3D%2780%27%20text-anchor%3D%27middle%27%20dominant-baseline%3D%27central%27%3E%E2%9A%A1%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tesla Deep">
+<meta name="theme-color" content="#0a0c10">
+
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="bolt">⚡</span>
+    <div>
+      <h1>TESLA DEEP</h1>
+      <p id="vehicle-name">2019 Model 3 Performance</p>
+    </div>
+  </div>
+  <div class="conn">
+    <span id="conn-dot" class="dot"></span>
+    <span id="conn-text">connecting…</span>
+  </div>
+</header>
+
+<p id="verdict" class="verdict">Waiting for data…</p>
+
+<nav class="tabs">
+  <button class="tab active" data-tab="launch">LAUNCH</button>
+  <button class="tab" data-tab="battery">BATTERY</button>
+  <button class="tab" data-tab="drive">DRIVE</button>
+  <button class="tab" data-tab="chassis">CHASSIS</button>
+  <button class="tab" data-tab="raw">RAW</button>
+</nav>
+
+<main>
+  <!-- ============================ LAUNCH ============================ -->
+  <section id="tab-launch" class="panel active">
+    <div class="hero">
+      <div class="gauge-wrap">
+        <svg class="gauge" viewBox="0 0 200 120">
+          <path class="gauge-track" d="M20,110 A80,80 0 0,1 180,110"></path>
+          <path id="gauge-fill" class="gauge-fill" d="M20,110 A80,80 0 0,1 180,110"></path>
+        </svg>
+        <div class="gauge-centre">
+          <div id="hp-available" class="hp-big">—</div>
+          <div class="hp-label">HP AVAILABLE</div>
+          <div id="hp-ceiling" class="hp-sub">of — hp potential</div>
+        </div>
+      </div>
+
+      <div class="ontable">
+        <div id="hp-on-table" class="ontable-num">—</div>
+        <div class="ontable-label">HORSEPOWER ON THE TABLE</div>
+        <div id="pct-potential" class="ontable-sub">—</div>
+      </div>
+    </div>
+
+    <h2>Why — and what to do</h2>
+    <div id="causes" class="causes"></div>
+
+    <h2>Launch readiness <span id="ready-score" class="score"></span></h2>
+    <div id="checks" class="checks"></div>
+
+    <h2>Drive unit limits <small>live from CAN 0x1D6</small></h2>
+    <div id="limits" class="limits"></div>
+
+    <h2>Power trace <small>last 30 seconds</small></h2>
+    <canvas id="spark-power" class="spark" width="800" height="160"></canvas>
+  </section>
+
+  <!-- ============================ BATTERY ============================ -->
+  <section id="tab-battery" class="panel">
+    <div class="grid" id="battery-grid"></div>
+    <h2>Pack health</h2>
+    <div class="healthbar">
+      <div class="healthbar-track"><div id="health-fill" class="healthbar-fill"></div></div>
+      <div id="health-caption" class="caption"></div>
+    </div>
+    <h2>Cell balance <small>the best cheap indicator of pack health</small></h2>
+    <div id="cell-detail" class="grid"></div>
+  </section>
+
+  <!-- ============================ DRIVE ============================ -->
+  <section id="tab-drive" class="panel">
+    <h2>Torque split</h2>
+    <div class="split">
+      <div class="split-end"><span id="front-nm">—</span><small>FRONT Nm</small></div>
+      <div class="split-bar"><div id="split-fill"></div></div>
+      <div class="split-end"><span id="rear-nm">—</span><small>REAR Nm</small></div>
+    </div>
+    <div class="grid" id="drive-grid"></div>
+    <h2>Thermals</h2>
+    <div id="thermals" class="thermals"></div>
+  </section>
+
+  <!-- ============================ CHASSIS ============================ -->
+  <section id="tab-chassis" class="panel">
+    <h2>Tyre pressures <small>grip is how power reaches the road</small></h2>
+    <div class="car">
+      <div class="corner" id="tyre-FL"><b>—</b><small>FL</small></div>
+      <div class="corner" id="tyre-FR"><b>—</b><small>FR</small></div>
+      <div class="car-body"></div>
+      <div class="corner" id="tyre-RL"><b>—</b><small>RL</small></div>
+      <div class="corner" id="tyre-RR"><b>—</b><small>RR</small></div>
+    </div>
+    <div class="grid" id="chassis-grid"></div>
+  </section>
+
+  <!-- ============================ RAW ============================ -->
+  <section id="tab-raw" class="panel">
+    <h2>Every signal on the bus</h2>
+    <p class="caption" id="raw-caption">—</p>
+    <input id="raw-search" class="search" type="search"
+           placeholder="Filter 2752 signals… try 'temp', 'brick', 'limit', 'torque'">
+    <div id="raw-list" class="raw-list"></div>
+  </section>
+</main>
+
+<footer>
+  <span id="stats">—</span>
+  <span class="disclaimer">Signal definitions are community reverse-engineering
+    (joshwardell/model3dbc), not Tesla documentation. Read-only: this app never
+    writes to the bus.</span>
+</footer>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

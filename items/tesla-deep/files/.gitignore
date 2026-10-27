@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+data/history.db
+.DS_Store
+.env
+.secrets.sh
