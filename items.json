@@ -1,8 +1,29 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-10-27T16:35:31+00:00",
+  "updated": "2026-10-27T16:35:32+00:00",
   "items": [
+    {
+      "slug": "daily-reels",
+      "title": "Daily Reels: an Instagram reel every day, automatically",
+      "emoji": "🎞️",
+      "type": "skill",
+      "summary": "Renders a branded 9:16 reel plus caption every day from photo albums and film clips, a week ahead, into a synced folder ready to post.",
+      "how_to_use": "Mostly a reference for building your own. It's wired to Jesse's photography site and albums.",
+      "requires": "ffmpeg and Python. You'd need to point it at your own photos and branding.",
+      "tags": [],
+      "link": "",
+      "created": "2026-10-22T04:00:01+08:00",
+      "updated": "2026-10-26T04:00:00+08:00",
+      "version": 1,
+      "useful": 2,
+      "files": [
+        "SKILL.md"
+      ],
+      "skill_name": "daily-reels",
+      "zip": "items/daily-reels/daily-reels.zip",
+      "install_prompt": "Please install the Claude Code skill \"Daily Reels: an Instagram reel every day, automatically\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/daily-reels/daily-reels.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/daily-reels/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+    },
     {
       "slug": "gmail",
       "title": "Gmail from Claude (draft, then you confirm)",
