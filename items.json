@@ -1,7 +1,7 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-10-27T16:36:09+00:00",
+  "updated": "2026-10-27T16:36:11+00:00",
   "items": [
     {
       "slug": "share-with-friend",
@@ -401,6 +401,23 @@
       ],
       "zip": "items/instagram-to-gbp/instagram-to-gbp.zip",
       "install_prompt": "Please set up \"Instagram → Google Business Profile auto-poster\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/instagram-to-gbp/instagram-to-gbp.zip and unzip it to ~/claude-shelf/instagram-to-gbp/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Follow RUNBOOK.md step by step. clean-caption.js is the Zapier code step."
+    },
+    {
+      "slug": "luxe-beauty-yanchep",
+      "title": "Luxe Beauty Yanchep website",
+      "emoji": "💅",
+      "type": "website",
+      "summary": "A full local-business site built with Claude for a beauty salon: services and prices, aftercare guides, SEO pages for each treatment and suburb, and a gallery.",
+      "how_to_use": "Have a look for ideas. Ask Claude to build you something similar for your business.",
+      "requires": "",
+      "tags": [],
+      "link": "https://luxebeautyyanchep.com/",
+      "created": "2026-09-03T17:48:01+08:00",
+      "updated": "2026-09-29T18:15:37+08:00",
+      "version": 1,
+      "useful": 2,
+      "files": [],
+      "install_prompt": null
     },
     {
       "slug": "memory",
