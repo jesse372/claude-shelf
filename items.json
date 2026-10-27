@@ -1,7 +1,7 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-10-27T16:35:34+00:00",
+  "updated": "2026-10-27T16:35:35+00:00",
   "items": [
     {
       "slug": "daily-reels",
@@ -23,6 +23,27 @@
       "skill_name": "daily-reels",
       "zip": "items/daily-reels/daily-reels.zip",
       "install_prompt": "Please install the Claude Code skill \"Daily Reels: an Instagram reel every day, automatically\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/daily-reels/daily-reels.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/daily-reels/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+    },
+    {
+      "slug": "boat-day",
+      "title": "Boat Day: is it a good morning for the boat?",
+      "emoji": "🚤",
+      "type": "skill",
+      "summary": "Grades the next 7 mornings as GREAT/GOOD/MARGINAL/NO for boating, using two weather models for wind and gusts, swell and chop, plus Bureau of Meteorology coastal warnings. It can email you when a good day is coming.",
+      "how_to_use": "Ask \"is it a good boat day this week?\". Change the location and thresholds in the script.",
+      "requires": "Free APIs, no keys. Set up for Perth (Two Rocks), so change the coordinates for your area.",
+      "tags": [],
+      "link": "",
+      "created": "2026-10-14T04:00:05+08:00",
+      "updated": "2026-10-14T04:00:05+08:00",
+      "version": 1,
+      "useful": 2,
+      "files": [
+        "SKILL.md"
+      ],
+      "skill_name": "boat-day",
+      "zip": "items/boat-day/boat-day.zip",
+      "install_prompt": "Please install the Claude Code skill \"Boat Day: is it a good morning for the boat?\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/boat-day/boat-day.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/boat-day/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "gmail",

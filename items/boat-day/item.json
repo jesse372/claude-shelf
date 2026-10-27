@@ -1,0 +1,20 @@
+{
+  "slug": "boat-day",
+  "title": "Boat Day: is it a good morning for the boat?",
+  "emoji": "🚤",
+  "type": "skill",
+  "summary": "Grades the next 7 mornings as GREAT/GOOD/MARGINAL/NO for boating, using two weather models for wind and gusts, swell and chop, plus Bureau of Meteorology coastal warnings. It can email you when a good day is coming.",
+  "how_to_use": "Ask \"is it a good boat day this week?\". Change the location and thresholds in the script.",
+  "requires": "Free APIs, no keys. Set up for Perth (Two Rocks), so change the coordinates for your area.",
+  "tags": [],
+  "link": "",
+  "created": "2026-10-14T04:00:05+08:00",
+  "updated": "2026-10-14T04:00:05+08:00",
+  "version": 1,
+  "useful": 2,
+  "files": [
+    "SKILL.md"
+  ],
+  "skill_name": "boat-day",
+  "zip": "items/boat-day/boat-day.zip"
+}
