@@ -1,0 +1,24 @@
+{
+  "slug": "voice",
+  "title": "Voice: Claude talks and listens",
+  "emoji": "🗣️",
+  "type": "skill",
+  "summary": "Free text-to-speech with natural Microsoft neural voices (falls back to the Mac's built-in voice offline), plus offline transcription of voice notes and recordings with Whisper.",
+  "how_to_use": "Say \"read it to me\", \"say that out loud\", or \"transcribe this voice note\".",
+  "requires": "macOS. pip install edge-tts for the good voices; whisper.cpp or openai-whisper for transcription.",
+  "tags": [],
+  "link": "",
+  "created": "2026-06-29T05:08:07+08:00",
+  "updated": "2026-06-29T05:08:07+08:00",
+  "version": 1,
+  "useful": 4,
+  "files": [
+    "SKILL.md",
+    "scripts/dictate.sh",
+    "scripts/speak.sh",
+    "scripts/transcribe.sh",
+    "scripts/voices.sh"
+  ],
+  "skill_name": "voice",
+  "zip": "items/voice/voice.zip"
+}
