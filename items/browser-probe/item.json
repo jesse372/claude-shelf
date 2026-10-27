@@ -4,17 +4,14 @@
   "emoji": "🔍",
   "type": "skill",
   "summary": "Claude drives a real headless Chrome so it can screenshot every screen of your web app, catch JavaScript errors, and spot bugs that only show up on screen. No Playwright or Puppeteer needed.",
-  "how_to_use": "Install it, then ask Claude: \"test the UI\", \"screenshot every screen at phone size\" or \"it looks wrong but the data is fine, find out why\".",
+  "how_to_use": "Ask Claude: \"test the UI\", \"screenshot every screen at phone size\" or \"it looks wrong but the data is fine, find out why\".",
   "requires": "Google Chrome and Node 22 or newer.",
-  "tags": [
-    "testing",
-    "web",
-    "qa"
-  ],
+  "tags": [],
   "link": "",
-  "created": "2026-10-27T16:14:07+00:00",
-  "updated": "2026-10-27T16:14:07+00:00",
+  "created": "2026-09-11T04:00:00+08:00",
+  "updated": "2026-09-11T04:00:00+08:00",
   "version": 1,
+  "useful": 4,
   "files": [
     "SKILL.md",
     "scripts/cdp.mjs",
