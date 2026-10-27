@@ -1,0 +1,26 @@
+{
+  "slug": "square",
+  "title": "Square catalogue sync",
+  "emoji": "🟦",
+  "type": "skill",
+  "summary": "Keeps your Square booking prices in sync with your website: reads both, shows the differences, and pushes changes only when you confirm.",
+  "how_to_use": "Ask \"do the site and Square prices match?\" or \"raise the price of X to $Y\".",
+  "requires": "A Square account and your own access token.",
+  "tags": [],
+  "link": "",
+  "created": "2026-09-19T04:00:02+08:00",
+  "updated": "2026-09-19T04:00:02+08:00",
+  "version": 1,
+  "useful": 2,
+  "files": [
+    "SETUP.md",
+    "SKILL.md",
+    "plans/luxe-rebuild-20260918-095542.json",
+    "scripts/apply_rebuild.py",
+    "scripts/square.sh",
+    "scripts/squarecat.py",
+    "scripts/test_squarecat.py"
+  ],
+  "skill_name": "square",
+  "zip": "items/square/square.zip"
+}
