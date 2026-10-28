@@ -89,5 +89,63 @@ CALLS.clear()
 rc=M.cmd_apply(c)
 check("returns nonzero + no calls", rc==1 and len(CALLS)==0, (rc,CALLS))
 
+print("\n[8] leads are not double-counted across Meta's overlapping action types")
+acts=lambda **kv: {"actions":[{"action_type":k.replace("__","."),"value":str(v)} for k,v in kv.items()]}
+check("lead rollup + its pixel twin = 4, not 8",
+      M._lead_count(acts(lead=4, offsite_conversion__fb_pixel_lead=4))==4)
+check("no rollup: pixel + onsite are disjoint = 5",
+      M._lead_count(acts(offsite_conversion__fb_pixel_lead=3, onsite_conversion__lead_grouped=2))==5)
+check("registration twins counted once = 2",
+      M._lead_count(acts(complete_registration=2, offsite_conversion__fb_pixel_complete_registration=2))==2)
+check("unrelated actions ignored", M._lead_count(acts(link_click=40, lead=1))==1)
+
+print("\n[9] weekly verdicts")
+R=lambda spend,leads,freq=1.0,name="x": {"name":name,"campaign":"C","spend":spend,"leads":leads,
+      "clicks":0,"freq":freq,"cpl":spend/leads if leads else None}
+wk={"a":R(600,10,name="ok"), "b":R(200,0,name="dud"), "c":R(100,8,name="star"),
+    "d":R(200,1,name="pricey"), "e":R(60,2,freq=4.2,name="tired"), "f":R(500,0,name="paused")}
+b,vs=M.verdicts(wk, active_ids={"a","b","c","d","e"})
+got={(v,r["name"]) for v,r,_ in vs}
+check("blended CPL = 1660/21", abs(b-1660/21)<1e-9, b)
+check("0-lead big spender -> KILL", ("KILL","dud") in got, got)
+check("2x+ average CPL -> KILL", ("KILL","pricey") in got, got)
+check("cheap leads, 3+ -> SCALE", ("SCALE","star") in got, got)
+check("high frequency -> TIRED", ("TIRED","tired") in got, got)
+check("paused ads never judged", not any(n=="paused" for _,n in got), got)
+check("average ad left alone", not any(n=="ok" for _,n in got), got)
+check("KILLs listed first", vs[0][0]=="KILL", [v for v,_,_ in vs])
+_,small=M.verdicts({"s":R(30,0,name="small"),"a":R(300,10)}, {"s","a"})
+check("pocket-change spend not killed", not small, small)
+
+print("\n[10] ad account auto-detected when the token sees exactly one")
+saved_api, saved_acct = M.api_all, os.environ.pop("META_AD_ACCOUNT")
+M.api_all=lambda p,params=None,limit_pages=25: [{"id":"act_555","name":"Only"}]
+check("single account used", M.account_id()=="act_555")
+os.environ.pop("META_AD_ACCOUNT")
+M.api_all=lambda p,params=None,limit_pages=25: [{"id":"act_1"},{"id":"act_2"}]
+try: M.account_id(); check("ambiguous -> error", False)
+except M.MetaError as e: check("ambiguous -> error naming both", "act_1" in str(e) and "act_2" in str(e), e)
+M.api_all=saved_api; os.environ["META_AD_ACCOUNT"]=saved_acct
+
+print("\n[11] weekly end to end (fake Meta) + not-connected exit code")
+import io, contextlib
+def fake_all(path, params=None, limit_pages=25):
+    if path.endswith("/ads"): return [{"id":"1","effective_status":"ACTIVE"},{"id":"2","effective_status":"ACTIVE"}]
+    if path.endswith("/insights"):
+        return [{"ad_id":"1","ad_name":"Gold sale reel","campaign_name":"Sale","spend":"240","frequency":"1.8",
+                 "actions":[{"action_type":"lead","value":"6"},{"action_type":"offsite_conversion.fb_pixel_lead","value":"6"}]},
+                {"ad_id":"2","ad_name":"Old carousel","campaign_name":"Sale","spend":"180","frequency":"2.0","actions":[]}]
+    return []
+M.api_all=fake_all
+buf=io.StringIO()
+with contextlib.redirect_stdout(buf): rc=M.cmd_weekly(None)
+out=buf.getvalue()
+check("weekly rc 0", rc==0, rc)
+check("subject line has spend/leads/CPL", out.splitlines()[0].endswith("$420 spent, 6 leads, $70/lead"), out.splitlines()[0])
+check("dud carousel flagged Turn off", "Turn off: Old carousel" in out, out)
+tok=os.environ.pop("META_ACCESS_TOKEN")
+check("no token -> NOT_CONNECTED", M.cmd_weekly(None)==M.NOT_CONNECTED)
+os.environ["META_ACCESS_TOKEN"]=tok; M.api_all=saved_api
+
 print("\n"+("ALL PASSED" if not fails else f"{len(fails)} FAILURE(S): {fails}"))
 sys.exit(1 if fails else 0)

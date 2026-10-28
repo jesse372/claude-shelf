@@ -47,6 +47,7 @@ ads.sh report                          # last 7d by campaign
 ads.sh report --level ad --days 30     # last 30 complete days, per ad
 ads.sh report --level adset --preset last_14d
 ads.sh report --since 2026-08-01 --until 2026-08-31
+ads.sh weekly                          # last 7d vs prior 7d + Turn off / Scale / Freshen verdicts
 ```
 
 `report` shows spend, impressions, clicks, CTR, CPC, leads and **cost per lead** —
@@ -99,3 +100,10 @@ audit trail of what changed and when.
 `python3 scripts/test_metaads.py` — stubs the API and asserts the safety properties:
 money conversion is exact, planning issues no writes, `apply` without `--confirm` is inert,
 duplicates default to PAUSED, plan ids never collide, applied plans don't re-run.
+
+## Weekly email
+
+`~/JesseOS/workspace/loops/meta-ads-weekly` emails `ads.sh weekly` to Jesse every Monday 07:41
+(read-only; rules in its `contract.md`). Until a token exists it sends a setup nudge at most
+every 28 days. Lead counts take each Meta action family once (`lead` already includes
+`offsite_conversion.fb_pixel_lead`), so CPL isn't halved by double counting.

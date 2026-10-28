@@ -105,10 +105,18 @@ def api_all(path, params=None, limit_pages=25):
 def account_id():
     a = os.environ.get("META_AD_ACCOUNT", "").strip()
     if not a:
-        raise MetaError(
-            "No ad account set. Run `ads.sh accounts` to list yours, then:\n"
-            "  security add-generic-password -s meta-ads -a account -w 'act_YOUR_AD_ACCOUNT_ID'"
-        )
+        # No account pinned: if the token can see exactly one ad account, that's the one.
+        # Only an ambiguous token (several accounts) needs the Keychain entry.
+        rows = api_all("/me/adaccounts", {"fields": "id,name"})
+        if len(rows) == 1:
+            a = rows[0]["id"]
+            os.environ["META_AD_ACCOUNT"] = a
+        else:
+            seen = ", ".join(f"{r.get('id')} ({r.get('name')})" for r in rows) or "none"
+            raise MetaError(
+                f"No ad account set and the token sees {len(rows)} ({seen}). Pick one:\n"
+                "  security add-generic-password -s meta-ads -a account -w 'act_YOUR_AD_ACCOUNT_ID'"
+            )
     return a if a.startswith("act_") else "act_" + a
 
 
@@ -257,14 +265,24 @@ LEAD_ACTIONS = {"lead", "offsite_conversion.fb_pixel_lead", "onsite_conversion.l
 
 
 def _lead_count(row):
-    total = 0.0
+    # Meta reports the same conversion under several overlapping action types: `lead` is the
+    # rollup of pixel leads (offsite_conversion.fb_pixel_lead) + on-Facebook leads
+    # (onsite_conversion.lead_grouped), and complete_registration rolls up its pixel twin.
+    # Summing every type double-counts and halves CPL, so take each family once.
+    v = {}
     for a in row.get("actions") or []:
-        if a.get("action_type") in LEAD_ACTIONS:
+        t = a.get("action_type")
+        if t in LEAD_ACTIONS:
             try:
-                total += float(a.get("value", 0))
+                v[t] = v.get(t, 0.0) + float(a.get("value", 0))
             except (TypeError, ValueError):
                 pass
-    return total
+    leads = v["lead"] if "lead" in v else (
+        v.get("offsite_conversion.fb_pixel_lead", 0.0) + v.get("onsite_conversion.lead_grouped", 0.0))
+    regs = max(v.get("complete_registration", 0.0),
+               v.get("offsite_conversion.fb_pixel_complete_registration", 0.0))
+    return (leads + regs + v.get("submit_application", 0.0)
+            + v.get("onsite_conversion.messaging_conversation_started_7d", 0.0))
 
 
 def cmd_report(args):
@@ -324,6 +342,108 @@ def cmd_report(args):
         print("\nNote: 0 leads attributed. If the site does fire a Lead event, the pixel/CAPI mapping")
         print("      is likely the problem rather than the ads. Worth checking before judging CPL.")
     print()
+    return 0
+
+
+# ---------------------------------------------------------------- weekly verdicts
+NOT_CONNECTED = 3          # exit code: no token yet -> the weekly loop sends the setup nudge
+MIN_JUDGE_SPEND = 50.0     # don't call an ad a loser on pocket change
+FATIGUE_FREQ = 3.5         # same people seeing it 3.5x a week = creative is tiring
+
+
+def _week_rows(acct, since, until):
+    rows = api_all(f"/{acct}/insights", {
+        "level": "ad",
+        "fields": "ad_id,ad_name,campaign_name,spend,impressions,clicks,frequency,actions",
+        "time_range": json.dumps({"since": str(since), "until": str(until)}),
+        "limit": 500,
+    })
+    out = {}
+    for r in rows:
+        spend = float(r.get("spend") or 0)
+        leads = _lead_count(r)
+        out[r.get("ad_id")] = {
+            "name": r.get("ad_name", "(unnamed)"), "campaign": r.get("campaign_name", ""),
+            "spend": spend, "leads": leads, "clicks": int(float(r.get("clicks") or 0)),
+            "freq": float(r.get("frequency") or 0), "cpl": spend / leads if leads else None,
+        }
+    return out
+
+
+def verdicts(this_week, active_ids):
+    """Pure: ad rows for the week -> (blended CPL or None, [(verdict, row, why)])."""
+    ts = sum(r["spend"] for r in this_week.values())
+    tl = sum(r["leads"] for r in this_week.values())
+    b = ts / tl if tl else None
+    out = []
+    for aid, r in this_week.items():
+        if aid not in active_ids or r["spend"] <= 0:
+            continue
+        if b is not None and r["leads"] == 0 and r["spend"] >= max(2 * b, MIN_JUDGE_SPEND):
+            out.append(("KILL", r, f"spent ${r['spend']:,.0f} (2x+ your average cost per lead) for 0 leads"))
+        elif b is not None and r["cpl"] and r["spend"] >= MIN_JUDGE_SPEND and r["cpl"] >= 2 * b:
+            out.append(("KILL", r, f"${r['cpl']:,.0f}/lead vs your ${b:,.0f} average"))
+        elif b is not None and r["leads"] >= 3 and r["cpl"] <= 0.7 * b:
+            out.append(("SCALE", r, f"${r['cpl']:,.0f}/lead vs your ${b:,.0f} average, {r['leads']:.0f} leads"))
+        if r["freq"] >= FATIGUE_FREQ:
+            out.append(("TIRED", r, f"each person saw it {r['freq']:.1f}x this week, freshen the creative"))
+    order = {"KILL": 0, "SCALE": 1, "TIRED": 2}
+    out.sort(key=lambda x: (order[x[0]], -x[1]["spend"]))
+    return b, out
+
+
+def cmd_weekly(args):
+    """Last 7 complete days vs the 7 before. Line 1 = email subject, rest = body."""
+    try:
+        _token()
+    except MetaError:
+        return NOT_CONNECTED
+    acct = account_id()
+    cur = account_currency(acct).get("currency", "")
+    until = datetime.date.today() - datetime.timedelta(days=1)
+    since = until - datetime.timedelta(days=6)
+    now, prev = _week_rows(acct, since, until), _week_rows(acct, since - datetime.timedelta(days=7),
+                                                          since - datetime.timedelta(days=1))
+    active = {a["id"] for a in api_all(f"/{acct}/ads", {"fields": "id,effective_status"})
+              if a.get("effective_status") == "ACTIVE"}
+
+    def tot(w):
+        s, l = sum(r["spend"] for r in w.values()), sum(r["leads"] for r in w.values())
+        return s, l, (s / l if l else None)
+    s1, l1, c1 = tot(now)
+    s0, l0, c0 = tot(prev)
+    money = lambda x: f"${x:,.0f}" if x is not None else "n/a"
+
+    print(f"Facebook ads {since:%d %b}-{until:%d %b}: {money(s1)} spent, {l1:.0f} leads, {money(c1)}/lead")
+    print(f"Week {since:%a %d %b} to {until:%a %d %b} ({cur})\n")
+    print(f"  Spent:          {money(s1):>8}   (week before {money(s0)})")
+    print(f"  Leads:          {l1:>8.0f}   (week before {l0:.0f})")
+    print(f"  Cost per lead:  {money(c1):>8}   (week before {money(c0)})\n")
+
+    if s1 == 0:
+        print("Nothing ran this week. If that's not on purpose, the ads are off or the card failed.")
+        return 0
+    if l1 == 0:
+        print("Money was spent but ZERO leads were recorded. That's usually broken tracking (the")
+        print("thank-you page Lead event), not dead ads. Ask Claude to check it before judging any ad.")
+        return 0
+
+    b, vs = verdicts(now, active)
+    if not vs:
+        print("No action needed: no ad is clearly winning, losing, or worn out.")
+    else:
+        print("WHAT TO DO\n")
+        label = {"KILL": "Turn off", "SCALE": "Give more budget", "TIRED": "Freshen"}
+        for v, r, why in vs:
+            print(f"  {label[v]}: {r['name']}  [{r['campaign']}]")
+            print(f"      {why}")
+        print("\nReply to Claude with e.g. 'pause the losers' - it prepares the change and nothing")
+        print("touches Meta until you confirm.")
+
+    print("\nALL ACTIVE ADS THIS WEEK\n")
+    for r in sorted(now.values(), key=lambda r: -r["spend"]):
+        if r["spend"] > 0:
+            print(f"  {money(r['spend']):>7}  {r['leads']:>3.0f} leads  {money(r['cpl']):>6}/lead  {r['name'][:60]}")
     return 0
 
 
@@ -531,6 +651,8 @@ def main():
     p.add_argument("--days", type=int, help="last N complete days (ending yesterday)")
     p.add_argument("--since"); p.add_argument("--until")
 
+    sub.add_parser("weekly", help="last week's kill/scale/tired verdicts (line 1 = email subject)")
+
     p = sub.add_parser("duplicate", help="PLAN a duplicate of a campaign/adset/ad")
     p.add_argument("id")
     p.add_argument("--count", type=int, default=1)
@@ -565,6 +687,7 @@ def main():
             args.level = {"campaigns": "campaign", "adsets": "adset", "ads": "ad"}[args.level]
             return cmd_list(args)
         if args.cmd == "report":    return cmd_report(args)
+        if args.cmd == "weekly":    return cmd_weekly(args)
         if args.cmd == "duplicate": return cmd_duplicate(args)
         if args.cmd == "edit":      return cmd_edit(args)
         if args.cmd in ("pause", "resume"): return cmd_setstatus(args, args._status)

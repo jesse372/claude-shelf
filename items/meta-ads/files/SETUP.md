@@ -38,16 +38,17 @@ Do these steps yourself; they need a logged-in browser and cannot be done headle
    - `business_management` — resolve the account
 4. Generate, then **copy the token** (it is shown once).
 
-## 4. Find your ad account id
+## 4. Find your ad account id (usually skip)
 
-Open <https://adsmanager.facebook.com>. The URL contains `act=XXXXXXXXXXXX`.
+If the token can see exactly one ad account, it is picked up automatically and you
+can skip this and the second line of step 5. Otherwise: open <https://adsmanager.facebook.com>. The URL contains `act=XXXXXXXXXXXX`.
 Your id is that number prefixed with `act_`, e.g. `act_YOUR_AD_ACCOUNT_ID`.
 
 ## 5. Store both on this machine
 
 ```bash
 security add-generic-password -s meta-ads -a token   -w 'PASTE_TOKEN_HERE'
-security add-generic-password -s meta-ads -a account -w 'act_YOUR_AD_ACCOUNT_ID'
+security add-generic-password -s meta-ads -a account -w 'act_YOUR_AD_ACCOUNT_ID'   # only if step 4 applied
 ```
 
 These go in the macOS Keychain and are read by the shared `authlib.sh` accessor,
