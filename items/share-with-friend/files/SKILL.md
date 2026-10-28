@@ -86,6 +86,27 @@ wedding-jobs test.js with a real client's details), browser profiles (gsc/), vid
 strictly-ornate jersey concepts (client work), and **cartoon-studio** (held: it names Jesse's kids;
 post only if Jesse says yes). Rebuild the starter kit with `scripts/recipes/jesseos-starter.sh /tmp/x`.
 
+## Keeping items up to date (many are still being worked on)
+Every published item remembers its source in `sources.json` (private, never published).
+- **Nightly, 3:15am:** LaunchAgent `com.jesse.shelf-sync` runs `scripts/sync-nightly.sh`, which runs
+  `shelf.py sync`. It re-copies each source through the same scanner. If the shareable files changed, it
+  republishes the item: new files and zip, version +1, "Updated" badge, moves up in Most recent.
+  Log: `~/.claude/logs/shelf-sync.log`. Last result: `logs/shelf-sync.last.json`.
+- **Safety:** if a change brings in a blocked item (secret, phone number, client name) or a NEW
+  photo/video, that item is NOT updated. Jesse gets a desktop + phone (ntfy) alert, throttled to once
+  every 3 days for the same problem. Fix the source (or publish it by hand after checking), then sync again.
+- **Folder permission:** macOS blocks background jobs from `~/Documents` (anotherlife, wedding-jobs,
+  instagram-to-gbp live there). The nightly job skips them and sends one alert every 14 days. They update when an
+  agent runs `shelf.py sync` in a normal session. Permanent fix (Jesse, once): System Settings →
+  Privacy & Security → Full Disk Access → add `/bin/bash`.
+- **Dead-man's switch:** each completed run writes `~/.qc-heartbeats/shelf-sync` (3-day limit).
+  `com.jesse.qc-heartbeat-watchdog` (every 6h, now also sends to ntfy) alerts if the sync stops running.
+- **Card text doesn't auto-update.** When you change what a shelf item *does*, also run
+  `shelf.py edit <slug> --summary "..."` (and `--how-to-use`, `--requires`) so the card stays accurate,
+  then `shelf.py sync <slug>` to push the files now instead of waiting for tonight.
+- New items are tracked automatically by `publish` (`--prebuild CMD` for assembled ones like the
+  starter kit, `--no-track` to opt out). `remove` stops tracking.
+
 ## If the scan blocks
 Don't work around it. Remove or parameterise the secret (read it from an env var), or move the
 private file out of the source folder, then re-run. If a block is a false positive, change the
