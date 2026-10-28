@@ -54,8 +54,9 @@ else
     || log "codex CLI not installed"
 fi
 
-# Omnara — never interrupt an active session
-if $CHECK; then log "omnara: $($HOME/.omnara/bin/omnara --version 2>/dev/null || echo '?')"; else
+# Omnara — never interrupt an active session (skipped once retired; service ends 2026-11-10)
+if [ ! -x "$HOME/.omnara/bin/omnara" ]; then log "omnara: retired — skipped"
+elif $CHECK; then log "omnara: $($HOME/.omnara/bin/omnara --version 2>/dev/null || echo '?')"; else
   if pgrep -f "omnara daemon run-session" >/dev/null 2>&1; then log "omnara: active session — skipped"
   else log "omnara: self-updates via app/daemon"; fi
 fi

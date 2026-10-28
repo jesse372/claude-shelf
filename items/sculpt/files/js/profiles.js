@@ -237,7 +237,24 @@ export function learnedTone(id, thumb, seg = null, photo = null) {
         return [median(Ls), median(As), median(Bs)];
       };
       const tgt = L.skin.target;
-      for (let rep = 0; rep < (L.skin.wb ? 3 : 1); rep++) {
+      // 'shade' mode (Jesse 2026-10-28, two review photos "a bit dark": people in open shade, sunlit background):
+      // only anchor to skin when the faces sit well below the rest of the frame, and only if that BRIGHTENS -
+      // never darker than the regression's guess. Tested on 558 pairs: dark misses 24% -> 20% (tools/colour/eval_shade.py).
+      let anchor = true;
+      const regression = { ...out };
+      if (L.skin.mode === 'shade') {
+        const tt = out.temp / 100, ti = out.tint / 100;
+        let gr = Math.exp(0.32 * tt), gg = Math.exp(-0.22 * ti), gb = Math.exp(-0.32 * tt);
+        const lum = 0.2126 * gr + 0.7152 * gg + 0.0722 * gb, k = 2 ** (out.exposure / 100 * 2.5) / lum;
+        gr *= k; gg *= k; gb *= k;
+        const fr = [], d = thumb.data, step = Math.max(1, Math.floor(d.length / 4 / 4000));
+        for (let i = 0; i < d.length; i += 4 * step) {
+          const o = grade(finishK(toLin(d[i] / 255) * gr, knee), finishK(toLin(d[i + 1] / 255) * gg, knee), finishK(toLin(d[i + 2] / 255) * gb, knee));
+          fr.push(labOf(o[0], o[1], o[2])[0]);
+        }
+        anchor = statsAt(out)[0] - median(fr) < -(L.skin.gap || 15);
+      }
+      for (let rep = 0; anchor && rep < (L.skin.wb ? 3 : 1); rep++) {
         let lo = lim.exposure[0], hi = lim.exposure[1];
         for (let it = 0; it < 16; it++) { const m = (lo + hi) / 2; if (statsAt({ ...out, exposure: m })[0] < tgt[0]) lo = m; else hi = m; }
         out.exposure = (lo + hi) / 2;
@@ -249,6 +266,7 @@ export function learnedTone(id, thumb, seg = null, photo = null) {
           }
         }
       }
+      if (L.skin.mode === 'shade' && out.exposure < regression.exposure) Object.assign(out, regression);   // never darker
     }
   }
   for (const k in out) out[k] = Math.round(out[k]);

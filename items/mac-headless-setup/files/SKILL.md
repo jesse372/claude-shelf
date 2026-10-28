@@ -220,3 +220,15 @@ launchctl getenv PATH  # should include ~/node-current/bin (may not work for dae
 cat ~/.app-autoupdate/status.json | jq '.lastCheck, .apps[] | select(.updateAvailable == true)'
 # lastCheck should be recent; no apps with updateAvailable:true (if all up-to-date)
 ```
+
+## Remote access: Claude Code Remote Control (replaces Omnara, which shuts down 2026-11-10)
+- `com.jesse.claude-remote` (LaunchAgent, every 5 min) runs `~/JesseOS/workspace/claude-remote/keepalive.sh`,
+  which keeps `claude-remote.command` running **inside Terminal** in `~/Documents/Claude`
+  (`claude remote-control --permission-mode bypassPermissions --spawn same-dir`). Use it from the Claude app's Code tab or claude.ai/code.
+- **Why Terminal:** launchd jobs hang when they touch `~/Documents` (TCC), even with claude.exe launched directly.
+  Terminal holds the Documents grant, so anything started inside it inherits access.
+- One-time consent: the first run asks "Enable Remote Control? (y/n)" and hangs silently with no terminal attached.
+  It's already accepted (`remoteDialogSeen` in ~/.claude.json).
+- Health: logs/claude-remote.log, screen capture logs/claude-remote.screen ("Connected"), heartbeat
+  ~/.qc-heartbeats/claude-remote (1h limit, watched by com.jesse.qc-heartbeat-watchdog). It alerts by ntfy if it
+  can't restart after about 10 minutes or if it needs you to log in again.

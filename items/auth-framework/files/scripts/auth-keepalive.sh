@@ -189,6 +189,11 @@ PY
 t_omnara(){
   # Omnara daemon holds this machine's session. There's no single expiry file to read, so PROBE
   # that the daemon is alive (the thing that actually matters) and alert only if it's down.
+  # Omnara shuts down 2026-11-10; replaced by Claude Code Remote Control (~/JesseOS/workspace/claude-remote,
+  # watched by its own keepalive.sh). Once Omnara's LaunchAgent is gone, skip instead of alerting.
+  if [ ! -f "$HOME/Library/LaunchAgents/com.omnara.daemon.plist" ]; then
+    row omnara OK "retired" "Omnara retired; Claude Remote Control replaces it"; return
+  fi
   local pid
   pid=$(launchctl list 2>/dev/null | awk '/com\.omnara\.daemon/{print $1}')
   if [ -n "$pid" ] && [ "$pid" != "-" ]; then

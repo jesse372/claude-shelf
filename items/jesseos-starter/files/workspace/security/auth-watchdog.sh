@@ -12,8 +12,9 @@ if security find-generic-password -s "Claude Code-credentials" -a "$USER" -w >/d
 # Codex (auth file)
 if [ -f "$HOME/.codex/auth.json" ] || codex login status >/dev/null 2>&1; then
   codex_ok=true; else codex_ok=false; problems+=("Codex: sign in"); fi
-# Omnara (PAT)
-if "$HOME/.omnara/bin/omnara" auth status 2>/dev/null | grep -qi "stored\|PAT"; then
+# Omnara (PAT) — skipped once Omnara is retired (service ends 2026-11-10; Claude Remote Control replaces it)
+if [ ! -f "$HOME/Library/LaunchAgents/com.omnara.daemon.plist" ]; then omnara_ok='"retired"'
+elif "$HOME/.omnara/bin/omnara" auth status 2>/dev/null | grep -qi "stored\|PAT"; then
   omnara_ok=true; else omnara_ok=false; problems+=("Omnara: omnara auth login"); fi
 # GitHub (gh CLI token — powers nightly off-machine backup)
 if command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then

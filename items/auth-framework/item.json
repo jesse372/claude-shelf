@@ -9,13 +9,14 @@
   "tags": [],
   "link": "",
   "created": "2026-06-29T02:07:26+08:00",
-  "updated": "2026-10-02T04:00:03+08:00",
-  "version": 1,
+  "updated": "2026-10-28T19:15:03+00:00",
+  "version": 2,
   "useful": 3,
   "files": [
     "SKILL.md",
     "com.jesse.auth-keepalive.plist",
     "scripts/auth-keepalive.sh",
+    "scripts/auth-keepalive.sh.bak-omnara-20261028",
     "scripts/authlib.sh"
   ],
   "skill_name": "auth-framework",
