@@ -62,7 +62,8 @@ Anything new and reusable you built (skill, tool, script, site, prompt) goes on 
 site for his friend. Use the `share-with-friend` skill:
 `~/.claude/skills/share-with-friend/scripts/shelf.py publish --source <path> --title ... --summary ...`
 Write the card text for the friend, not for Jesse. Skip anything tied to private accounts or client data,
-and say so in the final report. Include the card link in the final report.
+and say so in the final report. Include the card link in the final report. If the work changed something already on the shelf, run
+`shelf.py sync <slug>` and refresh its card text with `shelf.py edit` if what it does changed.
 
 ### 7. Record to long-term memory
 Capture the final architecture, key decisions, and gotchas (schedules, file paths,

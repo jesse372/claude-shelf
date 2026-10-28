@@ -1,8 +1,32 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-10-28T00:36:23+00:00",
+  "updated": "2026-10-28T00:36:46+00:00",
   "items": [
+    {
+      "slug": "wrap-up",
+      "title": "Project Wrap-Up Checklist",
+      "emoji": "✅",
+      "type": "skill",
+      "summary": "Before Claude calls anything 'done', it checks for things that will break silently later (expired logins, jobs that stopped running, untested cron paths), hardens them, saves reusable skills and writes notes to memory.",
+      "how_to_use": "Say \"wrap up\" or \"is this done?\" at the end of any project. You can also run scripts/audit.sh for a quick inventory.",
+      "requires": "Claude Code. Most useful on macOS with LaunchAgents/cron jobs.",
+      "tags": [],
+      "link": "",
+      "created": "2026-06-29T02:07:26+08:00",
+      "updated": "2026-10-28T00:36:46+00:00",
+      "version": 2,
+      "useful": 2,
+      "files": [
+        "SKILL.md",
+        "WRAP-UP-PROTOCOL.md",
+        "scripts/audit.sh",
+        "scripts/nightly_audit.py"
+      ],
+      "skill_name": "wrap-up",
+      "zip": "items/wrap-up/wrap-up.zip",
+      "install_prompt": "Please install the Claude Code skill \"Project Wrap-Up Checklist\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/wrap-up/wrap-up.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/wrap-up/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+    },
     {
       "slug": "share-with-friend",
       "title": "Claude Shelf",
@@ -1042,30 +1066,6 @@
       "skill_name": "web-essentials",
       "zip": "items/web-essentials/web-essentials.zip",
       "install_prompt": "Please install the Claude Code skill \"Website Icons\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/web-essentials/web-essentials.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/web-essentials/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
-    },
-    {
-      "slug": "wrap-up",
-      "title": "Project Wrap-Up Checklist",
-      "emoji": "✅",
-      "type": "skill",
-      "summary": "Before Claude calls anything 'done', it checks for things that will break silently later (expired logins, jobs that stopped running, untested cron paths), hardens them, saves reusable skills and writes notes to memory.",
-      "how_to_use": "Say \"wrap up\" or \"is this done?\" at the end of any project. You can also run scripts/audit.sh for a quick inventory.",
-      "requires": "Claude Code. Most useful on macOS with LaunchAgents/cron jobs.",
-      "tags": [],
-      "link": "",
-      "created": "2026-06-29T02:07:26+08:00",
-      "updated": "2026-06-29T02:07:26+08:00",
-      "version": 1,
-      "useful": 2,
-      "files": [
-        "SKILL.md",
-        "WRAP-UP-PROTOCOL.md",
-        "scripts/audit.sh",
-        "scripts/nightly_audit.py"
-      ],
-      "skill_name": "wrap-up",
-      "zip": "items/wrap-up/wrap-up.zip",
-      "install_prompt": "Please install the Claude Code skill \"Project Wrap-Up Checklist\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/wrap-up/wrap-up.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/wrap-up/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "jesseos-starter",
