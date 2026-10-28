@@ -13,7 +13,9 @@ Commands:
                      [--tags a,b] [--useful 1-5] [--exclude GLOB]... [--created ISO] [--updated ISO]
                      [--dry-run] [--no-push]
     shelf.py scan PATH            run only the secret/privacy scan
+    shelf.py edit SLUG [--title T] [--summary S] [--useful 1-5] ...   card text only (no version bump)
     shelf.py rate SLUG 1-5        set how useful it is (drives the "Most useful" sort)
+    shelf.py sync [SLUG...] [--dry-run]   republish anything whose source changed (nightly LaunchAgent)
     shelf.py list
     shelf.py remove SLUG
     shelf.py rebuild              regenerate index/items/feed from item.json files, then push
@@ -31,6 +33,11 @@ REPO_DIR = Path(os.path.expanduser(CFG["repo_dir"]))
 SITE_URL = CFG["site_url"].rstrip("/") + "/"
 REPO_URL = CFG["repo_url"].rstrip("/")
 TYPES = ["skill", "tool", "website", "prompt", "script", "other"]
+SOURCES = SKILL / "sources.json"        # PRIVATE: slug -> where it came from, for `sync`. Never published.
+_TEST = os.environ.get("SHELF_TEST")            # sandbox runs: no alerts, state kept out of the real paths
+SYNC_STATE = Path(_TEST or Path.home() / "JesseOS/workspace/logs") / "shelf-sync.last.json"
+HEARTBEAT = Path(_TEST or Path.home() / ".qc-heartbeats") / "shelf-sync"
+NTFY_TOPIC_FILE = Path.home() / "JesseOS/workspace/watchdog/ntfy-topic.txt"
 
 SKIP_DIRS = {".git", "node_modules", "__pycache__", ".venv", "venv", "env", "logs", "log", "state",
              ".cache", ".pytest_cache", ".mypy_cache", ".next", ".wrangler", ".idea", ".vscode",
@@ -119,8 +126,11 @@ def excluded(rel, patterns):
 
 def git_files(src):
     """Tracked + untracked-but-not-ignored files when src is inside a git work tree, else None."""
-    r = subprocess.run(["git", "-C", str(src), "ls-files", "-co", "--exclude-standard", "-z", "--", "."],
-                       capture_output=True, text=True)
+    try:
+        r = subprocess.run(["git", "-C", str(src), "ls-files", "-co", "--exclude-standard", "-z", "--", "."],
+                           capture_output=True, text=True, timeout=120)
+    except subprocess.TimeoutExpired:
+        raise RuntimeError(f"git ls-files timed out in {src}")
     if r.returncode:
         return None
     return sorted({f for f in r.stdout.split("\0") if f})
@@ -313,6 +323,72 @@ def install_prompt(it):
     return None
 
 
+def load_sources():
+    return json.loads(SOURCES.read_text()) if SOURCES.exists() else {}
+
+
+def save_source(slug, rec):
+    srcs = load_sources()
+    srcs[slug] = rec
+    SOURCES.write_text(json.dumps(dict(sorted(srcs.items())), indent=2) + "\n")
+
+
+def can_read(path):
+    """macOS privacy (TCC) makes background jobs HANG on ~/Documents, ~/Desktop, ~/Downloads.
+    Probe in a throwaway process with a timeout instead of finding out by freezing."""
+    try:
+        return subprocess.run(["/bin/ls", str(path)], stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+                              stderr=subprocess.DEVNULL, timeout=15).returncode == 0
+    except subprocess.TimeoutExpired:
+        return False
+
+
+def throttled(key, msg, days=7):
+    """True if this alert should fire: new message, or the same one not sent for `days`."""
+    f = SYNC_STATE.with_name("shelf-sync.alerts.json")
+    seen = json.loads(f.read_text()) if f.exists() else {}
+    last = seen.get(key, {})
+    if last.get("msg") == msg and time.time() - last.get("at", 0) < days * 86400:
+        return False
+    seen[key] = {"msg": msg, "at": time.time()}
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_text(json.dumps(seen))
+    return True
+
+
+def same_tree(a, b):
+    """True if dirs a and b hold exactly the same files with the same bytes."""
+    if not b.exists():
+        return False
+    fa = {p.relative_to(a): p for p in a.rglob("*") if p.is_file()}
+    fb = {p.relative_to(b): p for p in b.rglob("*") if p.is_file()}
+    return fa.keys() == fb.keys() and all(fa[k].read_bytes() == fb[k].read_bytes() for k in fa)
+
+
+def tree_diff(a, b):
+    fa = {str(p.relative_to(a)) for p in a.rglob("*") if p.is_file()}
+    fb = {str(p.relative_to(b)) for p in b.rglob("*") if p.is_file()} if b.exists() else set()
+    mod = [k for k in fa & fb if (a / k).read_bytes() != (b / k).read_bytes()]
+    return f"+{len(fa - fb)} new, -{len(fb - fa)} removed, ~{len(mod)} changed"
+
+
+def notify(title, msg):
+    """macOS banner + phone (ntfy, same topic as the site watchdog) + log."""
+    print(f"ALERT {title}: {msg}")
+    if _TEST:
+        return
+    with contextlib.suppress(Exception):
+        # fire-and-forget: osascript can hang with no GUI session, and a captured pipe would hang us with it
+        subprocess.Popen(["osascript", "-e", f'display notification "{msg[:200].replace(chr(34), chr(39))}" with title "{title}"'],
+                         stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+    with contextlib.suppress(Exception):
+        topic = NTFY_TOPIC_FILE.read_text().strip() if NTFY_TOPIC_FILE.exists() else ""
+        if topic:
+            req = urllib.request.Request(f"https://ntfy.sh/{topic}", data=msg[:1000].encode(),
+                                         headers={"Title": title, "Tags": "toolbox"})
+            urllib.request.urlopen(req, timeout=15)
+
+
 @contextlib.contextmanager
 def repo_lock():
     REPO_DIR.mkdir(parents=True, exist_ok=True)
@@ -415,6 +491,10 @@ def cmd_publish(a):
         die(f"--type must be one of {TYPES}")
     slug = slugify(a.slug or (skill_name(src) if t == "skill" and src else a.title))
 
+    if a.prebuild and not a.dry_run:
+        r = subprocess.run(a.prebuild, shell=True, capture_output=True, text=True)
+        if r.returncode:
+            die(f"--prebuild failed:\n{r.stdout}{r.stderr}")
     with repo_lock():
         if not a.dry_run:
             ensure_repo()
@@ -464,6 +544,9 @@ def cmd_publish(a):
                 if t == "prompt" and len(rep["files"]) == 1:
                     it["prompt_text"] = (item_dir / "files" / rep["files"][0]).read_text()
             (item_dir / "item.json").write_text(json.dumps(it, indent=2, ensure_ascii=False))
+            if src and not a.no_track:
+                save_source(slug, {"source": str(src).replace(str(Path.home()), "~", 1), "exclude": a.exclude or [],
+                                   "redact": bool(a.redact), "prebuild": a.prebuild or ""})
 
         build_site()
         commit_push(f"{'Update' if old else 'Publish'}: {a.title}", push=not a.no_push)
@@ -483,6 +566,9 @@ def cmd_remove(a):
         if not d.exists():
             die(f"no item '{a.slug}'")
         shutil.rmtree(d)
+        srcs = load_sources()
+        if srcs.pop(a.slug, None) is not None:
+            SOURCES.write_text(json.dumps(srcs, indent=2) + "\n")
         build_site()
         commit_push(f"Remove: {a.slug}")
     print("note: it stays in the public git history. If it held something sensitive, rotate that secret.")
@@ -499,6 +585,121 @@ def cmd_rate(a):
         f.write_text(json.dumps(it, indent=2, ensure_ascii=False))
         build_site()
         commit_push(f"Rate {a.slug}: {a.score}/5")
+
+
+def cmd_edit(a):
+    """Change card text/rating without touching files, version or dates."""
+    with repo_lock():
+        ensure_repo()
+        f = REPO_DIR / "items" / a.slug / "item.json"
+        if not f.exists():
+            die(f"no item '{a.slug}'")
+        it = json.loads(f.read_text())
+        changes = {k: getattr(a, k) for k in ("title", "summary", "how_to_use", "requires", "emoji", "useful", "link")
+                   if getattr(a, k) is not None}
+        if a.tags is not None:
+            changes["tags"] = [x.strip() for x in a.tags.split(",") if x.strip()]
+        for field in ("title", "summary", "how_to_use", "requires"):
+            if field in changes:
+                b, _ = scan_text(f"--{field}", changes[field], private_terms())
+                if b:
+                    die("blocked: " + "; ".join(b))
+        it.update(changes)
+        f.write_text(json.dumps(it, indent=2, ensure_ascii=False))
+        print(f"edited {a.slug}: {', '.join(changes) or 'nothing'}")
+        if not a.no_push:
+            build_site()
+            commit_push(f"Edit {a.slug}")
+
+
+def cmd_sync(a):
+    """Re-copy every tracked item from its source; republish the ones whose shareable files changed."""
+    srcs = load_sources()
+    changed, blocked, errors, no_access = [], [], [], []
+    with repo_lock():
+        ensure_repo()
+        for slug, rec in srcs.items():
+            if a.slugs and slug not in a.slugs:
+                continue
+            item_dir = REPO_DIR / "items" / slug
+            f = item_dir / "item.json"
+            if not f.exists():
+                print(f"· {slug}: no longer on the shelf, skipping")
+                continue
+            if rec.get("prebuild"):
+                r = subprocess.run(rec["prebuild"], shell=True, capture_output=True, text=True)
+                if r.returncode:
+                    errors.append(f"{slug}: prebuild failed: {(r.stderr or r.stdout).strip()[-200:]}")
+                    continue
+            src = Path(os.path.expanduser(rec["source"]))
+            if not can_read(src):
+                no_access.append(slug)
+                continue
+            if not src.exists():
+                errors.append(f"{slug}: source folder missing ({rec['source']})")
+                continue
+            with tempfile.TemporaryDirectory() as td:
+                staged = Path(td) / "files"
+                try:
+                    rep = stage(src, staged, rec.get("exclude", []), rec.get("redact", False))
+                except (RuntimeError, OSError) as e:
+                    errors.append(f"{slug}: {e}")
+                    continue
+                if not rep["files"]:
+                    errors.append(f"{slug}: nothing to publish from {rec['source']}")
+                    continue
+                if same_tree(staged, item_dir / "files"):
+                    continue
+                diff = tree_diff(staged, item_dir / "files")
+                if rep["blockers"]:
+                    blocked.append(f"{slug}: " + "; ".join(sorted(set(rep["blockers"]))[:3]))
+                    continue
+                print(f"↻ {slug}: {diff}")
+                if rep.get("media"):
+                    new_media = [m for m in rep["media"] if not (item_dir / "files" / m).exists()]
+                    if new_media:
+                        blocked.append(f"{slug}: {len(new_media)} NEW photo/video file(s) need a human look "
+                                       f"(e.g. {new_media[0]}). Publish manually once checked.")
+                        continue
+                if a.dry_run:
+                    changed.append(slug)
+                    continue
+                it = json.loads(f.read_text())
+                shutil.rmtree(item_dir / "files", ignore_errors=True)
+                shutil.copytree(staged, item_dir / "files")
+                make_zip(item_dir / "files", item_dir / f"{slug}.zip", it.get("skill_name") or slug)
+                if it["type"] == "prompt" and len(rep["files"]) == 1:
+                    it["prompt_text"] = (item_dir / "files" / rep["files"][0]).read_text()
+                it.update(files=rep["files"], updated=now_iso(), version=it.get("version", 1) + 1)
+                f.write_text(json.dumps(it, indent=2, ensure_ascii=False))
+                changed.append(slug)
+        if changed and not a.dry_run:
+            build_site()
+            commit_push("Sync: updated " + ", ".join(changed))
+    print(f"sync: {len(changed)} updated{' (dry run)' if a.dry_run else ''}, {len(blocked)} blocked, {len(errors)} errors"
+          + (f", {len(no_access)} skipped (no folder permission)" if no_access else "")
+          + (f": {', '.join(changed)}" if changed else ""))
+    for b in blocked + errors:
+        print(f"  ! {b}")
+    if no_access:
+        print(f"  · no permission to read: {', '.join(no_access)} (they update when an agent runs `shelf.py sync` interactively)")
+    if not a.dry_run:
+        SYNC_STATE.parent.mkdir(parents=True, exist_ok=True)
+        SYNC_STATE.write_text(json.dumps({"at": now_iso(), "updated": changed, "blocked": blocked, "errors": errors,
+                                          "no_access": no_access}, indent=2))
+        HEARTBEAT.parent.mkdir(parents=True, exist_ok=True)
+        HEARTBEAT.write_text(f"{int(time.time())} {3 * 86400} shelf-sync\n")   # pipeline-qc dead-man's switch: 3 days
+        if no_access:
+            msg = (f"Nightly sync can't read {', '.join(no_access)} (macOS blocks background jobs from ~/Documents). "
+                   "Fix once: System Settings → Privacy & Security → Full Disk Access → add /bin/bash. "
+                   "Until then these update whenever Claude runs the sync in a session.")
+            if throttled("no_access", msg, days=14):
+                notify("Claude Shelf: folder permission", msg)
+        if (blocked or errors) and throttled("problems", " | ".join(sorted(blocked + errors)), days=3):
+            notify("Claude Shelf sync needs a look",
+                   f"{len(blocked)} blocked, {len(errors)} errors. " + " | ".join(blocked + errors)[:700]
+                   + " (details: ~/.claude/logs/shelf-sync.log)")
+    sys.exit(1 if blocked or errors else 0)
 
 
 def cmd_rebuild(a):
@@ -546,6 +747,8 @@ def main():
     pub.add_argument("--created", help="ISO date it was first built (default: now / keep existing)")
     pub.add_argument("--updated", help="ISO date it last changed (default: now)")
     pub.add_argument("--keep-version", action="store_true", help="don't bump the version (metadata-only fix)")
+    pub.add_argument("--prebuild", help="shell command that (re)builds --source first; stored for sync")
+    pub.add_argument("--no-track", action="store_true", help="don't auto-sync this item from its source")
     pub.add_argument("--dry-run", action="store_true")
     pub.add_argument("--no-push", action="store_true")
     pub.set_defaults(f=cmd_publish)
@@ -553,6 +756,17 @@ def main():
     rt = sp.add_parser("rate"); rt.add_argument("slug"); rt.add_argument("score", type=int, choices=range(1, 6)); rt.set_defaults(f=cmd_rate)
     sp.add_parser("list").set_defaults(f=cmd_list)
     r = sp.add_parser("remove"); r.add_argument("slug"); r.set_defaults(f=cmd_remove)
+    e = sp.add_parser("edit")
+    e.add_argument("slug")
+    for fl in ("title", "summary", "how-to-use", "requires", "emoji", "link", "tags"):
+        e.add_argument(f"--{fl}", dest=fl.replace("-", "_"))
+    e.add_argument("--useful", type=int, choices=range(1, 6))
+    e.add_argument("--no-push", action="store_true", help="batch several edits, then run rebuild")
+    e.set_defaults(f=cmd_edit)
+    sy = sp.add_parser("sync", help="republish items whose source changed (runs nightly)")
+    sy.add_argument("slugs", nargs="*")
+    sy.add_argument("--dry-run", action="store_true")
+    sy.set_defaults(f=cmd_sync)
     b = sp.add_parser("rebuild"); b.add_argument("--no-push", action="store_true"); b.set_defaults(f=cmd_rebuild)
     v = sp.add_parser("verify"); v.add_argument("slug", nargs="?"); v.add_argument("--tries", type=int, default=9)
     v.set_defaults(f=cmd_verify)

@@ -41,6 +41,22 @@
   .stars .off { color: #3a3f4d; }
   .badge.top { background: rgba(242,196,109,.12); border-color: rgba(242,196,109,.45); color: #f2c46d; }
   .count { color: var(--muted); font-size: 13px; margin: -6px 0 14px; }
+  .section { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 34px 0 12px; font-weight: 600; }
+  .section:first-child { margin-top: 0; }
+  .grid.big { grid-template-columns: repeat(auto-fill, minmax(min(100%, 460px), 1fr)); gap: 18px; }
+  .card.big { padding: 24px; border-color: rgba(217,119,87,.35); background: linear-gradient(160deg, #1d1a1c 0%, var(--panel) 55%); }
+  .card.big h2 { font-size: 23px; }
+  .card.big .emoji { font-size: 40px; width: 64px; height: 64px; border-radius: 16px; }
+  .card.big .summary { font-size: 16px; }
+  .grid.small { grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 10px; }
+  .card.small { padding: 12px 14px; gap: 6px; }
+  .card.small h2 { font-size: 15px; }
+  .card.small .emoji { font-size: 20px; width: 34px; height: 34px; border-radius: 9px; }
+  .card.small .summary { font-size: 13.5px; color: var(--muted); }
+  .card.small .btn { padding: 5px 9px; font-size: 12px; }
+  .card.small .btn.primary { background: var(--panel2); border-color: var(--line); color: var(--text); font-weight: 500; }
+  .card.small .summary { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .card.small .stars { display: none; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 16px; }
   .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px;
     display: flex; flex-direction: column; gap: 10px; }
@@ -91,7 +107,7 @@
   <div id="chips" style="margin:-6px 0 16px"></div>
   <p id="count" class="count"></p>
 
-  <div id="grid" class="grid"></div>
+  <div id="grid"></div>
   <div id="empty" class="empty" hidden>Nothing here yet. Check back soon.</div>
 
   <footer>
@@ -140,17 +156,19 @@ const fmt = (d) => new Date(d).toLocaleDateString(undefined, { day: "numeric", m
 function card(it) {
   const meta = el("div", { class: "meta" },
     el("span", { class: "badge", text: TYPES[it.type] || it.type }),
-    (it.useful || 3) >= 5 ? el("span", { class: "badge top", text: "Top pick" }) : null,
+    (it.useful || 3) >= 5 ? el("span", { class: "badge top", text: "Big build" }) : null,
     isNew(it.updated) ? el("span", { class: "badge new", text: it.version > 1 ? "Updated" : "New" }) : null,
     el("span", { text: fmt(it.updated) + (it.version > 1 ? ` · v${it.version}` : "") }),
     stars(it.useful));
-  const c = el("article", { class: "card", id: it.slug },
+  const tier = (it.useful || 3) >= 5 ? "big" : (it.useful || 3) <= 2 ? "small" : "";
+  const c = el("article", { class: "card " + tier, id: it.slug },
     el("div", { class: "top" }, el("div", { class: "emoji", text: it.emoji || "✨" }),
       el("div", {}, el("h2", { text: it.title }), meta)),
     el("p", { class: "summary", text: it.summary }));
-  if (it.how_to_use) c.append(el("details", {}, el("summary", { text: "How to use it" }), el("pre", { text: it.how_to_use })));
-  if (it.requires) c.append(el("details", {}, el("summary", { text: "What you'll need" }), el("pre", { text: it.requires })));
-  if (it.files && it.files.length) {
+  const small = tier === "small";
+  if (it.how_to_use && !small) c.append(el("details", {}, el("summary", { text: "How to use it" }), el("pre", { text: it.how_to_use })));
+  if (it.requires && !small) c.append(el("details", {}, el("summary", { text: "What you'll need" }), el("pre", { text: it.requires })));
+  if (it.files && it.files.length && !small) {
     const ul = el("ul");
     it.files.slice(0, 40).forEach(f => ul.append(el("li", { text: f })));
     if (it.files.length > 40) ul.append(el("li", { text: `…and ${it.files.length - 40} more` }));
@@ -160,21 +178,32 @@ function card(it) {
   if (it.install_prompt) a.append(el("button", { class: "btn primary", text: it.type === "prompt" ? "Copy prompt" : "Copy prompt for Claude", onclick: () => copy(it.install_prompt) }));
   if (it.link) a.append(el("a", { class: "btn" + (it.install_prompt ? "" : " primary"), href: it.link, target: "_blank", rel: "noopener", text: "Open ↗" }));
   if (it.zip) a.append(el("a", { class: "btn", href: it.zip, download: "", text: "Download .zip" }));
-  if (it.files && it.files.length) a.append(el("a", { class: "btn", href: `${REPO}/tree/main/items/${it.slug}/files`, target: "_blank", rel: "noopener", text: "View files" }));
+  if (it.files && it.files.length && !small) a.append(el("a", { class: "btn", href: `${REPO}/tree/main/items/${it.slug}/files`, target: "_blank", rel: "noopener", text: "View files" }));
   c.append(a);
-  if (it.type === "skill" && it.zip) c.append(el("p", { class: "hint", text: "claude.ai: Settings → Capabilities → Skills → upload the .zip" }));
+  if (it.type === "skill" && it.zip && !small) c.append(el("p", { class: "hint", text: "claude.ai: Settings → Capabilities → Skills → upload the .zip" }));
   return c;
 }
 
 function render() {
   const q = document.getElementById("q").value.trim().toLowerCase();
-  const grid = document.getElementById("grid"); grid.replaceChildren();
+  const grid = document.getElementById("grid"); grid.replaceChildren(); grid.className = "";
   const shown = items.filter(it => (filter === "all" || it.type === filter) &&
     (!q || [it.title, it.summary, it.how_to_use, (it.tags || []).join(" ")].join(" ").toLowerCase().includes(q)))
     .sort(sort === "recent" ? byRecent : byUseful);
   document.getElementById("count").textContent = `${shown.length} of ${items.length} · sorted by ${sort === "recent" ? "most recent" : "most useful"}`;
   document.querySelectorAll(".sort button").forEach(b => b.classList.toggle("on", b.dataset.sort === sort));
-  shown.forEach(it => grid.append(card(it)));
+  const tierOf = (it) => (it.useful || 3) >= 5 ? 0 : (it.useful || 3) >= 3 ? 1 : 2;
+  const groups = [["Big builds", "big"], ["Tools & skills", ""], ["Small utilities", "small"]];
+  if (sort === "useful") {
+    groups.forEach(([label, cls], i) => {
+      const part = shown.filter(it => tierOf(it) === i);
+      if (!part.length) return;
+      grid.append(el("h3", { class: "section", text: `${label} · ${part.length}` }));
+      const g = el("div", { class: "grid " + cls }); part.forEach(it => g.append(card(it))); grid.append(g);
+    });
+  } else {
+    const g = el("div", { class: "grid" }); shown.forEach(it => g.append(card(it))); grid.append(g);
+  }
   document.getElementById("empty").hidden = shown.length > 0;
 }
 

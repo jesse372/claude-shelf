@@ -9,8 +9,8 @@
   "tags": [],
   "link": "",
   "created": "2026-10-28T00:11:21+08:00",
-  "updated": "2026-10-28T00:38:38+08:00",
-  "version": 1,
+  "updated": "2026-10-28T00:35:18+00:00",
+  "version": 2,
   "useful": 3,
   "files": [
     "SKILL.md",
@@ -18,7 +18,8 @@
     "scripts/recipes/jesseos-starter.sh",
     "scripts/shelf.py",
     "scripts/site_template/icons.html",
-    "scripts/site_template/index.html"
+    "scripts/site_template/index.html",
+    "scripts/sync-nightly.sh"
   ],
   "skill_name": "share-with-friend",
   "zip": "items/share-with-friend/share-with-friend.zip"

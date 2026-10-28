@@ -43,10 +43,17 @@ $SHELF publish --source <file-or-folder> \
 $SHELF verify <slug>      # waits until the live site shows it
 $SHELF rate <slug> 4      # change a rating later (Jesse: "rate X higher" → do this)
 ```
-**Usefulness (1-5), judged for the friend, not Jesse:** 5 = broadly useful to any Claude user
-(LLM Council, the JesseOS starter kit). 4 = useful to most people building with Claude.
-3 = useful if he has that need. 2 = niche or mostly a reference/example. 1 = just for fun or for one specific place.
-The site sorts by **Most useful** (rating, then newest) or **Most recent** (last-changed date).
+**Titles:** plain and straight to the point, 2–4 words, saying what it is ("Sculpt Photo Editor",
+"Tap List TV Display", "Gmail Assistant"). No taglines, colons or jokes.
+
+**Rank (`--useful` 1-5) by how big and substantial the build is.** Jesse wants the big things in
+front, not the simple ones:
+- 5 = **Big build**: a real app or product (Sculpt, Tap List TV, AnotherLife, Tesla dashboard, Jarvis, jessechance.com). Shown first in large cards.
+- 4 = substantial project or pipeline (games, full business sites, Square sync, AI video pipeline, Claude + Codex setup).
+- 3 = solid tool or skill with real code (Gmail, Meta Ads, Self-Healing Automations).
+- 2 = small helper or checklist. 1 = tiny or for fun. Both are shown as compact cards under "Small utilities".
+The site's **Most useful** view groups items into Big builds / Tools & skills / Small utilities.
+**Most recent** shows everything by last-changed date. Change a rank with `shelf.py edit <slug> --useful N`.
 
 Write the summary, how-to-use and requires fields **for the friend**, in plain words. He hasn't
 seen the conversation and doesn't have JesseOS.

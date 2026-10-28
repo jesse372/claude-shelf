@@ -28,6 +28,10 @@ notify() {  # subject, body
   mkdir -p "$(dirname "$NOTIFY_LOG")" 2>/dev/null
   { printf '%s [watchdog] %s\n' "$(date '+%F %T')" "$1"; printf '%s\n' "$2" | sed 's/^/    /'; } >>"$NOTIFY_LOG" 2>/dev/null
   # >>> ADD YOUR OWN DELIVERY CHANNEL HERE <<<
+  # phone: ntfy, same private topic the site watchdog uses (file is never committed/published)
+  local t="$HOME/JesseOS/workspace/watchdog/ntfy-topic.txt"
+  [ -s "$t" ] && curl -s --max-time 15 -H "Title: $1" -H "Tags: warning" -d "$(printf '%s' "$2" | head -c 900)" \
+      "https://ntfy.sh/$(tr -d '[:space:]' < "$t")" >/dev/null 2>&1 || true
 }
 
 [ -d "$HB_DIR" ] || { echo "no heartbeats yet ($HB_DIR)"; exit 0; }
