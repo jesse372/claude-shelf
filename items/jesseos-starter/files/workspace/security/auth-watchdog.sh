@@ -6,9 +6,9 @@ set -u
 export PATH="$HOME/.local/bin:/usr/local/bin:$HOME/.omnara/bin:$PATH"
 STATUS="$HOME/JesseOS/workspace/security/auth-status.json"
 problems=()
-# Claude Code (OAuth creds in login keychain)
-if security find-generic-password -s "Claude Code-credentials" -a "$USER" -w >/dev/null 2>&1; then
-  claude_ok=true; else claude_ok=false; problems+=("Claude Code: re-login (claude /login)"); fi
+# Credential presence alone is insufficient: expired/cleared tokens remain in Keychain.
+if python3 "~/.claude/skills/auth-framework/scripts/claude_auth_health.py" >/dev/null 2>&1; then
+  claude_ok=true; else claude_ok=false; problems+=("Claude Code: check auth; renew with claude auth login --claudeai"); fi
 # Codex (auth file)
 if [ -f "$HOME/.codex/auth.json" ] || codex login status >/dev/null 2>&1; then
   codex_ok=true; else codex_ok=false; problems+=("Codex: sign in"); fi

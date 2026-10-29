@@ -43,7 +43,7 @@ These ship as working examples — adapt the probes to where your tokens actuall
 
 | Target | How handled |
 |---|---|
-| claude-code | reads the Claude Code credential from the login Keychain; CLI auto-refreshes the access token on use. If <48h to expiry, a trivial `claude -p` triggers a refresh; alerts if missing or refresh unconfirmed |
+| claude-code | bounded metadata-only `scripts/claude_auth_health.py` check; alerts within 48h of refresh expiry, separately when expired/missing, and on unreadable credentials. No model calls. Expired refresh tokens require `claude auth login --claudeai` |
 | codex | reads `~/.codex/auth.json`; report-only if a `refresh_token` is present (auto-refreshes); alerts only if expiring <48h with no refresh token |
 | omnara | probes that the `com.omnara.cli` daemon is alive (the thing that matters); alerts if down |
 | gmail | reads `~/.authframework/secrets/gmail.token` via `gmail.sh token-status`; alerts if absent or missing a `refresh_token`, then does a real `whoami` probe (a revoked token still looks fine on disk). Catches the Testing-mode 7-day refresh-token revocation |
@@ -78,3 +78,17 @@ so launchd-run probes find their binaries.
 `bash scripts/auth-keepalive.sh --dry-run` (table only) · `bash scripts/auth-keepalive.sh` (live).
 Health log: `~/.claude/logs/auth-framework.log`; launchd output:
 `~/.claude/logs/auth-keepalive.cron.log`.
+
+## Claude Remote Control expiry recovery
+
+An RC parent can still display `Connected` after child sessions lose authentication. Do not use
+process presence, a remaining Keychain item, or an old screen status as proof of working auth.
+`python3 scripts/claude_auth_health.py` emits only safe metadata; exit 0 means locally refreshable,
+1 means renewal needed, 2 means unknown. It does not prove upstream validity or model capacity.
+The 10-second Keychain timeout and in-process parsing keep raw tokens out of command arguments.
+
+When refresh expiry has passed, start `claude auth login --claudeai`, complete the official browser
+sign-in, then check `claude auth status`. Verify a new remote request before claiming full recovery.
+Existing Remote Control monitoring should call the same probe before refreshing a healthy heartbeat
+and send near-expiry/expired warnings through its existing phone notifier. Do not restart sessions
+merely to mask expired credentials. Never publish login links, auth codes, or credential snapshots.

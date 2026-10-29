@@ -9,15 +9,18 @@
   "tags": [],
   "link": "",
   "created": "2026-06-29T02:07:26+08:00",
-  "updated": "2026-10-28T19:15:03+00:00",
-  "version": 2,
+  "updated": "2026-10-29T19:15:04+00:00",
+  "version": 3,
   "useful": 3,
   "files": [
+    "CONTRACT.md",
     "SKILL.md",
     "com.jesse.auth-keepalive.plist",
     "scripts/auth-keepalive.sh",
     "scripts/auth-keepalive.sh.bak-omnara-20261028",
-    "scripts/authlib.sh"
+    "scripts/authlib.sh",
+    "scripts/claude_auth_health.py",
+    "tests/test_claude_auth_health.py"
   ],
   "skill_name": "auth-framework",
   "zip": "items/auth-framework/auth-framework.zip"

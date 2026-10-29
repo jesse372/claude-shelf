@@ -50,18 +50,21 @@ af_alert(){  # af_alert <cap-key> <subject> <body>   (cap = 1 alert / key / 24h)
   [ "$DRY" = 1 ] && { echo "    would-alert[$key]: $subj"; return 0; }
 
   log "ALERT [$key] $subj — $body"
-  # macOS desktop/Notification Center notification (best-effort; harmless if headless).
-  if command -v osascript >/dev/null 2>&1; then
-    osascript -e "display notification \"${body//\"/\\\"}\" with title \"${subj//\"/\\\"}\"" >/dev/null 2>&1
-  fi
-
-  # --- OPTIONAL: wire a push channel here (Slack/Telegram/email/ntfy) ----------------------
-  # e.g.  curl -fsS -H "Title: $subj" -d "$body" "https://ntfy.sh/your-topic" >/dev/null 2>&1
-  # ----------------------------------------------------------------------------------------
-
+  # Persist first so an unavailable desktop cannot swallow the warning.
   echo "$now" >"$capf"
-  # durable record so nothing is lost even if a push channel is down
   { printf '%s\n' "$subj"; printf '%s\n' "$body"; } >"$ALERT_QUEUE/$(date +%s)_${key}.alert" 2>/dev/null
+  # Existing Remote Control monitor supplies phone warnings for Claude expiry.
+  # Bound the optional desktop notification, including in headless launchd.
+  python3 - "$subj" "$body" <<'PYNOTIFY' >/dev/null 2>&1
+import subprocess, sys
+try:
+    subprocess.run(["osascript", "-e",
+        "on run argv\ndisplay notification (item 2 of argv) with title (item 1 of argv)\nend run",
+        sys.argv[1], sys.argv[2]], timeout=10, capture_output=True)
+except (OSError, subprocess.TimeoutExpired):
+    pass
+PYNOTIFY
+
 }
 
 # ---- helpers --------------------------------------------------------------------------------
@@ -93,58 +96,22 @@ row(){ printf '  %-15s %-8s %-5s  %s\n' "$1" "$2" "$3" "$4"; }   # name state ho
 # own with t_template below.
 
 t_claude_code(){
-  # Claude Code OAuth credentials, in the login Keychain under "Claude Code-credentials" as
-  # JSON: claudeAiOauth.{accessToken,refreshToken,expiresAt,refreshTokenExpiresAt} (ms epoch).
-  #
-  # The ACCESS token (expiresAt) is short-lived and the CLI silently re-mints it on every use —
-  # its remaining hours are not interesting and not what we gate on.
-  #
-  # The REFRESH token (refreshTokenExpiresAt) is the one that matters: once IT expires, every
-  # Claude Code session this daemon (Omnara) spawns starts dying with "OAuth session expired and
-  # could not be refreshed" / "failed to authenticate", and there is NO headless way to recover —
-  # it requires a human to open a `claude auth login --claudeai` browser link and sign in. This hit
-  # Jesse twice in ~5 weeks (2026-08-27, 2026-09-29) and went unnoticed for days each time because
-  # this keepalive had never actually been installed as a running LaunchAgent. So: this target
-  # cannot self-heal — its only job is to alert with enough lead time.
-  local raw hl state="ok" det=""
-  if command -v security >/dev/null 2>&1; then
-    raw="$(_cred_timeout 10 security find-generic-password -s "Claude Code-credentials" -w 2>/dev/null)"
-  fi
-  if [ -z "${raw:-}" ]; then
-    row claude-code MISSING "-" "no Claude Code credential in Keychain"
-    [ "$DRY" = 1 ] || af_alert claude_code "Claude Code auth missing" \
-"No Claude Code credential found in the login Keychain. Message Claude Code or Omnara ('fix my omnara') to sign in."
-    return
-  fi
-  hl="$(python3 - "$raw" <<'PY' 2>/dev/null || echo n/a
-import sys,json,time
-try:
-    d=json.loads(sys.argv[1])
-    o=d.get("claudeAiOauth") or {}
-    exp=float(o.get("refreshTokenExpiresAt") or 0)
-    exp=exp/1000 if exp>1e12 else exp
-    print(int((exp-time.time())//3600) if exp else "n/a")
-except Exception:
-    print("n/a")
-PY
-)"
-  if [ "$hl" = "n/a" ]; then
-    row claude-code WARN "n/a" "credential present but refreshTokenExpiresAt unreadable"
-    [ "$DRY" = 1 ] || af_alert claude_code_fmt "Claude Code credential format changed" \
-"Keychain item 'Claude Code-credentials' no longer has a readable claudeAiOauth.refreshTokenExpiresAt. The keepalive probe may need updating for a new CLI version."
-    return
-  fi
-  if [ "$hl" -lt 0 ]; then
-    row claude-code DEAD "${hl}" "refresh token ALREADY EXPIRED — every session is broken now"
-    [ "$DRY" = 1 ] || af_alert claude_code_exp "Claude Code auth is DEAD right now" \
-"The refresh token expired ${hl#-}h ago. Every Claude Code session Omnara spawns will fail with 'failed to authenticate'. Cannot self-heal headlessly — message Claude Code or Omnara ('fix my omnara') to get a fresh sign-in link; takes 30s once you tap it."
-  elif [ "$hl" -lt "$THRESH_H" ]; then
-    row claude-code WARN "${hl}" "refresh token expires in <48h — cannot self-heal, needs a human sign-in"
-    [ "$DRY" = 1 ] || af_alert claude_code_exp "Claude Code auth expiring soon (${hl}h)" \
-"The refresh token expires in ~${hl}h. This cannot be refreshed headlessly. Message Claude Code or Omnara ('fix my omnara') ahead of time to sign in and renew it before it breaks every session."
-  else
-    row claude-code OK "${hl}" "refresh token healthy"
-  fi
+  # One shared, bounded probe. Raw credentials never enter shell variables or argv.
+  local info state hl det
+  info="$(python3 "$SELF_DIR/claude_auth_health.py" --tsv 2>/dev/null)"
+  IFS='|' read -r state hl det <<< "$info"
+  state="${state:-UNKNOWN}"; hl="${hl:-n/a}"; det="${det:-Claude auth probe unavailable}"
+  row claude-code "$state" "$hl" "$det"
+  [ "$DRY" = 1 ] && return 0
+  case "$state" in
+    OK) ;;
+    EXPIRING) af_alert claude_code_expiring "Claude login expires within 48h" \
+      "Renew the Mac login with claude auth login --claudeai before phone sessions stop working." ;;
+    EXPIRED|MISSING|NO_REFRESH) af_alert claude_code_expired "Claude login needs renewal" \
+      "Claude Remote Control cannot start authenticated work. Run claude auth login --claudeai on the Mac and finish its browser sign-in." ;;
+    *) af_alert claude_code_unknown "Claude login could not be checked" \
+      "The bounded Claude credential probe failed. Inspect Keychain access and run claude auth status; do not assume phone sessions work." ;;
+  esac
 }
 
 t_codex(){
