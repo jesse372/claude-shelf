@@ -253,6 +253,40 @@ t_square(){
   fi
 }
 
+t_youtube(){
+  local yt="~/.claude/skills/youtube-upload/scripts/youtube.sh"
+  [ -x "$yt" ] || return 0
+  # Do not nag about a setup that has never been connected.
+  if [ ! -f "${YOUTUBE_HOME:-$HOME/.youtube-upload}/channel.json" ]; then
+    row youtube N/A "-" "connection not completed; no upload access claimed"
+    return 0
+  fi
+  local state
+  state="$(python3 - "$yt" "$DRY" <<'PYYT'
+import json, subprocess, sys
+cmd = [sys.argv[1], 'health']
+if sys.argv[2] != '1':
+    cmd.append('--live')
+try:
+    result = subprocess.run(cmd, capture_output=True, text=True, timeout=90)
+    value = json.loads(result.stdout)
+    print('OK' if result.returncode == 0 and value.get('state') == 'OK' else
+          'UNVERIFIED' if sys.argv[2] == '1' and value.get('has_refresh_token') else 'FAIL')
+except (OSError, ValueError, subprocess.TimeoutExpired):
+    print('FAIL')
+PYYT
+)"
+  if [ "$state" = OK ]; then
+    row youtube OK "-" "live refresh and saved channel verified"
+  elif [ "$state" = UNVERIFIED ]; then
+    row youtube CHECK "-" "refresh token present; dry-run did not contact Google"
+  else
+    row youtube FAIL "-" "access check failed (auth, connectivity, or runtime)"
+    [ "$DRY" = 1 ] || af_alert youtube "YouTube access needs attention" \
+      "youtube.sh health --live failed or timed out. Check connectivity and the saved channel; reconnect with youtube.sh auth if Google consent expired. No video was uploaded."
+  fi
+}
+
 t_template(){
   [ "${ENABLE_TEMPLATE:-0}" = 1 ] || return 0   # disabled by default; set ENABLE_TEMPLATE=1 to try
   local exp_iso="2030-01-01T00:00:00Z"          # <- read this from your token file in real use
@@ -274,6 +308,7 @@ t_codex
 t_omnara
 t_gmail
 t_square
+t_youtube
 t_template
 log "===== done ====="
 exit 0
