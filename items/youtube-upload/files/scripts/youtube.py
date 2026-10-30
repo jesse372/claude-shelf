@@ -22,7 +22,8 @@ from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
 from urllib.parse import urlparse
 
-ROOT = Path(os.environ.get("YOUTUBE_HOME", Path.home() / ".youtube-upload"))
+BASE_ROOT = Path(os.environ.get("YOUTUBE_HOME", Path.home() / ".youtube-upload"))
+ROOT = BASE_ROOT
 SCOPES = ["https://www.googleapis.com/auth/youtube.upload",
           "https://www.googleapis.com/auth/youtube.readonly"]
 API = "https://www.googleapis.com/youtube/v3/"
@@ -232,6 +233,8 @@ def auth(args):
     from google_auth_oauthlib.flow import InstalledAppFlow
     from google.auth.transport.requests import AuthorizedSession
     client = ROOT / "oauth.client"
+    if not client.exists() and ROOT != BASE_ROOT:
+        client = BASE_ROOT / "oauth.client"
     if not client.exists():
         raise UploadError("Missing Desktop OAuth client. See references/setup.md.")
     with lock("auth"):
@@ -244,14 +247,45 @@ def auth(args):
         if not creds.refresh_token or not creds.has_scopes(SCOPES):
             raise UploadError("Google did not grant persistent upload/read access; reconnect and grant both requested permissions.")
         actual = channel(AuthorizedSession(creds))
-        if actual["id"] != args.channel_id:
+        if args.channel_id and actual["id"] != args.channel_id:
             raise UploadError(f"Google connected channel {actual['id']}, not {args.channel_id}. Credentials were not saved. Reconnect and choose the intended channel.")
+        if args.channel_title and actual["title"] != args.channel_title:
+            raise UploadError("Google connected a different channel title. Credentials were not saved. Reconnect and choose the intended channel.")
         save(ROOT / "oauth.token", json.loads(creds.to_json()))
         save(ROOT / "channel.json", {**actual, "connected_at": now()})
     output({"connected": True, "channel": actual})
 
 
 def health(args):
+    global ROOT
+    if getattr(args, "all", False):
+        original_root = ROOT
+        roots = ([BASE_ROOT] if (BASE_ROOT / "channel.json").exists() else [])
+        roots += sorted(p.parent for p in (BASE_ROOT / "profiles").glob("*/channel.json"))
+        results = []
+        try:
+            for location in roots:
+                ROOT = location
+                result = {"profile": "default" if location == BASE_ROOT else location.name}
+                try:
+                    if not args.live:
+                        data = read(ROOT / "oauth.token")
+                        result.update(state="UNVERIFIED", has_refresh_token=bool(data.get("refresh_token")))
+                    else:
+                        actual = channel(session(force_refresh=True))
+                        if actual["id"] != read(ROOT / "channel.json")["id"]:
+                            raise UploadError("Channel binding differs.")
+                        result.update(state="OK", channel=actual)
+                except (UploadError, OSError, ValueError, KeyError):
+                    result["state"] = "FAIL"
+                results.append(result)
+        finally:
+            ROOT = original_root
+        failed = any(r["state"] == "FAIL" for r in results)
+        state = "NOT_CONNECTED" if not results else "FAIL" if failed else "OK" if args.live else "UNVERIFIED"
+        output({"state": state, "profiles": results,
+                "has_refresh_token": bool(results) and all(r.get("has_refresh_token", False) for r in results)})
+        return 1 if failed else 2 if not results else 0
     if not (ROOT / "oauth.token").exists():
         output({"state": "NOT_CONNECTED", "client_installed": (ROOT / "oauth.client").exists()})
         return 2
@@ -495,11 +529,16 @@ def status(args):
 
 
 def main():
+    global ROOT
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--profile", help="Separate channel connection, for example family or fishing")
     sub = parser.add_subparsers(dest="command", required=True)
     p = sub.add_parser("install-client"); p.add_argument("file"); p.set_defaults(func=install_client)
-    p = sub.add_parser("auth"); p.add_argument("--channel-id", required=True); p.add_argument("--port", type=int, default=8766); p.set_defaults(func=auth)
-    p = sub.add_parser("health"); p.add_argument("--live", action="store_true"); p.set_defaults(func=health)
+    p = sub.add_parser("auth")
+    channel_group = p.add_mutually_exclusive_group(required=True)
+    channel_group.add_argument("--channel-id"); channel_group.add_argument("--channel-title")
+    p.add_argument("--port", type=int, default=8766); p.set_defaults(func=auth)
+    p = sub.add_parser("health"); p.add_argument("--live", action="store_true"); p.add_argument("--all", action="store_true"); p.set_defaults(func=health)
     p = sub.add_parser("whoami"); p.set_defaults(func=lambda a: output(channel(session())))
     p = sub.add_parser("plan"); p.add_argument("file"); p.add_argument("--channel-id", required=True)
     p.add_argument("--title", required=True); p.add_argument("--description", default=""); p.add_argument("--description-file")
@@ -511,6 +550,10 @@ def main():
     p = sub.add_parser("upload"); p.add_argument("job"); p.add_argument("--confirm", action="store_true"); p.set_defaults(func=upload)
     p = sub.add_parser("status"); p.add_argument("job"); p.add_argument("--live", action="store_true"); p.set_defaults(func=status)
     args = parser.parse_args()
+    if args.profile:
+        if not re.fullmatch(r"[a-z0-9][a-z0-9-]{0,63}", args.profile):
+            parser.error("Profile must use lowercase letters, numbers and hyphens (max 64 characters).")
+        ROOT = BASE_ROOT / "profiles" / args.profile
     try:
         return args.func(args) or 0
     except UploadError as exc:

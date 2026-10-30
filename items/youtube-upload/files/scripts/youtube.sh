@@ -3,7 +3,9 @@ set -euo pipefail
 export PATH="/usr/local/bin:/opt/homebrew/bin:$HOME/.local/bin:$PATH"
 SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Cheap local planning/inspection works without downloading dependencies or network access.
-case "${1:---help}" in
+COMMAND="${1:---help}"
+if [ "$COMMAND" = --profile ]; then COMMAND="${3:---help}"; fi
+case "$COMMAND" in
   --help|-h|plan|install-client) exec python3 "$SELF_DIR/youtube.py" "$@" ;;
   health|status)
     case " $* " in *' --live '*) ;; *) exec python3 "$SELF_DIR/youtube.py" "$@" ;; esac ;;

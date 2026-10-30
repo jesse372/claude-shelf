@@ -257,14 +257,14 @@ t_youtube(){
   local yt="~/.claude/skills/youtube-upload/scripts/youtube.sh"
   [ -x "$yt" ] || return 0
   # Do not nag about a setup that has never been connected.
-  if [ ! -f "${YOUTUBE_HOME:-$HOME/.youtube-upload}/channel.json" ]; then
+  if [ ! -f "${YOUTUBE_HOME:-$HOME/.youtube-upload}/channel.json" ] && ! compgen -G "${YOUTUBE_HOME:-$HOME/.youtube-upload}/profiles/*/channel.json" >/dev/null; then
     row youtube N/A "-" "connection not completed; no upload access claimed"
     return 0
   fi
   local state
   state="$(python3 - "$yt" "$DRY" <<'PYYT'
 import json, subprocess, sys
-cmd = [sys.argv[1], 'health']
+cmd = [sys.argv[1], 'health', '--all']
 if sys.argv[2] != '1':
     cmd.append('--live')
 try:
