@@ -1,14 +1,14 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-10-30T11:07:43+00:00",
+  "updated": "2026-10-30T11:08:29+00:00",
   "items": [
     {
       "slug": "auth-framework",
       "title": "Login Keepalive",
       "emoji": "🔐",
       "type": "skill",
-      "summary": "One place that tracks every token, session and cookie your automations depend on, and refreshes them (or warns you) before they expire, instead of breaking silently.",
+      "summary": "Checks configured service logins, refreshes access where supported, and alerts when you need to reconnect. Includes a YouTube access check after connecting the YouTube Uploader skill.",
       "how_to_use": "Ask \"add an auth keepalive for this\" when you build anything that logs in.",
       "requires": "macOS (Keychain + launchd).",
       "tags": [],
