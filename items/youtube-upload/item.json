@@ -3,7 +3,7 @@
   "title": "YouTube Uploader",
   "emoji": "▶️",
   "type": "skill",
-  "summary": "Let Claude upload videos to your YouTube channel when you ask, with titles, descriptions, thumbnails and privacy settings. Interrupted uploads resume from saved progress and completed videos are not posted twice.",
+  "summary": "Let Claude upload videos when you ask, with separate channel profiles, thumbnail preparation, scheduled releases and safe resume after interruptions. Connect your own YouTube account once.",
   "how_to_use": "Install the skill, connect your own Google Desktop OAuth client, then ask Claude to upload a specific video and choose its visibility.",
   "requires": "Claude Code or Codex on macOS/Linux, Python and uv, your own YouTube channel and Google Cloud OAuth client. Configure storage paths for your computer.",
   "tags": [],
