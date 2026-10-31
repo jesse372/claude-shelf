@@ -47,7 +47,7 @@ These ship as working examples — adapt the probes to where your tokens actuall
 | codex | reads `~/.codex/auth.json`; report-only if a `refresh_token` is present (auto-refreshes); alerts only if expiring <48h with no refresh token |
 | omnara | probes that the `com.omnara.cli` daemon is alive (the thing that matters); alerts if down |
 | gmail | reads `~/.authframework/secrets/gmail.token` via `gmail.sh token-status`; alerts if absent or missing a `refresh_token`, then does a real `whoami` probe (a revoked token still looks fine on disk). Catches the Testing-mode 7-day refresh-token revocation |
-| youtube | once connected, runs `youtube-upload/scripts/youtube.sh health --live` with a 90-second bound; refreshes access, checks the saved channel, and alerts on failure. Never uploads; skips initial setup until connection is complete |
+| youtube | once connected, runs `youtube-upload/scripts/youtube.sh health --all --live` with a 90-second bound; refreshes each connected profile, checks its saved channel, and alerts on any failure. Never uploads; skips initial setup until a connection is complete |
 | template (`t_template`) | disabled by default — copy it to register a new target (set `ENABLE_TEMPLATE=1` to see it run) |
 
 ## Relationship to auth-watchdog.sh

@@ -12,12 +12,12 @@
 
 - Trigger: existing auth keepalive every six hours; no extra schedule and no automatic uploads.
 - Goal: after connection, refresh YouTube access and verify the channel binding, or report a failure.
-- Scope: `youtube-upload/scripts/youtube.sh health --live` only. It can refresh its existing
-  OAuth token and read the channel. Never post a video, change consent, or broaden scopes.
+- Scope: `youtube-upload/scripts/youtube.sh health --all --live` only. It can refresh each
+  connected profile's existing OAuth token and read its channel. Never post a video, change consent, or broaden scopes.
 - Verifier: health exits 0 with state OK and matching channel; missing/invalid access is not healthy.
 - Budget: one subprocess per tick, 90-second wall-clock limit, no model calls. Dry-run reads
   metadata only. Skip an installation that has never completed connection.
-- State: `~/.youtube-upload/channel.json`, mode-0600 token file, existing auth-framework log
+- State: `~/.youtube-upload/profiles/*/channel.json` (or legacy base `channel.json`), mode-0600 token files, existing auth-framework log
   and durable alert queue. The token itself never appears in logs.
 - Stop/escalate: no blind retries within the tick; desktop notification plus persisted alert
   capped at once per 24 hours asks for connectivity/access repair. New Google consent remains

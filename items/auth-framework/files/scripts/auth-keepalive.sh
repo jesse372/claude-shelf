@@ -277,13 +277,13 @@ except (OSError, ValueError, subprocess.TimeoutExpired):
 PYYT
 )"
   if [ "$state" = OK ]; then
-    row youtube OK "-" "live refresh and saved channel verified"
+    row youtube OK "-" "live refresh and saved channels verified"
   elif [ "$state" = UNVERIFIED ]; then
     row youtube CHECK "-" "refresh token present; dry-run did not contact Google"
   else
     row youtube FAIL "-" "access check failed (auth, connectivity, or runtime)"
     [ "$DRY" = 1 ] || af_alert youtube "YouTube access needs attention" \
-      "youtube.sh health --live failed or timed out. Check connectivity and the saved channel; reconnect with youtube.sh auth if Google consent expired. No video was uploaded."
+      "youtube.sh health --all --live failed or timed out. Check connectivity and each saved profile; reconnect the affected profile with youtube.sh --profile PROFILE auth if Google consent expired. No video was uploaded."
   fi
 }
 
