@@ -1,6 +1,6 @@
 ---
 name: youtube-upload
-description: Upload a local video to the user's YouTube channel when asked, with title, description, privacy, optional thumbnail and scheduled publishing. Uses the official YouTube API and resumable uploads. Also check channel access and upload status.
+description: Upload a local video to the user's YouTube channel when asked, prepare its thumbnail, and set title, description, privacy or scheduled publishing. Supports separate channel profiles, official YouTube API resumable uploads, connection checks and upload status.
 ---
 
 # YouTube uploads
@@ -10,7 +10,12 @@ The shared installation is `~/.claude/skills/youtube-upload/scripts/youtube.sh`.
 
 ## When asked to post a video
 
-1. Run `youtube.sh whoami` to check the actual destination. If not connected, read
+1. Read `~/.youtube-upload/routing.json` if present (or `$YOUTUBE_HOME/routing.json`).
+   It contains the user's channel/profile choices and thumbnail preferences. Match the request
+   to those choices; ask only if the destination is ambiguous. Use `--profile PROFILE` before
+   **every** command for that channel, including plan, upload and status. Never silently use
+   another profile if access fails. Run `youtube.sh --profile PROFILE whoami` to check the
+   actual destination and obtain its channel ID. If not connected, read
    [setup.md](references/setup.md). Never claim setup is finished based on local code alone.
 2. Resolve the exact final video, title, description, audience setting and visibility from
    the user's request and project context. Keep video files on the external drive; upload
@@ -19,10 +24,12 @@ The shared installation is `~/.claude/skills/youtube-upload/scripts/youtube.sh`.
    Private is the CLI's conservative default. Children appearing in a family video does not
    by itself mean the video is directed at children. Establish the audience setting from
    the intended audience; don't blindly infer it from faces.
-3. Create a local plan. `plan` reads files but sends nothing to Google:
+3. When the user wants thumbnails handled, prepare one using [thumbnails.md](references/thumbnails.md)
+   and the saved channel preferences. Use the final thumbnail path in the upload plan.
+   Create a local plan. `plan` reads files but sends nothing to Google:
 
    ```bash
-   youtube.sh plan '/path/to/final.mp4' --channel-id UC_CHANNEL_ID \
+   youtube.sh --profile PROFILE plan '/path/to/final.mp4' --channel-id UC_CHANNEL_ID \
      --title 'Video title' --description-file '/path/to/description.txt' \
      --privacy unlisted --made-for-kids no --thumbnail '/path/to/thumbnail.jpg'
    ```
@@ -37,11 +44,11 @@ The shared installation is `~/.claude/skills/youtube-upload/scripts/youtube.sh`.
    plan and ask for that choice before uploading. Then run:
 
    ```bash
-   youtube.sh upload JOB_ID --confirm
+   youtube.sh --profile PROFILE upload JOB_ID --confirm
    ```
 
 5. Return the saved video link and actual visibility/processing state. Run
-   `youtube.sh status JOB_ID --live` to check processing later when requested. An accepted
+   `youtube.sh --profile PROFILE status JOB_ID --live` to check processing later when requested. An accepted
    upload may still be processing; do not call it published until visibility and processing
    support that claim. An API restriction or failed thumbnail is a partial result, not success.
 
@@ -56,14 +63,15 @@ The shared installation is `~/.claude/skills/youtube-upload/scripts/youtube.sh`.
 - `upload JOB_ID` without `--confirm` only previews the plan.
 - The command does not delete videos, change existing metadata/visibility, or upload on a
   background schedule. Initial publication scheduling is performed by YouTube itself.
-- Tokens and session URLs live under `~/.youtube-upload/` in mode-0600 files. Never print,
+- Tokens and session URLs live under `~/.youtube-upload/profiles/PROFILE/` in mode-0600 files
+  (legacy single-channel installations use `~/.youtube-upload/`). Never print,
   commit, publish, paste into chat, or share these. `status` omits session URLs.
 - For file access failures in a remote Claude session, use the existing Terminal runner
   documented in the machine's standing storage context. Do not move media onto the system disk.
 - The API has two scopes: upload videos/thumbnails, and read channel/video status.
   Later metadata edits require a broader scope and are outside this version.
-- `health --live` forces a refresh and checks the saved channel binding. The existing
-  auth-framework monitor checks this every six hours once a connection exists, and alerts
+- `health --all --live` forces a refresh and checks every connected channel binding. The existing
+  auth-framework monitor checks these every six hours once a connection exists, and alerts
   on failure. It never uploads. The generic standalone tool also refreshes access on use.
 - Google currently has conflicting documentation about unverified-project upload privacy.
   Read back actual visibility; never promise public availability based solely on the request.

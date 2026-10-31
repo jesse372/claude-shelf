@@ -9,13 +9,14 @@
   "tags": [],
   "link": "",
   "created": "2026-10-30T11:07:19+00:00",
-  "updated": "2026-10-30T19:15:15+00:00",
-  "version": 2,
+  "updated": "2026-10-31T01:14:59+00:00",
+  "version": 3,
   "useful": 3,
   "files": [
     ".gitignore",
     "SKILL.md",
     "references/setup.md",
+    "references/thumbnails.md",
     "scripts/test_youtube.py",
     "scripts/youtube.py",
     "scripts/youtube.sh"

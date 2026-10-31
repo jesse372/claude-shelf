@@ -275,7 +275,8 @@ def health(args):
                         actual = channel(session(force_refresh=True))
                         if actual["id"] != read(ROOT / "channel.json")["id"]:
                             raise UploadError("Channel binding differs.")
-                        result.update(state="OK", channel=actual)
+                        result.update(state="OK", channel=actual,
+                                      has_refresh_token=bool(read(ROOT / "oauth.token").get("refresh_token")))
                 except (UploadError, OSError, ValueError, KeyError):
                     result["state"] = "FAIL"
                 results.append(result)
@@ -287,7 +288,8 @@ def health(args):
                 "has_refresh_token": bool(results) and all(r.get("has_refresh_token", False) for r in results)})
         return 1 if failed else 2 if not results else 0
     if not (ROOT / "oauth.token").exists():
-        output({"state": "NOT_CONNECTED", "client_installed": (ROOT / "oauth.client").exists()})
+        output({"state": "NOT_CONNECTED", "client_installed":
+                (ROOT / "oauth.client").exists() or (BASE_ROOT / "oauth.client").exists()})
         return 2
     if not args.live:
         data = read(ROOT / "oauth.token")

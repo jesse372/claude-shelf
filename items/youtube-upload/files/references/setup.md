@@ -14,18 +14,40 @@ client, then grant the upload and read permissions on Google's own consent page.
 
    ```bash
    youtube.sh install-client '/path/to/downloaded-client.json'
-   youtube.sh auth --channel-id YOUR_CHANNEL_ID
+   youtube.sh --profile family auth --channel-id YOUR_CHANNEL_ID
    ```
 
    Find the channel ID in the `studio.youtube.com/channel/UC…` address. The tool opens Google's
    consent in the Mac's default browser and listens on `127.0.0.1:8766` for up to five minutes.
    Choose the exact YouTube channel, including the correct Brand Account if offered.
    Complete sign-in and consent yourself. Wrong-channel consent is rejected without saving it.
+   If the ID is not yet known, use `--channel-title 'Exact channel name'` instead; it checks the
+   returned title and saves the actual ID. Prefer that saved ID for later reconnections.
    For a remote Mac, use a local browser on that Mac or arrange loopback forwarding; do not
    paste authorization codes or token URLs into conversation. No OOB flow is implemented.
-4. `youtube.sh health --live` must return `state: OK` and the expected channel. This verifies
+4. `youtube.sh --profile family health --live` must return `state: OK` and the expected channel. This verifies
    refresh and read access. Full upload verification requires a user-requested real video;
    never post a test video merely to finish setup.
+
+## Multiple channels
+
+Repeat consent with a different profile for each channel, for example
+`youtube.sh --profile fishing auth --channel-title 'Exact fishing channel name'`.
+Each profile gets its own token, channel binding and jobs under `profiles/PROFILE/`.
+The base `oauth.client` is shared unless a profile has its own client. Run
+`youtube.sh health --all --live` to verify every connected profile. It lists only completed
+connections, so compare that list against all destinations you intended to connect.
+
+Keep user-specific routing and thumbnail preferences in `~/.youtube-upload/routing.json`,
+outside the source repository. Suggested shape:
+
+```json
+{"channels": [{"profile": "family", "channel_title": "Exact family channel name",
+  "topics": ["family", "general"], "thumbnail_style": "Natural, warm and playful"}],
+ "handle_thumbnails": true}
+```
+
+Omitting `--profile` selects the legacy base connection. It never auto-selects a channel.
 
 `uv` installs binary Python dependencies on first live use. This machine also has an isolated
 runtime at `/Volumes/LaCie/VideoEdits/cache/youtube-runtime`, which the wrapper prefers.

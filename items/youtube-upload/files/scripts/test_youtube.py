@@ -40,8 +40,8 @@ class UploadTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.media_temp = tempfile.TemporaryDirectory(dir=external if external.is_dir() else None)
         self.root = Path(self.temp.name)
-        self.oldroot = yt.ROOT
-        yt.ROOT = self.root / "state"
+        self.oldroot, self.oldbase = yt.ROOT, yt.BASE_ROOT
+        yt.ROOT = yt.BASE_ROOT = self.root / "state"
         self.video = Path(self.media_temp.name) / "final.mp4"
         self.video.write_bytes(b"offline mock media")
         self.quiet = contextlib.redirect_stdout(io.StringIO())
@@ -49,7 +49,7 @@ class UploadTests(unittest.TestCase):
 
     def tearDown(self):
         self.quiet.__exit__(None, None, None)
-        yt.ROOT = self.oldroot
+        yt.ROOT, yt.BASE_ROOT = self.oldroot, self.oldbase
         self.temp.cleanup()
         self.media_temp.cleanup()
 
@@ -225,6 +225,53 @@ class UploadTests(unittest.TestCase):
         with self.assertRaisesRegex(yt.UploadError, "title differs"):
             yt.verify(FakeSession([response]), job, path)
         self.assertEqual(yt.read(path)["phase"], "needs_attention")
+
+    def test_profile_jobs_are_isolated(self):
+        yt.ROOT = yt.BASE_ROOT / "profiles" / "family"
+        first_path, first = self.plan()
+        yt.ROOT = yt.BASE_ROOT / "profiles" / "fishing"
+        second_path, second = self.plan()
+        self.assertEqual(first["id"], second["id"])
+        self.assertNotEqual(first_path, second_path)
+        second["phase"] = "uploaded"; yt.save(second_path, second)
+        self.assertEqual(yt.read(first_path)["phase"], "planned")
+
+    def test_profile_health_recognizes_shared_client(self):
+        yt.save(yt.BASE_ROOT / "oauth.client", {"installed": {}})
+        yt.ROOT = yt.BASE_ROOT / "profiles" / "family"
+        captured = io.StringIO()
+        with contextlib.redirect_stdout(captured):
+            code = yt.health(argparse.Namespace(live=False, all=False))
+        self.assertEqual(code, 2)
+        self.assertEqual(json.loads(captured.getvalue()),
+                         {"state": "NOT_CONNECTED", "client_installed": True})
+
+    def test_all_health_checks_each_binding_and_restores_profile(self):
+        for name in ("family", "fishing"):
+            profile = yt.BASE_ROOT / "profiles" / name
+            yt.save(profile / "channel.json", {"id": CHANNEL})
+            yt.save(profile / "oauth.token", {"refresh_token": "offline-fixture"})
+        yt.ROOT = yt.BASE_ROOT / "profiles" / "family"
+        original = yt.ROOT
+        for wrong, code in ((False, 0), (True, 1)):
+            results = [{"id": CHANNEL, "title": "Family"},
+                       {"id": "wrong" if wrong else CHANNEL, "title": "Fishing"}]
+            captured = io.StringIO()
+            with patch.object(yt, "session") as session, patch.object(yt, "channel", side_effect=results), contextlib.redirect_stdout(captured):
+                self.assertEqual(yt.health(argparse.Namespace(live=True, all=True)), code)
+            value = json.loads(captured.getvalue())
+            self.assertEqual(session.call_count, 2)
+            self.assertEqual(yt.ROOT, original)
+            self.assertEqual(value["state"], "FAIL" if wrong else "OK")
+            self.assertEqual(value["has_refresh_token"], not wrong)
+            self.assertEqual([r["profile"] for r in value["profiles"]], ["family", "fishing"])
+
+    def test_all_health_does_not_claim_unconnected_profiles_work(self):
+        yt.save(yt.BASE_ROOT / "oauth.client", {"installed": {}})
+        captured = io.StringIO()
+        with contextlib.redirect_stdout(captured), patch.object(yt, "session", side_effect=AssertionError("no connection")):
+            self.assertEqual(yt.health(argparse.Namespace(live=True, all=True)), 2)
+        self.assertEqual(json.loads(captured.getvalue())["state"], "NOT_CONNECTED")
 
 
 if __name__ == "__main__":
