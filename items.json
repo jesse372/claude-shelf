@@ -1,8 +1,36 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-10-31T01:15:20+00:00",
+  "updated": "2026-11-01T12:22:10+00:00",
   "items": [
+    {
+      "slug": "youtube-upload",
+      "title": "YouTube Uploader",
+      "emoji": "▶️",
+      "type": "skill",
+      "summary": "Let Claude upload videos when you ask, with separate channel profiles, thumbnail preparation, scheduled releases and safe resume after interruptions. Connect your own YouTube account once.",
+      "how_to_use": "Install the skill, connect your own Google Desktop OAuth client, then ask Claude to upload a specific video and choose its visibility.",
+      "requires": "Claude Code or Codex on macOS/Linux, Python and uv, your own YouTube channel and Google Cloud OAuth client. Configure storage paths for your computer.",
+      "tags": [],
+      "link": "",
+      "created": "2026-10-30T11:07:19+00:00",
+      "updated": "2026-11-01T12:22:10+00:00",
+      "version": 4,
+      "useful": 3,
+      "files": [
+        ".gitignore",
+        "SKILL.md",
+        "references/setup.md",
+        "references/thumbnails.md",
+        "scripts/phone_auth_relay.py",
+        "scripts/test_youtube.py",
+        "scripts/youtube.py",
+        "scripts/youtube.sh"
+      ],
+      "skill_name": "youtube-upload",
+      "zip": "items/youtube-upload/youtube-upload.zip",
+      "install_prompt": "Please install the Claude Code skill \"YouTube Uploader\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/youtube-upload/youtube-upload.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/youtube-upload/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+    },
     {
       "slug": "auth-framework",
       "title": "Login Keepalive",
@@ -30,33 +58,6 @@
       "skill_name": "auth-framework",
       "zip": "items/auth-framework/auth-framework.zip",
       "install_prompt": "Please install the Claude Code skill \"Login Keepalive\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/auth-framework/auth-framework.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/auth-framework/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
-    },
-    {
-      "slug": "youtube-upload",
-      "title": "YouTube Uploader",
-      "emoji": "▶️",
-      "type": "skill",
-      "summary": "Let Claude upload videos when you ask, with separate channel profiles, thumbnail preparation, scheduled releases and safe resume after interruptions. Connect your own YouTube account once.",
-      "how_to_use": "Install the skill, connect your own Google Desktop OAuth client, then ask Claude to upload a specific video and choose its visibility.",
-      "requires": "Claude Code or Codex on macOS/Linux, Python and uv, your own YouTube channel and Google Cloud OAuth client. Configure storage paths for your computer.",
-      "tags": [],
-      "link": "",
-      "created": "2026-10-30T11:07:19+00:00",
-      "updated": "2026-10-31T01:14:59+00:00",
-      "version": 3,
-      "useful": 3,
-      "files": [
-        ".gitignore",
-        "SKILL.md",
-        "references/setup.md",
-        "references/thumbnails.md",
-        "scripts/test_youtube.py",
-        "scripts/youtube.py",
-        "scripts/youtube.sh"
-      ],
-      "skill_name": "youtube-upload",
-      "zip": "items/youtube-upload/youtube-upload.zip",
-      "install_prompt": "Please install the Claude Code skill \"YouTube Uploader\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/youtube-upload/youtube-upload.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/youtube-upload/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "jesseos-starter",

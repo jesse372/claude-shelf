@@ -77,3 +77,21 @@ Official references:
 - [Resumable upload protocol](https://developers.google.com/youtube/data/guides/using_resumable_upload_protocol)
 - [Video status and scheduling](https://developers.google.com/youtube/data/reference/rest/v3/videos#status)
 - [Thumbnail upload](https://developers.google.com/youtube/data/reference/rest/v3/thumbnails/set)
+
+## Connecting from a phone (nobody at the Mac)
+
+Desktop OAuth sends Google's answer to `127.0.0.1` on whichever device approved it, so a phone can't
+finish `auth` directly. `scripts/phone_auth_relay.py` bridges that without codes ever passing through chat:
+
+```bash
+TOK=$(python3 -c "import secrets;print(secrets.token_urlsafe(18))")
+scripts/phone_auth_relay.py "$TOK" PROFILE --channel-title 'Exact channel name' &   # serves 127.0.0.1:8767
+cloudflared tunnel --no-autoupdate --url http://127.0.0.1:8767 &                     # prints a trycloudflare URL
+# send the owner https://<tunnel>.trycloudflare.com/$TOK/
+```
+
+The owner taps **Start** (the Mac starts `auth`; the phone goes to Google), approves the channel, then copies
+the "can't open 127.0.0.1" address back into the page. The relay forwards it to the Mac's own listener.
+The code is PKCE-bound to the waiting process and single-use. The relay exits after one success (1 h max).
+Stop the tunnel afterwards. A failure shows the tool's own message and keeps it in
+`profiles/PROFILE/last_phone_auth.log`. Google's "unverified app" screen needs **Advanced → Go to …**.
