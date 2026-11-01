@@ -49,9 +49,17 @@ else
     claude --version >/dev/null 2>&1 && log "claude-code repaired: $(claude --version)" \
       || osascript -e 'display notification "Claude Code is broken after an update - new sessions will fail" with title "Updater" sound name "Basso"'
   fi
-  command -v codex >/dev/null 2>&1 \
-    && update_cli "codex" "@openai/codex" "codex" "latest" \
-    || log "codex CLI not installed"
+  # 2026-11-01: an interrupted npm update left only @openai/.codex-XXXX (no binary), and the old
+  # "not installed -> skip" check meant it never healed. Clear npm's leftover temp dir and reinstall.
+  if ! codex --version >/dev/null 2>&1; then
+    log "codex missing/broken - reinstalling"
+    rm -rf "$(npm root -g)"/@openai/.codex-* 2>/dev/null
+    npm i -g @openai/codex@latest >/dev/null 2>&1
+    codex --version >/dev/null 2>&1 && log "codex repaired: $(codex --version)" \
+      || alert "codex: reinstall FAILED — Codex is broken, needs a human"
+  else
+    update_cli "codex" "@openai/codex" "codex" "latest"
+  fi
 fi
 
 # Omnara — never interrupt an active session (skipped once retired; service ends 2026-11-10)
