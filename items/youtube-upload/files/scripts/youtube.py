@@ -425,7 +425,10 @@ def verify(sess, job, path):
     if snippet.get("channelId") != job["channel_id"]:
         issues.append("channel mismatch")
     for key in ("title", "description", "categoryId"):
-        if snippet.get(key) != job["body"]["snippet"].get(key):
+        want, got = job["body"]["snippet"].get(key), snippet.get(key)
+        if key == "description" and isinstance(want, str) and isinstance(got, str):
+            want, got = want.rstrip(), got.rstrip()     # YouTube strips trailing whitespace/newlines on save
+        if got != want:
             issues.append(f"{key} differs from the upload plan")
     if sorted(snippet.get("tags", [])) != sorted(job["body"]["snippet"].get("tags", [])):
         issues.append("tags differ from the upload plan")
@@ -519,6 +522,33 @@ def upload(args):
         output(safe_job(job))
 
 
+
+def set_thumbnail(args):
+    """Replace the thumbnail of a video already on the connected channel (thumbnails.set; youtube.upload scope).
+    Changes nothing else. Without --confirm it only previews."""
+    thumb = file_info(args.file, True)
+    sess = session()
+    me = channel(sess)
+    response = request(sess, "GET", API + "videos", params={"part": "snippet", "id": args.video_id})
+    if response.status_code != 200:
+        error_response(response)
+    items = response.json().get("items", [])
+    if not items:
+        raise UploadError("Video not found, or not visible to this connection.")
+    snippet = items[0]["snippet"]
+    if snippet.get("channelId") != me["id"]:
+        raise UploadError("That video belongs to a different channel than this profile. Nothing was changed.")
+    plan_view = {"video_id": args.video_id, "title": snippet.get("title"), "channel": me, "thumbnail": thumb["path"]}
+    if not args.confirm:
+        output({"preview_only": True, **plan_view}); return
+    with open(thumb["path"], "rb") as handle:
+        response = request(sess, "POST", UPLOAD + "thumbnails/set",
+            params={"videoId": args.video_id, "uploadType": "media"},
+            headers={"Content-Type": thumb["mime"]}, data=handle)
+    if response.status_code != 200:
+        error_response(response)
+    output({"thumbnail_set": True, **plan_view, "sha256": thumb["sha256"], "at": now()})
+
 def status(args):
     path = job_path(args.job)
     with lock("uploads"):
@@ -551,6 +581,8 @@ def main():
     p.add_argument("--notify-subscribers", choices=["yes", "no"], default="no"); p.set_defaults(func=plan)
     p = sub.add_parser("upload"); p.add_argument("job"); p.add_argument("--confirm", action="store_true"); p.set_defaults(func=upload)
     p = sub.add_parser("status"); p.add_argument("job"); p.add_argument("--live", action="store_true"); p.set_defaults(func=status)
+    p = sub.add_parser("set-thumbnail", help="replace the thumbnail of an existing video on this channel")
+    p.add_argument("video_id"); p.add_argument("file"); p.add_argument("--confirm", action="store_true"); p.set_defaults(func=set_thumbnail)
     args = parser.parse_args()
     if args.profile:
         if not re.fullmatch(r"[a-z0-9][a-z0-9-]{0,63}", args.profile):

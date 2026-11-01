@@ -61,7 +61,10 @@ The shared installation is `~/.claude/skills/youtube-upload/scripts/youtube.sh`.
   Do not delete the job or reset its phase to bypass duplicate protection. An expired session
   also needs reconciliation before any replacement upload. Report the unresolved outcome.
 - `upload JOB_ID` without `--confirm` only previews the plan.
-- The command does not delete videos, change existing metadata/visibility, or upload on a
+- To replace the thumbnail of a video already on the channel (only when the user asks):
+  `youtube.sh --profile PROFILE set-thumbnail VIDEO_ID '/path/thumb.jpg'` previews; add `--confirm` to apply.
+  It checks the video belongs to that profile's channel and changes nothing else.
+- The command does not delete videos, change other existing metadata/visibility, or upload on a
   background schedule. Initial publication scheduling is performed by YouTube itself.
 - Tokens and session URLs live under `~/.youtube-upload/profiles/PROFILE/` in mode-0600 files
   (legacy single-channel installations use `~/.youtube-upload/`). Never print,
