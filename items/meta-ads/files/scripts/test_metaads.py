@@ -147,5 +147,45 @@ tok=os.environ.pop("META_ACCESS_TOKEN")
 check("no token -> NOT_CONNECTED", M.cmd_weekly(None)==M.NOT_CONNECTED)
 os.environ["META_ACCESS_TOKEN"]=tok; M.api_all=saved_api
 
+
+print("\n[12] create: plans only, forces PAUSED, chains step ids, guard refuses unpaused creates")
+spec_path=os.path.join(os.environ["META_ADS_STATE"],"spec.json")
+json.dump({"campaign":{"name":"T","objective":"OUTCOME_LEADS","daily_budget":80,"special_ad_categories":[]},
+           "adsets":[{"name":"S","optimization_goal":"LEAD_GENERATION","targeting":{"age_min":22,"age_max":50,
+                      "targeting_automation":{"advantage_audience":0}}}]}, open(spec_path,"w"))
+CALLS.clear()
+g=A(); g.spec=spec_path; g.validate=False; g.validate_adsets_in=None
+M.cmd_create(g)
+check("no POST while planning create", len([c for c in CALLS if c[0]=="POST"])==0, CALLS)
+cp=json.load(open(MADE[-1][0]))
+check("campaign forced PAUSED", cp["steps"][0]["params"]["status"]=="PAUSED", cp["steps"][0]["params"])
+check("ad set forced PAUSED", cp["steps"][1]["params"]["status"]=="PAUSED", cp["steps"][1]["params"])
+check("$80/day sent as 8000", cp["steps"][0]["params"]["daily_budget"]==8000, cp["steps"][0]["params"])
+check("targeting JSON-encoded", json.loads(cp["steps"][1]["params"]["targeting"])["targeting_automation"]["advantage_audience"]==0)
+check("summary says Advantage+ OFF", "Advantage+ audience OFF" in cp["steps"][1]["describe"], cp["steps"][1]["describe"])
+json.dump({"campaign":{"name":"T","objective":"OUTCOME_LEADS","status":"ACTIVE"}}, open(spec_path,"w"))
+try: M.cmd_create(g); check("ACTIVE spec rejected", False)
+except M.MetaError: check("ACTIVE spec rejected", True)
+# validate path: every POST must carry validate_only
+json.dump({"campaign":{"name":"T","objective":"OUTCOME_LEADS"},"adsets":[{"name":"S"}]}, open(spec_path,"w"))
+CALLS.clear(); g.validate=True; g.validate_adsets_in="C9"
+M.cmd_create(g)
+posts=[c for c in CALLS if c[0]=="POST"]
+check("validate: 2 POSTs, all validate_only", len(posts)==2 and all("validate_only" in c[2].get("execution_options","") for c in posts), posts)
+check("validate: ad set checked against given campaign", posts[1][2].get("campaign_id")=="C9", posts[1][2])
+# apply chains the campaign id into the ad set
+seq=iter([{"id":"NEWC"},{"id":"NEWS"}])
+saved=M.api; SEEN=[]
+M.api=lambda path,params=None,method="GET",retries=3: (SEEN.append((path,dict(params or {}))), next(seq))[1]
+h=A(); h.plan=MADE[-1][1]["id"]; h.confirm=True; h.again=False
+M.cmd_apply(h)
+check("ad set got campaign_id from step 1", SEEN[1][1].get("campaign_id")=="NEWC", SEEN)
+# guard: a hand-edited plan that would create something ACTIVE is refused before any call
+path2,_=M.new_plan("create","evil",[{"method":"POST","path":"/act_999/campaigns","params":{"name":"x","status":"ACTIVE"},"describe":"x"}])
+SEEN.clear(); h.plan=os.path.basename(path2)[:-5]
+rc=M.cmd_apply(h)
+check("unpaused create refused, nothing sent", rc==1 and SEEN==[], SEEN)
+M.api=saved
+
 print("\n"+("ALL PASSED" if not fails else f"{len(fails)} FAILURE(S): {fails}"))
 sys.exit(1 if fails else 0)

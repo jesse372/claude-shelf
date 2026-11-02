@@ -38,6 +38,7 @@ and let him run the apply line. That is the whole safety model — don't route a
 ```bash
 ads.sh doctor                          # token + account + permission check
 ads.sh accounts                        # every ad account this token can see
+ads.sh token-status                    # JSON expiry probe (used by auth-keepalive; never prints the token)
 
 ads.sh list campaigns                  # all campaigns w/ status + budget
 ads.sh list adsets --status ACTIVE
@@ -70,6 +71,13 @@ ads.sh edit AD123 --status PAUSED
 
 ads.sh pause AS123
 ads.sh resume AS123
+
+# create — new campaign + ad sets from a JSON spec (budgets in whole dollars), ALWAYS PAUSED
+ads.sh create spec.json --validate                       # Meta validate_only on the campaign
+ads.sh create spec.json --validate --validate-adsets-in C_SAME_TYPE   # also validate ad sets
+#   example spec: ~/JesseOS/workspace/ads-director/restart-campaign.json
+#   apply chains ids ({{step:1}} = the new campaign) and REFUSES any create step not PAUSED.
+#   Instant Forms + ads still need Ads Manager (token has no Page permissions).
 
 # then review + execute
 ads.sh plans                    # everything pending

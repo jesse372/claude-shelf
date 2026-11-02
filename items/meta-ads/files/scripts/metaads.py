@@ -216,6 +216,30 @@ def cmd_doctor(args):
     return 0
 
 
+def cmd_token_status(args):
+    """JSON expiry probe for auth-keepalive. Never prints the token."""
+    out = {"present": False, "valid": None, "expires_at": None, "data_access_expires_at": None, "hours_left": None}
+    try:
+        tok = _token()
+        out["present"] = True
+        d = api("/debug_token", {"input_token": tok}).get("data", {})
+        out["valid"] = bool(d.get("is_valid"))
+        exps = []
+        for k in ("expires_at", "data_access_expires_at"):
+            v = d.get(k) or 0
+            if v:
+                out[k] = datetime.datetime.fromtimestamp(v, datetime.timezone.utc).isoformat()
+                exps.append(v)
+        if exps:  # 0 = never expires (system user token)
+            out["hours_left"] = int((min(exps) - time.time()) // 3600)
+    except MetaError as e:
+        if out["present"]:
+            out["valid"] = False
+        out["error"] = str(e).splitlines()[0][:200]
+    print(json.dumps(out))
+    return 0
+
+
 def cmd_accounts(args):
     rows = api_all("/me/adaccounts", {"fields": "id,name,currency,account_status"})
     if not rows:
@@ -548,6 +572,116 @@ def cmd_setstatus(args, status):
     return 0
 
 
+# ---------------------------------------------------------------- create (campaign + ad sets)
+STEP_REF = re.compile(r"\{\{step:(\d+)\}\}")
+CREATE_EDGES = ("/campaigns", "/adsets", "/ads", "/adcreatives")
+
+
+def _resolve_refs(params, ids):
+    """Replace '{{step:N}}' in param values with the id step N returned on apply."""
+    out = {}
+    for k, v in params.items():
+        if isinstance(v, str) and STEP_REF.search(v):
+            def sub(mo, k=k):
+                n = int(mo.group(1))
+                if n not in ids:
+                    raise MetaError(f"param '{k}' needs the id from step {n}, which returned none")
+                return str(ids[n])
+            v = STEP_REF.sub(sub, v)
+        out[k] = v
+    return out
+
+
+def _unpaused_creates(plan):
+    """Create calls must create PAUSED objects. Returns offending step numbers (guards hand-edited plans too)."""
+    bad = []
+    for i, s in enumerate(plan["steps"], 1):
+        if s["method"] == "POST" and s["path"].endswith(CREATE_EDGES) and s["path"] != "__RENAME_LAST__":
+            if str(s["params"].get("status", "")).upper() != "PAUSED":
+                bad.append(i)
+    return bad
+
+
+def _enc(v):
+    """Lists/dicts go to Meta as JSON strings; strings and numbers pass through."""
+    return v if isinstance(v, (str, int, float)) and not isinstance(v, bool) else json.dumps(v, separators=(",", ":"))
+
+
+def _targeting_summary(t):
+    bits = [f"age {t.get('age_min', '?')}-{t.get('age_max', '?')}"]
+    adv = (t.get("targeting_automation") or {}).get("advantage_audience")
+    bits.append("Advantage+ audience " + ("OFF (age is a hard limit)" if adv == 0 else "ON (age is only a suggestion)" if adv == 1 else "unset"))
+    geo = t.get("geo_locations") or {}
+    places = [f"{c.get('name', c.get('key'))} +{c.get('radius', '')}{'km' if c.get('distance_unit') == 'kilometer' else 'mi' if c.get('radius') else ''}"
+              for c in geo.get("cities", [])]
+    places += [r.get("name", r.get("key")) for r in geo.get("regions", [])]
+    bits.append("where: " + (", ".join(places) or "?"))
+    if t.get("publisher_platforms"):
+        pos = []
+        for plat in t["publisher_platforms"]:
+            pos += [f"{plat}:{p}" for p in t.get(f"{plat}_positions", ["(all)"])]
+        bits.append("placements: " + ", ".join(pos))
+    else:
+        bits.append("placements: AUTOMATIC (Advantage+)")
+    return "; ".join(bits)
+
+
+def cmd_create(args):
+    """PLAN a new campaign plus its ad sets from a JSON spec. Everything is created PAUSED."""
+    with open(args.spec) as f:
+        spec = json.load(f)
+    acct = account_id()
+    cur = account_currency(acct).get("currency", "")
+    camp = dict(spec["campaign"])
+    adsets = [dict(a) for a in spec.get("adsets", [])]
+
+    for label, obj in [("campaign", camp)] + [(f"ad set '{a.get('name')}'", a) for a in adsets]:
+        if str(obj.get("status", "PAUSED")).upper() != "PAUSED":
+            raise MetaError(f"{label}: status must be PAUSED. New objects never start live; turn them on after review.")
+        obj["status"] = "PAUSED"
+
+    notes, total = [], 0
+    for label, obj in [("campaign", camp)] + [(f"ad set '{a.get('name')}'", a) for a in adsets]:
+        for key in ("daily_budget", "lifetime_budget"):
+            if key in obj:
+                minor = to_minor(obj[key], cur)
+                obj[key] = minor
+                notes.append(f"{label} {key.replace('_', ' ')}: {fmt_money(minor, cur)}  [sent as {minor} minor units]")
+                if key == "daily_budget":
+                    total += minor
+
+    cparams = {k: _enc(v) for k, v in camp.items()}
+    steps = [{"method": "POST", "path": f"/{acct}/campaigns", "params": cparams,
+              "describe": f"Create campaign '{camp.get('name')}' (objective {camp.get('objective')}) as PAUSED"}]
+    for a in adsets:
+        a["campaign_id"] = "{{step:1}}"
+        steps.append({"method": "POST", "path": f"/{acct}/adsets", "params": {k: _enc(v) for k, v in a.items()},
+                      "describe": f"Create ad set '{a.get('name')}' in the new campaign as PAUSED. "
+                                  + _targeting_summary(a.get("targeting", {}))})
+
+    if args.validate:
+        print("Asking Meta to validate (execution_options=validate_only; this creates nothing)...")
+        api(f"/{acct}/campaigns", dict(cparams, execution_options='["validate_only"]'), method="POST")
+        print("  campaign: OK")
+        if args.validate_adsets_in:
+            for s in steps[1:]:
+                p = dict(s["params"], campaign_id=args.validate_adsets_in, execution_options='["validate_only"]')
+                api(f"/{acct}/adsets", p, method="POST")
+                print(f"  ad set '{s['params'].get('name')}': OK (checked against campaign {args.validate_adsets_in})")
+        else:
+            print("  ad sets: not validated (pass --validate-adsets-in <existing campaign id of the same type>)")
+
+    path, plan = new_plan("create", f"Create campaign '{camp.get('name')}' + {len(adsets)} ad set(s), all PAUSED", steps)
+    print_plan(plan, path)
+    print("  Interpreted as:")
+    for n in notes:
+        print(f"    {n}")
+    if total:
+        print(f"    total daily budget once switched on: {fmt_money(total, cur)}")
+    print("    Everything is created PAUSED, so nothing spends until it's switched on in Ads Manager.\n")
+    return 0
+
+
 def _load_plan(pid):
     p = pid if os.path.isabs(pid) else os.path.join(PLAN_DIR, pid.replace(".json", "") + ".json")
     if not os.path.exists(p):
@@ -588,8 +722,13 @@ def cmd_apply(args):
         print("  NOT APPLIED — this was a dry run. Re-run with --confirm to execute.\n")
         return 0
 
+    bad = _unpaused_creates(plan)
+    if bad:
+        print(f"REFUSED: step(s) {bad} would create objects that are not PAUSED. Nothing was sent.")
+        return 1
+
     print(f"Applying plan {plan['id']} — {plan['description']}\n")
-    results, last_id = [], None
+    results, last_id, ids = [], None, {}
     for i, s in enumerate(plan["steps"], 1):
         p = s["path"]
         if p == "__RENAME_LAST__":
@@ -599,7 +738,7 @@ def cmd_apply(args):
             p = f"/{last_id}"
         print(f"  {i}. {s['describe']}")
         try:
-            res = api(p, s["params"], method=s["method"])
+            res = api(p, _resolve_refs(s["params"], ids), method=s["method"])
         except MetaError as e:
             print(f"     FAILED: {e}")
             results.append({"step": i, "ok": False, "error": str(e)})
@@ -618,6 +757,7 @@ def cmd_apply(args):
                 pass
         if nid:
             last_id = nid
+            ids[i] = nid
             print(f"     ok -> {nid}")
         else:
             print("     ok")
@@ -639,6 +779,7 @@ def main():
 
     sub.add_parser("doctor", help="check token, account and permissions")
     sub.add_parser("accounts", help="list ad accounts this token can see")
+    sub.add_parser("token-status", help="JSON expiry probe (for auth-keepalive)")
 
     p = sub.add_parser("list", help="list campaigns / adsets / ads")
     p.add_argument("level", choices=["campaigns", "adsets", "ads"])
@@ -674,6 +815,12 @@ def main():
         q.add_argument("id")
         q.set_defaults(_status=st)
 
+    p = sub.add_parser("create", help="PLAN a new campaign + ad sets from a JSON spec (always PAUSED)")
+    p.add_argument("spec", help="JSON file: {campaign:{...}, adsets:[{...}]}; budgets in whole dollars")
+    p.add_argument("--validate", action="store_true", help="ask Meta to validate first (validate_only; creates nothing)")
+    p.add_argument("--validate-adsets-in", dest="validate_adsets_in",
+                   help="existing campaign id (same objective + budget type) to validate the ad sets against")
+
     sub.add_parser("plans", help="list saved plans")
     p = sub.add_parser("show", help="show a plan"); p.add_argument("plan")
     p = sub.add_parser("apply", help="execute a plan (needs --confirm)")
@@ -683,6 +830,7 @@ def main():
     try:
         if args.cmd == "doctor":    return cmd_doctor(args)
         if args.cmd == "accounts":  return cmd_accounts(args)
+        if args.cmd == "token-status": return cmd_token_status(args)
         if args.cmd == "list":
             args.level = {"campaigns": "campaign", "adsets": "adset", "ads": "ad"}[args.level]
             return cmd_list(args)
@@ -691,6 +839,7 @@ def main():
         if args.cmd == "duplicate": return cmd_duplicate(args)
         if args.cmd == "edit":      return cmd_edit(args)
         if args.cmd in ("pause", "resume"): return cmd_setstatus(args, args._status)
+        if args.cmd == "create":    return cmd_create(args)
         if args.cmd == "plans":     return cmd_plans(args)
         if args.cmd == "show":      return cmd_show(args)
         if args.cmd == "apply":     return cmd_apply(args)
