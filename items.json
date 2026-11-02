@@ -1,14 +1,14 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-11-02T10:42:24+00:00",
+  "updated": "2026-11-02T10:42:34+00:00",
   "items": [
     {
       "slug": "meta-ads",
       "title": "Meta Ads Manager",
       "emoji": "📣",
       "type": "skill",
-      "summary": "Run Facebook/Instagram ads from the command line: duplicate campaigns, change budgets, pause and resume, and pull cost-per-lead reports. Every change is shown as a plan first and only applied when you confirm.",
+      "summary": "Run Facebook/Meta ads from the command line: reports, duplicate, edit budgets, pause/resume, and build new campaigns + ad sets from a JSON spec. Every write is a reviewable plan, and new objects are always created PAUSED.",
       "how_to_use": "Ask \"how are my ads doing?\", \"duplicate the winning ad set\", \"raise the budget to $40/day\".",
       "requires": "Your own Meta Marketing API access token and ad account ID (SETUP.md).",
       "tags": [],
