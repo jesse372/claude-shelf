@@ -32,7 +32,7 @@ and exports full-quality JPEGs with original names + capture dates. Everything s
 | Piece | File | Tech |
 |---|---|---|
 | Import | `js/io.js` | LibRaw (WASM), libheif, UTIF; embedded RAW previews for fast culling; EXIF read/write |
-| Cull AI | `js/cull.js`, `js/detect.js` | MediaPipe face mesh blendshapes (blinks), Laplacian sharpness (calibrated), dHash + capture time bursts |
+| Cull AI | `js/analyze.js` (in `js/analysis-worker.js`), `js/cull.js`, `js/detect.js` | YuNet + MediaPipe face mesh blendshapes (blinks), Laplacian sharpness (calibrated), dHash + capture time bursts. Runs in a background worker so the page never freezes on import; falls back to the page automatically |
 | Render | `js/render.js` | WebGL2: warp field → skin/chin → develop, all GPU at full res; 16-bit half-float for RAW |
 | Shape | `js/warp.js` | Face mesh + pose + person segmentation → smooth displacement fields per slider |
 | Skin | `js/skin.js` | Face-oval-minus-features mask ∪ learned skin-colour inside the person silhouette |
@@ -41,7 +41,9 @@ and exports full-quality JPEGs with original names + capture dates. Everything s
 
 ## Commands
 - `./deploy/deploy.sh` — build + deploy the website · `./deploy/deploy.sh --password` — change the password
-- `node tests/e2e.mjs` — full local self-check (17 checks; headless Chrome on :9333, `python3 server.py` on :8765)
+- `node tests/e2e.mjs` — full local self-check (20 checks; headless Chrome on :9333, `python3 server.py` on :8765)
+- `PORT=9337 node tests/responsiveness.mjs` — page stays smooth while 120 real wedding photos import (GPU browser)
+- other flow tests: `jobs`, `details`, `clock`, `resume`, `brightness`, `autopilot`, `cull-rules`, `stress` (all take `PORT=9337` for the GPU browser)
 - `node tests/autopilot.mjs` — teach style → Process shoot → verify cull, edits and exported files
 - `node tests/style-eval2.mjs` — honest style-learning benchmark (needs tests/fixtures/style2)
 - `SCULPT_PASSWORD=… node tests/live.mjs` — smoke-test the live site

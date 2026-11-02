@@ -83,6 +83,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         if self.path.split("?")[0] == "/api/style":
             data = self._read_style()
             return self._json(200, data or {})
+        if self.path.split("?")[0] == "/api/deliveries":   # "Send to Pixieset" needs the website's storage: off here
+            return self._json(200, {"enabled": False})
         return super().do_GET()
 
     def do_PUT(self):

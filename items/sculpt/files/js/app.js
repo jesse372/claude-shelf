@@ -105,15 +105,13 @@ async function pump() {
     running++;
     (async () => {
       try {
-        const { bitmap, meta } = await loadPreview(p.file, 1600);
-        p.meta = meta || {};
-        p.time = p.time0 = meta?.time ? meta.time.getTime() : null;      // time0: the camera's own clock
-        const pv = await toBlob(bitmap, 1400, 0.82), th = await toBlob(bitmap, 360, 0.8);
-        p.previewURL = URL.createObjectURL(pv); p.thumbURL = URL.createObjectURL(th); p.thumbBlob = th;
-        p.previewW = bitmap.width;     // face boxes are in this bitmap's pixels
-        if (job) J.saveImages(job.id, p.key, th, pv).catch((e) => console.warn('could not save thumbnails', e));
-        p.raw = await analyzePhoto(bitmap);
-        bitmap.close?.();
+        const r = await analyseFile(p.file);
+        p.meta = r.meta || {};
+        p.time = p.time0 = p.meta.time ? new Date(p.meta.time).getTime() : null;      // time0: the camera's own clock
+        p.previewURL = URL.createObjectURL(r.pv); p.thumbURL = URL.createObjectURL(r.th); p.thumbBlob = r.th;
+        p.previewW = r.w;     // face boxes are in this bitmap's pixels
+        if (job) J.saveImages(job.id, p.key, r.th, r.pv).catch((e) => console.warn('could not save thumbnails', e));
+        p.raw = r.raw;
       } catch (e) {
         console.warn('analysis failed', p.name, e);
         p.failed = true;
@@ -131,10 +129,71 @@ async function pump() {
     })();
   }
 }
+/**
+ * Preview + thumbnails + culling AI for one file → { meta, raw, pv, th, w }. Runs in a background worker so the page
+ * never freezes during a big import; if the worker can't start, keeps failing where the page succeeds, or stalls,
+ * the page does the work itself from then on (slower to use, same results).
+ */
+let worker = null, workerOff = !self.Worker || !!self.__sculptNoWorker, workerMisses = 0, workerSeq = 0;
+const workerWaits = new Map();
+function stopWorker(why) {
+  console.warn('photo analysis moves to the page:', why);
+  workerOff = true;
+  try { worker?.terminate(); } catch {}
+  worker = null;
+  for (const w of workerWaits.values()) w.reject(new Error(why));
+  workerWaits.clear();
+}
+function analysisWorker() {
+  if (worker || workerOff) return worker;
+  try {
+    worker = new Worker(new URL('./analysis-worker.js', import.meta.url), { type: 'module' });
+  } catch (e) { stopWorker('could not start: ' + e.message); return null; }
+  worker.onmessage = ({ data: m }) => {
+    if (m.fatal) return stopWorker(m.error);     // rejects every waiting photo → each is redone on the page
+    const w = workerWaits.get(m.id); if (!w) return; workerWaits.delete(m.id); m.ok ? w.resolve(m) : w.reject(new Error(m.error));
+  };
+  worker.onerror = (e) => { e.preventDefault?.(); stopWorker('worker error: ' + (e.message || 'failed to load')); };
+  worker.postMessage({ flags: { __sculptCPU: !!self.__sculptCPU, __sculptNoGPU: !!self.__sculptNoGPU, __ortGpuPath: self.__ortGpuPath || null } });
+  return worker;
+}
+async function analyseHere(file) {
+  const { bitmap, meta } = await loadPreview(file, 1600);
+  try {
+    const pv = await toBlob(bitmap, 1400, 0.82), th = await toBlob(bitmap, 360, 0.8);
+    return { meta: meta || {}, pv, th, w: bitmap.width, raw: await analyzePhoto(bitmap) };
+  } finally { bitmap.close?.(); }
+}
+/** One request to the worker; rejects if it answers with an error or stops (the caller then does the work here). */
+function askWorker(msg) {
+  const w = analysisWorker();
+  if (!w) return Promise.reject(new Error('no worker'));
+  const id = ++workerSeq;
+  let timer;
+  return new Promise((resolve, reject) => {
+    workerWaits.set(id, { resolve, reject });
+    // first photo also loads the AI models; after that a photo takes seconds — minutes means the worker is stuck
+    timer = setTimeout(() => stopWorker('no answer in 5 minutes'), 300e3);
+    w.postMessage({ ...msg, id });
+  }).finally(() => { clearTimeout(timer); workerWaits.delete(id); });
+}
+async function analyseFile(file) {
+  if (!analysisWorker()) return analyseHere(file);
+  try {
+    return await askWorker({ file });
+  } catch (e) {
+    const r = await analyseHere(file);           // a genuinely unreadable file throws here too → marked failed
+    if (!workerOff && ++workerMisses >= 3) stopWorker('kept failing where the page succeeds: ' + e.message);
+    return r;
+  }
+}
 /** Second shooter / second body: line every camera's clock up with the main camera (see clocksync.js). */
-function syncClocks() {
+async function syncClocks() {
   const items = photos.filter((p) => p.time0 != null && p.raw?.emb).map((p) => ({ p, cam: cameraId(p.meta, p.name), t: p.time0, emb: p.raw.emb }));
-  const { offsets } = estimateOffsets(items);
+  // compares every photo with every main-camera photo (seconds on a big wedding): in the worker when there is one
+  let offsets = null;
+  if (analysisWorker()) try { offsets = (await askWorker({ clock: items.map(({ cam, t, emb }) => ({ cam, t, emb })) })).offsets; } catch (e) { console.warn('clock sync in worker failed', e); }
+  if (!offsets) offsets = estimateOffsets(items).offsets;
   const fixes = [];
   for (const it of items) it.p.time = it.t + (offsets[it.cam]?.ms || 0);
   for (const [cam, o] of Object.entries(offsets)) if (o.ms && Math.abs(o.ms) >= 20e3) {
@@ -144,8 +203,15 @@ function syncClocks() {
   if (job) job.clock = { offsets, at: Date.now() };
   return fixes;
 }
+let finishing = null, finishAgain = false;
 function finishImport() {
-  const fixes = syncClocks();
+  // one at a time; photos that finish meanwhile (a second batch) get a fresh pass straight after
+  if (finishing) { finishAgain = true; return finishing; }
+  finishing = (async () => { try { do { finishAgain = false; await finishImportNow(); } while (finishAgain); } finally { finishing = null; } })();
+  return finishing;
+}
+async function finishImportNow() {
+  const fixes = await syncClocks();
   if (fixes.length) toast(`Lined up the cameras’ clocks so the timeline is right — ${fixes.join('; ')}.`, 9000);
   // shoot order = capture time (falls back to filename order)
   photos.sort((a, b) => (a.time ?? Infinity) - (b.time ?? Infinity) || a.order - b.order);
@@ -427,4 +493,5 @@ const startJob = startId ? await J.getJob(startId).catch(() => null) : null;
 if (startJob) await enterJob(startJob);
 else { document.body.classList.add('home'); updateHeader(); setMode('cull'); showHome(); }
 // Automation hook for the self-check script.
-window.__sculpt = { addFiles, photos, S, setMode, get cur() { return current(); }, emit, get job() { return job; } };
+window.__sculpt = { addFiles, photos, S, setMode, get cur() { return current(); }, emit, get job() { return job; },
+  get analysis() { return workerOff ? 'page' : worker ? 'worker' : 'not started'; } };

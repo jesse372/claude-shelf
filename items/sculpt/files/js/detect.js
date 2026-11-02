@@ -6,27 +6,60 @@ const DETECT_MAX = 1600;   // long side of the image the detectors see
 let face = null, pose = null, seg = null, initPromise = null, fileset = null;
 const SEG_MAX = 1024;   // person/skin segmentation resolution
 
+// MediaPipe inside a module worker (photo analysis runs in one) imports its WASM loader as an ES module, so the global
+// ModuleFactory it then looks for is never set ("ModuleFactory not set") — and it clears that global after every model.
+// So in a worker: run the loader once as a classic script, and hand its factory back before each model is created.
+let loaderFactory = null;
+async function prepLoader() {
+  if (typeof document !== 'undefined') return;           // page: MediaPipe's own <script> loading works
+  if (!loaderFactory) {
+    const r = await fetch(fileset.wasmLoaderPath);
+    if (!r.ok) throw new Error('could not load the AI engine');
+    (0, eval)(await r.text());
+    loaderFactory = self.ModuleFactory;
+  }
+  self.ModuleFactory = loaderFactory;
+}
+
 async function make(Cls, opts) {
+  await prepLoader();
   // test / batch machines without a real GPU: the CPU path is much faster than an emulated GPU
   if (self.__sculptCPU) return Cls.createFromOptions(fileset, { ...opts, baseOptions: { ...opts.baseOptions, delegate: 'CPU' } });
   try {
     return await Cls.createFromOptions(fileset, { ...opts, baseOptions: { ...opts.baseOptions, delegate: 'GPU' } });
   } catch (e) {
     console.warn('GPU delegate unavailable, falling back to CPU', e);
+    await prepLoader();
     return await Cls.createFromOptions(fileset, { ...opts, baseOptions: { ...opts.baseOptions, delegate: 'CPU' } });
   }
 }
 
-export function initDetectors() {
-  if (!initPromise) initPromise = (async () => {
+// Each model loads on first use: photo analysis (also run in a background worker) needs only the face model and the
+// scene fingerprint; the editor also needs body pose + person segmentation.
+let filesetP = null, faceP = null;
+function initFileset() {
+  if (!filesetP) filesetP = FilesetResolver.forVisionTasks(new URL('../vendor/', import.meta.url).href + 'wasm')
+    .then((f) => (fileset = f)).catch((e) => { filesetP = null; throw e; });
+  return filesetP;
+}
+function initFace() {
+  if (!faceP) faceP = (async () => {
+    await initFileset();
     const base = new URL('../vendor/', import.meta.url).href;
-    fileset = await FilesetResolver.forVisionTasks(base + 'wasm');
     face = await make(FaceLandmarker, {
       baseOptions: { modelAssetPath: base + 'models/face_landmarker.task' },
       runningMode: 'IMAGE', numFaces: 8, outputFaceBlendshapes: true, outputFacialTransformationMatrixes: true,
       // low thresholds find close-up / three-quarter faces; detections are then kept only if they sit on a person
       minFaceDetectionConfidence: 0.2, minFacePresenceConfidence: 0.25,
     });
+  })().catch((e) => { faceP = null; throw e; });
+  return faceP;
+}
+
+export function initDetectors() {
+  if (!initPromise) initPromise = (async () => {
+    const base = new URL('../vendor/', import.meta.url).href;
+    await initFace();
     pose = await make(PoseLandmarker, {
       baseOptions: { modelAssetPath: base + 'models/pose_landmarker_full.task' },
       runningMode: 'IMAGE', numPoses: 4, outputSegmentationMasks: false,   // GPU mask readback is unreliable; the segmenter below is better anyway
@@ -34,6 +67,7 @@ export function initDetectors() {
     });
     // Multi-class person segmentation: background / hair / body-skin / face-skin / clothes / others.
     // CPU: tiny model, ~0.5s, and its mask always reads back correctly.
+    await prepLoader();
     seg = await ImageSegmenter.createFromOptions(fileset, {
       baseOptions: { modelAssetPath: base + 'models/selfie_multiclass_256x256.tflite', delegate: 'CPU' },
       runningMode: 'IMAGE', outputCategoryMask: true, outputConfidenceMasks: false,
@@ -45,6 +79,7 @@ export function initDetectors() {
 export const SEG = { BG: 0, HAIR: 1, BODY_SKIN: 2, FACE_SKIN: 3, CLOTHES: 4, OTHER: 5 };
 
 function canvas(w, h) {
+  if (typeof document === 'undefined') return new OffscreenCanvas(w, h);   // background worker
   const c = document.createElement('canvas');
   c.width = w; c.height = h;
   return c;
@@ -142,7 +177,7 @@ function blink(res, i) {
  * @param source canvas/bitmap (already small, e.g. 1024px)
  */
 export async function analyzeFaces(source) {
-  await initDetectors();
+  await initFace();
   const res = face.detect(source);
   const W = source.width, H = source.height;
   return (res.faceLandmarks || []).map((lms, i) => {
@@ -157,7 +192,7 @@ export async function analyzeFaces(source) {
 let embedderP = null;
 function initEmbedder() {
   if (!embedderP) embedderP = (async () => {
-    await initDetectors();
+    await initFileset();
     const base = new URL('../vendor/', import.meta.url).href;
     return make(ImageEmbedder, { baseOptions: { modelAssetPath: base + 'models/mobilenet_v3_small.tflite' }, runningMode: 'IMAGE', l2Normalize: true, quantize: false });
   })().catch((e) => { embedderP = null; throw e; });

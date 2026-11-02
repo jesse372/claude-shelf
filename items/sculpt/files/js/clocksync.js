@@ -27,16 +27,31 @@ export function estimateOffsets(items, { range = 3 * 3600e3, step = 10e3, topK =
   for (const [cam, B] of cams.slice(1)) {
     if (B.length < minPhotos) { out.offsets[cam] = { ms: 0, confidence: 0, votes: 0, reason: 'too few photos' }; continue; }
     const bins = Math.round(range / step), hist = new Float64Array(2 * bins + 1);
-    for (const b of B) {
-      const sims = A.map((a) => dot(a.e, b.e));
-      const sorted = Float64Array.from(sims).sort(), med = sorted[sorted.length >> 1];
-      const top = sims.map((s, i) => [s, i]).sort((x, y) => y[0] - x[0]).slice(0, topK);
-      for (const [s, i] of top) {
-        const w = s - med; if (w <= 0) continue;
-        const k = Math.round((A[i].t - b.t) / step) + bins;
-        if (k >= 0 && k < hist.length) hist[k] += w;
+    // each photo's similarity to every main-camera photo, computed once and reused below (this step runs over every
+    // pair of photos — ~1.5 million on a two-camera wedding — so it is kept tight; results match the plain version)
+    const sims = new Float64Array(A.length), sorted = new Float64Array(A.length), best1 = new Int32Array(B.length);
+    const topS = new Float64Array(topK), topI = new Int32Array(topK);
+    B.forEach((b, bi) => {
+      let arg = -1, bs = -2;
+      for (let i = 0; i < A.length; i++) { const v = dot(A[i].e, b.e); sims[i] = v; if (v > bs) { bs = v; arg = i; } }
+      best1[bi] = arg;
+      sorted.set(sims); sorted.sort();
+      const med = sorted[sorted.length >> 1];
+      // top K by similarity, earlier photo first on ties (same order as a stable sort)
+      let n = 0;
+      for (let i = 0; i < A.length; i++) {
+        const s = sims[i];
+        if (n === topK && !(s > topS[n - 1])) continue;
+        let j = n < topK ? n++ : n - 1;
+        while (j > 0 && s > topS[j - 1]) { topS[j] = topS[j - 1]; topI[j] = topI[j - 1]; j--; }
+        topS[j] = s; topI[j] = i;
       }
-    }
+      for (let k = 0; k < n; k++) {
+        const w = topS[k] - med; if (w <= 0) continue;
+        const h = Math.round((A[topI[k]].t - b.t) / step) + bins;
+        if (h >= 0 && h < hist.length) hist[h] += w;
+      }
+    });
     // smooth over ±3 bins (shots of one moment span a few seconds either side)
     const sm = hist.map((_, k) => { let s = 0; for (let j = -3; j <= 3; j++) s += hist[k + j] || 0; return s; });
     let best = 0; for (let k = 1; k < sm.length; k++) if (sm[k] > sm[best]) best = k;
@@ -50,10 +65,7 @@ export function estimateOffsets(items, { range = 3 * 3600e3, step = 10e3, topK =
     // a real clock error is confirmed by many separate moments through the day; a coincidence by one cluster of
     // look-alike photos — count the distinct 10-minute stretches whose best match agrees with this offset
     const moments = new Set();
-    for (const b of B) {
-      let bi = -1, bs = -2; for (let i = 0; i < A.length; i++) { const v = dot(A[i].e, b.e); if (v > bs) { bs = v; bi = i; } }
-      if (Math.abs(A[bi].t - b.t - ms) <= 30e3) moments.add(Math.floor((b.t + ms) / 600e3));
-    }
+    B.forEach((b, j) => { const bi = best1[j]; if (Math.abs(A[bi].t - b.t - ms) <= 30e3) moments.add(Math.floor((b.t + ms) / 600e3)); });
     const ok = confidence >= minConfidence && (moments.size >= minMoments || confidence >= minConfidence + 1);   // or a very clear match in one stretch
     out.offsets[cam] = ok ? { ms: Math.round(ms), confidence: +confidence.toFixed(2), moments: moments.size, votes: B.length }
       : { ms: 0, confidence: +confidence.toFixed(2), moments: moments.size, votes: B.length, reason: 'no clear match', guess: Math.round(ms) };

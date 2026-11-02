@@ -94,6 +94,12 @@ async function applyFlip(src, flip) {
 
 // ------------------------------------------------------------------ helpers
 async function loadScript(src) {
+  if (typeof document === 'undefined') {     // background worker: no <script> tags; run the classic script globally
+    const r = await fetch(src);
+    if (!r.ok) throw new Error('failed to load ' + src);
+    (0, eval)(await r.text());
+    return;
+  }
   await new Promise((res, rej) => {
     const s = document.createElement('script');
     s.src = src; s.onload = res; s.onerror = () => rej(new Error('failed to load ' + src));
