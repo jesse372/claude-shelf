@@ -10,3 +10,4 @@ __pycache__/
 review/
 deploy/.dev.vars
 deploy/.wrangler/
+tmp-gbm/

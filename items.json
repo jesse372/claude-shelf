@@ -1,33 +1,8 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-11-02T10:42:34+00:00",
+  "updated": "2026-11-02T19:16:08+00:00",
   "items": [
-    {
-      "slug": "meta-ads",
-      "title": "Meta Ads Manager",
-      "emoji": "📣",
-      "type": "skill",
-      "summary": "Run Facebook/Meta ads from the command line: reports, duplicate, edit budgets, pause/resume, and build new campaigns + ad sets from a JSON spec. Every write is a reviewable plan, and new objects are always created PAUSED.",
-      "how_to_use": "Ask \"how are my ads doing?\", \"duplicate the winning ad set\", \"raise the budget to $40/day\".",
-      "requires": "Your own Meta Marketing API access token and ad account ID (SETUP.md).",
-      "tags": [],
-      "link": "",
-      "created": "2026-09-17T04:00:00+08:00",
-      "updated": "2026-11-02T10:42:24+00:00",
-      "version": 3,
-      "useful": 3,
-      "files": [
-        "SETUP.md",
-        "SKILL.md",
-        "scripts/ads.sh",
-        "scripts/metaads.py",
-        "scripts/test_metaads.py"
-      ],
-      "skill_name": "meta-ads",
-      "zip": "items/meta-ads/meta-ads.zip",
-      "install_prompt": "Please install the Claude Code skill \"Meta Ads Manager\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/meta-ads/meta-ads.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/meta-ads/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
-    },
     {
       "slug": "sculpt",
       "title": "Sculpt Photo Editor",
@@ -39,8 +14,8 @@
       "tags": [],
       "link": "",
       "created": "2026-10-08T11:01:27+08:00",
-      "updated": "2026-11-02T01:11:59+00:00",
-      "version": 3,
+      "updated": "2026-11-02T19:15:56+00:00",
+      "version": 4,
       "useful": 5,
       "files": [
         ".gitignore",
@@ -117,8 +92,8 @@
       "tags": [],
       "link": "",
       "created": "2026-06-29T01:45:57+08:00",
-      "updated": "2026-11-01T19:15:07+00:00",
-      "version": 5,
+      "updated": "2026-11-02T19:15:40+00:00",
+      "version": 6,
       "useful": 4,
       "files": [
         "README.md",
@@ -150,6 +125,59 @@
       "install_prompt": "Please set up \"Claude + Codex Setup\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/jesseos-starter/jesseos-starter.zip and unzip it to ~/claude-shelf/jesseos-starter/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Unzip, read README.md, run ./install.sh (it never overwrites your files). Then fill in vault/00-context and add skills from this shelf."
     },
     {
+      "slug": "auth-framework",
+      "title": "Login Keepalive",
+      "emoji": "🔐",
+      "type": "skill",
+      "summary": "Checks configured service logins, refreshes access where supported, and alerts when you need to reconnect. Includes a YouTube access check after connecting the YouTube Uploader skill.",
+      "how_to_use": "Ask \"add an auth keepalive for this\" when you build anything that logs in.",
+      "requires": "macOS (Keychain + launchd).",
+      "tags": [],
+      "link": "",
+      "created": "2026-06-29T02:07:26+08:00",
+      "updated": "2026-11-02T19:15:14+00:00",
+      "version": 7,
+      "useful": 3,
+      "files": [
+        "CONTRACT.md",
+        "SKILL.md",
+        "com.jesse.auth-keepalive.plist",
+        "scripts/auth-keepalive.sh",
+        "scripts/auth-keepalive.sh.bak-omnara-20261028",
+        "scripts/authlib.sh",
+        "scripts/claude_auth_health.py",
+        "tests/test_claude_auth_health.py"
+      ],
+      "skill_name": "auth-framework",
+      "zip": "items/auth-framework/auth-framework.zip",
+      "install_prompt": "Please install the Claude Code skill \"Login Keepalive\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/auth-framework/auth-framework.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/auth-framework/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+    },
+    {
+      "slug": "meta-ads",
+      "title": "Meta Ads Manager",
+      "emoji": "📣",
+      "type": "skill",
+      "summary": "Run Facebook/Meta ads from the command line: reports, duplicate, edit budgets, pause/resume, and build new campaigns + ad sets from a JSON spec. Every write is a reviewable plan, and new objects are always created PAUSED.",
+      "how_to_use": "Ask \"how are my ads doing?\", \"duplicate the winning ad set\", \"raise the budget to $40/day\".",
+      "requires": "Your own Meta Marketing API access token and ad account ID (SETUP.md).",
+      "tags": [],
+      "link": "",
+      "created": "2026-09-17T04:00:00+08:00",
+      "updated": "2026-11-02T10:42:24+00:00",
+      "version": 3,
+      "useful": 3,
+      "files": [
+        "SETUP.md",
+        "SKILL.md",
+        "scripts/ads.sh",
+        "scripts/metaads.py",
+        "scripts/test_metaads.py"
+      ],
+      "skill_name": "meta-ads",
+      "zip": "items/meta-ads/meta-ads.zip",
+      "install_prompt": "Please install the Claude Code skill \"Meta Ads Manager\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/meta-ads/meta-ads.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/meta-ads/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+    },
+    {
       "slug": "youtube-upload",
       "title": "YouTube Uploader",
       "emoji": "▶️",
@@ -176,34 +204,6 @@
       "skill_name": "youtube-upload",
       "zip": "items/youtube-upload/youtube-upload.zip",
       "install_prompt": "Please install the Claude Code skill \"YouTube Uploader\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/youtube-upload/youtube-upload.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/youtube-upload/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
-    },
-    {
-      "slug": "auth-framework",
-      "title": "Login Keepalive",
-      "emoji": "🔐",
-      "type": "skill",
-      "summary": "Checks configured service logins, refreshes access where supported, and alerts when you need to reconnect. Includes a YouTube access check after connecting the YouTube Uploader skill.",
-      "how_to_use": "Ask \"add an auth keepalive for this\" when you build anything that logs in.",
-      "requires": "macOS (Keychain + launchd).",
-      "tags": [],
-      "link": "",
-      "created": "2026-06-29T02:07:26+08:00",
-      "updated": "2026-10-31T01:15:20+00:00",
-      "version": 6,
-      "useful": 3,
-      "files": [
-        "CONTRACT.md",
-        "SKILL.md",
-        "com.jesse.auth-keepalive.plist",
-        "scripts/auth-keepalive.sh",
-        "scripts/auth-keepalive.sh.bak-omnara-20261028",
-        "scripts/authlib.sh",
-        "scripts/claude_auth_health.py",
-        "tests/test_claude_auth_health.py"
-      ],
-      "skill_name": "auth-framework",
-      "zip": "items/auth-framework/auth-framework.zip",
-      "install_prompt": "Please install the Claude Code skill \"Login Keepalive\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/auth-framework/auth-framework.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/auth-framework/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "mac-headless-setup",

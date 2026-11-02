@@ -13,3 +13,7 @@ The Mac mini's internal disk is small (~113 GB, often <10 GB free). **Do not fil
 - Internal disk is only for code, small scripts, configs and the few review images an agent must read directly. Prune those after use.
 - Agent sessions running under Omnara can't read external drives right now (TCC). Run commands through Terminal with
   `~/JesseOS/workspace/video-edits-runner/tr.sh "<cmd>"` until Omnara gets Full Disk Access.
+
+## Machines (2026-11-02)
+- Mac mini (headless, always on): JesseOS home. MacBook Pro: Jesse's laptop, `ssh macbook` from the mini on home Wi-Fi.
+- Work across both with the `peer-mac` skill (SSH both ways + task handoff to the other Mac's Claude).

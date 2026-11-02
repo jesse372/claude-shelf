@@ -287,6 +287,39 @@ PYYT
   fi
 }
 
+t_meta_ads(){
+  # Meta Marketing API token (skills/meta-ads). Jesse's is a 60-day USER token that cannot
+  # self-refresh headlessly, so warn 10 days out (not 48h): re-minting needs him in a browser.
+  # Probe is `ads.sh token-status` (Meta's /debug_token), so a revoked token shows up too.
+  local ADS="~/.claude/skills/meta-ads/scripts/ads.sh"
+  [ -x "$ADS" ] || return 0
+  local js present valid hl
+  js="$("$ADS" token-status 2>/dev/null)"
+  present="$(printf '%s' "$js" | python3 -c 'import sys,json;print(json.load(sys.stdin).get("present",False))' 2>/dev/null || echo False)"
+  valid="$(printf '%s'   "$js" | python3 -c 'import sys,json;print(json.load(sys.stdin).get("valid"))' 2>/dev/null || echo None)"
+  hl="$(printf '%s'      "$js" | python3 -c 'import sys,json;v=json.load(sys.stdin).get("hours_left");print(v if v is not None else "n/a")' 2>/dev/null || echo n/a)"
+  [ "$present" = "True" ] || { row meta-ads N/A "-" "no token (weekly loop nudges setup)"; return 0; }
+  local subj="" body=""
+  if [ "$valid" != "True" ]; then
+    row meta-ads FAIL "$hl" "token rejected by Meta"
+    subj="Meta ads token is dead"
+  elif [ "$hl" != "n/a" ] && [ "$hl" -lt 240 ]; then
+    row meta-ads WARN "$hl" "user token expires in $(( hl / 24 ))d"
+    subj="Meta ads token expires in $(( hl / 24 )) days"
+  else
+    row meta-ads OK "$hl" "token valid"; return 0
+  fi
+  body="The Meta Marketing API token used by ads.sh and the Monday ads report stops working at the expiry above. Renew it (2 min, needs a browser): Graph API Explorer -> your app -> Generate token with ads_read + ads_management + business_management, then exchange it for a 60-day token (or mint a never-expiring System User token per skills/meta-ads/SETUP.md). Save it yourself: security add-generic-password -U -s meta-ads -a token -w '<TOKEN>', then run ads.sh doctor."
+  [ "$DRY" = 1 ] && { echo "    would-alert[meta_ads]: $subj"; return 0; }
+  af_alert meta_ads "$subj" "$body"
+  # Email too, at most every 3 days (af_alert's cap file was just written if it fired).
+  local capf="$STATE/email.meta_ads.epoch" now; now=$(date +%s)
+  if [ $(( now - $(cat "$capf" 2>/dev/null || echo 0) )) -ge 259200 ]; then
+    printf '%s\n' "$body" | /bin/bash "~/.claude/skills/gmail/scripts/gmail.sh" notify-self \
+      --subject "$subj" --body - >>"$LOG" 2>&1 && echo "$now" >"$capf"
+  fi
+}
+
 t_template(){
   [ "${ENABLE_TEMPLATE:-0}" = 1 ] || return 0   # disabled by default; set ENABLE_TEMPLATE=1 to try
   local exp_iso="2030-01-01T00:00:00Z"          # <- read this from your token file in real use
@@ -309,6 +342,7 @@ t_omnara
 t_gmail
 t_square
 t_youtube
+t_meta_ads
 t_template
 log "===== done ====="
 exit 0

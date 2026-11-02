@@ -208,8 +208,10 @@ export function learnedTone(id, thumb, seg = null, photo = null) {
     // computed exactly as in training (tools/brightness-model.py)
     const x = learnedFeatures(all, lums, sorted, thumb, seg, photo), out = {};
     learnedTone.lastFeatures = x;                      // (tests compare these with training)
+    // per-photo contrast too, when the style has it (Jesse 2026-11-03: his contrast varies photo to photo); any other
+    // target is a ±100 slider - the editor adds these to the matching develop sliders (applyParams)
     const lim = { exposure: [-(L.expMax || 100), L.expMax || 100], temp: [-100, 100], tint: [-100, 100] };
-    L.gbm.targets.forEach((name, j) => { out[name] = Math.round(Math.max(lim[name][0], Math.min(lim[name][1], gbmPredict(L.gbm.models[j], x)))); });
+    L.gbm.targets.forEach((name, j) => { const [lo, hi] = lim[name] || [-100, 100]; out[name] = Math.round(Math.max(lo, Math.min(hi, gbmPredict(L.gbm.models[j], x)))); });
     return out;
   }
   const { mu, sd, W } = L.model, f = all.slice(0, mu.length), z = [1, ...f.map((v, k) => (v - mu[k]) / sd[k])];
