@@ -1,10 +1,10 @@
-// Luxe Lash Studio: Bec uploads a phone photo of a client's lashes, and a Mac
+// Lash Photo Studio: the artist uploads a phone photo of a client's lashes, and a Mac
 // edits it with Codex, which is signed in with the owner's ChatGPT plan (no OpenAI API billing).
 //
 //   phone --POST /api/jobs--> Worker --> Queue (Durable Object, SQLite) <--poll-- Mac mini agent
 //   phone <--GET /api/jobs/:id (status) / :id/image--                     --result-->
 //
-// Public routes need Bec's ACCESS_CODE; /api/agent/* routes need the Mac's AGENT_TOKEN.
+// Public routes need the artist's ACCESS_CODE; /api/agent/* routes need the Mac's AGENT_TOKEN.
 import { DurableObject } from "cloudflare:workers";
 import PAGE from "../build/index.html";
 
@@ -161,7 +161,7 @@ export class Queue extends DurableObject {
   async finish(id, image) {
     this.beat();
     this.putBlob(id, "out", image);
-    this.sql.exec("DELETE FROM blobs WHERE job=? AND kind='in'", id); // keep only what Bec needs
+    this.sql.exec("DELETE FROM blobs WHERE job=? AND kind='in'", id); // keep only what the artist needs
     this.sql.exec("UPDATE jobs SET status='done', error=NULL, updated=? WHERE id=?", Date.now(), id);
   }
 
@@ -222,7 +222,7 @@ export default {
       return json({ error: "not found" }, 404);
     }
 
-    // ----- Bec's phone -----
+    // ----- the artist's phone -----
     if (p === "/api/check" && request.method === "POST") {
       const { code } = await request.json().catch(() => ({}));
       const h = await q.health();

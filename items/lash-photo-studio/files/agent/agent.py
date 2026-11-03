@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Lash Studio agent: runs on the Mac mini (run as a macOS LaunchAgent, see README).
 
-Polls the Worker for photos Bec has sent, edits each one with `codex exec`, which uses the
+Polls the Worker for photos the artist has sent, edits each one with `codex exec`, which uses the
 image_generation tool and The ChatGPT account sign-in (no OpenAI API billing), and uploads the result.
 
 Uses only the standard library plus macOS `sips`. Logs to agent/agent.log.
@@ -45,7 +45,7 @@ def call(method, path, body=None, ctype="application/json", timeout=60):
 
 
 def classify(text):
-    """Turn Codex output into (message for Bec, retry?)."""
+    """Turn Codex output into (message for the artist, retry?)."""
     t = text.lower()
     if re.search(r"usage limit|rate limit|too many requests|quota|reached your", t):
         return "The ChatGPT account has hit its limit for now. Please try again later.", False
@@ -69,7 +69,7 @@ def dims(path):
 
 
 def finish_image(src, dst, shape):
-    """PNG from Codex -> JPEG, capped size, centre-cropped to the shape Bec asked for."""
+    """PNG from Codex -> JPEG, capped size, centre-cropped to the shape the artist asked for."""
     sips("-s", "format", "jpeg", "-s", "formatOptions", "92", str(src), "--out", str(dst))
     target = {"square": 1.0, "portrait": 4 / 5}.get(shape)
     if target:

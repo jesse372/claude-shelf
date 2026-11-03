@@ -24,5 +24,5 @@ new_sqlite_classes = ["Queue"]
 enabled = true
 
 # Secrets (`npx wrangler secret put NAME`, never committed):
-#   ACCESS_CODE  - the code Bec types once on her phone
+#   ACCESS_CODE  - the code the artist types once on her phone
 #   AGENT_TOKEN  - shared with the Mac mini agent (agent/.agent_token)

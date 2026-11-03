@@ -1,7 +1,7 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-11-03T15:42:17+00:00",
+  "updated": "2026-11-03T15:42:28+00:00",
   "items": [
     {
       "slug": "lash-photo-studio",
@@ -19,8 +19,8 @@
       ],
       "link": "",
       "created": "2026-11-03T15:16:16+00:00",
-      "updated": "2026-11-03T15:42:17+00:00",
-      "version": 2,
+      "updated": "2026-11-03T15:42:28+00:00",
+      "version": 3,
       "useful": 4,
       "files": [
         ".gitignore",
