@@ -24,6 +24,7 @@ from urllib.parse import urlparse
 
 BASE_ROOT = Path(os.environ.get("YOUTUBE_HOME", Path.home() / ".youtube-upload"))
 ROOT = BASE_ROOT
+MANAGE_SCOPE = "https://www.googleapis.com/auth/youtube"   # optional (auth --manage): change visibility of existing videos
 SCOPES = ["https://www.googleapis.com/auth/youtube.upload",
           "https://www.googleapis.com/auth/youtube.readonly"]
 API = "https://www.googleapis.com/youtube/v3/"
@@ -238,13 +239,14 @@ def auth(args):
     if not client.exists():
         raise UploadError("Missing Desktop OAuth client. See references/setup.md.")
     with lock("auth"):
-        flow = InstalledAppFlow.from_client_secrets_file(str(client), SCOPES, autogenerate_code_verifier=True)
+        want = SCOPES + ([MANAGE_SCOPE] if getattr(args, 'manage', False) else [])
+        flow = InstalledAppFlow.from_client_secrets_file(str(client), want, autogenerate_code_verifier=True)
         # Library handles state, PKCE and the loopback callback. Never print the login URL.
         creds = flow.run_local_server(host="127.0.0.1", port=args.port, open_browser=True,
             authorization_prompt_message="Finish Google consent in the browser on this Mac.",
             success_message="YouTube authorization received. You may close this tab.",
             timeout_seconds=300, access_type="offline", prompt="consent")
-        if not creds.refresh_token or not creds.has_scopes(SCOPES):
+        if not creds.refresh_token or not creds.has_scopes(want):
             raise UploadError("Google did not grant persistent upload/read access; reconnect and grant both requested permissions.")
         actual = channel(AuthorizedSession(creds))
         if args.channel_id and actual["id"] != args.channel_id:
@@ -549,6 +551,25 @@ def set_thumbnail(args):
         error_response(response)
     output({"thumbnail_set": True, **plan_view, "sha256": thumb["sha256"], "at": now()})
 
+
+def set_privacy(args):
+    """Change an existing video's visibility on this profile's channel (needs auth --manage). Changes nothing else."""
+    if MANAGE_SCOPE not in read(ROOT / "oauth.token").get("scopes", []):
+        raise UploadError("This connection can only upload. Reconnect once with: youtube.sh --profile P auth --manage --channel-id ...")
+    sess = session(); me = channel(sess)
+    r = request(sess, "GET", API + "videos", params={"part": "status,snippet", "id": args.video_id})
+    if r.status_code != 200: error_response(r)
+    items = r.json().get("items", [])
+    if not items: raise UploadError("Video not found on this connection.")
+    v = items[0]
+    if v["snippet"]["channelId"] != me["id"]: raise UploadError("That video belongs to a different channel. Nothing was changed.")
+    keep = {k: v["status"][k] for k in ("embeddable", "license", "publicStatsViewable", "selfDeclaredMadeForKids", "containsSyntheticMedia") if k in v["status"]}
+    view = {"video_id": args.video_id, "title": v["snippet"]["title"], "from": v["status"]["privacyStatus"], "to": args.privacy}
+    if not args.confirm: output({"preview_only": True, **view}); return
+    r = request(sess, "PUT", API + "videos", params={"part": "status"}, json={"id": args.video_id, "status": {**keep, "privacyStatus": args.privacy}})
+    if r.status_code != 200: error_response(r)
+    output({"privacy_set": True, **view, "now": r.json()["status"]["privacyStatus"], "at": now()})
+
 def status(args):
     path = job_path(args.job)
     with lock("uploads"):
@@ -569,7 +590,7 @@ def main():
     p = sub.add_parser("auth")
     channel_group = p.add_mutually_exclusive_group(required=True)
     channel_group.add_argument("--channel-id"); channel_group.add_argument("--channel-title")
-    p.add_argument("--port", type=int, default=8766); p.set_defaults(func=auth)
+    p.add_argument("--port", type=int, default=8766); p.add_argument("--manage", action="store_true", help="also allow changing visibility of existing videos"); p.set_defaults(func=auth)
     p = sub.add_parser("health"); p.add_argument("--live", action="store_true"); p.add_argument("--all", action="store_true"); p.set_defaults(func=health)
     p = sub.add_parser("whoami"); p.set_defaults(func=lambda a: output(channel(session())))
     p = sub.add_parser("plan"); p.add_argument("file"); p.add_argument("--channel-id", required=True)
@@ -581,6 +602,8 @@ def main():
     p.add_argument("--notify-subscribers", choices=["yes", "no"], default="no"); p.set_defaults(func=plan)
     p = sub.add_parser("upload"); p.add_argument("job"); p.add_argument("--confirm", action="store_true"); p.set_defaults(func=upload)
     p = sub.add_parser("status"); p.add_argument("job"); p.add_argument("--live", action="store_true"); p.set_defaults(func=status)
+    p = sub.add_parser("set-privacy", help="change visibility of an existing video (needs auth --manage)")
+    p.add_argument("video_id"); p.add_argument("privacy", choices=["private", "unlisted", "public"]); p.add_argument("--confirm", action="store_true"); p.set_defaults(func=set_privacy)
     p = sub.add_parser("set-thumbnail", help="replace the thumbnail of an existing video on this channel")
     p.add_argument("video_id"); p.add_argument("file"); p.add_argument("--confirm", action="store_true"); p.set_defaults(func=set_thumbnail)
     args = parser.parse_args()

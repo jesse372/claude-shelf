@@ -241,3 +241,51 @@ Cost: Jesse is credit-sensitive. Don't print big files (use grep -n / sed -n ran
   couple-required in every favourite frame but the detail; _distinct min_bits 18. Bright frames per live album:
   tayla 22/24, danja 13/18, steph 10/20, nyomi 9/13, jade 8/25, melissa 8/25, nat 8/15, josie 8/16, jamie 7/13,
   [redacted] 3/15, shona 2/17 -> other recipes (photo_pool) are NOT gated yet; ask Jesse before gating globally.
+
+## 2026-11-03 VARIETY PASS (Jesse: "reels all look the same, same photos and videos; more face-cam ones; copy viral videos")
+- Diagnosis: Nov 3-16 = 143 reels from only 216 distinct photos (top frames 11-15x), 9 BTS clips in 10 BTS reels, 2 face-cam
+  intros. Face-cam skits + BTS win (Imagine 5.8k, I2 Nov 2 1.6k; median 342); our auto photo reels sit below median.
+- REEL POOL: reel_pool.py shortlist <key...> (photo_curate stage 1 -> 'Back Up/JC Studio training/reel-pool/<key>/sheet.jpg')
+  then `reel_pool.py pick <key> 1c,4b,9g,12d` after LOOKING (c couple/b bride/g groom/d detail -> alt text; no children,
+  Jesse's photo bar, no signing/certificates/drinking). Frames -> assets/reelpool/<key>/, albums_reels.json. plan.reel_pool()
+  only while Pixieset status 0; anon=True -> plan.credit() = '' (captions name no one). plan.albums() = catalog + pool feeds
+  photo_pool (tips/sdcard/funny), little, _one_wedding (beautiful/favourite/button), _imagine2_albums (APPENDED: index kept).
+  Story/fast/venue/photopost stay website-only. 2026-11-03: 25 galleries shortlisted, picks done for the newest ~20.
+  leighaandjarrad2 == leighaandjarred (same wedding) - dropped. Pick 10+ couple frames where possible (I2 needs >= 7).
+  Remaining 160+ released galleries: same two commands, newest first.
+- LRU: plan._photo_uses(slot) = photo counts from out/*/spec.json for the 14 days BEFORE the slot (_CUR set in _spec_core);
+  pick() sorts (-tag score, uses, portrait, rnd) and draws from the least-used ties; _one_wedding picks the least-shown album.
+- BTS: +16 segments (4 fps screen; children are elsewhere in the 07-24 and 09-05 masters - only the listed windows are safe),
+  hooks now 3 Jesse-on-camera clips x 5 hook lines, rotation steps 5 clips per reel (was 1 -> neighbours shared 4 of 5).
+- Face-cam: needs NEW clips from Jesse - docs/facecam-shotlist.md (10 reactions + 5 BTS copies of the top competitor formats).
+  When they arrive: add to engine.IMAGINE_INTROS-style table with per-clip hook text + own sound.
+- Approved days (Nov 3-9 all, Nov 10-15 main slots) are frozen; changes reach unapproved trials Nov 10-15 and all of Nov 16+.
+- BLACK-FRAME BUG (fixed 2026-11-03): clips whose video stream starts at 0.033 s make cv2 return a black first frame ->
+  1-frame black flash at cuts (seen in approved BTS reels). Fixed at the ASSET: re-encoded with setpts=PTS-STARTPTS.
+  Any new clip cut with `ffmpeg -ss X -i` must be checked: `ffprobe ... stream=start_time` == 0, or re-time it.
+- Pool QC: picks were re-checked one gallery per row (/tmp sheet) - tomjessica bride+groomsman frame and emilyandhavier
+  dance frames (unconfirmed groom) removed. 23 galleries / 175 frames.
+- 2026-11-03 later: Jesse "replace approved reels with new better ones" -> 48 approved reels re-rendered (decline -> render ->
+  publish -> replaced -> approve_week, /tmp/reeltest/replace.py pattern; same id = re-render in place, approval stays valid).
+  WORKER RACE: `snap` and `pending` are read-modify-write - calls seconds apart lose writes (31 scheduled reels had dropped
+  out of `pending` = would never post). Truth = KV `day:<slot>` keys (read with `wrangler kv key get --remote`). NEVER delete
+  `snap` (request-time rebuild of 150+ slots times out -> page dead); rebuild it from day keys and `kv key put snap`.
+  rebuildSnap (hourly :07) now re-adds every scheduled day to `pending`. Space Worker writes >= a few seconds apart.
+- plan.declined() strips '-tN': declining a TRIAL used to ban nothing (planner checked content ids without the suffix).
+- HARD RULE 2026-11-03: Ryan & Nell blocked like [redacted] (plan.BLOCKED, film_clips, photo_curate, screen.json).
+- 2026-11-03 PERTH INSTAGRAM STUDY (Jesse: "find the best performing wedding videos in Perth and copy them"):
+  research/perth-instagram-study-2026-11-03.md + research/ig/{accounts,posts,top}.json + ig/videos (top 14 downloaded).
+  Method: MacBook Chrome, COPY of his logged-in Profile 8 (Instagram) at /tmp/igr with --remote-debugging-port=9477,
+  launched via peer-mac mb_term.sh, ssh -L 9477 tunnel, research/ig_cdp.mjs. Instagram's search/clips APIs return HTML to
+  scripts; what works: /explore/search/keyword/?q= pages (45 posts each), /api/v1/media/<id>/info/ (shortcode->id), and
+  each /<user>/reels/ page (tile text = play count, og:description = followers). Copy removed after (privacy).
+  TikTok: logged-out search works ~15 queries then 'Please wait' bot wall; Perth wedding TikTok is tiny anyway.
+  FINDING: no top Perth reel is a photo montage. All = one continuous phone clip, own sound, Instagram white text box
+  (Miranda Adie 8.5M BTS 'Watch me...', 1.6M 'POV: your wedding photographer reads books' w/ her directions as captions;
+  curatedbyus 5.7M guest surprise; Bayley William 1.5M face-cam skit).
+- RECIPE N 'native' (native.py, plan.native_spec, assets/native/clips.json): screened 4 fps windows of Jesse's BTS masters,
+  white rounded SFNS hook box at 15% height, his spoken directions as subtitles (groom's name -> 'the groom'), original
+  audio where it's raw (07-24 155336) else Pixabay music (09-05 / 10-03 edits have commercial songs baked in). -maxrate 8M
+  (flare/grass hit 42 MB at crf 20). Tue + Sat 18:30 from Nov 4 (NATIVE_SLOTS, replaced offer/review) + first in
+  TRIAL_ROTATION. Approved swaps done: Nov 7.4 groomsmen, Nov 10.4 back-of-camera, Nov 14.4 first-kiss. Only 5 clips:
+  more need Jesse's footage (docs/facecam-shotlist.md). Unusable masters: 07-24 152752/155156 (children), 0815 (crowds).

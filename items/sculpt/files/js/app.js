@@ -211,6 +211,7 @@ function finishImport() {
   return finishing;
 }
 async function finishImportNow() {
+  persist();                       // save "all analysed" right away - the clock sync below can take seconds on a big shoot
   const fixes = await syncClocks();
   if (fixes.length) toast(`Lined up the cameras’ clocks so the timeline is right — ${fixes.join('; ')}.`, 9000);
   // shoot order = capture time (falls back to filename order)

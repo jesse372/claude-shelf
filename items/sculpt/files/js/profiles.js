@@ -430,6 +430,13 @@ export function profileLut(id, amount = 1, override = null) {
   return out;
 }
 
+/** A trained style's own skin colour (json.lut_skin) as RGBA8 LUT_N³ at amount 0..1, or null when it has none. */
+export function profileSkinLut(id, amount = 1) {
+  const p = profileById(id), L = p && p.learned;
+  if (!L || !L.lut_skin) return null;
+  return profileLut(id + '#skin', amount, { learned: { ...L, lut: L.lut_skin } });
+}
+
 /** Tone-slider offsets the profile adds (scaled by amount 0..1). */
 export function profileDev(id, amount = 1, override = null) {
   const p = override || profileById(id);

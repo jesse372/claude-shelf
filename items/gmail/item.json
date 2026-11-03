@@ -9,13 +9,14 @@
   "tags": [],
   "link": "",
   "created": "2026-08-16T04:00:00+08:00",
-  "updated": "2026-10-14T04:00:05+08:00",
-  "version": 1,
+  "updated": "2026-11-03T19:15:11+00:00",
+  "version": 2,
   "useful": 3,
   "files": [
     "SKILL.md",
     "scripts/gmail.py",
-    "scripts/gmail.sh"
+    "scripts/gmail.sh",
+    "scripts/phone_auth_relay.py"
   ],
   "skill_name": "gmail",
   "zip": "items/gmail/gmail.zip"

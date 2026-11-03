@@ -4,7 +4,7 @@ import { detect, initDetectors, sceneEmbedding } from './detect.js';
 import { measureNeeds, AUTO_SHAPE, AUTO_RETOUCH } from './needs.js';
 import { loadStyle, saveStyle, hasStyle, styleSliders, describeStyle, encodeEmb, COLOUR_KEYS } from './style-store.js';
 import { photoStats, autoWhiteBalance, simulate, baseLum } from './style.js';
-import { PROFILES, profileLut, profileDev, profileGrain, profileVignette, profileById, profileTone, fitAdaptiveTone, learnedTone, profileKnee } from './profiles.js';
+import { PROFILES, profileLut, profileDev, profileGrain, profileVignette, profileById, profileTone, fitAdaptiveTone, learnedTone, profileKnee, profileSkinLut } from './profiles.js';
 import { SLIDERS, makeField, buildUnitFields, combine, buildChinMask, newManual, brushPush, brushRestore, faceFrame, neckSkin, maskWarpToSkin } from './warp.js';
 import { buildSkinMask } from './skin.js';
 import { removeStroke, initInpaint, isModelReady } from './inpaint.js';
@@ -318,7 +318,10 @@ async function runAuto(p, F) {
   if (o.retouch || o.shape) {
     const needs = measureNeeds(F, p.det);
     p.childFaces = needs.childFaces;
-    if (o.retouch) p.edit.ret = { ...AUTO_RETOUCH };
+    // skin smoothing only where it found faces: with no face the skin map falls back to skin-coloured areas of the
+    // person, which smeared hair and profile faces (Jesse 2026-11-03: "most people are blurry")
+    if (o.retouch && p.det && p.det.faces.length) p.edit.ret = { ...AUTO_RETOUCH };
+    else if (o.retouch) notes.push('no face found — skin left untouched');
     if (o.shape) { p.autoWeights = needs.weights; p.edit.shape = { ...p.edit.shape, ...AUTO_SHAPE }; }
     notes.push(...needs.reasons);
   }
@@ -353,6 +356,9 @@ function describeDetections(p) {
 let lutKey = null;
 function applyParams() {
   const e = cur.photo.edit;
+  // RAW capture sharpening: a trained style may carry its own (Jesse's finals are crisper than Sculpt's default)
+  const lookLearned = e.look && profileById(e.look.id)?.learned;
+  renderer.sharpen = cur.photo.kind === 'raw' ? (lookLearned?.sharpen ?? RAW_SHARPEN) : 0;
   // a profile sits under the sliders: its tone offsets add to the user's
   const look = e.look && profileById(e.look.id) ? e.look : null;
   if (look) {
@@ -360,13 +366,13 @@ function applyParams() {
     // exposure may go to ±200 (5 EV): trained styles push dark RAWs a long way
     renderer.params.dev = Object.fromEntries(Object.keys(DEFAULT_DEV).map((k) => { const m = k === 'exposure' ? 200 : 100; return [k, Math.max(-m, Math.min(m, (e.dev[k] || 0) + (off[k] || 0) + (tone[k] || 0) * a))]; }));
     const key = look.id + ':' + a.toFixed(2);
-    if (key !== lutKey) { renderer.setLut(profileLut(look.id, a)); lutKey = key; }
+    if (key !== lutKey) { renderer.setLut(profileLut(look.id, a)); renderer.setSkinLut(profileSkinLut(look.id, a)); lutKey = key; }
     renderer.grain = profileGrain(look.id, a);
     renderer.vignette = profileVignette(look.id, a);
     renderer.knee = profileKnee(look.id);
   } else {
     renderer.params.dev = e.dev;
-    if (lutKey) { renderer.setLut(null); lutKey = null; }
+    if (lutKey) { renderer.setLut(null); renderer.setSkinLut(null); lutKey = null; }
     renderer.grain = 0;
     renderer.vignette = 0;
     renderer.knee = 0.88;

@@ -11,6 +11,12 @@ metadata:
 CLI at `~/.claude/skills/gmail/scripts/gmail.sh`. A `uv` inline-dependency Python
 script over Google's official API client. No third-party server ever holds the token.
 
+
+## Replies stay in the thread (Jesse, 2026-11-03)
+When replying or following up with someone Jesse is already talking to, ALWAYS send it as a reply in the existing
+Gmail thread (same threadId, `Re:` subject, In-Reply-To/References) - never a fresh email. For draft-based sends use the
+original thread; the lead auto-reply helper does this via `loops/lead-alert/autoreply.py` `find_thread()` / `reply_in_thread()`.
+
 ## The safety model — read this before sending anything
 
 **Composing and delivering are separate commands.** There is no one-shot send.

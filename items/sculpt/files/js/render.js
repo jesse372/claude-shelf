@@ -31,8 +31,8 @@ uniform float uSplit, uChin, uSkin, uEven;
 uniform bool uDev;
 uniform vec3 uWB;          // white-balance gains (linear)
 uniform float uExp, uContrast, uHi, uSh, uWhites, uBlacks, uClarity, uVib, uSat;
-uniform highp sampler3D uLut;
-uniform bool uLutOn;
+uniform highp sampler3D uLut, uLutSkin;
+uniform bool uLutOn, uLutSkinOn;
 uniform float uGrain;
 uniform float uVignette;
 uniform float uKnee;       // highlight shoulder start (gamma); learned profiles use a lower knee = more headroom
@@ -124,7 +124,12 @@ void main() {
     c = clamp(g, 0.0, 1.0);
   }
   // ---- My style: learned colour grade (3D LUT)
-  if (uLutOn) c = texture(uLut, c * ((LUT_N - 1.0) / LUT_N) + 0.5 / LUT_N).rgb;
+  if (uLutOn) {
+    vec3 cin = c * ((LUT_N - 1.0) / LUT_N) + 0.5 / LUT_N;
+    c = texture(uLut, cin).rgb;
+    // trained styles: skin gets its own learned colour (Jesse's skin rendering), blended by the skin map
+    if (uLutSkinOn) { float m = texture(uSkinMask, src).r; if (m > 0.002) c = mix(c, texture(uLutSkin, cin).rgb, m); }
+  }
   // ---- vignette (profiles): darken the edges smoothly, aspect-aware
   if (uVignette > 0.0) {
     vec2 q = (vUv - 0.5) * vec2(uSize.x / max(uSize.x, uSize.y), uSize.y / max(uSize.x, uSize.y)) * 2.0;
@@ -192,7 +197,7 @@ export class Renderer {
     this.floatRT = !!gl.getExtension('EXT_color_buffer_float');
     gl.getExtension('OES_texture_float_linear');
     this.main = this._program(FS_MAIN, ['uImg', 'uDisp', 'uBS', 'uBM', 'uBL', 'uChinMask', 'uSkinMask', 'uBG',
-      'uSize', 'uSplit', 'uChin', 'uSkin', 'uEven', 'uDev', 'uBX', 'uSharpen', 'uWB', 'uExp', 'uContrast', 'uHi', 'uSh', 'uWhites', 'uBlacks', 'uClarity', 'uVib', 'uSat', 'uRect', 'uLut', 'uLutOn', 'uToFbo', 'uGrain', 'uVignette', 'uKnee']);
+      'uSize', 'uSplit', 'uChin', 'uSkin', 'uEven', 'uDev', 'uBX', 'uSharpen', 'uWB', 'uExp', 'uContrast', 'uHi', 'uSh', 'uWhites', 'uBlacks', 'uClarity', 'uVib', 'uSat', 'uRect', 'uLut', 'uLutOn', 'uLutSkin', 'uLutSkinOn', 'uToFbo', 'uGrain', 'uVignette', 'uKnee']);
     this.down = this._program(FS_DOWN, ['uSrc', 'uRect', 'uToFbo']);
     this.blur = this._program(FS_BLUR, ['uSrc', 'uDir', 'uSigma', 'uRect', 'uToFbo']);
     const buf = this.vbo = gl.createBuffer();
@@ -339,15 +344,18 @@ export class Renderer {
     return this._lutDummy;
   }
   /** data: RGBA8 N³ (r fastest) or null to turn the style off */
-  setLut(data, N = 33) {
+  setLut(data, N = 33, which = 'lut') {
     const gl = this.gl;
-    if (!data) { this.lut = null; return; }
-    if (!this.lut) this.lut = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_3D, this.lut);
+    if (!data) { this[which] = null; return; }
+    if (!this[which]) this[which] = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_3D, this[which]);
     gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
     gl.texImage3D(gl.TEXTURE_3D, 0, gl.RGBA8, N, N, N, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
     for (const [k, v] of [[gl.TEXTURE_MIN_FILTER, gl.LINEAR], [gl.TEXTURE_MAG_FILTER, gl.LINEAR], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE]]) gl.texParameteri(gl.TEXTURE_3D, k, v);
   }
+
+  /** a trained style's skin colour (RGBA8 N³) or null */
+  setSkinLut(data, N = 33) { this.setLut(data, N, 'lutSkin'); }
 
   // ------------------------------------------------------------------ blurs
   /** Gaussian blur of the base photo with sigma in image pixels → {tex,w,h} */
@@ -465,6 +473,10 @@ export class Renderer {
       gl.bindTexture(gl.TEXTURE_3D, this.lut || this._lut1());
       gl.uniform1i(u.uLut, 9);
       gl.uniform1i(u.uLutOn, !plain && this.lut ? 1 : 0);
+      gl.activeTexture(gl.TEXTURE10);
+      gl.bindTexture(gl.TEXTURE_3D, this.lutSkin || this._lut1());
+      gl.uniform1i(u.uLutSkin, 10);
+      gl.uniform1i(u.uLutSkinOn, !plain && this.lut && this.lutSkin ? 1 : 0);
       gl.uniform1f(u.uGrain, plain ? 0 : this.grain || 0);
       gl.uniform1f(u.uVignette, plain ? 0 : this.vignette || 0);
       gl.uniform1f(u.uKnee, plain ? 0.88 : this.knee || 0.88);
