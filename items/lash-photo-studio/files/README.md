@@ -1,25 +1,26 @@
 # Lash Photo Studio
 
-A one-page phone website for a lash or beauty artist. Choose a photo of a client's lashes, pick a look
-(Soft studio, Warm luxe, Bright & airy or Moody editorial) and a shape, and OpenAI's image model retouches
-the lighting, background and sharpness into an Instagram-ready shot. The prompt forbids changing the
-lashes, eyes, brows or the client's face, so the photo stays an honest example of the work. Edited
-"results" photos that misrepresent work can breach consumer law, and the page reminds the artist to
-check before posting.
+A one-page phone website for a lash or beauty artist. Send a phone photo of a client's lashes, pick a look
+(Soft studio, Warm luxe, Bright & airy or Moody editorial) and a shape, and about a minute later you get back
+an Instagram-ready shot. **No OpenAI API bill:** a Mac at home does the edit with the Codex CLI signed in to
+your normal ChatGPT plan, using Codex's built-in image tool.
 
-Runs as a single Cloudflare Worker. The OpenAI key stays on the server, and an access code keeps strangers
-from using up your credit.
+The prompt forbids changing the lashes, eyes, brows or face. Only lighting, background, sharpness and a light
+skin retouch are allowed, so the photo stays an honest example of the work.
 
-## Deploy (about 5 minutes)
-```bash
-npm i -g wrangler && wrangler login
-wrangler deploy                          # prints your https://<name>.<you>.workers.dev URL
-wrangler secret put OPENAI_API_KEY       # platform.openai.com → API keys (needs billing)
-wrangler secret put ACCESS_CODE          # what you type once on your phone
 ```
-Open the URL on your phone, enter the code, then Share → Add to Home Screen.
+phone ──▶ Cloudflare Worker + Durable Object queue (free) ◀── Mac polls ── codex exec -i photo ── ChatGPT plan
+```
 
-## Customise
-- Branding: colours and fonts are CSS variables at the top of `src/page.html`; the title and "Luxe Beauty" kicker are in the header.
-- Looks: edit `STYLES` in `src/worker.js`. Model and quality are in `wrangler.toml` `[vars]` (default `gpt-image-1.5`, `high`).
-- Cost: about US$0.15-0.25 per photo at high quality, or roughly a quarter of that at `medium`. ChatGPT Plus does not cover API use, so set a monthly limit in the OpenAI dashboard.
+## Set up
+1. **Website:** `npm i -g wrangler && wrangler login && wrangler deploy`, then
+   `wrangler secret put ACCESS_CODE` (what you type on your phone) and
+   `wrangler secret put AGENT_TOKEN` (a long random string).
+2. **Mac:** install Codex (`npm i -g @openai/codex`) and run `codex login` with your ChatGPT account.
+   Put the same token in `agent/.agent_token`, set your Worker URL in `agent/agent.py` (`BASE`),
+   then try `python3 agent/agent.py --once`.
+3. **Keep it running:** add a LaunchAgent with `KeepAlive` that runs `python3 agent/agent.py`.
+   Use **`ProcessType` Interactive, not Background**: macOS throttles Background jobs so badly that each edit times out.
+
+Each edit takes about 1 minute and uses your ChatGPT/Codex allowance. Photos are deleted from the queue after 24h,
+and from the Mac right after upload. If the Mac is off, the page says so and the photo waits in the queue.

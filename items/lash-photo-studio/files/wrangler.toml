@@ -11,13 +11,18 @@ type = "Text"
 globs = ["**/*.html"]
 fallthrough = false
 
-[vars]
-OPENAI_MODEL = "gpt-image-1.5"
-OPENAI_QUALITY = "high"
+# The photo queue: one SQLite-backed Durable Object (free plan, no R2 needed).
+[[durable_objects.bindings]]
+name = "QUEUE"
+class_name = "Queue"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Queue"]
 
 [observability]
 enabled = true
 
-# Secrets (set with `npx wrangler secret put NAME`, never committed):
-#   OPENAI_API_KEY  - OpenAI API key with billing enabled
-#   ACCESS_CODE     - the code Bec types once on her phone
+# Secrets (`npx wrangler secret put NAME`, never committed):
+#   ACCESS_CODE  - the code Bec types once on her phone
+#   AGENT_TOKEN  - shared with the Mac mini agent (agent/.agent_token)

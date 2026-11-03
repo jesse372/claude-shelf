@@ -3,19 +3,19 @@
   "title": "Lash Photo Studio",
   "emoji": "✨",
   "type": "tool",
-  "summary": "A one-page phone website for a lash or beauty artist. Snap a client's lashes, pick a look (soft studio, warm luxe, bright, moody), and OpenAI retouches the lighting and background into an Instagram-ready shot while keeping the lash work exactly as it is.",
-  "how_to_use": "Give the folder to Claude and say: 'Deploy this to my Cloudflare account, set my OpenAI API key and an access code, and rebrand it for my business.' The README has the exact commands.",
-  "requires": "A free Cloudflare account, an OpenAI API key with billing (separate from ChatGPT Plus, about US$0.15-0.25 per photo), Node.",
+  "summary": "A phone website for a lash or beauty artist: send a client's lash photo, pick a look, and a minute later get an Instagram-ready shot. No OpenAI API bill, because a Mac at home does the edit with Codex on your normal ChatGPT plan. The lash work itself is kept exactly as it is.",
+  "how_to_use": "Give the folder to Claude and say: 'Set this up for me: deploy the website to my Cloudflare account and run the agent on my Mac with my ChatGPT Codex login. Rebrand it for my business.'",
+  "requires": "A Mac that stays on, a ChatGPT plan with Codex, a free Cloudflare account, Node and Python 3.",
   "tags": [
     "beauty",
     "instagram",
-    "openai",
+    "codex",
     "cloudflare"
   ],
   "link": "",
   "created": "2026-11-03T15:16:16+00:00",
-  "updated": "2026-11-03T15:16:16+00:00",
-  "version": 1,
+  "updated": "2026-11-03T15:42:17+00:00",
+  "version": 2,
   "useful": 4,
   "files": [
     ".gitignore",
@@ -23,6 +23,7 @@
     "build.py",
     "head-snippet.html",
     "wrangler.toml",
+    "agent/agent.py",
     "src/page.html",
     "src/worker.js"
   ],

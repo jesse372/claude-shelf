@@ -131,8 +131,10 @@
 
     <section id="loading" class="card loading hidden">
       <div class="spinner"></div>
-      <div class="big">Retouching…</div>
-      <p class="sub">This takes about a minute. Keep this screen open.<br><span id="elapsed">0s</span></p>
+      <div class="big" id="loadTitle">Sending…</div>
+      <p class="sub"><span id="loadMsg">Uploading your photo.</span><br><span id="elapsed">0s</span></p>
+      <p class="err hidden" id="offline"></p>
+      <p class="note">You can lock your phone or close this page.<br>Open it again and your photo will be here.</p>
     </section>
 
     <section id="result" class="hidden">
@@ -163,6 +165,7 @@
   let photoURL = "";         // for preview and before/after
   let resultURL = "";
   let style = "studio", size = "original";
+  const JOB = "lashStudioJob";
 
   // ---------- access code ----------
   async function check(c) {
@@ -187,7 +190,12 @@
   }
   $("codeBtn").onclick = unlock;
   $("code").addEventListener("keydown", (e) => { if (e.key === "Enter") unlock(); });
-  check(code).then((r) => (r.ok ? showApp() : showGate())).catch(() => showGate());
+  check(code).then((r) => {
+    if (!r.ok) return showGate();
+    showApp();
+    const pending = JSON.parse(localStorage.getItem(JOB) || "null");
+    if (pending && Date.now() - pending.t < 20 * 3600 * 1000) follow(pending.id, pending.t);
+  }).catch(() => showGate());
 
   // ---------- choices ----------
   function chips(groupId, set) {
@@ -241,38 +249,94 @@
     ["editor", "loading", "result"].forEach((id) => $(id).classList.toggle("hidden", id !== which));
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
-  let timer;
+  let timer, polling = 0;
+  // Every request gives up after a while, so a dropped connection never leaves an endless spinner.
+  const api = (path, opts = {}, ms = 20000) =>
+    fetch(path, { ...opts, signal: AbortSignal.timeout(ms), headers: { ...(opts.headers || {}), "x-access-code": code } });
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  function startClock(t0) {
+    clearInterval(timer);
+    const tick = () => { const s = Math.round((Date.now() - t0) / 1000); $("elapsed").textContent = s < 60 ? s + "s" : Math.floor(s / 60) + "m " + (s % 60) + "s"; };
+    tick(); timer = setInterval(tick, 1000);
+  }
+  function loading(title, msg) { $("loadTitle").textContent = title; $("loadMsg").textContent = msg; }
+  function fail(msg) {
+    clearInterval(timer); polling++; localStorage.removeItem(JOB);
+    view("editor"); showErr(msg);
+  }
+
   async function run() {
     if (!photo) return;
-    hideErr(); view("loading");
-    const t0 = Date.now();
-    timer = setInterval(() => ($("elapsed").textContent = Math.round((Date.now() - t0) / 1000) + "s"), 1000);
+    hideErr(); view("loading"); $("offline").classList.add("hidden");
+    loading("Sending…", "Uploading your photo.");
+    const t0 = Date.now(); startClock(t0);
     const fd = new FormData();
     fd.append("image", photo, "photo.jpg");
-    fd.append("style", style); fd.append("size", size);
-    fd.append("notes", $("notes").value); fd.append("code", code);
+    fd.append("style", style); fd.append("size", size); fd.append("notes", $("notes").value);
     try {
-      const r = await fetch("/api/enhance", { method: "POST", body: fd });
-      const data = await r.json().catch(() => ({ error: "Something went wrong. Please try again." }));
-      if (data.badCode) { localStorage.removeItem(KEY); clearInterval(timer); view("editor"); return showGate("Please enter your access code again."); }
-      if (!r.ok || !data.image) throw new Error(data.error || "Something went wrong. Please try again.");
-      const blob = await (await fetch(data.image)).blob();
+      const r = await api("/api/jobs", { method: "POST", body: fd }, 90000);
+      const data = await r.json().catch(() => ({}));
+      if (data.badCode) return badCode();
+      if (!r.ok || !data.id) throw new Error(data.error || "Something went wrong. Please try again.");
+      localStorage.setItem(JOB, JSON.stringify({ id: data.id, t: t0 }));
+      follow(data.id, t0);
+    } catch (err) {
+      fail(["TypeError", "TimeoutError", "AbortError"].includes(err.name) ? "Lost connection. Check your internet and try again." : err.message);
+    }
+  }
+
+  function badCode() {
+    clearInterval(timer); localStorage.removeItem(KEY); localStorage.removeItem(JOB);
+    view("editor"); showGate("Please enter your access code again.");
+  }
+
+  // Watch a sent photo until the Mac has finished it.
+  async function follow(id, t0) {
+    const me = ++polling;
+    view("loading"); startClock(t0);
+    loading("Retouching…", "Usually 1–2 minutes.");
+    let misses = 0;
+    while (me === polling) {
+      try {
+        const r = await api("/api/jobs/" + id);
+        const s = await r.json();
+        misses = 0;
+        if (s.badCode) return badCode();
+        if (s.gone) return fail(s.error);
+        if (s.status === "done") return show(id);
+        if (s.status === "error") return fail(s.error || "Something went wrong. Please try again.");
+        if (s.status === "queued") loading("In the queue…", s.ahead ? s.ahead + " photo" + (s.ahead > 1 ? "s" : "") + " ahead of yours." : "Starting soon.");
+        else loading("Retouching…", "Usually 1–2 minutes.");
+        const off = $("offline");
+        if (!s.agentOnline) { off.textContent = "The editing computer is offline right now. Your photo is saved and will be done as soon as it's back."; off.classList.remove("hidden"); }
+        else off.classList.add("hidden");
+      } catch { if (++misses > 3) loading("Reconnecting…", "Check your internet. Your photo is still being made."); }
+      await sleep(4000);
+    }
+  }
+
+  async function show(id) {
+    clearInterval(timer); localStorage.removeItem(JOB);
+    try {
+      const r = await api("/api/jobs/" + id + "/image", {}, 60000);
+      if (!r.ok) throw new Error();
+      const blob = await r.blob();
       if (resultURL) URL.revokeObjectURL(resultURL);
       resultURL = URL.createObjectURL(blob);
-      $("after").src = resultURL; $("before").src = photoURL;
+      $("after").src = resultURL;
+      $("before").src = photoURL || resultURL;  // after a page reload the original isn't on hand
+      $("compare").dataset.hasBefore = photoURL ? "1" : "";
+      document.querySelector(".hint").classList.toggle("hidden", !photoURL);
       view("result");
-    } catch (err) {
-      view("editor");
-      showErr(err.message === "Failed to fetch" || err.name === "TypeError" ? "Lost connection. Check your internet and try again." : err.message);
-    } finally { clearInterval(timer); $("elapsed").textContent = "0s"; }
+    } catch { fail("Couldn't download the finished photo. Please try again."); }
   }
   $("go").onclick = run;
-  $("again").onclick = run;
+  $("again").onclick = () => (photo ? run() : (view("editor"), $("file").click()));
   $("newPhoto").onclick = () => { view("editor"); $("file").click(); };
 
   // hold to compare
   const cmp = $("compare");
-  const on = (e) => { e.preventDefault(); cmp.classList.add("show-before"); $("tag").textContent = "Before"; };
+  const on = (e) => { e.preventDefault(); if (!cmp.dataset.hasBefore) return; cmp.classList.add("show-before"); $("tag").textContent = "Before"; };
   const off = () => { cmp.classList.remove("show-before"); $("tag").textContent = "After"; };
   cmp.addEventListener("pointerdown", on);
   ["pointerup", "pointerleave", "pointercancel"].forEach((ev) => cmp.addEventListener(ev, off));
