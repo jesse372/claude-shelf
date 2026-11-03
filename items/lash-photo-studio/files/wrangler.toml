@@ -1,0 +1,23 @@
+name = "luxe-lash-studio"
+main = "src/worker.js"
+compatibility_date = "2026-07-01"
+workers_dev = true
+
+[build]
+command = "python3 build.py"
+
+[[rules]]
+type = "Text"
+globs = ["**/*.html"]
+fallthrough = false
+
+[vars]
+OPENAI_MODEL = "gpt-image-1.5"
+OPENAI_QUALITY = "high"
+
+[observability]
+enabled = true
+
+# Secrets (set with `npx wrangler secret put NAME`, never committed):
+#   OPENAI_API_KEY  - OpenAI API key with billing enabled
+#   ACCESS_CODE     - the code Bec types once on her phone

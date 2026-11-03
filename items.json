@@ -1,8 +1,39 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-11-02T19:16:08+00:00",
+  "updated": "2026-11-03T15:16:16+00:00",
   "items": [
+    {
+      "slug": "lash-photo-studio",
+      "title": "Lash Photo Studio",
+      "emoji": "✨",
+      "type": "tool",
+      "summary": "A one-page phone website for a lash or beauty artist. Snap a client's lashes, pick a look (soft studio, warm luxe, bright, moody), and OpenAI retouches the lighting and background into an Instagram-ready shot while keeping the lash work exactly as it is.",
+      "how_to_use": "Give the folder to Claude and say: 'Deploy this to my Cloudflare account, set my OpenAI API key and an access code, and rebrand it for my business.' The README has the exact commands.",
+      "requires": "A free Cloudflare account, an OpenAI API key with billing (separate from ChatGPT Plus, about US$0.15-0.25 per photo), Node.",
+      "tags": [
+        "beauty",
+        "instagram",
+        "openai",
+        "cloudflare"
+      ],
+      "link": "",
+      "created": "2026-11-03T15:16:16+00:00",
+      "updated": "2026-11-03T15:16:16+00:00",
+      "version": 1,
+      "useful": 4,
+      "files": [
+        ".gitignore",
+        "README.md",
+        "build.py",
+        "head-snippet.html",
+        "wrangler.toml",
+        "src/page.html",
+        "src/worker.js"
+      ],
+      "zip": "items/lash-photo-studio/lash-photo-studio.zip",
+      "install_prompt": "Please set up \"Lash Photo Studio\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/lash-photo-studio/lash-photo-studio.zip and unzip it to ~/claude-shelf/lash-photo-studio/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Give the folder to Claude and say: 'Deploy this to my Cloudflare account, set my OpenAI API key and an access code, and rebrand it for my business.' The README has the exact commands."
+    },
     {
       "slug": "sculpt",
       "title": "Sculpt Photo Editor",

@@ -1,0 +1,30 @@
+{
+  "slug": "lash-photo-studio",
+  "title": "Lash Photo Studio",
+  "emoji": "✨",
+  "type": "tool",
+  "summary": "A one-page phone website for a lash or beauty artist. Snap a client's lashes, pick a look (soft studio, warm luxe, bright, moody), and OpenAI retouches the lighting and background into an Instagram-ready shot while keeping the lash work exactly as it is.",
+  "how_to_use": "Give the folder to Claude and say: 'Deploy this to my Cloudflare account, set my OpenAI API key and an access code, and rebrand it for my business.' The README has the exact commands.",
+  "requires": "A free Cloudflare account, an OpenAI API key with billing (separate from ChatGPT Plus, about US$0.15-0.25 per photo), Node.",
+  "tags": [
+    "beauty",
+    "instagram",
+    "openai",
+    "cloudflare"
+  ],
+  "link": "",
+  "created": "2026-11-03T15:16:16+00:00",
+  "updated": "2026-11-03T15:16:16+00:00",
+  "version": 1,
+  "useful": 4,
+  "files": [
+    ".gitignore",
+    "README.md",
+    "build.py",
+    "head-snippet.html",
+    "wrangler.toml",
+    "src/page.html",
+    "src/worker.js"
+  ],
+  "zip": "items/lash-photo-studio/lash-photo-studio.zip"
+}
