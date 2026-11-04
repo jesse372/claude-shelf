@@ -33,6 +33,13 @@
 # ---------------------------- qc_init ---------------------------------------
 # qc_init --name <label> [--lockdir <dir>] [--logfile <f>] [--repo <git-dir>]
 #         [--model <m>] [--timeout <s>] [--no-tidy]
+# macOS ships no GNU `timeout`; without this shim every Tier-2 `timeout ... claude -p` call failed with
+# "timeout: command not found" and self-repair silently never ran (found 2026-11-04). Prefer gtimeout, else perl alarm.
+if ! command -v timeout >/dev/null 2>&1; then
+  if command -v gtimeout >/dev/null 2>&1; then timeout() { gtimeout "$@"; }
+  else timeout() { local s="$1"; shift; perl -e 'alarm shift; exec @ARGV or exit 127' "$s" "$@"; }; fi
+fi
+
 qc_init() {
   QC_LABEL="qc"
   QC_LOCKDIR=""; QC_LOG="/tmp/qc.log"; QC_REPO=""; QC_TIDY=1; QC_MODEL="sonnet"; QC_TIMEOUT=600

@@ -18,6 +18,10 @@ metadata:
   related: []
 ---
 
+> **Standing rule (Jesse 2026-11-04):** every unattended job you create MUST also be registered in
+> `~/JesseOS/workspace/guardian/registry.json` (the box-wide self-healing guardian, every 10 min). See
+> `~/JesseOS/vault/00-context/automations.md`. Write state files atomically (tmp + os.replace).
+
 # pipeline-qc
 
 A reusable engine that makes any pipeline **self-monitoring and self-repairing**. You write the
