@@ -8,6 +8,10 @@ metadata:
   related: [pipeline-qc, wrap-up]
 ---
 
+> **Standing rule (Jesse 2026-11-04):** every unattended job you create MUST also be registered in
+> `~/JesseOS/workspace/guardian/registry.json` (the box-wide self-healing guardian, every 10 min). See
+> `~/JesseOS/vault/00-context/automations.md`. Write state files atomically (tmp + os.replace).
+
 # Loop Contract
 
 Every loop is born with a written **contract** before a single line of runner code. The contract is the
