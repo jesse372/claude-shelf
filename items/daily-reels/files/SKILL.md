@@ -289,3 +289,52 @@ Cost: Jesse is credit-sensitive. Don't print big files (use grep -n / sed -n ran
   (flare/grass hit 42 MB at crf 20). Tue + Sat 18:30 from Nov 4 (NATIVE_SLOTS, replaced offer/review) + first in
   TRIAL_ROTATION. Approved swaps done: Nov 7.4 groomsmen, Nov 10.4 back-of-camera, Nov 14.4 first-kiss. Only 5 clips:
   more need Jesse's footage (docs/facecam-shotlist.md). Unusable masters: 07-24 152752/155156 (children), 0815 (crowds).
+- 2026-11-04 RAW MOMENTS (Jesse: "Yeah use that" = videographers' raw): 12 previews, [redacted] S-Log3 raw ->
+  local-data/creative-previews/raw-2026-11-04 (Experimental tab). clips.json key `raw_preview` = renderable by native.py but
+  NOT scheduled (plan.native_spec reads `clips` only) - move a clip across once Jesse approves it. native.py: absolute src,
+  `cx`/`cy`/`zoom` crop for 16:9 (crop centre = 0.158+0.684*cx), `lut` (assets/native/slog3_709.cube via mklut.py). Set cx from
+  YuNet face centres (.venv/bin/python has cv2), not by eye. No emoji in hooks (SFNS -> boxes). Whisper: candidate clips only
+  + word_timestamps on trimmed windows (full 63 min base > 1.5 h). Excluded: C8555 (speaker may be a minor), C8545 (child),
+  mosque prayer. Unknown-couple raws (July-2025 shared Drive = Mar 2025 wedding; Ceremony/Speeches.mov) await Jesse.
+  Gmail app password missing from Keychain -> weekly_email send() fails; used the Gmail connector for the self-email.
+- 2026-11-04 (later) RECIPE R 'moments' (moments.py, assets/moments/moments.json). Jesse: the 12 single-take raw previews
+  were "not good enough, not viral"; raw footage "needs to be edited beautiful". Moments = several shots per reel with the
+  payoff in SLOW MOTION (speed 0.6 = 50p source -> exactly 30p, every frame real: minterpolate mci at 1080x1920 x6 parallel
+  jobs took load avg to 205 and ~30 min per shot - never again), face-tracked 9:16 crop in SOURCE pixels first (cheap)
+  then the push-in scale, grade = assets/native/mklut2.py look (sat 1.04, con 1.12, warm 0; per-reel exposure; the old
+  slog3_709.cube ACES tone-map + SAT 0.9 is why everything looked milky), big faces (>25% frame) -> full-height window,
+  per-shot `cool` (colorbalance) for tungsten scenes, hook Cormorant 90 + subs Jost 56 with ADAPTIVE ink (dark on bright
+  bands, band_luma), voice = the clip's own directions (real-time shots) or spec `voice` = speech audio over the visuals,
+  music sidechain-ducked, loudnorm -14. Dropped as un-beautiful: entrance (wet-floor sign, backs of heads), cake (colour-
+  cycling LEDs), sunglasses (guests), and every speech CAMERA shot (handheld under LEDs) - speech reels use the AUDIO only.
+  Shot times are absolute seconds and must stay inside screened windows (clips.json raw_preview); C8459 29.5-30.5 screened
+  by hand. 5 reels (on-three dropped: static, hook collides with hair) in local-data/creative-previews/moments-2026-11-04 (Experimental tab 'New'); NOT scheduled until Jesse
+  picks. Load-test rule: ONE moments.py at a time (~1 min per reel). QC = contact sheet (select mod 16, tile 10x2) + ebur128.
+- 2026-11-04 AI CLIPS (Jesse: "make AI clips where needed as long as it's not pretending to be our work"): ai_broll.py =
+  briefs for 7 faceless NON-wedding inserts (camera_lift, gear_pack, desk_waiting, overcast_sky, phones_basket, watch_tick,
+  sd_card) -> assets/broll/ai/<name>.mp4 + provenance in sources.json; plan.ai_broll() swaps them into recipes C/E when
+  present and plan.ai_broll_caption() appends the disclosure. NEVER an AI couple/bride/venue/ceremony. Canva video
+  generation is NOT on Jesse's plan; no Replicate/Gemini/fal key on the box yet -> `ai_broll.py list` says NONE. When a
+  key arrives (env REPLICATE_API_TOKEN / GEMINI_API_KEY / FAL_KEY or auth-framework cred_get): `ai_broll.py make all`,
+  LOOK at each clip (sheet), then re-render unapproved camera/waiting days. Tips/sdcard inserts still need engine hooks.
+- 2026-11-04 FREE AI VIDEO (Jesse: "find a free way that still gives amazing results"): ai_broll.py backend `hf` = Hugging
+  Face ZeroGPU Space alexnasa/ltx-2-TURBO (LTX-2 distilled, open weights, no watermark, 1152x2048 ~3 s, ~55 s/clip,
+  Text-to-Video mode, gradio_client). It is the DEFAULT backend. Anonymous quota = ~1 clip/day per IP (90 s GPU each);
+  a FREE HF account token (HF_TOKEN env or auth-framework cred_get HF_TOKEN) raises it. Official Lightricks/LTX-2.5 and
+  LTX-2-3 Spaces need PRO (per-task GPU time > free cap); prithivMLmods/Wan2.2-Fast works but shares the same quota.
+  Sample: local-data/creative-previews/ai-samples/camera_lift_ltx2turbo.mp4 (good, but fake lettering on the camera ->
+  STYLE now says unbranded/no lettering; regenerate with seeds and LOOK before use). Canva video gen: not on his plan.
+  Adobe on the MacBook = Photoshop 2026 + Lightroom Classic (Firefly video would need his login; unverified credits).
+- 2026-11-04 EMOTIONAL REELS STUDY (Jesse: "highly emotional videos of couples ... slow motion, black and white, music that
+  drags you in"): research/emotional-reels-study-2026-11-04.md + research/ig/emo/ (52 posts, top 20 downloaded, via
+  research/ig_emotional.mjs on the MacBook Chrome copy; copy deleted after). FINDING: the 10-16M reels are ONE held
+  real-time reaction (groom/father sees her, vows), 20-40 s, 1-6 cuts, ORIGINAL sound in 8 of top 12, COLOUR (0 B&W in
+  the top 12), hook promises the reaction, caption names the emotion. B&W slow-mo montage = Jesse's taste, not what
+  the data rewards -> made both. Recipe 'emotional' = moments.py specs (mono/graded/fade_out/grain keys; film
+  sources auto-detected: fps + size, 24/25p slow-mo = minterpolate ~8 min per reel, ONE at a time). 7 reels in
+  local-data/creative-previews/emotional-2026-11-04 (5 B&W, 2 colour held). filmlib/screen.json gained "family" lists
+  ([redacted] 54/55/56 father first look, 74, 19; finak 18/29/57) screened 3-frame by hand. Music: mood 'emotional'
+  (12 tracks; 'Epic Action' trailers rejected); picks by RMS build: piano-and-strings-625724 (start 36 s), cinematic-
+  piano-625695, violin-strings-453280, cinematic-background-621553. REAL-SOUND path: Whisper (/usr/local/bin/whisper
+  small, word_timestamps) on local-data/transcripts/{[redacted]-ceremony,[redacted]-continuous}.wav -> find vow /
+  first-look lines -> screen frames -> held 15-30 s colour clip with the words as captions (not built yet).

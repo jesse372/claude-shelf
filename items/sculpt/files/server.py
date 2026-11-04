@@ -21,7 +21,8 @@ PORT = int(os.environ.get("SCULPT_PORT", sys.argv[1] if len(sys.argv) > 1 else 8
 MAX_UPLOAD = 200 * 1024 * 1024
 STYLE_FILE = os.path.join(ROOT, "data", "style.json")
 LEARNED_FILE = os.path.join(ROOT, "data", "learned.json")
-import json, threading
+CORR_FILE = os.path.join(ROOT, "data", "corrections.jsonl")   # quick-check fixes (training examples)
+import json, threading, time
 _style_lock = threading.Lock()
 
 
@@ -83,6 +84,12 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         if self.path.split("?")[0] == "/api/style":
             data = self._read_style()
             return self._json(200, data or {})
+        if self.path.split("?")[0] == "/api/corrections":
+            try:
+                with open(CORR_FILE) as f:
+                    return self._json(200, [json.loads(l) for l in f if l.strip()])
+            except FileNotFoundError:
+                return self._json(200, [])
         if self.path.split("?")[0] == "/api/deliveries":   # "Send to Pixieset" needs the website's storage: off here
             return self._json(200, {"enabled": False})
         return super().do_GET()
@@ -125,6 +132,18 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 data["examples"] = data["examples"][-600:]
                 self._write_style(data)
             return self._json(200, {"ok": True, "n": len(data["examples"])})
+        if self.path.split("?")[0] == "/api/corrections":
+            n = int(self.headers.get("Content-Length", 0))
+            if n <= 0 or n > 512 * 1024:
+                return self.send_error(413)
+            try:
+                items = json.loads(self.rfile.read(n))["items"]
+            except Exception:
+                return self.send_error(400)
+            os.makedirs(os.path.dirname(CORR_FILE), exist_ok=True)
+            with _style_lock, open(CORR_FILE, "a") as f:
+                f.write(json.dumps({"at": int(time.time() * 1000), "items": items}) + "\n")
+            return self._json(200, {"ok": True, "n": len(items)})
         if self.path.split("?")[0] != "/convert":
             self.send_error(404)
             return

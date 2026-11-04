@@ -207,11 +207,22 @@ export function learnedTone(id, thumb, seg = null, photo = null) {
     // boosted trees over the photo's brightness spread, backlight, skin and the camera's settings + time of day —
     // computed exactly as in training (tools/brightness-model.py)
     const x = learnedFeatures(all, lums, sorted, thumb, seg, photo), out = {};
+    // index 30: the image network's guess in stops (js/expnet.js, computed by the editor before this) when the style's
+    // trees were trained with it; missing (NaN) sends the trees down their 'unknown' branch
+    if (L.gbm.features && L.gbm.features.includes('network stops')) x.push(photo && photo.netStops != null ? +photo.netStops : NaN);
+    // indices after that: the subject - the largest face found at import (YuNet, js/faces.js: p.raw.faces, biggest first,
+    // boxes in p.raw.W x p.raw.H pixels): its brightness in the base render, size, count, place, the top two faces'
+    // brightness, its brightest part (tools/colour/face_feats.py)
+    if (L.gbm.features && L.gbm.features.includes('face lum')) x.push(...faceFeatures(thumb, photo));
+    learnedTone.lastFeatures = x;
     learnedTone.lastFeatures = x;                      // (tests compare these with training)
     // per-photo contrast too, when the style has it (Jesse 2026-11-03: his contrast varies photo to photo); any other
     // target is a ±100 slider - the editor adds these to the matching develop sliders (applyParams)
     const lim = { exposure: [-(L.expMax || 100), L.expMax || 100], temp: [-100, 100], tint: [-100, 100] };
     L.gbm.targets.forEach((name, j) => { const [lo, hi] = lim[name] || [-100, 100]; out[name] = Math.round(Math.max(lo, Math.min(hi, gbmPredict(L.gbm.models[j], x)))); });
+    // how sure it is: width of the likely exposure range in stops (quantile trees, tools/colour/unsure_test.py) — orders
+    // the quick check after Process shoot. Not a slider: the editor only reads develop keys from a tone.
+    if (L.unsure) out.unsure = +Math.max(0, (gbmPredict(L.unsure.hi, x) - gbmPredict(L.unsure.lo, x)) / 40).toFixed(2);
     return out;
   }
   const { mu, sd, W } = L.model, f = all.slice(0, mu.length), z = [1, ...f.map((v, k) => (v - mu[k]) / sd[k])];
@@ -310,6 +321,24 @@ export function learnedFeatures(base8, lums, sorted, thumb, seg, photo) {
   const ab = m.autoBrightEv != null ? +m.autoBrightEv : NaN;
   return [...base8, ...pc, lg(med(cen)) - lg(med(bor)), lg(med(top)) - lg(med(bot)), bright / n, ...sk, ...cam,
     Math.sin(hr / 24 * 2 * Math.PI), Math.cos(hr / 24 * 2 * Math.PI), hr, ab];
+}
+/** Face inputs for the trees: [face lum, face area, faces, face y, two faces lum, face p90] (NaN/0 without a face). */
+export function faceFeatures(thumb, photo) {
+  const r = photo && photo.raw, fs = r && r.faces && r.W ? r.faces : [];
+  if (!fs.length) return [NaN, 0, 0, NaN, NaN, NaN];
+  const { data, w: Wd, h: H } = thumb, lg = (v) => Math.log2(Math.max(v, 1e-5));
+  const toLin = (v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
+  const box = (f) => {                                 // inner 60% of the box, luminance in linear light
+    const b = f.box, x0 = Math.floor((b.x + 0.2 * b.w) / r.W * Wd), y0 = Math.floor((b.y + 0.2 * b.h) / r.H * H);
+    const x1 = Math.max(x0 + 1, Math.floor((b.x + 0.8 * b.w) / r.W * Wd)), y1 = Math.max(y0 + 1, Math.floor((b.y + 0.8 * b.h) / r.H * H)), out = [];
+    for (let y = Math.max(0, y0); y < Math.min(H, y1); y++) for (let x = Math.max(0, x0); x < Math.min(Wd, x1); x++) {
+      const i = (y * Wd + x) * 4; out.push(0.2126 * toLin(data[i] / 255) + 0.7152 * toLin(data[i + 1] / 255) + 0.0722 * toLin(data[i + 2] / 255));
+    }
+    return Float32Array.from(out).sort();
+  };
+  const q = (a, f) => (a.length ? a[Math.min(a.length - 1, Math.floor(f * (a.length - 1)))] : NaN);
+  const b0 = box(fs[0]), two = fs.length > 1 ? Float32Array.from([...b0, ...box(fs[1])]).sort() : b0, f0 = fs[0].box;
+  return [lg(q(b0, 0.5)), f0.w * f0.h / (r.W * r.H), fs.length, (f0.y + f0.h / 2) / r.H, lg(q(two, 0.5)), lg(q(b0, 0.9))];
 }
 /** One boosted-trees regressor (scikit-learn HistGradientBoosting, exported node lists). */
 export function gbmPredict(model, x) {

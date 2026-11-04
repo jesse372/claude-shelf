@@ -9,8 +9,8 @@
   "tags": [],
   "link": "",
   "created": "2026-10-08T11:01:27+08:00",
-  "updated": "2026-11-03T19:15:15+00:00",
-  "version": 5,
+  "updated": "2026-11-04T19:15:14+00:00",
+  "version": 6,
   "useful": 5,
   "files": [
     ".gitignore",
@@ -53,6 +53,7 @@
     "js/details.js",
     "js/detect.js",
     "js/editor.js",
+    "js/expnet.js",
     "js/exporter.js",
     "js/faces.js",
     "js/home.js",
@@ -70,6 +71,7 @@
     "js/venues.js",
     "js/warp.js",
     "manifest.webmanifest",
+    "models/exposure-net.onnx",
     "server.py",
     "setup.sh"
   ],

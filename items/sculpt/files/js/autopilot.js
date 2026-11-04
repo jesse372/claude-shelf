@@ -95,6 +95,7 @@ async function run(resume = null) {
   await job({ run: { ...R }, status: 'processing', brightness });
   // 4. edit + export each pick (skipping any finished before an interruption)
   let cur = null;
+  const quickOn = !resume && !!(o.profile && profileById(o.profile)?.learned?.unsure);
   const opts = { dir, quality: 0.92, used: new Set(names.map((n) => n.toLowerCase())), safety: true,
     onSaved: (name, blob) => { names.push(name); R.done[cur.key] = name; if (sending) sending.up.add(name, blob); } };
   const todo = list.filter((p) => !R.done[p.key]);
@@ -113,12 +114,28 @@ async function run(resume = null) {
       cur = p;
       await exportOne(p, opts);
       p.editedOnce = true;
+      if (quickOn) p.qthumb = renderer.thumbnail(200);          // for the quick check (base image; the preview applies the style)
       if (p.autoNotes) for (const n of p.autoNotes) if (/child|group/.test(n)) notes.push(`${p.name}: ${n}`);
       if (p.safety) notes.push(`${p.name}: re-edited more gently (${p.safety.fixed.join(', ')})`);
       emit('photo-updated', p);
     } catch (e) { console.error(e); failed.push(p.name); }
     busy(null);
     await job({ run: { ...R }, progress: [k + 1, list.length] });             // saved after every photo
+  }
+  // 4b. quick check (trained styles that can rank their own doubt): the wedding, least-sure first, Brighter/Darker per photo
+  if (quickOn && !cancel) {
+    const fixed = await quickCheck(list.filter((p) => p.qthumb && p.edit.look?.tone && !failed.includes(p.name)), o.profile);
+    for (let i = 0; i < fixed.length; i++) {
+      const p = fixed[i];
+      $('#apRun').hidden = false; $('#apStatus').textContent = `Re-exporting your fixes ${i + 1} of ${fixed.length} — ${p.name}`;
+      try { cur = p; await exportOne(p, { ...opts, used: new Set(), onSaved: (name, blob) => { if (sending) sending.up.add(name, blob); } }); } catch (e) { console.error(e); failed.push(p.name); }
+      busy(null);
+    }
+    const leans = [quickCheck.lean ? `${quickCheck.lean > 0 ? '+' : '−'}${(Math.abs(quickCheck.lean) / 40).toFixed(2)} stop` : '', quickCheck.tlean ? `${quickCheck.tlean > 0 ? 'warm +' : 'cool −'}${Math.abs(quickCheck.tlean)}` : ''].filter(Boolean).join(', ');
+    if (fixed.length) notes.push(leans
+      ? `Quick check: your nudges reached ${fixed.length} photo${fixed.length === 1 ? '' : 's'} — carried across each scene, and the wedding's lean (${leans}, from your nudges) went to the scenes you left alone — re-exported, and the nudges saved so the style learns from them.`
+      : `Quick check: your nudges reached ${fixed.length} photo${fixed.length === 1 ? '' : 's'} (carried across each scene) — re-exported, and saved so the style learns from them.`);
+    for (const p of list) delete p.qthumb;
   }
   // 5. let the last uploads finish, then hand the gallery over (anything an interruption lost is re-read from the folder)
   if (sending) {
@@ -176,6 +193,134 @@ async function brightnessCheck(profileId) {
     $('#apCheckOk').onclick = () => resolve(b);
     $('#apCheckCancel').onclick = () => resolve(null);
   });
+}
+
+/**
+ * Quick check after editing: every photo of the wedding as a small preview in the trained look, grouped by scene with the
+ * least-sure scenes first, with Darker / Brighter in quarter stops and Cooler / Warmer in 15-unit steps. A nudge on a
+ * scene's first frame is carried to its other frames; any frame can be nudged on top. Resolves to the photos Jesse
+ * changed — their exposure / warmth is updated (re-exported by the caller) and each change is saved as a training
+ * example (/api/corrections).
+ */
+async function quickCheck(items, profileId) {
+  quickCheck.lean = 0; quickCheck.tlean = 0;
+  if (!items.length) return [];
+  // Scenes: frames close in time with a similar scene fingerprint. One fix per scene, carried to its frames, lands the
+  // whole wedding - how much depends on how tight a scene is. Simulated on unseen weddings (v7 guesses, 14k pairs,
+  // scratch scenes95.py): sim 0.65 -> 82.8% within 1/3 stop looking at 0.38 cards per photo; sim 0.75 -> 90.1% at 0.55;
+  // sim 0.85 -> 96.3% at 0.75 (> 2/3-stop misses 0.6%). Jesse (2026-11-05): "a minimum of 95% accuracy" -> 0.85.
+  // Sculpt's own guesses can't be pooled this way (they share the same mistake across a scene) - the human anchor is
+  // what makes it work.
+  const DT = 0.15 * 3600e3, SIM = 0.85;
+  const unit = (e) => { if (!e) return null; let n = 0; for (const v of e) n += v * v; n = Math.sqrt(n) || 1; return Float32Array.from(e, (v) => v / n); };
+  const E = new Map(items.map((p) => [p, unit(p.raw && p.raw.emb)]));
+  const sim = (a, b) => { const x = E.get(a), y = E.get(b); if (!x || !y) return 0; let s = 0; for (let i = 0; i < x.length; i++) s += x[i] * y[i]; return s; };
+  const byTime = [...items].sort((a, b) => (a.time ?? 0) - (b.time ?? 0));
+  const scenes = [], of = new Map();
+  for (const p of byTime) {
+    if (of.has(p)) continue;
+    const sc = [p]; of.set(p, sc);
+    for (const q of byTime) if (!of.has(q) && p.time != null && q.time != null && Math.abs(q.time - p.time) <= DT && sim(p, q) >= SIM) { sc.push(q); of.set(q, sc); }
+    scenes.push(sc);
+  }
+  for (const sc of scenes) sc.anchor = sc[sc.length >> 1];
+  scenes.sort((a, b) => Math.max(...b.map((p) => p.edit.look.tone.unsure || 0)) - Math.max(...a.map((p) => p.edit.look.tone.unsure || 0)));
+  $('#apRun').hidden = true; $('#apQuick').hidden = false;
+  const grid = $('#apQuickGrid'); grid.innerHTML = '';
+  // Every photo gets a card (Jesse 2026-11-05: "99.9%" - one nudge per scene tops out near 96% because a few frames of
+  // every scene differ from their anchor): grouped by scene, least-sure scene first, the anchor first and its frames after
+  // it. A nudge on the anchor is carried to its frames (their cards redraw with it); a nudge on any other card sits on top
+  // of what was carried, so most frames need a glance and no tap.
+  // Warm/cool too: Jesse's warmth is within ~4 slider units across a scene while the style misses it by ~18 (14k pairs).
+  const TSTEP = 15, TMAX = 4 * TSTEP, PAGE = 48;
+  const own = new Map();                                           // photo -> { e: stops, t: warmth units } tapped on its card
+  const ofScene = new Map(); for (const sc of scenes) for (const p of sc) ofScene.set(p, sc);
+  const carry = (p, sc) => (p === sc.anchor ? 1 : Math.max(0, sim(p, sc.anchor)));
+  const eff = (p, sc) => { const a = own.get(sc.anchor) || { e: 0, t: 0 }, o = own.get(p) || { e: 0, t: 0 }, c = p === sc.anchor ? 0 : carry(p, sc); return { e: a.e * c + o.e, t: a.t * c + o.t }; };
+  const order = [];
+  for (const sc of scenes) { const byT = [...sc].sort((a, b) => (a.time ?? 0) - (b.time ?? 0)); order.push(sc.anchor, ...byT.filter((p) => p !== sc.anchor)); }
+  const cards = new Map(); let shown = 0;
+  const label = (d) => { const q = Math.round(Math.abs(d) * 4), w = Math.floor(q / 4), f = ['', '¼', '½', '¾'][q % 4]; return `${d > 0 ? '+' : '−'}${w || ''}${f}`; };
+  const tlabel = (n) => (n ? `${n > 0 ? 'warm +' : 'cool −'}${Math.abs(n)}` : '');
+  const draw = (p) => {
+    const c = cards.get(p); if (!c || !p.qthumb) return;              // thumbs are released once the check closes
+    const sc = ofScene.get(p), { e, t: dt } = eff(p, sc), t = p.edit.look.tone, dtt = Math.round(dt);
+    const img = previewLearned(profileId, p.qthumb, { ...t, exposure: Math.max(-200, Math.min(200, (t.exposure || 0) + e * 40)), temp: Math.max(-100, Math.min(100, (t.temp || 0) + dtt)) });
+    if (img) { c.cv.width = img.width; c.cv.height = img.height; c.cv.getContext('2d').putImageData(img, 0, 0); }
+    const from = p === sc.anchor ? (sc.length > 1 ? `, carried to the ${sc.length - 1} other frame${sc.length > 2 ? 's' : ''} of this scene` : '') : (own.has(p) ? ' (your tap on top of the scene nudge)' : ' (carried from the first frame of this scene)');
+    c.lab.textContent = Math.abs(e) >= 0.125 ? label(e) : ''; c.lab.title = e ? `${label(e)} stop${from}` : '';
+    c.tlab.textContent = tlabel(dtt); c.tlab.title = dtt ? `warmth ${dtt > 0 ? '+' : ''}${dtt}${from}` : '';
+  };
+  const redraw = (sc) => { for (const p of sc) draw(p); };
+  const more = () => {
+    for (const p of order.slice(shown, shown + PAGE)) {
+      const sc = ofScene.get(p), first = p === sc.anchor;
+      const card = document.createElement('div'); card.className = 'qcard' + (first ? '' : ' qfollow');
+      const cv = document.createElement('canvas'); cv.title = p.name;
+      if (sc.length > 1) { const b = document.createElement('i'); b.className = 'qmore'; b.textContent = first ? `scene of ${sc.length}` : '↳ same scene'; b.title = first ? `nudge this one and the ${sc.length - 1} other frame${sc.length > 2 ? 's' : ''} of this scene follow` : 'follows the first frame of its scene; a tap here adds to that'; card.append(b); }
+      const row = document.createElement('div'); row.className = 'qrow';
+      const dn = document.createElement('button'), up = document.createElement('button'), lab = document.createElement('span');
+      dn.type = up.type = 'button'; dn.className = up.className = 'ghost qbtn'; dn.textContent = 'Darker'; up.textContent = 'Brighter'; dn.dataset.q = 'dn'; up.dataset.q = 'up';
+      const row2 = document.createElement('div'); row2.className = 'qrow';
+      const cool = document.createElement('button'), warm = document.createElement('button'), tlab = document.createElement('span');
+      cool.type = warm.type = 'button'; cool.className = warm.className = 'ghost qbtn'; cool.textContent = 'Cooler'; warm.textContent = 'Warmer'; cool.dataset.q = 'cool'; warm.dataset.q = 'warm';
+      const tap = (de, dt) => { const o = own.get(p) || { e: 0, t: 0 }; o.e = Math.max(-3, Math.min(3, o.e + de)); o.t = Math.max(-TMAX, Math.min(TMAX, o.t + dt)); own.set(p, o); first ? redraw(sc) : draw(p); };
+      dn.onclick = () => tap(-0.25, 0); up.onclick = () => tap(0.25, 0); cool.onclick = () => tap(0, -TSTEP); warm.onclick = () => tap(0, TSTEP);
+      row.append(dn, lab, up); row2.append(cool, tlab, warm); card.append(cv, row, row2); grid.append(card); cards.set(p, { cv, lab, tlab }); draw(p);
+    }
+    shown = Math.min(order.length, shown + PAGE);
+    $('#apQuickMore').hidden = shown >= order.length;
+    $('#apQuickCount').textContent = `${shown} of ${order.length} photos shown (${scenes.length} scene${scenes.length === 1 ? '' : 's'}) — least sure scenes first`;
+  };
+  more();
+  const ok = await new Promise((resolve) => {
+    $('#apQuickMore').onclick = more;
+    $('#apQuickDone').onclick = () => resolve(true);
+    $('#apQuickSkip').onclick = () => resolve(false);
+  });
+  $('#apQuick').hidden = true; $('#apRun').hidden = false;
+  grid.innerHTML = ''; $('#apQuickMore').onclick = $('#apQuickDone').onclick = $('#apQuickSkip').onclick = null;   // nothing can redraw after this
+  if (!ok) return [];
+  const fixed = new Set(), ex = [];
+  for (const sc of scenes) {
+    for (const p of sc) {
+      const { e, t: dt } = eff(p, sc), dd = Math.round(e * 40), dtt = Math.round(dt); if (!dd && !dtt) continue;
+      const t = p.edit.look.tone, c = carry(p, sc);
+      const chosen = Math.max(-200, Math.min(200, (t.exposure || 0) + dd)), chosenTemp = Math.max(-100, Math.min(100, (t.temp || 0) + dtt));
+      // dExp / dTemp say which slider changed (0 = left as predicted; retraining learns only from the changed one);
+      // anchor = his own hand set this card (the scene's first frame, or a frame he tapped) - a true label; carried
+      // frames count less in retraining (0.5 x carry).
+      ex.push({ name: p.name, x: p.toneX || null, net: p.netStops ?? null, predicted: t.exposure, chosen, dExp: dd, predictedTemp: t.temp ?? 0, chosenTemp, dTemp: dtt,
+        unsure: t.unsure ?? null, anchor: p === sc.anchor || own.has(p), carry: +c.toFixed(2), job: S.job?.id || null });
+      t.exposure = chosen; t.temp = chosenTemp; p.pendingAuto = null; fixed.add(p);
+    }
+  }
+  if (ex.length) fetch('api/corrections', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items: ex }) }).catch(() => {});
+  // The wedding's own lean: every wedding carries a brightness offset the style can't know from the photos (leave-one-
+  // wedding-out: a constant per wedding is worth +5 points within 1/3 stop; estimated from ~20 nudges, +3-4 and fewer
+  // dark misses). The median of the scene nudges over the scenes he looked at (untouched = 0), shrunk towards 0, goes to
+  // every scene he did not touch. Not saved as training examples - they are not his judgement.
+  // The same for warmth (leave-one-wedding-out: 20 warmth nudges shrunk this way take the untouched scenes' median miss
+  // from 18 to 15.6 slider units).
+  const looked = scenes.filter((sc) => cards.has(sc.anchor));
+  if (looked.length >= 4) {
+    const median = (vals) => { const ds = [...vals].sort((a, b) => a - b), m = ds.length >> 1; return ds.length % 2 ? ds[m] : (ds[m - 1] + ds[m]) / 2; };
+    const shrink = looked.length / (looked.length + 5), at = (sc) => own.get(sc.anchor) || { e: 0, t: 0 };
+    const off = Math.round(median(looked.map((sc) => at(sc).e)) * shrink * 40);
+    const toff = Math.round(median(looked.map((sc) => at(sc).t)) * shrink);
+    quickCheck.lean = off; quickCheck.tlean = toff;
+    for (const sc of scenes) {
+      const e = sc.some((p) => (own.get(p) || {}).e) ? 0 : off, w = sc.some((p) => (own.get(p) || {}).t) ? 0 : toff;
+      if (!e && !w) continue;
+      for (const p of sc) {
+        const t = p.edit.look.tone;
+        if (e) t.exposure = Math.max(-200, Math.min(200, (t.exposure || 0) + e));
+        if (w) t.temp = Math.max(-100, Math.min(100, (t.temp || 0) + w));
+        p.pendingAuto = null; fixed.add(p);
+      }
+    }
+  }
+  return [...fixed];
 }
 
 /** Carry on with an interrupted Process shoot (called from the job's "Continue" bar, within the click). */

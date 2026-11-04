@@ -79,6 +79,27 @@ function rawMeta(m) {
   };
 }
 
+/** EXIF Orientation (tag 0x0112) of a JPEG, 0 when absent. Reads only the APP1 segment. */
+function exifOrientation(bytes) {
+  try {
+    const d = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+    if (d.getUint16(0) !== 0xffd8) return 0;
+    let p = 2;
+    while (p + 4 <= d.byteLength) {
+      const marker = d.getUint16(p), len = d.getUint16(p + 2);
+      if (marker === 0xffda || marker === 0xffd9) return 0;                              // image data: no APP1 before it
+      if (marker === 0xffe1 && d.getUint32(p + 4) === 0x45786966) {                      // 'Exif'
+        const t = p + 10, le = d.getUint16(t) === 0x4949, rd16 = (o) => d.getUint16(o, le), rd32 = (o) => d.getUint32(o, le);
+        const ifd = t + rd32(t + 4), n = rd16(ifd);
+        for (let i = 0; i < n; i++) { const e = ifd + 2 + i * 12; if (rd16(e) === 0x0112) return rd16(e + 8); }
+        return 0;
+      }
+      p += 2 + len;
+    }
+  } catch { /* not a JPEG we can read */ }
+  return 0;
+}
+
 /** LibRaw flip → rotate an ImageBitmap/canvas (embedded previews are stored unrotated). */
 async function applyFlip(src, flip) {
   if (!flip) return src;
@@ -242,13 +263,16 @@ export async function loadPreview(file, maxSide = 1600) {
       let bmp = null;
       try {
         const th = await lr.thumbnailData();
-        if (th && th.format === 'jpeg') bmp = await applyFlip(await createImageBitmap(new Blob([th.data], { type: 'image/jpeg' })), meta.flip);
+        // The embedded JPEG is stored in sensor orientation; when it carries its own EXIF orientation tag Chrome's decoder
+        // applies it (imageOrientation 'none' no longer exists), and LibRaw's flip then turned portrait frames sideways
+        // (found 2026-11-05: the import fingerprint / culling faces of every portrait photo were rotated). Rotate once.
+        if (th && th.format === 'jpeg') { const o = exifOrientation(th.data); bmp = await applyFlip(await createImageBitmap(new Blob([th.data], { type: 'image/jpeg' })), o > 1 ? 0 : meta.flip); }
         else if (th && th.format === 'bitmap') {
           const id = new ImageData(th.width, th.height);
           for (let i = 0, j = 0; i < th.width * th.height; i++, j += 3) { id.data.set([th.data[j], th.data[j + 1], th.data[j + 2], 255], i * 4); }
           bmp = await applyFlip(await createImageBitmap(id), meta.flip);
         }
-      } catch { /* no thumbnail */ }
+      } catch (e) { console.warn('embedded preview unusable, decoding instead:', e); }
       if (!bmp) {   // fall back to a quick half-size decode
         const tmp = await libraw();
         try {

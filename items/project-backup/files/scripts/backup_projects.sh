@@ -23,8 +23,14 @@ while IFS= read -r d; do
   [ -z "$d" ] && continue
   d="${d/#\~/$HOME}"
   [ -d "$d/.git" ] || { echo "[$(ts)] skip (no .git): $d" >>"$LOG"; continue; }
-  cd "$d" || continue
-  if [ -n "$(git status --porcelain)" ]; then
+  cd "$d" || { echo "[$(ts)] UNREADABLE (cd failed): $d" >>"$LOG"; fail=1; notify "BACKUP CAN'T READ: $d"; continue; }
+  # git status failing (e.g. macOS privacy/TCC blocking ~/Documents) used to look like "no changes" and the repo
+  # silently never backed up. Treat it as a failure.
+  if ! st="$(git status --porcelain 2>&1)"; then
+    echo "[$(ts)] UNREADABLE (git status failed: $(printf '%s' "$st" | head -1)): $d" >>"$LOG"; fail=1
+    notify "BACKUP CAN'T READ: $d (macOS privacy block?)"; continue
+  fi
+  if [ -n "$st" ]; then
     branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo HEAD)"
 
     # --- DEPLOY GUARD -------------------------------------------------------
@@ -63,7 +69,20 @@ while IFS= read -r d; do
       echo "[$(ts)] COMMIT FAILED: $d" >>"$LOG"; fail=1; notify "COMMIT FAILED: $d"
     fi
   else
-    echo "[$(ts)] no changes: $d" >>"$LOG"
+    # Nothing new to commit, but commits made by hand/agents may still be unpushed (2026-11-04: two
+    # jessechance-2026 commits sat local-only for a day because this branch never pushed). Push them.
+    ahead=$(git rev-list --count @{u}..HEAD 2>/dev/null || echo 0)
+    if [ "${ahead:-0}" -gt 0 ]; then
+      branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo HEAD)"; push_ref=""   # same DEPLOY GUARD as above
+      if { [ -f CNAME ] || [ -f .deploy-guard ]; } && { [ "$branch" = "main" ] || [ "$branch" = "master" ]; }; then
+        push_ref="HEAD:refs/heads/auto-backup/$branch"
+      fi
+      if [ -n "$push_ref" ]; then git push -q origin "$push_ref" 2>/dev/null; else git push -q 2>/dev/null; fi \
+        && echo "[$(ts)] pushed $ahead unpushed commit(s): $d" >>"$LOG" \
+        || { echo "[$(ts)] PUSH FAILED: $d" >>"$LOG"; fail=1; notify "PUSH FAILED: $d"; }
+    else
+      echo "[$(ts)] no changes: $d" >>"$LOG"
+    fi
   fi
 done < "$REG"
 exit "$fail"

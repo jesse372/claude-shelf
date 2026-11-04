@@ -128,6 +128,25 @@ export default {
       }
       return new Response('method not allowed', { status: 405 });
     }
+    // ---- quick-check fixes from Process shoot: the photo's features + the brightness Jesse chose (training examples) ----
+    if (url.pathname === '/api/corrections') {
+      const H = { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' };
+      if (req.method === 'POST') {
+        const body = await req.text();
+        if (body.length > 512 * 1024) return new Response('too large', { status: 413 });
+        let items; try { items = JSON.parse(body).items; } catch { return new Response('bad json', { status: 400 }); }
+        if (!Array.isArray(items) || !items.length) return new Response('no items', { status: 400 });
+        const key = `corr:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`;
+        await env.STYLE.put(key, JSON.stringify({ at: Date.now(), items }));
+        return isolate(new Response(JSON.stringify({ ok: true, n: items.length }), { headers: H }));
+      }
+      if (req.method === 'GET') {           // for retraining: every saved batch
+        const out = []; let cursor;
+        do { const l = await env.STYLE.list({ prefix: 'corr:', cursor }); for (const k of l.keys) out.push(JSON.parse(await env.STYLE.get(k.name))); cursor = l.list_complete ? null : l.cursor; } while (cursor);
+        return isolate(new Response(JSON.stringify(out), { headers: H }));
+      }
+      return new Response('method not allowed', { status: 405 });
+    }
     if (url.pathname === '/api/style/examples' && req.method === 'POST') {
       const ex = await req.text();
       if (ex.length > 64 * 1024) return new Response('too large', { status: 413 });

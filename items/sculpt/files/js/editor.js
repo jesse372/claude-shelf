@@ -5,6 +5,7 @@ import { measureNeeds, AUTO_SHAPE, AUTO_RETOUCH } from './needs.js';
 import { loadStyle, saveStyle, hasStyle, styleSliders, describeStyle, encodeEmb, COLOUR_KEYS } from './style-store.js';
 import { photoStats, autoWhiteBalance, simulate, baseLum } from './style.js';
 import { PROFILES, profileLut, profileDev, profileGrain, profileVignette, profileById, profileTone, fitAdaptiveTone, learnedTone, profileKnee, profileSkinLut } from './profiles.js';
+import { netStops } from './expnet.js';
 import { SLIDERS, makeField, buildUnitFields, combine, buildChinMask, newManual, brushPush, brushRestore, faceFrame, neckSkin, maskWarpToSkin } from './warp.js';
 import { buildSkinMask } from './skin.js';
 import { removeStroke, initInpaint, isModelReady } from './inpaint.js';
@@ -275,7 +276,14 @@ async function runAuto(p, F) {
   if (o.profile && profileById(o.profile)?.learned) {
     // a trained style predicts this photo's exposure & white balance itself, then applies the learned grade
     p.edit.dev = { ...DEFAULT_DEV };
+    const Lp = profileById(o.profile).learned;
+    if (Lp.net && p.netStops === undefined) {           // the image network looks at the base render first (once per photo)
+      // large base thumbnail; the network's letterbox does the (exact) downscale
+      try { p.netStops = await netStops(renderer.thumbnail(1024), Lp.net); }
+      catch (e) { console.warn('image network unavailable, trees go without it', e); p.netStops = null; }
+    }
     p.edit.look = { id: o.profile, amount: 100, tone: learnedToneFor(o.profile, p, o.brightness) };
+    if (learnedTone.lastFeatures) p.toneX = learnedTone.lastFeatures.map((v) => (Number.isNaN(v) ? null : +v.toFixed(5)));   // for quick-check training examples
     notes.push(profileById(o.profile).name + ' (trained)');
   } else if (o.profile) {
     // a wedding profile defines the colour; tone is still normalised per photo first

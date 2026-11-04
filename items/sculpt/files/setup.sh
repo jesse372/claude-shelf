@@ -62,4 +62,7 @@ fetch https://huggingface.co/Carve/LaMa-ONNX/resolve/main/lama_fp32.onnx "$V/mod
 # face finder for culling (YuNet, OpenCV Zoo, MIT) — small enough to ship with the app
 fetch https://github.com/opencv/opencv_zoo/raw/main/models/face_detection_yunet/face_detection_yunet_2023mar.onnx "$V/models/face_detection_yunet_2023mar.onnx"
 
+# Sculpt's own trained models live in the repo (models/): the exposure network the brightness trees read (4 MB)
+for m in models/*.onnx; do [ -f "$m" ] && cp -f "$m" "$V/models/"; done
+
 echo "  AI models ready."
