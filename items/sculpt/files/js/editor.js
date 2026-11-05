@@ -189,11 +189,13 @@ const needsAI = (p) => !!p.pendingAuto || Object.values(p.edit.shape).some(Boole
  * Load a photo into the GPU pipeline. interactive=false (export) skips the AI when no
  * face/body/skin edits are set.
  */
-export async function loadPhoto(p, { interactive = true, fit = true } = {}) {
+export async function loadPhoto(p, { interactive = true, fit = true, quick = false } = {}) {
   const token = ++openToken;
   busy(p.kind === 'raw' ? `Developing RAW ${p.name}…` : `Opening ${p.name}…`);
   try {
-    const img = await getDecoded(p);
+    // quick: a half-size development (Process shoot's look pass) - the trained style decides the tone from it; nothing
+    // that depends on the full-size frame (detections, masks) is kept, the export's full load redoes those
+    const img = quick ? await decodeFull(p.file, { forPreview: true }) : await getDecoded(p);
     if (token !== openToken) return false;
     renderer.setImage(img);
     renderer.sharpen = p.kind === 'raw' ? RAW_SHARPEN : 0;      // camera JPEGs are already sharpened
@@ -206,6 +208,7 @@ export async function loadPhoto(p, { interactive = true, fit = true } = {}) {
     if (interactive) { syncSliderUI(); if (fit) fitView(); renderer.buildBlurs(0); draw(); renderLookPreviews(); }
 
     if (interactive || needsAI(p)) {
+      const hadDet = !!p.det;
       if (!p.det || !p.emb) {
         busy('AI is finding faces & bodies…');
         const t = renderer.thumbnail(3200);
@@ -218,6 +221,7 @@ export async function loadPhoto(p, { interactive = true, fit = true } = {}) {
       const F = makeField(p.w, p.h);
       cur.F = F;
       if (p.pendingAuto) await runAuto(p, F);
+      if (quick) { if (!hadDet) delete p.det; return true; }       // detections found on the half-size frame are not kept
       cur.fields = buildUnitFields(F, p.det, p.autoWeights || null);
       // the double chin only ever moves/lightens skin: collars, ties, jewellery, hair and background stay put
       const neck = p.det.seg ? neckSkin(F, p.det) : null;
@@ -277,14 +281,18 @@ async function runAuto(p, F) {
     // a trained style predicts this photo's exposure & white balance itself, then applies the learned grade
     p.edit.dev = { ...DEFAULT_DEV };
     const Lp = profileById(o.profile).learned;
-    if (Lp.net && p.netStops === undefined) {           // the image network looks at the base render first (once per photo)
-      // large base thumbnail; the network's letterbox does the (exact) downscale
-      try { p.netStops = await netStops(renderer.thumbnail(1024), Lp.net); }
-      catch (e) { console.warn('image network unavailable, trees go without it', e); p.netStops = null; }
+    if (o.keepTone && p.edit.look?.tone && p.edit.look.id === o.profile) {
+      notes.push(profileById(o.profile).name + ' (trained, checked)');   // decided in the look pass and the quick check
+    } else {
+      if (Lp.net && p.netStops === undefined) {           // the image network looks at the base render first (once per photo)
+        // large base thumbnail; the network's letterbox does the (exact) downscale
+        try { p.netStops = await netStops(renderer.thumbnail(1024), Lp.net); }
+        catch (e) { console.warn('image network unavailable, trees go without it', e); p.netStops = null; }
+      }
+      p.edit.look = { id: o.profile, amount: 100, tone: learnedToneFor(o.profile, p, o.brightness) };
+      if (learnedTone.lastFeatures) p.toneX = learnedTone.lastFeatures.map((v) => (Number.isNaN(v) ? null : +v.toFixed(5)));   // for quick-check training examples
+      notes.push(profileById(o.profile).name + ' (trained)');
     }
-    p.edit.look = { id: o.profile, amount: 100, tone: learnedToneFor(o.profile, p, o.brightness) };
-    if (learnedTone.lastFeatures) p.toneX = learnedTone.lastFeatures.map((v) => (Number.isNaN(v) ? null : +v.toFixed(5)));   // for quick-check training examples
-    notes.push(profileById(o.profile).name + ' (trained)');
   } else if (o.profile) {
     // a wedding profile defines the colour; tone is still normalised per photo first
     const st = await loadStyle();

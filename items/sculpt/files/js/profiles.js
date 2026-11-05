@@ -354,7 +354,8 @@ export function gbmPredict(model, x) {
   }
   return s;
 }
-/** Quick preview of a trained style on a thumbnail (exposure / temp / tint + its look) — for the brightness check. */
+/** Quick preview of a trained style on a thumbnail (exposure / temp / tint + its look, and the quick check's Softer /
+ * Punchier: highlights, whites, contrast - in render.js order: tone() -> finish() -> contrast -> look). */
 export function previewLearned(id, thumb, tone) {
   const L = profileById(id)?.learned; if (!L) return null;
   const grade = learnedGrade(L), knee = L.knee || 0.88, { data, w, h } = thumb, out = new ImageData(w, h);
@@ -363,8 +364,21 @@ export function previewLearned(id, thumb, tone) {
   const lum = 0.2126 * gr + 0.7152 * gg + 0.0722 * gb, k = 2 ** ((tone.exposure || 0) / 100 * 2.5) / lum;
   gr *= k; gg *= k; gb *= k;
   const lin = new Float32Array(256); for (let i = 0; i < 256; i++) lin[i] = toLin(i / 255);
-  for (let i = 0; i < w * h * 4; i += 4) {
-    const o = grade(finishK(lin[data[i]] * gr, knee), finishK(lin[data[i + 1]] * gg, knee), finishK(lin[data[i + 2]] * gb, knee));
+  const hi = (tone.highlights || 0) / 100, wp = 1 - (tone.whites || 0) / 100 * 0.35, con = (tone.contrast || 0) / 100;
+  let bgL = null;
+  if (hi) {                                   // the surroundings' brightness (render.js uBG: blur of 1.2% of the long side)
+    const r = Math.max(1, Math.round(0.012 * Math.max(w, h))), Y = new Float32Array(w * h), T = new Float32Array(w * h);
+    for (let i = 0; i < w * h; i++) Y[i] = 0.2126 * lin[data[i * 4]] * gr + 0.7152 * lin[data[i * 4 + 1]] * gg + 0.0722 * lin[data[i * 4 + 2]] * gb;
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { let s = 0, n = 0; for (let d = -r; d <= r; d++) { const xx = x + d; if (xx >= 0 && xx < w) { s += Y[y * w + xx]; n++; } } T[y * w + x] = s / n; }
+    bgL = new Float32Array(w * h);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { let s = 0, n = 0; for (let d = -r; d <= r; d++) { const yy = y + d; if (yy >= 0 && yy < h) { s += T[yy * w + x]; n++; } } bgL[y * w + x] = s / n; }
+  }
+  const ss = (e0, e1, x) => { const t = Math.max(0, Math.min(1, (x - e0) / (e1 - e0))); return t * t * (3 - 2 * t); };
+  const curve = (g) => (con >= 0 ? g + (g * g * (3 - 2 * g) - g) * con : g + ((0.5 + (g - 0.5) * 0.6) - g) * -con);
+  for (let i = 0, j = 0; i < w * h * 4; i += 4, j++) {
+    const m = (hi ? 2 ** (hi * 1.4 * ss(0.12, 0.85, Math.max(bgL[j], 1e-4))) : 1) / wp;
+    const f = (v) => { const g = finishK(v * m, knee); return con ? Math.max(0, Math.min(1, curve(g))) : g; };
+    const o = grade(f(lin[data[i]] * gr), f(lin[data[i + 1]] * gg), f(lin[data[i + 2]] * gb));
     out.data[i] = o[0] * 255; out.data[i + 1] = o[1] * 255; out.data[i + 2] = o[2] * 255; out.data[i + 3] = 255;
   }
   return out;

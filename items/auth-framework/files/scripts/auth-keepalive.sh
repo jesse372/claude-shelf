@@ -225,6 +225,26 @@ t_gmail(){
   fi
 }
 
+t_gsc(){
+  # Google Search Console API (workspace/gsc/gsc.py). Same Desktop OAuth client + Cloud project as
+  # gmail (327045295496, In production => refresh tokens do not expire on a timer). token-status
+  # does a real refresh, so "ok":false means Google rejected the refresh token.
+  local G="$HOME/JesseOS/workspace/gsc/gsc.py"
+  [ -x "$G" ] || return 0
+  local js ok
+  js="$(python3 -I "$G" token-status 2>/dev/null)"
+  ok="$(printf '%s' "$js" | python3 -c 'import sys,json;print(json.load(sys.stdin).get("ok",False))' 2>/dev/null || echo False)"
+  if [ "$ok" = "True" ]; then
+    row gsc OK "n/a" "refresh ok (webmasters scope)"
+  elif printf '%s' "$js" | grep -q '"no token"'; then
+    row gsc MISSING "n/a" "no token — run: gsc.py auth-url (or gsc.py relay TOKEN for the phone flow)"
+    [ "$DRY" = 1 ] || af_alert gsc "Search Console not authorized" "No token at ~/.authframework/secrets/gsc.token. Run: ~/JesseOS/workspace/gsc/gsc.py auth-url"
+  else
+    row gsc FAIL "n/a" "refresh_token rejected by Google"
+    [ "$DRY" = 1 ] || af_alert gsc "Search Console auth is dead" "gsc.py token-status failed — refresh token revoked. Fix: ~/JesseOS/workspace/gsc/gsc.py auth-url (phone: gsc.py relay TOKEN behind cloudflared --protocol http2)"
+  fi
+}
+
 t_square(){
   # Square catalogue token (skills/square). A Square *personal/production access token* has no
   # expiry timer, so there are no hours-left to report — the only failure modes are "never
@@ -340,6 +360,7 @@ t_claude_code
 t_codex
 t_omnara
 t_gmail
+t_gsc
 t_square
 t_youtube
 t_meta_ads

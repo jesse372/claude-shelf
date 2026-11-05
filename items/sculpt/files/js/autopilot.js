@@ -93,7 +93,6 @@ async function run(resume = null) {
     if (R.deliveryId) sending = { id: R.deliveryId, up: new Uploader(R.deliveryId), names };
   }
   await job({ run: { ...R }, status: 'processing', brightness });
-  // 4. edit + export each pick (skipping any finished before an interruption)
   let cur = null;
   const quickOn = !resume && !!(o.profile && profileById(o.profile)?.learned?.unsure);
   const opts = { dir, quality: 0.92, used: new Set(names.map((n) => n.toLowerCase())), safety: true,
@@ -102,40 +101,51 @@ async function run(resume = null) {
   const before = list.length - todo.length;
   const sendNote = () => (sending ? ` · ${before + sending.up.sent.size} of ${list.length} sent to Pixieset` : '');
   if (before) notes.push(`Continued after an interruption: ${before} photo${before === 1 ? ' was' : 's were'} already finished.`);
+  // 4a. the look first (trained styles that can rank their own doubt): every pick's tone from a quick half-size
+  // development, then the quick check - so the glance happens up front and each photo is exported once, with the
+  // nudges already in (before: the check came after the export and every nudged photo was exported twice)
+  if (quickOn) {
+    const t1 = performance.now();
+    for (let i = 0; i < todo.length; i++) {
+      if (cancel) { await job({ run: null }); return finish([], [], 0, dir, true, notes); }
+      const p = todo[i];
+      const el = (performance.now() - t1) / 1000, eta = i ? el / i * (todo.length - i) : 0;
+      $('#apStatus').textContent = `Choosing the look ${i + 1} of ${todo.length} — ${p.name}` + (i ? ` · about ${fmtTime(eta)} left` : '');
+      $('#apBar').value = 0.1 + 0.2 * i / todo.length;
+      try {
+        p.pendingAuto = { profile: o.profile, brightness };
+        if (await loadPhoto(p, { interactive: false, quick: true })) p.qthumb = renderer.thumbnail(200);   // base image; the card applies the style
+      } catch (e) { console.error(e); }
+      busy(null);
+    }
+    const fixed = await quickCheck(todo.filter((p) => p.qthumb && p.edit.look?.tone), o.profile);
+    for (const p of todo) { delete p.qthumb; if (p.edit.look?.tone) p.toneChecked = true; }
+    const leans = [quickCheck.lean ? `${quickCheck.lean > 0 ? '+' : '−'}${(Math.abs(quickCheck.lean) / 40).toFixed(2)} stop` : '', quickCheck.tlean ? `${quickCheck.tlean > 0 ? 'warm +' : 'cool −'}${Math.abs(quickCheck.tlean)}` : ''].filter(Boolean).join(', ');
+    if (fixed.length) notes.push(leans
+      ? `Quick check: your nudges reached ${fixed.length} photo${fixed.length === 1 ? '' : 's'} — carried across each scene, and the wedding's lean (${leans}, from your nudges) went to the scenes you didn't get to — applied before the export, and the nudges saved so the style learns from them.`
+      : `Quick check: your nudges reached ${fixed.length} photo${fixed.length === 1 ? '' : 's'} (carried across each scene) — applied before the export, and saved so the style learns from them.`);
+    $('#apQuick').hidden = true; $('#apRun').hidden = false;
+  }
+  // 4. edit + export each pick (skipping any finished before an interruption)
+  const b0 = quickOn ? 0.3 : 0.1;
   const t0 = performance.now();
   for (let i = 0; i < todo.length; i++) {
     if (cancel) { await job({ run: null }); return finish(list.slice(0, before + i), failed, before + i, dir, true, notes); }
     const p = todo[i], k = before + i;
     const el = (performance.now() - t0) / 1000, eta = i ? el / i * (todo.length - i) : 0;
     $('#apStatus').textContent = `Editing & exporting ${k + 1} of ${list.length} — ${p.name}` + (i ? ` · about ${fmtTime(eta)} left` : '') + sendNote();
-    $('#apBar').value = 0.1 + 0.87 * k / list.length;
+    $('#apBar').value = b0 + (0.97 - b0) * k / list.length;
     try {
-      if (o.colour || o.profile || o.retouch || o.shape) p.pendingAuto = { colour: o.colour, profile: o.profile, retouch: o.retouch, shape: o.shape, brightness };
+      if (o.colour || o.profile || o.retouch || o.shape) p.pendingAuto = { colour: o.colour, profile: o.profile, retouch: o.retouch, shape: o.shape, brightness, keepTone: !!p.toneChecked };
       cur = p;
       await exportOne(p, opts);
       p.editedOnce = true;
-      if (quickOn) p.qthumb = renderer.thumbnail(200);          // for the quick check (base image; the preview applies the style)
       if (p.autoNotes) for (const n of p.autoNotes) if (/child|group/.test(n)) notes.push(`${p.name}: ${n}`);
       if (p.safety) notes.push(`${p.name}: re-edited more gently (${p.safety.fixed.join(', ')})`);
       emit('photo-updated', p);
     } catch (e) { console.error(e); failed.push(p.name); }
     busy(null);
     await job({ run: { ...R }, progress: [k + 1, list.length] });             // saved after every photo
-  }
-  // 4b. quick check (trained styles that can rank their own doubt): the wedding, least-sure first, Brighter/Darker per photo
-  if (quickOn && !cancel) {
-    const fixed = await quickCheck(list.filter((p) => p.qthumb && p.edit.look?.tone && !failed.includes(p.name)), o.profile);
-    for (let i = 0; i < fixed.length; i++) {
-      const p = fixed[i];
-      $('#apRun').hidden = false; $('#apStatus').textContent = `Re-exporting your fixes ${i + 1} of ${fixed.length} — ${p.name}`;
-      try { cur = p; await exportOne(p, { ...opts, used: new Set(), onSaved: (name, blob) => { if (sending) sending.up.add(name, blob); } }); } catch (e) { console.error(e); failed.push(p.name); }
-      busy(null);
-    }
-    const leans = [quickCheck.lean ? `${quickCheck.lean > 0 ? '+' : '−'}${(Math.abs(quickCheck.lean) / 40).toFixed(2)} stop` : '', quickCheck.tlean ? `${quickCheck.tlean > 0 ? 'warm +' : 'cool −'}${Math.abs(quickCheck.tlean)}` : ''].filter(Boolean).join(', ');
-    if (fixed.length) notes.push(leans
-      ? `Quick check: your nudges reached ${fixed.length} photo${fixed.length === 1 ? '' : 's'} — carried across each scene, and the wedding's lean (${leans}, from your nudges) went to the scenes you left alone — re-exported, and the nudges saved so the style learns from them.`
-      : `Quick check: your nudges reached ${fixed.length} photo${fixed.length === 1 ? '' : 's'} (carried across each scene) — re-exported, and saved so the style learns from them.`);
-    for (const p of list) delete p.qthumb;
   }
   // 5. let the last uploads finish, then hand the gallery over (anything an interruption lost is re-read from the folder)
   if (sending) {
@@ -178,7 +188,7 @@ async function brightnessCheck(profileId) {
     $('#apCheckStatus').textContent = `Preparing previews… ${i + 1} of ${picks.length}`;
     const p = picks[i];
     p.pendingAuto = { profile: profileId, brightness: 0 };
-    if (!(await loadPhoto(p, { interactive: false }))) continue;
+    if (!(await loadPhoto(p, { interactive: false, quick: true }))) continue;     // half-size development: enough for a preview
     const thumb = renderer.thumbnail(320), cv = document.createElement('canvas');
     cv.width = thumb.w; cv.height = thumb.h; cv.title = p.name; grid.append(cv);
     shots.push({ p, thumb, tone: { ...(p.edit.look?.tone || {}) }, cv });
@@ -196,12 +206,13 @@ async function brightnessCheck(profileId) {
 }
 
 /**
- * Quick check after editing: every photo of the wedding as a small preview in the trained look, grouped by scene with the
+ * Quick check before the export: every photo of the wedding as a small preview in the trained look, grouped by scene with the
  * least-sure scenes first, with Darker / Brighter in quarter stops and Cooler / Warmer in 15-unit steps. A nudge on a
  * scene's first frame is carried to its other frames; any frame can be nudged on top. Resolves to the photos Jesse
- * changed — their exposure / warmth is updated (re-exported by the caller) and each change is saved as a training
+ * changed — their exposure / warmth is updated (the export that follows uses it) and each change is saved as a training
  * example (/api/corrections).
  */
+export const quickSettings = { page: 48 };     // cards per page (tests shrink it to exercise an early stop)
 async function quickCheck(items, profileId) {
   quickCheck.lean = 0; quickCheck.tlean = 0;
   if (!items.length) return [];
@@ -232,23 +243,30 @@ async function quickCheck(items, profileId) {
   // it. A nudge on the anchor is carried to its frames (their cards redraw with it); a nudge on any other card sits on top
   // of what was carried, so most frames need a glance and no tap.
   // Warm/cool too: Jesse's warmth is within ~4 slider units across a scene while the style misses it by ~18 (14k pairs).
-  const TSTEP = 15, TMAX = 4 * TSTEP, PAGE = 48;
+  const TSTEP = 15, TMAX = 4 * TSTEP, PAGE = quickSettings.page;
+  // Softer / Punchier (Jesse 2026-11-05 on Steph & Josh: "Too much contrast and maybe whites"): one step = contrast -10,
+  // highlights -20, whites -12 (render.js sliders, added on top of the style's tone), -2..+3 steps. Per-photo highlights /
+  // whites are not predictable from the photo (tools/colour/hiwhites_macbook.py: LOWO no gain), so it is his tap.
+  const SOFT = { contrast: -10, highlights: -20, whites: -12 }, SMIN = -2, SMAX = 3;
   const own = new Map();                                           // photo -> { e: stops, t: warmth units } tapped on its card
   const ofScene = new Map(); for (const sc of scenes) for (const p of sc) ofScene.set(p, sc);
   const carry = (p, sc) => (p === sc.anchor ? 1 : Math.max(0, sim(p, sc.anchor)));
-  const eff = (p, sc) => { const a = own.get(sc.anchor) || { e: 0, t: 0 }, o = own.get(p) || { e: 0, t: 0 }, c = p === sc.anchor ? 0 : carry(p, sc); return { e: a.e * c + o.e, t: a.t * c + o.t }; };
+  const eff = (p, sc) => { const a = own.get(sc.anchor) || { e: 0, t: 0, s: 0 }, o = own.get(p) || { e: 0, t: 0, s: 0 }, c = p === sc.anchor ? 0 : carry(p, sc); return { e: a.e * c + o.e, t: a.t * c + o.t, s: (a.s || 0) * c + (o.s || 0) }; };
   const order = [];
   for (const sc of scenes) { const byT = [...sc].sort((a, b) => (a.time ?? 0) - (b.time ?? 0)); order.push(sc.anchor, ...byT.filter((p) => p !== sc.anchor)); }
   const cards = new Map(); let shown = 0;
   const label = (d) => { const q = Math.round(Math.abs(d) * 4), w = Math.floor(q / 4), f = ['', '¼', '½', '¾'][q % 4]; return `${d > 0 ? '+' : '−'}${w || ''}${f}`; };
   const tlabel = (n) => (n ? `${n > 0 ? 'warm +' : 'cool −'}${Math.abs(n)}` : '');
+  const softOf = (t, sv) => { const n = Math.round(sv * 2) / 2; if (!n) return {}; return Object.fromEntries(Object.entries(SOFT).map(([k, v]) => [k, Math.max(-100, Math.min(100, (t[k] || 0) + Math.round(v * n)))])); };
+  const slabel = (sv) => { const n = Math.round(sv); return n ? (n > 0 ? `softer ${n > 1 ? '×' + n : ''}` : `punchier ${n < -1 ? '×' + -n : ''}`).trim() : ''; };
   const draw = (p) => {
     const c = cards.get(p); if (!c || !p.qthumb) return;              // thumbs are released once the check closes
-    const sc = ofScene.get(p), { e, t: dt } = eff(p, sc), t = p.edit.look.tone, dtt = Math.round(dt);
-    const img = previewLearned(profileId, p.qthumb, { ...t, exposure: Math.max(-200, Math.min(200, (t.exposure || 0) + e * 40)), temp: Math.max(-100, Math.min(100, (t.temp || 0) + dtt)) });
+    const sc = ofScene.get(p), { e, t: dt, s: sv } = eff(p, sc), t = p.edit.look.tone, dtt = Math.round(dt), soft = softOf(t, sv);
+    const img = previewLearned(profileId, p.qthumb, { ...t, exposure: Math.max(-200, Math.min(200, (t.exposure || 0) + e * 40)), temp: Math.max(-100, Math.min(100, (t.temp || 0) + dtt)), ...soft });
     if (img) { c.cv.width = img.width; c.cv.height = img.height; c.cv.getContext('2d').putImageData(img, 0, 0); }
     const from = p === sc.anchor ? (sc.length > 1 ? `, carried to the ${sc.length - 1} other frame${sc.length > 2 ? 's' : ''} of this scene` : '') : (own.has(p) ? ' (your tap on top of the scene nudge)' : ' (carried from the first frame of this scene)');
     c.lab.textContent = Math.abs(e) >= 0.125 ? label(e) : ''; c.lab.title = e ? `${label(e)} stop${from}` : '';
+    c.slab.textContent = slabel(sv); c.slab.title = Math.abs(sv) >= 0.5 ? `${slabel(sv)}: contrast, highlights and whites${from}` : '';
     c.tlab.textContent = tlabel(dtt); c.tlab.title = dtt ? `warmth ${dtt > 0 ? '+' : ''}${dtt}${from}` : '';
   };
   const redraw = (sc) => { for (const p of sc) draw(p); };
@@ -264,9 +282,14 @@ async function quickCheck(items, profileId) {
       const row2 = document.createElement('div'); row2.className = 'qrow';
       const cool = document.createElement('button'), warm = document.createElement('button'), tlab = document.createElement('span');
       cool.type = warm.type = 'button'; cool.className = warm.className = 'ghost qbtn'; cool.textContent = 'Cooler'; warm.textContent = 'Warmer'; cool.dataset.q = 'cool'; warm.dataset.q = 'warm';
-      const tap = (de, dt) => { const o = own.get(p) || { e: 0, t: 0 }; o.e = Math.max(-3, Math.min(3, o.e + de)); o.t = Math.max(-TMAX, Math.min(TMAX, o.t + dt)); own.set(p, o); first ? redraw(sc) : draw(p); };
+      const row3 = document.createElement('div'); row3.className = 'qrow';
+      const punch = document.createElement('button'), softB = document.createElement('button'), slab = document.createElement('span');
+      punch.type = softB.type = 'button'; punch.className = softB.className = 'ghost qbtn'; punch.textContent = 'Punchier'; softB.textContent = 'Softer'; punch.dataset.q = 'punch'; softB.dataset.q = 'soft';
+      softB.title = 'less contrast, gentler highlights and whites'; punch.title = 'more contrast, brighter highlights and whites';
+      const tap = (de, dt, ds = 0) => { const o = own.get(p) || { e: 0, t: 0, s: 0 }; o.e = Math.max(-3, Math.min(3, o.e + de)); o.t = Math.max(-TMAX, Math.min(TMAX, o.t + dt)); o.s = Math.max(SMIN, Math.min(SMAX, (o.s || 0) + ds)); own.set(p, o); first ? redraw(sc) : draw(p); };
       dn.onclick = () => tap(-0.25, 0); up.onclick = () => tap(0.25, 0); cool.onclick = () => tap(0, -TSTEP); warm.onclick = () => tap(0, TSTEP);
-      row.append(dn, lab, up); row2.append(cool, tlab, warm); card.append(cv, row, row2); grid.append(card); cards.set(p, { cv, lab, tlab }); draw(p);
+      punch.onclick = () => tap(0, 0, -1); softB.onclick = () => tap(0, 0, 1);
+      row.append(dn, lab, up); row2.append(cool, tlab, warm); row3.append(punch, slab, softB); card.append(cv, row, row2, row3); grid.append(card); cards.set(p, { cv, lab, tlab, slab }); draw(p);
     }
     shown = Math.min(order.length, shown + PAGE);
     $('#apQuickMore').hidden = shown >= order.length;
@@ -284,14 +307,16 @@ async function quickCheck(items, profileId) {
   const fixed = new Set(), ex = [];
   for (const sc of scenes) {
     for (const p of sc) {
-      const { e, t: dt } = eff(p, sc), dd = Math.round(e * 40), dtt = Math.round(dt); if (!dd && !dtt) continue;
+      const { e, t: dt, s: sv } = eff(p, sc), dd = Math.round(e * 40), dtt = Math.round(dt), ds = Math.round(sv * 2) / 2; if (!dd && !dtt && !ds) continue;
       const t = p.edit.look.tone, c = carry(p, sc);
       const chosen = Math.max(-200, Math.min(200, (t.exposure || 0) + dd)), chosenTemp = Math.max(-100, Math.min(100, (t.temp || 0) + dtt));
       // dExp / dTemp say which slider changed (0 = left as predicted; retraining learns only from the changed one);
       // anchor = his own hand set this card (the scene's first frame, or a frame he tapped) - a true label; carried
       // frames count less in retraining (0.5 x carry).
       ex.push({ name: p.name, x: p.toneX || null, net: p.netStops ?? null, predicted: t.exposure, chosen, dExp: dd, predictedTemp: t.temp ?? 0, chosenTemp, dTemp: dtt,
-        unsure: t.unsure ?? null, anchor: p === sc.anchor || own.has(p), carry: +c.toFixed(2), job: S.job?.id || null });
+        unsure: t.unsure ?? null, anchor: p === sc.anchor || own.has(p), carry: +c.toFixed(2), job: S.job?.id || null,
+        dSoft: ds, softSteps: SOFT });                     // Softer/Punchier steps (not used by retraining yet)
+      Object.assign(t, softOf(t, ds));
       t.exposure = chosen; t.temp = chosenTemp; p.pendingAuto = null; fixed.add(p);
     }
   }
@@ -299,7 +324,9 @@ async function quickCheck(items, profileId) {
   // The wedding's own lean: every wedding carries a brightness offset the style can't know from the photos (leave-one-
   // wedding-out: a constant per wedding is worth +5 points within 1/3 stop; estimated from ~20 nudges, +3-4 and fewer
   // dark misses). The median of the scene nudges over the scenes he looked at (untouched = 0), shrunk towards 0, goes to
-  // every scene he did not touch. Not saved as training examples - they are not his judgement.
+  // every scene he did NOT see (he stopped before its page). A scene he saw and left alone looked right to him - the
+  // 150-frame held-out harness (2026-11-05) lost 1.3 points when the lean also moved those. Not saved as training
+  // examples - they are not his judgement.
   // The same for warmth (leave-one-wedding-out: 20 warmth nudges shrunk this way take the untouched scenes' median miss
   // from 18 to 15.6 slider units).
   const looked = scenes.filter((sc) => cards.has(sc.anchor));
@@ -308,9 +335,10 @@ async function quickCheck(items, profileId) {
     const shrink = looked.length / (looked.length + 5), at = (sc) => own.get(sc.anchor) || { e: 0, t: 0 };
     const off = Math.round(median(looked.map((sc) => at(sc).e)) * shrink * 40);
     const toff = Math.round(median(looked.map((sc) => at(sc).t)) * shrink);
-    quickCheck.lean = off; quickCheck.tlean = toff;
-    for (const sc of scenes) {
-      const e = sc.some((p) => (own.get(p) || {}).e) ? 0 : off, w = sc.some((p) => (own.get(p) || {}).t) ? 0 : toff;
+    const unseen = scenes.filter((sc) => !cards.has(sc.anchor));   // seen scenes: his call stands, nudged or not
+    if (unseen.length) { quickCheck.lean = off; quickCheck.tlean = toff; }   // (the summary names a lean only if it reached photos)
+    for (const sc of unseen) {
+      const e = off, w = toff;
       if (!e && !w) continue;
       for (const p of sc) {
         const t = p.edit.look.tone;

@@ -338,3 +338,61 @@ Cost: Jesse is credit-sensitive. Don't print big files (use grep -n / sed -n ran
   piano-625695, violin-strings-453280, cinematic-background-621553. REAL-SOUND path: Whisper (/usr/local/bin/whisper
   small, word_timestamps) on local-data/transcripts/{[redacted]-ceremony,[redacted]-continuous}.wav -> find vow /
   first-look lines -> screen frames -> held 15-30 s colour clip with the words as captions (not built yet).
+- 2026-11-05 REAL-SOUND VOWS (first one): emo-[redacted]-vows-live = [redacted]-Ceremony.mp4 (single camera, profile
+  framing) 482-489 listening bride profile + 526-535 vow line + 682-690 'you may now kiss' with ORIGINAL audio (shots
+  voice=True), words as captions from local-data/transcripts/[redacted]-ceremony.json (whisper small, word_timestamps),
+  piano at level 0.3, 24 s. Face tracking picked the CELEBRANT -> set cx/cy/track=False by hand on ceremony footage.
+  Single-camera ceremonies give profiles, not the held face the 10M reels have; need the second angle / raw. [redacted]
+  continuous film transcript (78 min) running -> same recipe for first look / vows. Emotional round published to the
+  Experimental tab (8 reels) once the 4 fixed B&W/colour renders finished (~15 min each under whisper load).
+- 2026-11-05 JESSE'S RULES FOR EMOTIONAL/MOMENT REELS (after seeing the round): (1) the crop must never miss the person;
+  (2) on-screen text must match what is on screen for as long as it shows; (3) never say "her vows" over music - vow
+  text only with the real vow audio; (4) NO text on purely beautiful videos; (5) REFERENCE = emo-[redacted]-father-
+  colour ("Watch his face.", colour, held, real time, one slow-motion beat). moments.py now: spec hook "" = no text
+  (title key only labels the review card), hook_dur, track() follows the largest face when a group does not fit the
+  window (shot subject=largest|left|right), spec format "45" = 4:5 picture on black bars for two-person frames,
+  no-hook reels default zoom 1.0 / faces at 0.42. Old film contact sheets (filmlib/sheets) are MISLABELLED vs index ->
+  pick shots only from master-frame sheets. QC every shot for framing before publishing.
+- 2026-11-05 STOCK VIDEO RULE (Jesse): stock is fine wherever needed, same condition as AI clips - never anything that
+  could read as our work (no stock couples/brides/ceremonies/venues). Pixabay (assets/broll, LICENSE.md) stays the source;
+  use it for the insert briefs AI could not make (overcast sky, phone basket, watch, memory card, gear pack) when tips/
+  sdcard inserts get engine hooks. moments.py formats added today: "11" (square on black), "rotate" (full 16:9 turned
+  sideways + 'Rotate your phone' card), "wide" (16:9 on black), cinema_in {at,dur} = full screen -> cinema aspect with
+  the music rising on the settle (zoompan in the final pass; wide/rotate shots render as plain 1920x1080).
+- 2026-11-05 CENTRING (Jesse: "some you still aren't centering them well", with screenshots of the father and the profile
+  bride left of centre and the title on their heads): track() = 5-13 samples per shot, 3-tap smoothed, piecewise-linear
+  crop (pw()); the old 2-point version let anyone who moved drift. render_shot returns info.head_top; build() moves the
+  title to the lower third (0.62H) when a head reaches the top band and clears it before captions; format "11" puts the
+  title in the top black bar. Manual cx on ceremony footage must point at the FACE, not the body. Experimental page =
+  make_moments_section.py: current emotional set only, stale renders hidden; old page = index.backup-2026-11-05.html.
+- 2026-11-05 (afternoon) JESSE: square reels are RUBBISH (retired: veil/dad/light; generator skips formats 11/45 and
+  `retired`). Vows reels: frame who is TALKING (shot subject=left|right|largest), two-shots = subject "pair" (two largest
+  faces centred); split shots at camera cuts (ffmpeg scene detect). ROTATE reels are his favourite - wants heaps, turned
+  the OTHER way: build() uses transpose=1 and the prompt arrow is anticlockwise (spec rotate_dir "acw").
+  9 more rotate reels queued (emo-rot-<couple>, B&W + one colour) -> /tmp/emo/batch_rotbatch.log, publish after each.
+- FILM INDEX GOTCHA (cost an hour, looked like a child-safety hole): filmlib/index.json shots have GAPS in `n`.
+  ALWAYS look a shot up with `next(s for s in shots if s["n"] == n)`, never `shots[n]`. Position-indexed sheets showed
+  unscreened shots (kids) under whitelisted labels; the whitelist and production (film_clips matches by n) were fine.
+  filmlib/sheets/* are n-labelled and correct. Hand-screened extras are recorded by TRUE n: finak `moments` [74, 81],
+  [redacted]-Ceremony `moments` [66,68,69,79], [redacted] `family` [19,54,55,56,75]. Baked 2.39 bars: [redacted],
+  [redacted] (active.json) - the rotate cinema crop (804 px at y 138) lines up with them.
+- 2026-11-05 LONGER (Jesse: "they could all be longer but they are looking awesome"): rotate reels rebuilt at ~27-37 s,
+  8-11 shots each, built by n-picks through a helper that asserts every n is whitelisted and centres the window inside
+  the shot (never crosses a cut). Specs carry keep_while_rendering so the page keeps the short version up until the long
+  one lands. Batch log /tmp/emo/batch_long.log, QC strips /tmp/emo/long_<id>.jpg. Known songs: every render also writes
+  reel_song.mp4 (no soundtrack) + spec `song`; Jesse adds the song in the IG app (API cannot attach IG audio).
+  [redacted]-Continuous-Film: transcript done; ceremony shows young-looking groomsmen/bridesmaid (likely Jess's kids) ->
+  blocked in screen.json until Jesse confirms ages.
+- 2026-11-05 25 MiB GOTCHA: the review site is a Cloudflare Worker; any asset over 25 MiB fails the WHOLE wrangler deploy
+  (the batch's publish printed nothing useful through tail -1). moments.py final encode now crf 20 / maxrate 4.8M, and
+  make_moments_section.py shrinks any .mp4 > 23 MiB in the round before every publish. Check: find -L site -size +23M.
+- 2026-11-05 ROTATE REEL EVERY DAY (Jesse: "one of those each day ... start tomorrow by replacing one of the already
+  approved"): swap_in.py <slot> <preview id> = take run lock -> decline (if approved) -> move old folder to out/.replaced/
+  -> new out/<slot>_<id> (reel.mp4, reel_song.mp4, cover, caption, spec format "rotate" with the old post_time and
+  music title/artist for the page) -> publish -> replaced -> approve_week -> verify state. Slot choice = lowest-scoring
+  MAIN slot (1-5) of the day by format_scores, never imagine2/native/funny/bts/waiting; no same couple on the same day.
+  Plan /tmp/emo/swap_plan.json: 06.2 [redacted], 07.1 [redacted], 08.3 [redacted], 09.3 casey-dan, 10.3 [redacted],
+  11.5 [redacted], 12.1 [redacted], 13.2 [redacted], 14.5 [redacted]-colour, 15.3 jacob-taylor. Done 11-05: ALL TEN
+  scheduled (06.2-15.3). GOTCHAS: `pgrep -f publish.py` matched a bash -c batch loop that mentions publish.py (deadlock) -> anchored
+  regex; zsh does not word-split "$s" in `for s in "a b"; set -- $s` (IndexError, no harm). Posted rotate reels use the
+  royalty-free track (API can't attach IG songs).
