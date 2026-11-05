@@ -1,8 +1,34 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-11-04T19:15:16+00:00",
+  "updated": "2026-11-05T00:38:40+00:00",
   "items": [
+    {
+      "slug": "search-console-cli",
+      "title": "Search Console CLI",
+      "emoji": "🔎",
+      "type": "tool",
+      "summary": "Google Search Console from the terminal with no packages to install: submit your sitemap, inspect whether Google has indexed a URL, and pull the queries ranking 11-20 that are your cheapest SEO wins. Includes a one-page phone flow to approve the Google sign-in when the Mac is headless.",
+      "how_to_use": "Set up a Desktop OAuth client once (README), then: gsc.py submit-sitemap, gsc.py inspect /some-page, gsc.py queries --min-pos 11 --max-pos 20. Ask Claude: 'check what Google has indexed on my site'.",
+      "requires": "Python 3 (built in on macOS), a Google Cloud OAuth Desktop client with the Search Console API enabled, and a Search Console property you own.",
+      "tags": [
+        "seo",
+        "google",
+        "search-console",
+        "cli"
+      ],
+      "link": "",
+      "created": "2026-11-05T00:38:40+00:00",
+      "updated": "2026-11-05T00:38:40+00:00",
+      "version": 1,
+      "useful": 3,
+      "files": [
+        "README.md",
+        "gsc.py"
+      ],
+      "zip": "items/search-console-cli/search-console-cli.zip",
+      "install_prompt": "Please set up \"Search Console CLI\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/search-console-cli/search-console-cli.zip and unzip it to ~/claude-shelf/search-console-cli/\n2. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n3. Get it working on my machine and show me how to use it.\nHis notes: Set up a Desktop OAuth client once (README), then: gsc.py submit-sitemap, gsc.py inspect /some-page, gsc.py queries --min-pos 11 --max-pos 20. Ask Claude: 'check what Google has indexed on my site'."
+    },
     {
       "slug": "sculpt",
       "title": "Sculpt Photo Editor",

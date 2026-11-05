@@ -1,0 +1,25 @@
+{
+  "slug": "search-console-cli",
+  "title": "Search Console CLI",
+  "emoji": "🔎",
+  "type": "tool",
+  "summary": "Google Search Console from the terminal with no packages to install: submit your sitemap, inspect whether Google has indexed a URL, and pull the queries ranking 11-20 that are your cheapest SEO wins. Includes a one-page phone flow to approve the Google sign-in when the Mac is headless.",
+  "how_to_use": "Set up a Desktop OAuth client once (README), then: gsc.py submit-sitemap, gsc.py inspect /some-page, gsc.py queries --min-pos 11 --max-pos 20. Ask Claude: 'check what Google has indexed on my site'.",
+  "requires": "Python 3 (built in on macOS), a Google Cloud OAuth Desktop client with the Search Console API enabled, and a Search Console property you own.",
+  "tags": [
+    "seo",
+    "google",
+    "search-console",
+    "cli"
+  ],
+  "link": "",
+  "created": "2026-11-05T00:38:40+00:00",
+  "updated": "2026-11-05T00:38:40+00:00",
+  "version": 1,
+  "useful": 3,
+  "files": [
+    "README.md",
+    "gsc.py"
+  ],
+  "zip": "items/search-console-cli/search-console-cli.zip"
+}
