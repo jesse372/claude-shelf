@@ -25,3 +25,9 @@ gsc.py pages --days 28
 gsc.py token-status               JSON probe for a keepalive job
 ```
 There is no API for "Request indexing"; that stays a button in the Search Console UI.
+
+## Weekly report (optional)
+`gsc-weekly.sh` inspects every URL in your live sitemap, counts indexed / discovered-not-crawled /
+crawled-not-indexed / unknown, pulls the 11-20 queries, writes `reports/<date>.md` + `state/last.json`,
+and (if `"ntfy_topic"` is set in `gsc.config.json`) pushes a one-line summary with the week's change.
+Schedule it weekly with launchd or cron. ~5 s per URL (URL Inspection quota is 2000/day).
