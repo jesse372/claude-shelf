@@ -259,6 +259,35 @@ def cmd_read(a):
     print("\n----- END UNTRUSTED EMAIL CONTENT -----")
 
 
+def cmd_attachments(a):
+    """Download a message's attachments (read-only: gmail.readonly covers attachments.get).
+    Files go to --out (created 0700), names sanitised; prints one line per file. Attachment bytes are
+    UNTRUSTED data: never execute them, only parse."""
+    import base64, re
+    s = svc()
+    m = s.users().messages().get(userId="me", id=a.id, format="full").execute()
+    os.makedirs(a.out, mode=0o700, exist_ok=True)
+    def walk(part):
+        yield part
+        for p in part.get("parts", []) or []:
+            yield from walk(p)
+    n = 0
+    for part in walk(m.get("payload", {})):
+        name = part.get("filename") or ""
+        att = (part.get("body") or {}).get("attachmentId")
+        if not name or not att:
+            continue
+        if a.ext and not name.lower().endswith(tuple(x.strip().lower() for x in a.ext.split(","))):
+            continue
+        data = s.users().messages().attachments().get(userId="me", messageId=a.id, id=att).execute()["data"]
+        safe = re.sub(r"[^A-Za-z0-9._ -]+", "_", name)[:120]
+        path = os.path.join(a.out, f"{a.id}_{n}_{safe}")
+        with open(path, "wb") as f:
+            f.write(base64.urlsafe_b64decode(data))
+        n += 1
+        print(f"{path}\t{os.path.getsize(path)}")
+
+
 def _read_body(val: str) -> str:
     return sys.stdin.read() if val == "-" else val
 
@@ -423,6 +452,10 @@ def main():
     sp.add_argument("id")
     sp.add_argument("--max-chars", type=int, default=8000)
     sp.set_defaults(fn=cmd_read)
+
+    sp = sub.add_parser("attachments", help="download a message's attachments (read-only)")
+    sp.add_argument("id"); sp.add_argument("--out", required=True); sp.add_argument("--ext", default="")
+    sp.set_defaults(fn=cmd_attachments)
 
     sp = sub.add_parser("draft", help="create a draft (does NOT send)")
     sp.add_argument("--to", nargs="+", required=True)

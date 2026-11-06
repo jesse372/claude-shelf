@@ -9,8 +9,8 @@
   "tags": [],
   "link": "",
   "created": "2026-10-08T11:01:27+08:00",
-  "updated": "2026-11-05T19:15:17+00:00",
-  "version": 7,
+  "updated": "2026-11-06T19:15:13+00:00",
+  "version": 8,
   "useful": 5,
   "files": [
     ".gitignore",
@@ -48,6 +48,7 @@
     "js/autopilot.js",
     "js/clocksync.js",
     "js/cull.js",
+    "js/cullcheck.js",
     "js/cullrules.js",
     "js/delivery.js",
     "js/details.js",

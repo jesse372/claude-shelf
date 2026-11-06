@@ -288,7 +288,7 @@ LEAD_ACTIONS = {"lead", "offsite_conversion.fb_pixel_lead", "onsite_conversion.l
                 "offsite_conversion.fb_pixel_complete_registration", "submit_application"}
 
 
-def _lead_count(row):
+def _lead_count(row, include_dms=False):
     # Meta reports the same conversion under several overlapping action types: `lead` is the
     # rollup of pixel leads (offsite_conversion.fb_pixel_lead) + on-Facebook leads
     # (onsite_conversion.lead_grouped), and complete_registration rolls up its pixel twin.
@@ -305,8 +305,10 @@ def _lead_count(row):
         v.get("offsite_conversion.fb_pixel_lead", 0.0) + v.get("onsite_conversion.lead_grouped", 0.0))
     regs = max(v.get("complete_registration", 0.0),
                v.get("offsite_conversion.fb_pixel_complete_registration", 0.0))
+    # Messenger/IG DM conversations are NOT leads (2026-11-06: counting them inflated the Leads campaign's numbers,
+    # e.g. the `2027` ad). The old DM campaigns are retired; pass include_dms=True only to report those.
     return (leads + regs + v.get("submit_application", 0.0)
-            + v.get("onsite_conversion.messaging_conversation_started_7d", 0.0))
+            + (v.get("onsite_conversion.messaging_conversation_started_7d", 0.0) if include_dms else 0.0))
 
 
 def cmd_report(args):

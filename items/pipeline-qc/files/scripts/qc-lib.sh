@@ -188,12 +188,18 @@ _qc_hq() {  # _qc_hq <subject> <body> — retry+backoff, durable queue on total 
   return $rc
 }
 _qc_lock() {
-  [ -d "$QC_LOCKDIR" ] && [ -n "$(find "$QC_LOCKDIR" -maxdepth 0 -mmin +30 2>/dev/null)" ] && rmdir "$QC_LOCKDIR" 2>/dev/null
+  # stale lock: holder process gone (killed run) -> clear now; no pid file + older than 30 min -> clear (old format)
+  if [ -d "$QC_LOCKDIR" ]; then
+    local holder; holder="$(cat "$QC_LOCKDIR/pid" 2>/dev/null)"
+    if [ -n "$holder" ] && ! kill -0 "$holder" 2>/dev/null; then rm -f "$QC_LOCKDIR/pid"; rmdir "$QC_LOCKDIR" 2>/dev/null; _qc_log "cleared stale lock (pid $holder gone)"; fi
+    [ -z "$holder" ] && [ -n "$(find "$QC_LOCKDIR" -maxdepth 0 -mmin +30 2>/dev/null)" ] && rmdir "$QC_LOCKDIR" 2>/dev/null
+  fi
   mkdir "$QC_LOCKDIR" 2>/dev/null || { _qc_log "another ${QC_LABEL} QC run active — exit"; return 1; }
+  echo $$ > "$QC_LOCKDIR/pid"
   return 0
 }
 _qc_cleanup() {
-  rmdir "$QC_LOCKDIR" 2>/dev/null
+  rm -f "$QC_LOCKDIR/pid" 2>/dev/null; rmdir "$QC_LOCKDIR" 2>/dev/null
   # optional: point QC_TIDY_SCRIPT at your own cleanup script to run it on exit
   [ "$QC_TIDY" = 1 ] && [ -n "${QC_TIDY_SCRIPT:-}" ] && [ -x "$QC_TIDY_SCRIPT" ] \
     && bash "$QC_TIDY_SCRIPT" >/dev/null 2>&1
@@ -223,10 +229,10 @@ _qc_selfheal() {
     if [ -n "$tools" ]; then
       if [ -n "$maxturns" ]; then
         printf '%s' "$prompt" | timeout "$QC_TIMEOUT" "$QC_CLAUDE_BIN" -p --model "$QC_MODEL" \
-          --allowedTools "$tools" --max-turns "$maxturns" >>"$QC_LOG" 2>&1 || true
+          --permission-mode dontAsk --allowedTools "$tools" --max-turns "$maxturns" >>"$QC_LOG" 2>&1 || true
       else
         printf '%s' "$prompt" | timeout "$QC_TIMEOUT" "$QC_CLAUDE_BIN" -p --model "$QC_MODEL" \
-          --allowedTools "$tools" >>"$QC_LOG" 2>&1 || true
+          --permission-mode dontAsk --allowedTools "$tools" >>"$QC_LOG" 2>&1 || true
       fi
     else
       printf '%s' "$prompt" | timeout "$QC_TIMEOUT" "$QC_CLAUDE_BIN" -p --model "$QC_MODEL" \

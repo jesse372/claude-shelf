@@ -3,6 +3,8 @@
 import { $, photos, S, toast, busy, emit } from './state.js';
 import { startDelivery, Uploader, resumeDelivery, sendingAvailable } from './delivery.js';
 import { autoCull, renderGrid } from './cull.js';
+import { SOFT_STEP, softTone, hlTone } from './profiles.js';
+import { cullCheck } from './cullcheck.js';
 import { exportOne, pickFolder } from './exporter.js';
 import { loadStyle, describeStyle, hasStyle } from './style-store.js';
 import { PROFILES, profileById, previewLearned } from './profiles.js';
@@ -53,10 +55,11 @@ async function run(resume = null) {
   if (!$('#autoDlg').open) $('#autoDlg').showModal();
   // brightness check (trained style): the one choice the style can't know — how bright this wedding should be
   let brightness = resume ? (resume.brightness ?? S.job?.brightness ?? 0) : 0;
+  let hl = resume ? (resume.hl ?? 0) : 0;                          // the wedding's highlight recovery steps (same check)
   if (!resume && o.profile && profileById(o.profile)?.learned?.gbm) {
     const b = await brightnessCheck(o.profile);
     if (b === null) { $('#autoDlg').close(); return; }
-    brightness = b;
+    brightness = b.brightness; hl = b.hl;
   }
   $('#apSetup').hidden = true; $('#apCheck').hidden = true; $('#apRun').hidden = false; $('#apDone').hidden = true;
   cancel = false; sending = null;
@@ -76,11 +79,13 @@ async function run(resume = null) {
   if (resume) list = resume.keys.map((k) => photos.find((p) => p.key === k)).filter(Boolean);
   else {
     if (o.cull) autoCull();
+    // the cull check: he drops whole moments (a learned automatic cull can't tell his picks - see js/cullcheck.js)
+    if (o.cull && quickCull.on) { await cullCheck(photos.filter((p) => p.raw && !p.failed)); $('#apRun').hidden = false; }
     list = photos.filter((p) => p.flag === 1);
     if (!list.length) list = photos.filter((p) => p.flag !== -1);
     emit('flags'); renderGrid();
   }
-  const R = resume || { o, dir: dir || null, keys: list.map((p) => p.key), done: {}, send: $('#apSend').checked && !!S.job, started: Date.now(), brightness };
+  const R = resume || { o, dir: dir || null, keys: list.map((p) => p.key), done: {}, send: $('#apSend').checked && !!S.job, started: Date.now(), brightness, hl };
   const failed = [], notes = [];
   const names = Object.values(R.done);
   // 3. send to Pixieset as we go (uploads run alongside the editing)
@@ -113,7 +118,7 @@ async function run(resume = null) {
       $('#apStatus').textContent = `Choosing the look ${i + 1} of ${todo.length} — ${p.name}` + (i ? ` · about ${fmtTime(eta)} left` : '');
       $('#apBar').value = 0.1 + 0.2 * i / todo.length;
       try {
-        p.pendingAuto = { profile: o.profile, brightness };
+        p.pendingAuto = { profile: o.profile, brightness, hl };
         if (await loadPhoto(p, { interactive: false, quick: true })) p.qthumb = renderer.thumbnail(200);   // base image; the card applies the style
       } catch (e) { console.error(e); }
       busy(null);
@@ -136,7 +141,7 @@ async function run(resume = null) {
     $('#apStatus').textContent = `Editing & exporting ${k + 1} of ${list.length} — ${p.name}` + (i ? ` · about ${fmtTime(eta)} left` : '') + sendNote();
     $('#apBar').value = b0 + (0.97 - b0) * k / list.length;
     try {
-      if (o.colour || o.profile || o.retouch || o.shape) p.pendingAuto = { colour: o.colour, profile: o.profile, retouch: o.retouch, shape: o.shape, brightness, keepTone: !!p.toneChecked };
+      if (o.colour || o.profile || o.retouch || o.shape) p.pendingAuto = { colour: o.colour, profile: o.profile, retouch: o.retouch, shape: o.shape, brightness, hl, keepTone: !!p.toneChecked };
       cur = p;
       await exportOne(p, opts);
       p.editedOnce = true;
@@ -177,12 +182,13 @@ async function brightnessCheck(profileId) {
   const pool = photos.filter((p) => p.file && p.flag !== -1).sort((a, b) => (a.time0 ?? a.time ?? a.order ?? 0) - (b.time0 ?? b.time ?? b.order ?? 0));
   const n = Math.min(8, pool.length), picks = Array.from({ length: n }, (_, i) => pool[Math.floor((i + 0.5) * pool.length / n)]);
   const shots = [];
-  let b = 0;
+  let b = 0, hl = 0;              // hl: the wedding's highlight recovery steps, js/profiles.js HL_STEP
+  const hlLabel = (n) => (n ? `Highlights recovered${n > 1 ? ' ×' + n : ''}` : 'Highlights as is');
   const draw = () => {
-    $('#apCheckLabel').textContent = stopsLabel(b);
-    for (const s of shots) { const img = previewLearned(profileId, s.thumb, { ...s.tone, exposure: (s.tone.exposure || 0) + b * 40 }); if (img) s.cv.getContext('2d').putImageData(img, 0, 0); }
+    $('#apCheckLabel').textContent = stopsLabel(b); $('#apLookLabel').textContent = hlLabel(hl);
+    for (const s of shots) { const img = previewLearned(profileId, s.thumb, { ...s.tone, exposure: (s.tone.exposure || 0) + b * 40, ...hlTone(s.tone, hl) }); if (img) s.cv.getContext('2d').putImageData(img, 0, 0); }
   };
-  const btns = ['#apDarker', '#apBrighter', '#apCheckOk'];
+  const btns = ['#apDarker', '#apBrighter', '#apLookSofter', '#apLookPunchier', '#apCheckOk'];
   btns.forEach((k) => { $(k).disabled = true; });
   for (let i = 0; i < picks.length; i++) {
     $('#apCheckStatus').textContent = `Preparing previews… ${i + 1} of ${picks.length}`;
@@ -200,7 +206,9 @@ async function brightnessCheck(profileId) {
     const step = (d) => { b = Math.max(-3, Math.min(3, b + d)); draw(); };
     $('#apDarker').onclick = () => step(-0.25);
     $('#apBrighter').onclick = () => step(0.25);
-    $('#apCheckOk').onclick = () => resolve(b);
+    $('#apLookSofter').onclick = () => { hl = Math.min(3, hl + 1); draw(); };
+    $('#apLookPunchier').onclick = () => { hl = Math.max(0, hl - 1); draw(); };
+    $('#apCheckOk').onclick = () => resolve({ brightness: b, hl });
     $('#apCheckCancel').onclick = () => resolve(null);
   });
 }
@@ -212,7 +220,8 @@ async function brightnessCheck(profileId) {
  * changed — their exposure / warmth is updated (the export that follows uses it) and each change is saved as a training
  * example (/api/corrections).
  */
-export const quickSettings = { page: 48 };     // cards per page (tests shrink it to exercise an early stop)
+export const quickSettings = { page: 48 };   // cards per page (tests shrink it to exercise an early stop)
+export const quickCull = { on: true };      // tests that aren't about culling switch the cull check off
 async function quickCheck(items, profileId) {
   quickCheck.lean = 0; quickCheck.tlean = 0;
   if (!items.length) return [];
@@ -247,7 +256,7 @@ async function quickCheck(items, profileId) {
   // Softer / Punchier (Jesse 2026-11-05 on Steph & Josh: "Too much contrast and maybe whites"): one step = contrast -10,
   // highlights -20, whites -12 (render.js sliders, added on top of the style's tone), -2..+3 steps. Per-photo highlights /
   // whites are not predictable from the photo (tools/colour/hiwhites_macbook.py: LOWO no gain), so it is his tap.
-  const SOFT = { contrast: -10, highlights: -20, whites: -12 }, SMIN = -2, SMAX = 3;
+  const SOFT = SOFT_STEP, SMIN = -2, SMAX = 3;
   const own = new Map();                                           // photo -> { e: stops, t: warmth units } tapped on its card
   const ofScene = new Map(); for (const sc of scenes) for (const p of sc) ofScene.set(p, sc);
   const carry = (p, sc) => (p === sc.anchor ? 1 : Math.max(0, sim(p, sc.anchor)));
@@ -257,7 +266,7 @@ async function quickCheck(items, profileId) {
   const cards = new Map(); let shown = 0;
   const label = (d) => { const q = Math.round(Math.abs(d) * 4), w = Math.floor(q / 4), f = ['', '¼', '½', '¾'][q % 4]; return `${d > 0 ? '+' : '−'}${w || ''}${f}`; };
   const tlabel = (n) => (n ? `${n > 0 ? 'warm +' : 'cool −'}${Math.abs(n)}` : '');
-  const softOf = (t, sv) => { const n = Math.round(sv * 2) / 2; if (!n) return {}; return Object.fromEntries(Object.entries(SOFT).map(([k, v]) => [k, Math.max(-100, Math.min(100, (t[k] || 0) + Math.round(v * n)))])); };
+  const softOf = (t, sv) => softTone(t, sv);
   const slabel = (sv) => { const n = Math.round(sv); return n ? (n > 0 ? `softer ${n > 1 ? '×' + n : ''}` : `punchier ${n < -1 ? '×' + -n : ''}`).trim() : ''; };
   const draw = (p) => {
     const c = cards.get(p); if (!c || !p.qthumb) return;              // thumbs are released once the check closes

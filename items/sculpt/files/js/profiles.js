@@ -354,6 +354,17 @@ export function gbmPredict(model, x) {
   }
   return s;
 }
+/** Quick-check "Softer" step (Jesse 2026-11-05: "too much contrast and maybe whites"): render.js sliders added on top of a
+ * trained style's tone. Negative steps = Punchier. */
+export const SOFT_STEP = { contrast: -10, highlights: -20, whites: -12 };
+/** Highlight recovery for a whole wedding (Jesse 2026-11-06 on Steph & Josh: "the dress blows out" - "I prefer the look of the
+ * original but the highlights need to be fixed"): highlights and whites only, contrast and colour untouched. */
+export const HL_STEP = { highlights: -20, whites: -12 };
+const stepTone = (STEP) => (tone, steps) => {
+  const n = Math.round(steps * 2) / 2; if (!n) return {};
+  return Object.fromEntries(Object.entries(STEP).map(([k, v]) => [k, Math.max(-100, Math.min(100, (tone[k] || 0) + Math.round(v * n)))]));
+};
+export const softTone = stepTone(SOFT_STEP), hlTone = stepTone(HL_STEP);
 /** Quick preview of a trained style on a thumbnail (exposure / temp / tint + its look, and the quick check's Softer /
  * Punchier: highlights, whites, contrast - in render.js order: tone() -> finish() -> contrast -> look). */
 export function previewLearned(id, thumb, tone) {
@@ -364,7 +375,7 @@ export function previewLearned(id, thumb, tone) {
   const lum = 0.2126 * gr + 0.7152 * gg + 0.0722 * gb, k = 2 ** ((tone.exposure || 0) / 100 * 2.5) / lum;
   gr *= k; gg *= k; gb *= k;
   const lin = new Float32Array(256); for (let i = 0; i < 256; i++) lin[i] = toLin(i / 255);
-  const hi = (tone.highlights || 0) / 100, wp = 1 - (tone.whites || 0) / 100 * 0.35, con = (tone.contrast || 0) / 100;
+  const hi = (tone.highlights || 0) / 100, wp = 1 - (tone.whites || 0) / 100 * 0.35, con = (tone.contrast || 0) / 100, sat = (tone.saturation || 0) / 100;
   let bgL = null;
   if (hi) {                                   // the surroundings' brightness (render.js uBG: blur of 1.2% of the long side)
     const r = Math.max(1, Math.round(0.012 * Math.max(w, h))), Y = new Float32Array(w * h), T = new Float32Array(w * h);
@@ -378,7 +389,9 @@ export function previewLearned(id, thumb, tone) {
   for (let i = 0, j = 0; i < w * h * 4; i += 4, j++) {
     const m = (hi ? 2 ** (hi * 1.4 * ss(0.12, 0.85, Math.max(bgL[j], 1e-4))) : 1) / wp;
     const f = (v) => { const g = finishK(v * m, knee); return con ? Math.max(0, Math.min(1, curve(g))) : g; };
-    const o = grade(f(lin[data[i]] * gr), f(lin[data[i + 1]] * gg), f(lin[data[i + 2]] * gb));
+    let r = f(lin[data[i]] * gr), g2 = f(lin[data[i + 1]] * gg), b2 = f(lin[data[i + 2]] * gb);
+    if (sat) { const y = 0.2126 * r + 0.7152 * g2 + 0.0722 * b2, k = 1 + sat; r = Math.max(0, Math.min(1, y + (r - y) * k)); g2 = Math.max(0, Math.min(1, y + (g2 - y) * k)); b2 = Math.max(0, Math.min(1, y + (b2 - y) * k)); }
+    const o = grade(r, g2, b2);
     out.data[i] = o[0] * 255; out.data[i + 1] = o[1] * 255; out.data[i + 2] = o[2] * 255; out.data[i + 3] = 255;
   }
   return out;

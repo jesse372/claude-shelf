@@ -4,7 +4,7 @@ import { detect, initDetectors, sceneEmbedding } from './detect.js';
 import { measureNeeds, AUTO_SHAPE, AUTO_RETOUCH } from './needs.js';
 import { loadStyle, saveStyle, hasStyle, styleSliders, describeStyle, encodeEmb, COLOUR_KEYS } from './style-store.js';
 import { photoStats, autoWhiteBalance, simulate, baseLum } from './style.js';
-import { PROFILES, profileLut, profileDev, profileGrain, profileVignette, profileById, profileTone, fitAdaptiveTone, learnedTone, profileKnee, profileSkinLut } from './profiles.js';
+import { PROFILES, profileLut, profileDev, profileGrain, profileVignette, profileById, profileTone, fitAdaptiveTone, learnedTone, profileKnee, profileSkinLut, hlTone, previewLearned } from './profiles.js';
 import { netStops } from './expnet.js';
 import { SLIDERS, makeField, buildUnitFields, combine, buildChinMask, newManual, brushPush, brushRestore, faceFrame, neckSkin, maskWarpToSkin } from './warp.js';
 import { buildSkinMask } from './skin.js';
@@ -272,6 +272,25 @@ export function learnedToneFor(id, p, brightness, thumb = null) {
   return tone;
 }
 
+/** White clothing (a wedding dress, a white shirt) blown out in the trained look (Jesse 2026-11-06 on Steph & Josh: "the
+ * dress blows out" - only at one bright location, "the rest of the gallery is better on delivered"). From the person
+ * segmentation (class 4 = clothes) and the style's preview of this photo: white = the clothing pixels that render bright
+ * and nearly colourless; blown = those at the top of the range. Returns { white: share of the frame, blown: share of the
+ * white clothing } or null (no segmentation). */
+function dressBlown(profileId, p) {
+  const seg = p.det && p.det.seg; if (!seg || !p.edit.look?.tone) return null;
+  const t = renderer.thumbnail(256), img = previewLearned(profileId, t, p.edit.look.tone); if (!img) return null;
+  const d = img.data; let white = 0, blown = 0;
+  for (let y = 0; y < t.h; y++) for (let x = 0; x < t.w; x++) {
+    const c = seg.data[Math.min(seg.h - 1, Math.floor((y + 0.5) * seg.h / t.h)) * seg.w + Math.min(seg.w - 1, Math.floor((x + 0.5) * seg.w / t.w))];
+    if (c !== 4) continue;
+    const i = (y * t.w + x) * 4, r = d[i], g = d[i + 1], b = d[i + 2], mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+    if (mx < 205 || mx - mn > 28) continue;               // bright and nearly colourless = white fabric
+    white++; if (mn >= 250) blown++;
+  }
+  return { white: +(white / (t.w * t.h)).toFixed(4), blown: white ? +(blown / white).toFixed(3) : 0 };
+}
+
 /** Auto-pilot for one photo: your style (colour/tone) + natural polish (skin, subtle shape). */
 async function runAuto(p, F) {
   const o = p.pendingAuto;
@@ -290,6 +309,8 @@ async function runAuto(p, F) {
         catch (e) { console.warn('image network unavailable, trees go without it', e); p.netStops = null; }
       }
       p.edit.look = { id: o.profile, amount: 100, tone: learnedToneFor(o.profile, p, o.brightness) };
+      if (o.hl) Object.assign(p.edit.look.tone, hlTone(p.edit.look.tone, o.hl));   // the wedding's highlight recovery
+      p.dress = dressBlown(o.profile, p);                  // how much white clothing would come out blown (measured, see below)
       if (learnedTone.lastFeatures) p.toneX = learnedTone.lastFeatures.map((v) => (Number.isNaN(v) ? null : +v.toFixed(5)));   // for quick-check training examples
       notes.push(profileById(o.profile).name + ' (trained)');
     }

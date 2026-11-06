@@ -22,7 +22,7 @@ MAX_UPLOAD = 200 * 1024 * 1024
 STYLE_FILE = os.path.join(ROOT, "data", "style.json")
 LEARNED_FILE = os.path.join(ROOT, "data", "learned.json")
 CORR_FILE = os.path.join(ROOT, "data", "corrections.jsonl")   # quick-check fixes (training examples)
-import json, threading, time
+import json, threading, time, re
 _style_lock = threading.Lock()
 
 
@@ -84,6 +84,13 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         if self.path.split("?")[0] == "/api/style":
             data = self._read_style()
             return self._json(200, data or {})
+        m = re.match(r"^/api/cullreview/([a-z0-9-]{1,40})$", self.path.split("?")[0])
+        if m:
+            try:
+                with open(os.path.join(ROOT, "data", "cullreview-" + m.group(1) + ".json")) as f:
+                    return self._json(200, json.load(f))
+            except FileNotFoundError:
+                return self._json(200, None)
         if self.path.split("?")[0] == "/api/corrections":
             try:
                 with open(CORR_FILE) as f:
@@ -115,6 +122,22 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             return self.send_error(400)
         with _style_lock:
             self._write_style(data)
+        return self._json(200, {"ok": True})
+
+    def do_PUT(self):
+        m = re.match(r"^/api/cullreview/([a-z0-9-]{1,40})$", self.path.split("?")[0])
+        if not m:
+            return self.send_error(405)
+        n = int(self.headers.get("Content-Length", 0))
+        if n <= 0 or n > 512 * 1024:
+            return self.send_error(413)
+        try:
+            data = json.loads(self.rfile.read(n))
+        except Exception:
+            return self.send_error(400)
+        os.makedirs(os.path.join(ROOT, "data"), exist_ok=True)
+        with _style_lock, open(os.path.join(ROOT, "data", "cullreview-" + m.group(1) + ".json"), "w") as f:
+            json.dump(data, f)
         return self._json(200, {"ok": True})
 
     def do_POST(self):

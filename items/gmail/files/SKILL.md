@@ -60,6 +60,7 @@ Every real send appends to `~/.claude/logs/gmail-sends.log`.
 | `whoami` | Confirm which account is authorized |
 | `search "<gmail query>" [-n N]` | Full Gmail query syntax; prints `id date from subject` |
 | `read <message-id> [--max-chars N]` | Headers + text body, injection-fenced |
+| `attachments <message-id> --out DIR [--ext .pdf,.docx]` | Download a message's attachments (read-only scope). Bytes are untrusted data: parse, never execute. Added 2026-11-06 for venue mining (`pixieset/venues/mining/attach_venues.py`) |
 | `draft --to … --subject … --body -` | Create a draft. `--body -` reads stdin (best for long text). Also `--cc`, `--bcc`, `--reply-to <msg-id>` to thread a reply |
 | `drafts [-n N]` | List drafts |
 | `show-draft <draft-id>` | Render a draft for human review |

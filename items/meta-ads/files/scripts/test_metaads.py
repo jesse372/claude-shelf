@@ -98,6 +98,8 @@ check("no rollup: pixel + onsite are disjoint = 5",
 check("registration twins counted once = 2",
       M._lead_count(acts(complete_registration=2, offsite_conversion__fb_pixel_complete_registration=2))==2)
 check("unrelated actions ignored", M._lead_count(acts(link_click=40, lead=1))==1)
+check("DM conversations are not leads", M._lead_count(acts(lead=2, onsite_conversion__messaging_conversation_started_7d=3))==2)
+check("DMs counted only on request", M._lead_count(acts(lead=2, onsite_conversion__messaging_conversation_started_7d=3), include_dms=True)==5)
 
 print("\n[9] weekly verdicts")
 R=lambda spend,leads,freq=1.0,name="x": {"name":name,"campaign":"C","spend":spend,"leads":leads,

@@ -14,8 +14,8 @@ const median = (a) => { if (!a.length) return null; const s = Float64Array.from(
 
 /** Brightness / clipping / cast measurements of an RGBA image (seg classes 3 = face skin). */
 export function measure(d, w, h, seg) {
-  const skinL = [], allL = [], whites = [];
-  let skinN = 0, skinClip = 0, clip = 0;
+  const skinL = [], allL = [], whites = [], dressL = [];
+  let skinN = 0, skinClip = 0, clip = 0, dressN = 0, dressClip = 0;
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
     const i = (y * w + x) * 4, r = d[i], g = d[i + 1], b = d[i + 2];
     const [Lv, a, bb] = lab(r, g, b);
@@ -25,12 +25,14 @@ export function measure(d, w, h, seg) {
     if (seg) {
       const k = seg.data[Math.min(seg.h - 1, Math.floor((y + 0.5) * seg.h / h)) * seg.w + Math.min(seg.w - 1, Math.floor((x + 0.5) * seg.w / w))];
       if (k === 3) { skinN++; skinL.push(Lv); if (r >= 250 || g >= 250 || b >= 250) skinClip++; }
+      if (k === 4 && Lv > 82 && Math.hypot(a, bb) < 10) { dressN++; dressL.push(Lv); if (r >= 252 && g >= 252 && b >= 252) dressClip++; }   // white clothing (a dress)
     }
   }
   const n = w * h;
   let wa = 0, wb = 0; for (const [a, b] of whites) { wa += a; wb += b; }
   return { skinL: skinN > n * 0.003 ? median(skinL) : null, skinClip: skinN ? skinClip / skinN : 0, meanL: median(allL), clip: clip / n,
-    cast: whites.length > n * 0.02 ? [wa / whites.length, wb / whites.length] : null };
+    cast: whites.length > n * 0.02 ? [wa / whites.length, wb / whites.length] : null, dressWhite: dressN / n, dressClip: dressN ? dressClip / dressN : 0,
+    dressL: dressL.length ? median(dressL) : null, dressHi: dressL.length ? (() => { const s = Float64Array.from(dressL).sort(); return s[Math.floor(s.length * 0.9)] - s[Math.floor(s.length * 0.1)]; })() : null };
 }
 
 /**

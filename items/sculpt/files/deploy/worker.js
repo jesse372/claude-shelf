@@ -128,6 +128,20 @@ export default {
       }
       return new Response('method not allowed', { status: 405 });
     }
+    // ---- cull review pages (review/cull/<id>/): Jesse's remove / keep choices per wedding, synced across his devices ----
+    const cr = url.pathname.match(/^\/api\/cullreview\/([a-z0-9-]{1,40})$/);
+    if (cr) {
+      const H = { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }, key = 'cullreview:' + cr[1];
+      if (req.method === 'GET') return isolate(new Response((await env.STYLE.get(key)) || 'null', { headers: H }));
+      if (req.method === 'PUT') {
+        const body = await req.text();
+        if (body.length > 512 * 1024) return new Response('too large', { status: 413 });
+        try { JSON.parse(body); } catch { return new Response('bad json', { status: 400 }); }
+        await env.STYLE.put(key, body);
+        return isolate(new Response('{"ok":true}', { headers: H }));
+      }
+      return new Response('method not allowed', { status: 405 });
+    }
     // ---- quick-check fixes from Process shoot: the photo's features + the brightness Jesse chose (training examples) ----
     if (url.pathname === '/api/corrections') {
       const H = { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' };

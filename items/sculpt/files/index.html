@@ -292,11 +292,18 @@
     <div class="row"><button id="apClose" value="cancel" formnovalidate class="ghost">Cancel</button><button id="apStart" class="primary"><svg class="ic"><use href="#i-sparkles"/></svg>Choose folder &amp; start</button></div>
   </form>
   <div id="apCheck" hidden>
-    <div class="dlg-head"><div class="dlg-mark"><svg viewBox="0 0 24 24"><use href="#i-sparkles"/></svg></div><div><h2>Brightness check</h2><p class="muted small">Your style on this wedding, from across the day. Brighter or darker? One choice applies to every photo.</p></div></div>
+    <div class="dlg-head"><div class="dlg-mark"><svg viewBox="0 0 24 24"><use href="#i-sparkles"/></svg></div><div><h2>Brightness check</h2><p class="muted small">Your style on this wedding, from across the day. Brighter or darker — and do bright whites (dresses, skies) need recovering? Each choice applies to every photo.</p></div></div>
     <div id="apCheckGrid" class="check-grid"></div>
     <p id="apCheckStatus" class="small muted"></p>
     <div class="check-nudge"><button id="apDarker" type="button" class="ghost">Darker</button><span id="apCheckLabel">Your usual</span><button id="apBrighter" type="button" class="ghost">Brighter</button></div>
+    <div class="check-nudge"><button id="apLookPunchier" type="button" class="ghost">Less</button><span id="apLookLabel">Highlights as is</span><button id="apLookSofter" type="button" class="ghost">Recover highlights</button></div>
     <div class="row"><button id="apCheckCancel" type="button" class="ghost">Cancel</button><button id="apCheckOk" type="button" class="primary"><svg class="ic"><use href="#i-sparkles"/></svg>Looks right — start</button></div>
+  </div>
+  <div id="apCullCheck" hidden>
+    <div class="dlg-head"><div class="dlg-mark"><svg viewBox="0 0 24 24"><use href="#i-sparkles"/></svg></div><div><h2>Cull check</h2><p class="muted small">The wedding as moments, in order. Tap a moment to drop it (tap again to bring it back) — blinks, blur and accidents start out dropped. Group and family photos always keep their best frame. Aim for 60+ photos per hour shot. Sculpt learns your cull from what you drop.</p></div></div>
+    <p id="apCullCount" class="small cull-count"></p>
+    <div id="apCullGrid" class="cull-grid"></div>
+    <div class="row"><button id="apCullSkip" type="button" class="ghost">Skip</button><button id="apCullDone" type="button" class="primary"><svg class="ic"><use href="#i-check"/></svg>Done — edit these</button></div>
   </div>
   <div id="apQuick" hidden>
     <div class="dlg-head"><div class="dlg-mark"><svg viewBox="0 0 24 24"><use href="#i-sparkles"/></svg></div><div><h2>Quick check</h2><p class="muted small">Every photo, grouped by scene, the scenes Sculpt is least sure about first. Nudge any that look too dark or too bright, too cool or too warm — Softer / Punchier for contrast and highlights; a nudge on the first frame of a scene is carried to its other frames (tap any of them to adjust on top), the export runs after this with your nudges in, and Sculpt learns from them. Stop whenever you like.</p></div></div>

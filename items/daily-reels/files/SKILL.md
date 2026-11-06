@@ -396,3 +396,30 @@ Cost: Jesse is credit-sensitive. Don't print big files (use grep -n / sed -n ran
   scheduled (06.2-15.3). GOTCHAS: `pgrep -f publish.py` matched a bash -c batch loop that mentions publish.py (deadlock) -> anchored
   regex; zsh does not word-split "$s" in `for s in "a b"; set -- $s` (IndexError, no harm). Posted rotate reels use the
   royalty-free track (API can't attach IG songs).
+- 2026-11-06 MORE FILMS SCREENED (Jesse: "screen more films"): 8 new verified couples in filmlib/screen.json -
+  Chanlary & Johnny (Highlight-film-100725, Lewis 10.07.25), Matilda & Zachary, Sam & Pascal (FILM-2.0, MANY kids -
+  couple-alone shots only), [redacted] (Copy-of-Final, Brookleigh), Gemma & Luke (native 2.39 2048x858 -> rotate path
+  now letterboxes non-16:9 instead of stretching), [redacted], Aimee & Dane, [redacted] (60 fps, weakest light).
+  Copy-of-UPDATED / Copy-of-film = showreels mixing couples: never a source. Backup local-data/screen.json.bak-2026-11-06.
+  8 rotate reels emo-rot-<couple> rendering (/tmp/scr/batch_new.log). rotate_plan.py DAY=PREVIEW ... picks + clash-checks
+  + swap_in for days whose slots exist; reminder 2026-11-09 07:15 to schedule Nov 16-23. Music: each scheduled rotate
+  reel has its own emotional track (no repeats in a week); audio-only remix in place keeps the approval (same id).
+- 2026-11-06 MUSIC BASE (Jesse: "a preview page full of music where I can accept and decline and build up a song base
+  for you to use for all reels"; wants non-generic, emotional, some with lyrics). Page /<share>/previews/music/
+  (music/music_page.py, linked from the Experimental page). Worker GET/POST /<share>/api/music: one KV key per track
+  `mv:<slug>` with the verdict in metadata (no read-modify-write races; KV list lags ~60 s, so the page also keeps taps in
+  localStorage). music.py sync -> music/verdicts.json (daily.py runs it before rendering). music/base.py: declined never
+  used; once anything is accepted in a mood family only accepted tracks are used; plan.music_from_pool + moments.pick_music
+  go through it. music/music_pick.py = lift (biggest loudness rise) per track -> picks.json; cinema reveals land on the
+  lift; Whisper lyrics for vocal/anthem moods. New moods `vocal` (24 harvested, 2 rejected for lyric theme: Me & Mr.
+  Almost, Fierce Wind Blue Sea) and `anthem`. publish.py now takes .publish.lock (two concurrent publishes broke site/).
+
+## Real songs on automatic reels (2026-11-06)
+- Instagram Audio API (needs Facebook Login, not our Instagram Login). `fb_audio.py` = connect/status/search/test. Keychain jc-reels-fb: fb_token, fb_user_token, ig_user_id, fb_token_kind. App "Jesse social" 1195023206430280.
+- CATALOGUE HAS NO CHART HITS. Searched You Are The Reason, Perfect, A Thousand Years, Turning Page, I Loved Her First, Can't Help Falling in Love, Die With A Smile, Until I Found You, Make You Feel My Love: none there. Only music Meta licenses to third-party apps (real released tracks, mostly lesser-known artists). Chart songs can only be added by hand in the Instagram app.
+- A PAGE token works for both search and audio_configuration, and one made from a long-lived user token never expires. Extending the user token in Meta's Token Debugger asks for Jesse's password (don't type it for him); no app secret is stored. `fb_extend_watch.py` waits for him to type it in the MacBook Chrome, then stores the Page token, sets Worker secrets FB_TOKEN + FB_IG_USER_ID, deletes /tmp/fbr. Status: local-data/fb_token_status.json.
+- `music/ig_catalog.json` (search results) -> `music/ig_music.py` -> `music/ig_picks.json` + previews at previews/music/ig/ (first 35 s; the API has no start-offset field and which section Instagram plays is UNVERIFIED until the first song reel is live). Audio cache local-data/ig_audio_cache (download_url links are signed and expire).
+- Flow: Jesse accepts on the music page (Instagram songs tab) -> daily.py `music/songs.py` writes spec "ig_audio" on upcoming reels with reel_song.mp4 and no spoken audio -> publish.py publishes <stem>-song.mp4 and adds ig_audio to the manifest -> Worker start() posts via graph.facebook.com with audio_configuration (video_volume 0) and keeps state.via="fb" for status and publish. Any refusal falls back to the baked reel.mp4 with a "song not attached" note. Nothing accepted = nothing changes.
+- daily.py runs fb_audio.health() once the permanent token is in, and fails loudly if it breaks.
+- Jesse 2026-11-06: he will NOT pick songs or pay for a licence, and doesn't want to post by hand. Chosen set = his 3 own songs (music/ig_yours.json: I'll Always Be Around, I Love You More, Take Your Time) + 7 chosen by lyrics (music/ig_chosen.json; transcripts music/ig_auto_lyrics.json), accepted on his behalf through /api/music. Jesse approved all of them on 2026-11-06 ("Music approved"). Rejected on lyrics: My Favorite Is You and I Love You by Alex Blue (child-themed), Always Remember (loss).
+- LIVE 2026-11-06: Page token stored (Keychain + Worker FB_TOKEN, FB_IG_USER_ID), expires never, but Facebook lists data access until 2027-02-04. fb_audio.health() runs in daily.py and alerts if it stops working; the fix is the Explorer token + Extend flow again (Jesse types the password) via fb_extend_watch.py. Music page shows only the ten chosen songs. First live song reel: 2026-11-07.1 at 07:30 Perth (rot-[redacted], Wedding Day). Which part of the song Instagram plays is still unverified until then.
