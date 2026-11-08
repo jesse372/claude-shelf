@@ -183,6 +183,10 @@ function getDecoded(p) {
   return decodeCache.get(p.id);
 }
 
+/** Start developing a photo's RAW in the background (Process shoot: the next photo decodes while this one renders and
+ * saves - the RAW decoder runs in its own worker). At most current + 1 stay cached. */
+export function prefetchDecode(p) { if (p && p.file) getDecoded(p).catch(() => {}); }
+
 const needsAI = (p) => !!p.pendingAuto || Object.values(p.edit.shape).some(Boolean) || Object.values(p.edit.ret).some(Boolean);
 
 /**

@@ -475,7 +475,8 @@ async function editDetails(required = false) {
   if (!d) return hasDetails(job);
   Object.assign(job, d, { name: coupleName(d.couple) });
   document.title = job.name + ' — Jesse Chance Studio';
-  await J.saveJob(job); renderJobTitle();
+  renderJobTitle();                                       // the heading follows at once; storage catches up
+  await J.saveJob(job);
   return true;
 }
 S.ensureDetails = () => (hasDetails(job) ? Promise.resolve(true) : editDetails(true));   // used before delivery

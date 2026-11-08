@@ -101,7 +101,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             return self._json(200, {"enabled": False})
         return super().do_GET()
 
-    def do_PUT(self):
+    def _put_style(self):
         if self.path.split("?")[0] == "/api/learned":
             n = int(self.headers.get("Content-Length", 0))
             if n <= 0 or n > 10 * 1024 * 1024:
@@ -127,7 +127,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     def do_PUT(self):
         m = re.match(r"^/api/cullreview/([a-z0-9-]{1,40})$", self.path.split("?")[0])
         if not m:
-            return self.send_error(405)
+            return self._put_style()
         n = int(self.headers.get("Content-Length", 0))
         if n <= 0 or n > 512 * 1024:
             return self.send_error(413)

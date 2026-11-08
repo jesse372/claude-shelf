@@ -63,6 +63,8 @@ export async function exportOne(p, { dir, maxSide = 0, quality = 0.92, suffix = 
     const base = renderer.thumbnail(480);               // the photo before any edit
     for (let attempt = 1; attempt <= 2; attempt++) {
       const rep = await inspect(blob, p.det && p.det.seg, base);
+      if (attempt === 1 && rep.unsure && rep.unsure.length) p.unsure = { ...(p.unsure || {}), dress: true };   // borderline: for the review, not re-edited
+      if (attempt === 2 && rep.problems.every((x) => x.kind.startsWith('dress'))) break;                          // the dress fix is applied once
       if (rep.ok) break;
       p.safety = { fixed: rep.problems.map((x) => x.msg), attempts: attempt };
       saferEdit(p, rep, attempt);

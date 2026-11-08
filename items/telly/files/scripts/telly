@@ -23,6 +23,13 @@ telly — mess with the tap list TVs
   telly unphoto                    delete the stored picture from the worker
   telly laugh                      the next gag in the "Want a laugh?" rotation
   telly status                     what the TVs last received
+  telly auto                       the hourly gag: on/off, hours, when it last fired
+  telly auto on|off                turn the hourly gag on or off
+  telly auto hours FROM TO         only fire between these Perth hours (0-23), e.g. 11 23
+  telly auto hours any             any time of day
+
+The TVs also run a gag on the hour by themselves (a cron on the worker). The phone
+remote for all of this is https://jesse372.github.io/beer-tap-list/telly.html
 
 One thing at a time: a screen ignores anything sent while it's still showing
 the previous effect, so wait for it to finish.
@@ -60,6 +67,22 @@ PY
     fire '{}' ;;
   status)
     curl -sS "$W/laugh"; echo ;;
+  auto)
+    sub="${1:-}"; shift || true
+    case "$sub" in
+      "")   curl -sS "$W/auto"; echo ;;
+      on)   curl -sS -X POST "$W/auto" -H 'Content-Type: application/json' -d '{"on":true}'; echo ;;
+      off)  curl -sS -X POST "$W/auto" -H 'Content-Type: application/json' -d '{"on":false}'; echo ;;
+      hours)
+        if [ "${1:-}" = "any" ]; then
+          curl -sS -X POST "$W/auto" -H 'Content-Type: application/json' -d '{"from":null,"to":null}'; echo
+        else
+          [[ "${1:-}" =~ ^([0-9]|1[0-9]|2[0-3])$ && "${2:-}" =~ ^([0-9]|1[0-9]|2[0-3])$ ]] \
+            || { echo "usage: telly auto hours FROM TO   (hours 0-23, Perth) | telly auto hours any" >&2; exit 1; }
+          curl -sS -X POST "$W/auto" -H 'Content-Type: application/json' -d "{\"from\":$1,\"to\":$2}"; echo
+        fi ;;
+      *) echo "telly: auto takes: (nothing) | on | off | hours FROM TO | hours any" >&2; exit 1 ;;
+    esac ;;
   help|-h|--help) usage ;;
   *) echo "telly: unknown command '$cmd'" >&2; usage; exit 1 ;;
 esac

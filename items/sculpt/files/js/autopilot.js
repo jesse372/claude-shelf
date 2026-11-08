@@ -8,7 +8,7 @@ import { cullCheck } from './cullcheck.js';
 import { exportOne, pickFolder } from './exporter.js';
 import { loadStyle, describeStyle, hasStyle } from './style-store.js';
 import { PROFILES, profileById, previewLearned } from './profiles.js';
-import { loadPhoto, renderer } from './editor.js';
+import { loadPhoto, renderer, prefetchDecode } from './editor.js';
 
 let cancel = false;
 
@@ -102,10 +102,23 @@ async function run(resume = null) {
   const quickOn = !resume && !!(o.profile && profileById(o.profile)?.learned?.unsure);
   const opts = { dir, quality: 0.92, used: new Set(names.map((n) => n.toLowerCase())), safety: true,
     onSaved: (name, blob) => { names.push(name); R.done[cur.key] = name; if (sending) sending.up.add(name, blob); } };
+  // a photo saved to the folder just before an interruption, but not yet recorded as done, is not redone: the browser
+  // only commits a file when it is complete, so one already in the folder is finished (base names shared by two photos
+  // - IMG_1.CR3 + IMG_1.JPG - are left to the normal rule)
+  if (resume && dir) {
+    const base = (p) => p.name.replace(/\.[^.]+$/, ''), count = new Map();
+    for (const p of list) count.set(base(p), (count.get(base(p)) || 0) + 1);
+    for (const p of list) {
+      if (R.done[p.key] || count.get(base(p)) > 1) continue;
+      try { await dir.getFileHandle(base(p) + '.jpg'); R.done[p.key] = base(p) + '.jpg'; names.push(R.done[p.key]); opts.used.add(R.done[p.key].toLowerCase()); } catch { /* not there */ }
+    }
+  }
   const todo = list.filter((p) => !R.done[p.key]);
   const before = list.length - todo.length;
   const sendNote = () => (sending ? ` · ${before + sending.up.sent.size} of ${list.length} sent to Pixieset` : '');
   if (before) notes.push(`Continued after an interruption: ${before} photo${before === 1 ? ' was' : 's were'} already finished.`);
+  // a resumed run keeps the tones his look pass + quick check settled (saved with the run), instead of guessing them again
+  if (resume && R.tones) for (const p of todo) { const t = R.tones[p.key]; if (t) { p.edit.look = { id: t.id, amount: 100, tone: { ...t.tone } }; p.toneChecked = true; } }
   // 4a. the look first (trained styles that can rank their own doubt): every pick's tone from a quick half-size
   // development, then the quick check - so the glance happens up front and each photo is exported once, with the
   // nudges already in (before: the check came after the export and every nudged photo was exported twice)
@@ -124,7 +137,9 @@ async function run(resume = null) {
       busy(null);
     }
     const fixed = await quickCheck(todo.filter((p) => p.qthumb && p.edit.look?.tone), o.profile);
-    for (const p of todo) { delete p.qthumb; if (p.edit.look?.tone) p.toneChecked = true; }
+    R.tones = {};
+    for (const p of todo) { delete p.qthumb; if (p.edit.look?.tone) { p.toneChecked = true; R.tones[p.key] = { id: p.edit.look.id, tone: { ...p.edit.look.tone } }; } }
+    await job({ run: { ...R } });                                  // so an interrupted run resumes with these tones
     const leans = [quickCheck.lean ? `${quickCheck.lean > 0 ? '+' : '−'}${(Math.abs(quickCheck.lean) / 40).toFixed(2)} stop` : '', quickCheck.tlean ? `${quickCheck.tlean > 0 ? 'warm +' : 'cool −'}${Math.abs(quickCheck.tlean)}` : ''].filter(Boolean).join(', ');
     if (fixed.length) notes.push(leans
       ? `Quick check: your nudges reached ${fixed.length} photo${fixed.length === 1 ? '' : 's'} — carried across each scene, and the wedding's lean (${leans}, from your nudges) went to the scenes you didn't get to — applied before the export, and the nudges saved so the style learns from them.`
@@ -143,6 +158,7 @@ async function run(resume = null) {
     try {
       if (o.colour || o.profile || o.retouch || o.shape) p.pendingAuto = { colour: o.colour, profile: o.profile, retouch: o.retouch, shape: o.shape, brightness, hl, keepTone: !!p.toneChecked };
       cur = p;
+      prefetchDecode(todo[i + 1]);                                  // the next RAW develops while this one renders + saves
       await exportOne(p, opts);
       p.editedOnce = true;
       if (p.autoNotes) for (const n of p.autoNotes) if (/child|group/.test(n)) notes.push(`${p.name}: ${n}`);

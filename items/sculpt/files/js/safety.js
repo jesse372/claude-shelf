@@ -1,3 +1,4 @@
+import { hlTone } from './profiles.js';
 // Safety checks for hands-off delivery: before an auto-edited photo is saved, look at the actual result and make
 // sure nothing is off — skin in a believable range, faces / dress not blown, not too dark or bright, no colour cast.
 // If a check fails, the auto-pilot re-edits that photo more conservatively and checks again (see exporter.js).
@@ -40,7 +41,7 @@ export function measure(d, w, h, seg) {
  * silhouetted or high-key looks are never second-guessed), plus frames nobody delivers (fully black / white).
  * base = the neutral render ({data,w,h}, e.g. renderer.thumbnail) — optional.
  */
-export const LIMITS = { blownFaces: 0.6, blownRise: 0.45, crushDrop: 14, crushed: 28, glare: 92, clipRise: 0.22, black: 2, white: 98, castA: 12, castB: 24, castBlue: -16, castShift: 9 };
+export const LIMITS = { dressMin: 0.02, dressL: 93, dressFolds: 6, blownFaces: 0.6, blownRise: 0.45, crushDrop: 14, crushed: 28, glare: 92, clipRise: 0.22, black: 2, white: 98, castA: 12, castB: 24, castBlue: -16, castShift: 9 };
 export async function inspect(blob, seg = null, base = null, L = LIMITS) {
   const bmp = await createImageBitmap(blob, { resizeWidth: 480, resizeQuality: 'medium' });
   const w = bmp.width, h = bmp.height, c = new OffscreenCanvas(w, h), g = c.getContext('2d', { willReadFrequently: true });
@@ -52,11 +53,17 @@ export async function inspect(blob, seg = null, base = null, L = LIMITS) {
   if (o.skinL != null && b && b.skinL != null && o.skinL < L.crushed && b.skinL - o.skinL > L.crushDrop) problems.push({ kind: 'skin-dark', msg: 'faces crushed into shadow', skinL: o.skinL });
   if (o.skinL != null && o.skinL > L.glare) problems.push({ kind: 'skin-bright', msg: 'faces glaring white', skinL: o.skinL });
   if (b && o.clip - b.clip > L.clipRise) problems.push({ kind: 'clip', msg: 'large areas blown out' });
+  // a white dress that comes out flat and near-white (Jesse 2026-11-06, Steph & Josh: "the dress blows out" at one bright
+  // location; he picked highlights recovered x2 there and the delivered look everywhere else). 80 exports measured: dress
+  // L* >= 93 with p10-p90 fold detail <= 6 flags 18/33 photos at that location, 1/22 elsewhere.
+  if (o.dressWhite >= L.dressMin && o.dressL >= L.dressL && o.dressHi <= L.dressFolds) problems.push({ kind: 'dress-flat', msg: 'white dress blown flat' });
+  else if (o.dressWhite >= L.dressMin && o.dressL >= L.dressL - 1 && o.dressHi <= L.dressFolds + 1.5) problems.push({ kind: 'dress-maybe', msg: 'white dress may be too bright', soft: true });
   if (o.meanL < L.black) problems.push({ kind: 'dark', msg: 'nearly black' });
   if (o.meanL > L.white) problems.push({ kind: 'bright', msg: 'nearly white' });
   if (o.cast && (Math.abs(o.cast[0]) > L.castA || o.cast[1] > L.castB || o.cast[1] < L.castBlue) &&
       (!b || !b.cast || Math.hypot(o.cast[0] - b.cast[0], o.cast[1] - b.cast[1]) > L.castShift)) problems.push({ kind: 'cast', msg: 'colour cast in whites', cast: o.cast });
-  return { ok: !problems.length, problems, stats: o, base: b };
+  const hard = problems.filter((x) => !x.soft);       // soft = only worth asking about (the review), never re-edited
+  return { ok: !hard.length, problems: hard, unsure: problems.filter((x) => x.soft), stats: o, base: b };
 }
 
 /** A safer edit that fixes what inspect() found (applied to p.edit; slider units). */
@@ -71,9 +78,12 @@ export function saferEdit(p, report, attempt) {
     }
     if (pr.kind === 'skin-clip' || pr.kind === 'clip' || pr.kind === 'bright') { dev.exposure = (dev.exposure || 0) - 16; dev.highlights = Math.min(dev.highlights || 0, -30); dev.whites = Math.min(dev.whites || 0, -10); }
     if (pr.kind === 'dark') dev.exposure = (dev.exposure || 0) + 40;
+    if (pr.kind === 'dress-flat' && e.look && e.look.tone) {   // his "recovered x2" - topped up to two steps, never stacked on the wedding's own recovery
+      const two = hlTone({}, 2); e.look = { ...e.look, tone: { ...e.look.tone, highlights: Math.min(e.look.tone.highlights || 0, two.highlights), whites: Math.min(e.look.tone.whites || 0, two.whites) } };
+    }
     if (pr.kind === 'cast') { dev.temp = (dev.temp || 0) * 0.4; dev.tint = (dev.tint || 0) * 0.4; if (e.look) e.look = { ...e.look, amount: Math.min(e.look.amount ?? 100, 60) }; }
   }
   // the last resort is the plainest believable edit: the look at half strength
-  if (attempt >= 2 && e.look) e.look = { ...e.look, amount: Math.min(e.look.amount ?? 100, 50) };
+  if (attempt >= 2 && e.look && report.problems.some((x) => !x.kind.startsWith('dress'))) e.look = { ...e.look, amount: Math.min(e.look.amount ?? 100, 50) };   // never for the dress fix alone
   e.dev = dev;
 }
