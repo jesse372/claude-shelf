@@ -17,3 +17,8 @@ ALLOWED_ORIGIN = "https://jesse372.github.io"
 [[kv_namespaces]]
 binding = "SIGNAL"
 id = "7dd65713fe9b4571a451abbd7e6031df"
+
+# The hourly gag: the top of every hour (UTC on the schedule, Perth hours inside).
+# /auto in KV decides whether it actually fires.
+[triggers]
+crons = ["0 * * * *"]

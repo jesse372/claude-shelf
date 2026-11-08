@@ -1,0 +1,10 @@
+{
+  "name": "Edit Taps",
+  "short_name": "Edit Taps",
+  "start_url": "edit.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f1e7",
+  "theme_color": "#f6f1e7",
+  "icons": [{ "src": "apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }]
+}

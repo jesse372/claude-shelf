@@ -14,7 +14,7 @@ mkdir -p next
 
 # Assets are copied rather than referenced with ../, so the staging pages need no
 # rewriting beyond the data path. They change rarely and cost ~150KB once.
-for a in icons.js taplib.js config.js authkey.js favicon.svg apple-touch-icon.png keepawake.mp4 keepawake.webm hall.json; do
+for a in icons.js taplib.js config.js authkey.js favicon.svg apple-touch-icon.png telly-icon.png telly.webmanifest edit.webmanifest keepawake.mp4 keepawake.webm hall.json; do
   [ -e "$a" ] && cp "$a" "next/$a"
 done
 rm -rf next/fonts && cp -R fonts next/fonts
@@ -25,7 +25,7 @@ import re, datetime
 stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
 # Every page the site serves. New pages get staged automatically by listing here.
-PAGES = [p for p in ("index.html", "edit.html", "menu.html", "hall.html", "print.html", "signin.html", "reset.html") if __import__("os").path.exists(p)]
+PAGES = [p for p in ("index.html", "edit.html", "menu.html", "hall.html", "print.html", "signin.html", "reset.html", "telly.html") if __import__("os").path.exists(p)]
 
 for name in PAGES:
     s = open(name).read()

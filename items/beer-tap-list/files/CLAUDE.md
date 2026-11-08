@@ -72,6 +72,8 @@ Live pages live at the repo **root**. That is what the world sees.
 - `hall.html` — hall of fame, data in `hall.json`.
 - `print.html` — printable version.
 - `signin.html` — password gate. No data, so it has no `DATA_BASE`.
+- `telly.html` — the phone remote for the TVs (hourly gag on/off + hours, next gag, jumble,
+  write, photo). Installable on iPhone (`telly.webmanifest`, `telly-icon.png`). No `DATA_BASE`.
 
 Shared assets: `taplib.js`, `config.js`, `icons.js`, `authkey.js`, `fonts/`.
 
@@ -79,6 +81,9 @@ Shared assets: `taplib.js`, `config.js`, `icons.js`, `authkey.js`, `fonts/`.
 - `api/` — Cloudflare Worker `ontap-api`, D1-backed. Entry `api/src/index.js`.
 - `worker/` — Cloudflare Worker `ontap-publish`. Holds the GitHub token server-side and
   commits editor changes back to the repo. Secrets via `wrangler secret put`, never committed.
+  Also the gag signal (`/laugh`, `/laughimg`) and the **hourly gag cron** (`[triggers]` in
+  `wrangler.toml`, `scheduled()` → `autoLaugh`). Schedule lives in KV key `auto`; `/auto` GET/POST.
+  Deploy with `cd worker && npx wrangler deploy`; the cron shows as `schedule: 0 * * * *` in the output.
 - `firetv-app/` — Android TV wrapper (`ontap.apk`). Rarely touched.
 
 ## The staging workflow

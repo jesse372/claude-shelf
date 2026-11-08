@@ -9,6 +9,12 @@
  * Routes (all POST, JSON):
  *   /check    { password }                    -> { ok }
  *   /publish  { password, message, files[] }  -> { ok }   files: [{ path, content }]
+ *   /laugh    {} | {n} | {text,secs} | {img,secs} | {fx,secs}  -> the TVs run a gag
+ *   /auto     { on, from, to }                -> hourly gag schedule (GET reads it)
+ *
+ * A cron trigger (wrangler.toml, top of every hour) fires the next gag in the
+ * rotation by itself when /auto says it may, so the board has a laugh on the hour
+ * without anyone pressing anything.
  *
  * Everything else — the board, taps.json, GitHub Pages, the Fire TV app — is
  * untouched. This only replaces the editor's save path.
@@ -219,6 +225,78 @@ function readLaugh(raw) {
   return { t: Number(t) || 0, n: Number(n || 0) || 0 };
 }
 
+// Hourly schedule, kept in KV under "auto": { on, from, to, last, lastN, count }.
+// `from`/`to` are Perth hours (0-23); both null = any time of day. The window is
+// [from, to) and may wrap midnight (e.g. 16 -> 1 = four in the afternoon to 1 am).
+const AUTO_DEFAULT = { on: true, from: null, to: null, last: 0, lastN: null, count: 0 };
+const AUTO_TZ = "Australia/Perth";
+
+async function readAuto(env) {
+  let j = {};
+  try { j = JSON.parse((await env.SIGNAL.get("auto")) || "{}") || {}; } catch (e) {}
+  const hour = (v) => (Number.isInteger(v) && v >= 0 && v <= 23 ? v : null);
+  return {
+    on: j.on === undefined ? AUTO_DEFAULT.on : !!j.on,
+    from: hour(j.from),
+    to: hour(j.to),
+    last: Number(j.last) || 0,
+    lastN: Number.isInteger(j.lastN) ? j.lastN : null,
+    count: Number(j.count) || 0,
+  };
+}
+
+function localHour(d, tz) {
+  const h = new Intl.DateTimeFormat("en-GB", { timeZone: tz, hour: "numeric", hourCycle: "h23" })
+    .formatToParts(d).find((x) => x.type === "hour");
+  return h ? Number(h.value) % 24 : d.getUTCHours();
+}
+
+function inWindow(hour, from, to) {
+  if (from === null || to === null || from === to) return true;
+  return from < to ? (hour >= from && hour < to) : (hour >= from || hour < to);
+}
+
+// Write the signal every TV is polling for. Shared by POST /laugh and the cron.
+async function fireLaugh(env, body) {
+  body = body || {};
+  let n;
+  if (Number.isInteger(body.n) && body.n >= 0 && body.n < 1000) {
+    n = body.n;                       // fire a specific gag
+  } else {
+    const prev = readLaugh((await env.SIGNAL.get("laugh")) || "0:0");
+    n = (prev.n + 1) % 1000;          // the next one in the rotation
+  }
+  const sig = { t: Date.now(), n };
+  // Optional: a word for the TV to handwrite across the screen.
+  if (typeof body.text === "string" && body.text.trim()) sig.text = body.text.trim().slice(0, 40);
+  if (body.img === true) sig.img = 1;      // show the staged picture
+  // A screen effect by name, e.g. {"fx":"jumble","secs":2}. Short ones allowed.
+  if (typeof body.fx === "string" && /^[a-z]{1,20}$/.test(body.fx)) sig.fx = body.fx;
+  if (sig.text || sig.img) {
+    const secs = Number(body.secs);
+    sig.secs = Number.isFinite(secs) ? Math.max(5, Math.min(120, Math.round(secs))) : 30;
+  } else if (sig.fx) {
+    const secs = Number(body.secs);
+    sig.secs = Number.isFinite(secs) ? Math.max(1, Math.min(30, secs)) : 2;
+  }
+  await env.SIGNAL.put("laugh", JSON.stringify(sig));
+  return sig;
+}
+
+// The hourly gag. Returns what it did, for the log and for /auto's `last`.
+async function autoLaugh(env, now) {
+  const auto = await readAuto(env);
+  const hour = localHour(now, AUTO_TZ);
+  if (!auto.on) return { fired: false, why: "off", hour };
+  if (!inWindow(hour, auto.from, auto.to)) return { fired: false, why: "outside hours", hour };
+  // Belt and braces: never double up if the trigger is ever retried inside the hour.
+  if (now.getTime() - auto.last < 50 * 60 * 1000) return { fired: false, why: "already fired this hour", hour };
+  const sig = await fireLaugh(env, {});
+  auto.last = sig.t; auto.lastN = sig.n; auto.count += 1;
+  await env.SIGNAL.put("auto", JSON.stringify(auto));
+  return { fired: true, hour, n: sig.n };
+}
+
 export default {
   async fetch(request, env) {
     const cors = corsHeaders(env, request);
@@ -236,6 +314,13 @@ export default {
         ...cors,
         "Cache-Control": "no-store",
       });
+    }
+
+    // The hourly schedule, plus when it last fired, for the phone remote.
+    if (route === "/auto" && request.method === "GET") {
+      const auto = await readAuto(env);
+      return json({ ...auto, hour: localHour(new Date(), AUTO_TZ), tz: AUTO_TZ, now: Date.now() },
+                  200, { ...cors, "Cache-Control": "no-store" });
     }
 
     // The picture for the photo gag. Lives in KV, not the public repo.
@@ -310,31 +395,23 @@ export default {
       return json({ ok: true }, 200, cors);
     }
 
-    // Fired from the laptop; the TV picks it up on its next poll.
+    // Fired from the laptop or the phone remote; the TV picks it up on its next poll.
     if (route === "/laugh") {
-      // Bump a counter alongside the timestamp so every screen runs the same gag.
-      let n;
-      if (Number.isInteger(body.n) && body.n >= 0 && body.n < 1000) {
-        n = body.n;                       // fire a specific gag
-      } else {
-        const prev = readLaugh((await env.SIGNAL.get("laugh")) || "0:0");
-        n = (prev.n + 1) % 1000;
-      }
-      // Optional: a word for the TV to handwrite across the screen.
-      const sig = { t: Date.now(), n };
-      if (typeof body.text === "string" && body.text.trim()) sig.text = body.text.trim().slice(0, 40);
-      if (body.img === true) sig.img = 1;      // show the staged picture
-      // A screen effect by name, e.g. {"fx":"jumble","secs":2}. Short ones allowed.
-      if (typeof body.fx === "string" && /^[a-z]{1,20}$/.test(body.fx)) sig.fx = body.fx;
-      if (sig.text || sig.img) {
-        const secs = Number(body.secs);
-        sig.secs = Number.isFinite(secs) ? Math.max(5, Math.min(120, Math.round(secs))) : 30;
-      } else if (sig.fx) {
-        const secs = Number(body.secs);
-        sig.secs = Number.isFinite(secs) ? Math.max(1, Math.min(30, secs)) : 2;
-      }
-      await env.SIGNAL.put("laugh", JSON.stringify(sig));
+      const sig = await fireLaugh(env, body);
       return json({ ok: true, ...sig }, 200, cors);
+    }
+
+    // The hourly schedule: { on: true, from: 11, to: 23 } (hours in Perth time,
+    // from/to null = any time). Only the three settings change; counters are kept.
+    if (route === "/auto") {
+      const auto = await readAuto(env);
+      if (body.on !== undefined) auto.on = !!body.on;
+      const hour = (v) => (v === null || v === "" ? null
+                          : Number.isInteger(Number(v)) && Number(v) >= 0 && Number(v) <= 23 ? Number(v) : undefined);
+      if (body.from !== undefined) { const h = hour(body.from); if (h === undefined) return json({ ok: false, error: "from must be 0-23" }, 400, cors); auto.from = h; }
+      if (body.to !== undefined)   { const h = hour(body.to);   if (h === undefined) return json({ ok: false, error: "to must be 0-23" }, 400, cors);   auto.to = h; }
+      await env.SIGNAL.put("auto", JSON.stringify(auto));
+      return json({ ok: true, ...auto, hour: localHour(new Date(), AUTO_TZ), tz: AUTO_TZ }, 200, cors);
     }
 
     if (route === "/publish") {
@@ -362,5 +439,12 @@ export default {
     }
 
     return json({ ok: false, error: "Unknown route" }, 404, cors);
+  },
+
+  // Cron (wrangler.toml): the top of every hour. One line in `wrangler tail` says
+  // whether it fired, so a quiet board can be told apart from a broken one.
+  async scheduled(event, env, ctx) {
+    const r = await autoLaugh(env, new Date(event.scheduledTime || Date.now()));
+    console.log("auto-laugh", JSON.stringify(r));
   },
 };
