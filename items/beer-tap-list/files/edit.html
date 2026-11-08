@@ -9,7 +9,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Edit Taps">
+<meta name="apple-mobile-web-app-title" content="Tap List">
 <link rel="manifest" href="edit.webmanifest">
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -208,13 +208,68 @@
   .checkline input{width:24px;height:24px;accent-color:var(--gold);flex:0 0 auto}
   .checkline label{margin:0;text-transform:none;font-size:17px;letter-spacing:0;
                    color:var(--ink);font-weight:500}
+
+  /* ---------- the TVs: one gag now, or one every hour ---------- */
+  .tvcard{display:flex;flex-direction:column;gap:12px}
+  .tvrow{display:flex;align-items:center;justify-content:space-between;gap:14px}
+  .tvrow .t{flex:1 1 auto;min-width:0}
+  .tvrow .t strong{display:block;font-size:17px}
+  .tog{position:relative;width:58px;height:34px;flex:0 0 auto;border-radius:17px;background:#d9cfbe;border:0;padding:0;
+       transition:background .2s;-webkit-tap-highlight-color:transparent}
+  .tog::after{content:"";position:absolute;top:3px;left:3px;width:28px;height:28px;border-radius:50%;background:#fff;
+       transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+  .tog[aria-checked="true"]{background:var(--green)}
+  .tog[aria-checked="true"]::after{transform:translateX(24px)}
+  .tog:active{transform:none}
+
+  /* ---------- phones ----------
+     The brewer edits this from a phone behind the bar. Twelve fully open cards made a
+     15,000px page there, and the publish bar pushed its own green button off the right
+     edge. On a narrow screen each beer is one row (tap, name, style, status) that opens
+     when touched, and the publish bar stacks with Publish full-width on its own line. */
+  .tapsum{display:none}
+  @media (max-width:640px){
+    body{padding-bottom:calc(168px + env(safe-area-inset-bottom))}
+    .wrap{padding:12px 14px}
+    .top .wrap{padding:0 14px}
+    .top h1{font-size:18px}
+    .top .btn-sm{padding:8px 10px;font-size:14px;white-space:nowrap}
+    .publishbar{padding:8px 14px calc(8px + env(safe-area-inset-bottom))}
+    .publishbar .wrap{flex-wrap:wrap;gap:8px;padding:0}
+    .publishbar .status{flex:1 1 100%;font-size:13px;order:0;text-align:center}
+    .publishbar .btn-ghost{flex:1 1 auto;padding:9px 6px;font-size:15px;order:1;border-radius:9px}
+    .publishbar #publish{flex:1 1 100%;order:2;padding:14px;font-size:18px}
+    .publishbar #venue{order:1;flex:1 1 100%;max-width:none}
+    h2{margin:12px 0 8px}
+    .card{padding:12px}
+    /* one row per beer; touch it to open the full card */
+    .tapsum{display:flex;align-items:center;gap:10px;min-height:44px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+    .tapsum .tn{background:#241d15;color:#f4e9d5;border-radius:8px;font-weight:700;min-width:38px;height:34px;
+                display:flex;align-items:center;justify-content:center;font-size:15px;flex:0 0 auto}
+    .tapsum .tname{flex:1 1 auto;min-width:0}
+    .tapsum .tname b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:17px}
+    .tapsum .tname span{display:block;font-size:14px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .tapsum .pill{font-size:12px;font-weight:700;letter-spacing:.04em;padding:4px 8px;border-radius:999px;flex:0 0 auto;
+                  background:#e4f3ea;color:var(--green)}
+    .tapsum .pill.kicked{background:#f8e3e3;color:var(--red)}
+    .tapsum .pill.coming{background:#fbefd3;color:var(--gold)}
+    .tapsum .chev{color:var(--muted);flex:0 0 auto;transition:transform .15s}
+    #taps .card.open .tapsum .chev{transform:rotate(90deg)}
+    #taps .card.open .tapsum{margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+    #taps .card:not(.open) > :not(.tapsum){display:none}
+    #taps .card.kicked{opacity:1}
+    .card-head .btn-sm{padding:8px 10px;font-size:15px}
+    .libbar button{flex:1 1 100%}
+    summary{padding:15px 14px;font-size:17px}
+    details .inner,details .pad{padding:0 14px 14px}
+  }
 </style>
 </head>
 <body>
 
 <div class="top">
   <div class="wrap">
-    <h1>🍺 Edit the Tap List</h1>
+    <h1>🍺 Tap List</h1>
     <button class="btn-ghost-light btn-sm" id="preview">See the TV screen</button>
   </div>
 </div>
@@ -251,6 +306,12 @@
       Your changes can't reach the TV until it is — ask Jesse for the access token.
     </div>
     <button class="btn-sm" id="setupfix">Fix it</button>
+  </div>
+
+  <div id="installnote" style="display:none" class="banner">
+    <div class="t"><strong>Put this on your home screen.</strong>
+      In Safari tap <b>Share</b> (the box with the arrow), then <b>Add to Home Screen</b>. It opens like an app after that.</div>
+    <button class="btn-sm btn-ghost" id="installdone">Got it</button>
   </div>
 
   <h2>The beers</h2>
@@ -493,10 +554,20 @@
     </div>
   </details>
 
-  <div style="margin:26px 0 10px;text-align:center">
-    <button class="btn-ghost" id="laugh">Want a laugh?</button>
-    <div class="hint" id="laughmsg" style="margin-top:6px">&nbsp;</div>
-    <div class="hint" style="margin-top:6px">The TVs also run a gag on the hour by themselves. Turn that on or off, write on the screen or show a photo from your phone: <a href="telly.html">Telly remote</a>.</div>
+  <h2>The TVs</h2>
+  <div class="card tvcard">
+    <div class="tvrow">
+      <div class="t"><strong>A gag on the hour</strong>
+        <div class="hint" id="autohint" style="margin-top:2px">&nbsp;</div></div>
+      <button class="tog" id="autoOn" role="switch" aria-checked="false" aria-label="A gag on the hour"></button>
+    </div>
+    <div class="tvrow">
+      <div class="t"><strong>Want a laugh now?</strong>
+        <div class="hint" id="laughmsg" style="margin-top:2px">&nbsp;</div></div>
+      <button class="btn-ghost" id="laugh">Go on</button>
+    </div>
+    <div class="hint">Write a line across the screen, show a photo, or pick the hours for the hourly gag:
+      <a href="telly.html">Telly remote</a>.</div>
   </div>
 
 </div>
@@ -1218,11 +1289,29 @@
     renderLogo();
   }
 
+  /* Which beers are open on a phone. Keyed by the tap object, so a card stays open
+     when the list is re-rendered or reordered, and everything closes on a reload. */
+  var openTaps = [];
+  function isOpen(t){ return openTaps.indexOf(t) !== -1; }
+  function tapSummary(t){
+    var st = t.status === "kicked" ? "kicked" : t.status === "coming" ? "coming" : "pouring";
+    var pill = st === "kicked" ? "Kicked" : st === "coming" ? "Coming" : "Pouring";
+    var meta = [t.style, t.abv ? String(t.abv).replace(/%$/, "") + "%" : ""].filter(Boolean).join(" \u00b7 ");
+    return '<div class="tapsum" role="button" tabindex="0" aria-expanded="' + (isOpen(t) ? "true" : "false") + '">' +
+      '<span class="tn">' + esc(t.num) + '</span>' +
+      '<span class="tname"><b>' + (esc(t.name) || '<span class="muted">New beer</span>') + '</b>' +
+        '<span>' + (esc(meta) || "&nbsp;") + '</span></span>' +
+      '<span class="pill ' + st + '">' + pill + '</span>' +
+      '<span class="chev">\u25B8</span>' +
+    '</div>';
+  }
+
   function renderTaps(){
     $("taps").innerHTML = data.taps.map(function(t, i){
       var kicked = t.status === "kicked";
       return '' +
-      '<div class="card' + (kicked ? " kicked" : "") + '" data-i="' + i + '">' +
+      '<div class="card' + (kicked ? " kicked" : "") + (isOpen(t) ? " open" : "") + '" data-i="' + i + '">' +
+        tapSummary(t) +
         '<div class="card-head">' +
           '<span class="taplabel">Tap</span>' +
           '<input class="tapno" type="number" min="1" value="' + esc(t.num) + '" data-f="num" title="Tap number">' +
@@ -1624,10 +1713,27 @@
     }
   });
 
+  /* The summary row opens and closes a beer on a phone. Registered in the capture
+     phase so the card's own click handler never sees it. */
+  $("taps").addEventListener("click", function(e){
+    var sum = e.target.closest(".tapsum"); if(!sum) return;
+    e.stopPropagation();
+    var card = sum.closest(".card"), t = data.taps[Number(card.dataset.i)];
+    var at = openTaps.indexOf(t);
+    if(at === -1) openTaps.push(t); else openTaps.splice(at, 1);
+    card.className = card.className.replace(/ open\b/, "") + (at === -1 ? " open" : "");
+    sum.setAttribute("aria-expanded", at === -1 ? "true" : "false");
+  }, true);
+  $("taps").addEventListener("keydown", function(e){
+    if((e.key === "Enter" || e.key === " ") && e.target.classList.contains("tapsum")){ e.preventDefault(); e.target.click(); }
+  });
+
   $("add").addEventListener("click", function(){
     var maxNum = 0;
     data.taps.forEach(function(t){ maxNum = Math.max(maxNum, Number(t.num) || 0); });
-    data.taps.push(blankTap(maxNum + 1));
+    var fresh = blankTap(maxNum + 1);
+    data.taps.push(fresh);
+    openTaps.push(fresh);
     renderTaps(); touched();
     var cards = document.querySelectorAll(".card");
     var last = cards[cards.length - 1];
@@ -2120,6 +2226,49 @@
         }, 11000);
       });
     });
+  })();
+
+  /* The hourly gag switch. The schedule lives on the Worker (KV "auto"); this just
+     reads it and flips it. Same staging guard as the button above: it is the real TVs. */
+  (function(){
+    var tog = $("autoOn"), hint = $("autohint");
+    if(!tog) return;
+    function h12(h){ h = ((h % 24) + 24) % 24; var x = h % 12 || 12; return x + (h < 12 ? " am" : " pm"); }
+    function paint(a){
+      tog.setAttribute("aria-checked", a.on ? "true" : "false");
+      if(!a.on){ hint.textContent = "Off. The TVs only get a gag when someone sends one."; return; }
+      var win = (a.from != null && a.to != null && a.from !== a.to) ? ", " + h12(a.from) + " to " + h12(a.to) : ", any time of day";
+      hint.textContent = "On" + win + ".";
+    }
+    function load(){
+      if(!WORKER_URL){ hint.textContent = "Not connected."; return; }
+      var x = new XMLHttpRequest();
+      x.open("GET", WORKER_URL + "/auto?t=" + Date.now(), true);
+      x.onload = function(){ try { paint(JSON.parse(x.responseText)); } catch(e){ hint.textContent = "Couldn't read the setting."; } };
+      x.onerror = function(){ hint.textContent = "Couldn't reach the TVs."; };
+      x.send();
+    }
+    tog.addEventListener("click", function(){
+      if(STAGING){ hint.textContent = "Disabled on staging — this is the real TVs' schedule."; return; }
+      var on = tog.getAttribute("aria-checked") !== "true";
+      tog.disabled = true;
+      workerPost("/auto", { on: on }, function(err, status, j){
+        tog.disabled = false;
+        if(err || status !== 200){ hint.textContent = "Couldn't save that."; return; }
+        paint(j || { on: on });
+      });
+    });
+    load();
+  })();
+
+  /* iPhone, not yet on the home screen: say how, once. */
+  (function(){
+    var box = $("installnote"); if(!box) return;
+    var ios = /iPhone|iPad|iPod/.test(navigator.userAgent);
+    var standalone = window.navigator.standalone === true || (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches);
+    var seen = false; try { seen = localStorage.getItem("tapinstall.v1") === "1"; } catch(e){}
+    if(ios && !standalone && !seen) box.style.display = "";
+    $("installdone").addEventListener("click", function(){ try { localStorage.setItem("tapinstall.v1", "1"); } catch(e){} box.style.display = "none"; });
   })();
 
   /* ---------------- boot ---------------- */

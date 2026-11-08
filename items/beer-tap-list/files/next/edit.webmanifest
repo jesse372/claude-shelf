@@ -1,9 +1,11 @@
 {
-  "name": "Edit Taps",
-  "short_name": "Edit Taps",
+  "name": "Tap List",
+  "short_name": "Tap List",
+  "description": "Edit the MadLad tap list and drive the TVs.",
   "start_url": "edit.html",
   "scope": "./",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#f6f1e7",
   "theme_color": "#f6f1e7",
   "icons": [{ "src": "apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }]

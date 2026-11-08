@@ -72,8 +72,11 @@ Live pages live at the repo **root**. That is what the world sees.
 - `hall.html` — hall of fame, data in `hall.json`.
 - `print.html` — printable version.
 - `signin.html` — password gate. No data, so it has no `DATA_BASE`.
-- `telly.html` — the phone remote for the TVs (hourly gag on/off + hours, next gag, jumble,
-  write, photo). Installable on iPhone (`telly.webmanifest`, `telly-icon.png`). No `DATA_BASE`.
+- `telly.html` — the phone remote for the TVs (hourly gag hours, next gag, jumble, write,
+  photo). A sub-page of the app, not an app of its own. No `DATA_BASE`.
+- **The iPhone app is `edit.html`** (`edit.webmanifest`, name "Tap List", start_url edit.html).
+  Under 640px each beer is a one-row `.tapsum` that opens on touch (`openTaps`), the publish
+  bar stacks, and the TVs card carries the hourly switch (`/auto`) + the laugh button.
 
 Shared assets: `taplib.js`, `config.js`, `icons.js`, `authkey.js`, `fonts/`.
 

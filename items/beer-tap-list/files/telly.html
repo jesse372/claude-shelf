@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Telly</title>
+<title>Telly · Tap List</title>
 <meta name="theme-color" content="#0e0c0a">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230e0c0a'/%3E%3Ctext x='50' y='50' dominant-baseline='central' text-anchor='middle' font-size='64'%3E%F0%9F%93%BA%3C/text%3E%3C/svg%3E">
-<link rel="apple-touch-icon" href="telly-icon.png">
-<link rel="manifest" href="telly.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="edit.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Telly">
+<meta name="apple-mobile-web-app-title" content="Tap List">
 <style>
   /* The phone remote for the tap list TVs. One thumb, in a bar, half-watching the
      screen: big targets, one thing per card, nothing that needs reading twice. */
@@ -28,6 +28,8 @@
     padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 28px);
   }
   .wrap{max-width:520px;margin:0 auto}
+  .back{display:inline-block;color:var(--muted);text-decoration:none;font-size:15px;padding:6px 0 10px}
+  .back:active{color:var(--ink)}
   header{display:flex;align-items:center;gap:12px;margin-bottom:6px}
   header .tv{font-size:34px;line-height:1}
   h1{font-size:26px;font-weight:700;letter-spacing:.2px}
@@ -103,6 +105,7 @@
 </head>
 <body>
 <div class="wrap">
+  <a class="back" href="edit.html">&#8592; Tap list</a>
   <header>
     <div class="tv">📺</div>
     <div><h1>Telly</h1><div class="sub">MadLad tap list TVs</div></div>
@@ -110,8 +113,8 @@
   <div id="status">Checking the TVs…</div>
 
   <section class="card" id="install">
-    <h2>Put it on your home screen</h2>
-    <div class="lbl">In Safari tap <b>Share</b> (the box with the arrow), then <b>Add to Home Screen</b>. It opens like an app from then on.</div>
+    <h2>Put the tap list on your home screen</h2>
+    <div class="lbl">In Safari tap <b>Share</b> (the box with the arrow), then <b>Add to Home Screen</b>. The app opens on the beer list; this page is a tap away inside it.</div>
   </section>
 
   <section class="card">
@@ -160,7 +163,7 @@
   </section>
 
   <footer>
-    <a href="edit.html">Edit the beer list</a>
+    <a href="edit.html">Edit the tap list</a>
     <a href="index.html" target="_blank" rel="noopener">See the board</a>
   </footer>
 </div>
@@ -235,6 +238,7 @@
     }
     var any = document.createElement("option"); any.value = ""; any.textContent = "any time"; f.insertBefore(any, f.firstChild);
     var any2 = document.createElement("option"); any2.value = ""; any2.textContent = "any time"; t.insertBefore(any2, t.firstChild);
+    f.value = ""; t.value = "";
   })();
   function inWindow(hour, from, to){
     if(from === null || to === null || from === to) return true;
