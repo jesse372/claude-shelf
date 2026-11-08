@@ -222,6 +222,41 @@
   .tog[aria-checked="true"]::after{transform:translateX(24px)}
   .tog:active{transform:none}
 
+  /* ---------- the look, second pass ----------
+     Calmer and more app-like: quiet uppercase section labels, softer cards, a
+     segmented status control, and the rarely-touched fields folded away. */
+  :root{--bg:#f4efe6;--card:#fff;--ink:#1f1812;--muted:#7d6f5b;--line:#e4dac8;--soft:#efe6d5}
+  .top{background:#1f1812;padding:12px 18px}
+  .top .tt{flex:1 1 auto;min-width:0}
+  .top h1{font-size:20px;line-height:1.15;flex:none}
+  .topsub{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+          font-size:13px;color:#b9a98f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+  h2{font-family:inherit;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:22px 0 10px}
+  .card{border-radius:16px;box-shadow:0 1px 2px rgba(60,45,20,.05),0 6px 18px rgba(60,45,20,.05)}
+  .segs{display:flex;background:var(--soft);border-radius:12px;padding:4px;gap:4px}
+  .seg{flex:1 1 0;border:0;border-radius:9px;background:transparent;padding:10px 6px;font-size:15px;font-weight:600;color:var(--muted);white-space:nowrap}
+  .seg:hover{filter:none}
+  .seg.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.14)}
+  .seg.on[data-status=pouring]{color:var(--green)}
+  .seg.on[data-status=kicked]{color:var(--red)}
+  .seg.on[data-status=coming]{color:var(--gold)}
+  details.more{background:transparent;border:0;border-top:1px solid var(--line);border-radius:0;margin:4px 0 0;padding:0}
+  details.more summary{padding:12px 0;font-size:15px;color:var(--ink)}
+  details.more summary .muted{font-size:13px;font-weight:400;margin-left:4px}
+  details.more .morein{padding:2px 0 0}
+  .cardfoot{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:12px;margin-top:8px}
+  .cardfoot .taplabel{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+  .cardfoot input.tapno[type=number]{background:#1f1812;color:#f4e9d5;border-radius:10px;font-weight:700;
+    width:58px;height:40px;font-size:17px;text-align:center;border:2px solid #1f1812;flex:0 0 auto;padding:0}
+  .cardfoot .spacer{flex:1 1 auto}
+  .tapsum .tname b .dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin:0 7px 1px 0;vertical-align:middle;
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,.2)}
+  #taps .card.kicked .tapsum .tname b{color:var(--muted);text-decoration:line-through}
+  .tabbar{display:none}
+  .fab{display:none}
+  .mrow{display:none}
+  .publishbar{background:rgba(255,255,255,.96);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+
   /* ---------- phones ----------
      The brewer edits this from a phone behind the bar. Twelve fully open cards made a
      15,000px page there, and the publish bar pushed its own green button off the right
@@ -229,15 +264,43 @@
      when touched, and the publish bar stacks with Publish full-width on its own line. */
   .tapsum{display:none}
   @media (max-width:640px){
-    body{padding-bottom:calc(168px + env(safe-area-inset-bottom))}
+    body{padding-bottom:calc(160px + env(safe-area-inset-bottom))}
+    body:not(.dirty){padding-bottom:calc(120px + env(safe-area-inset-bottom))}
+    .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:32;background:#fff;border-top:1px solid var(--line);
+            padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+    .tabbar button{flex:1 1 0;border:0;background:transparent;padding:6px 4px;border-radius:12px;display:flex;flex-direction:column;
+            align-items:center;gap:2px;font-size:11px;font-weight:600;color:var(--muted)}
+    .tabbar button .i{font-size:22px;line-height:1}
+    .tabbar button.on{color:var(--ink);background:var(--soft)}
+    .tabbar button:active{transform:none}
+    body[data-tab="beers"] .tab:not(#tab-beers),body[data-tab="screen"] .tab:not(#tab-screen),body[data-tab="tvs"] .tab:not(#tab-tvs){display:none}
+    .mrow{display:flex;gap:10px;margin:4px 0 6px}
+    .mrow button{flex:1 1 0;padding:12px 8px;font-size:15px}
+    .fab{position:fixed;right:16px;z-index:31;width:56px;height:56px;border-radius:50%;background:var(--ink);color:#fff;border:0;
+         font-size:32px;line-height:1;padding:0 0 3px;box-shadow:0 8px 20px rgba(0,0,0,.28);align-items:center;justify-content:center;
+         bottom:calc(132px + env(safe-area-inset-bottom))}
+    body.dirty .fab{bottom:calc(176px + env(safe-area-inset-bottom))}
+    body[data-tab="beers"] .fab{display:flex}
+    .fab:active{transform:scale(.96)}
+    .publishbar{bottom:calc(58px + env(safe-area-inset-bottom))}
+    .publishbar #preview2,.publishbar #printmenu{display:none}
+    body:not(.dirty) .publishbar #revert{display:none}
+    body:not(.dirty) .publishbar .wrap{flex-wrap:nowrap}
+    body:not(.dirty) .publishbar .status{flex:1 1 auto;order:0;text-align:left}
+    body:not(.dirty) .publishbar #publish{flex:0 0 auto;order:1;padding:9px 14px;font-size:15px;background:transparent;
+                                           color:var(--green);border-color:var(--line)}
+    .segs{padding:3px;gap:3px}
+    .seg{padding:11px 4px;font-size:14px}
+    .cardfoot .btn-sm{padding:8px 10px;font-size:14px}
     .wrap{padding:12px 14px}
     .top .wrap{padding:0 14px}
     .top h1{font-size:18px}
     .top .btn-sm{padding:8px 10px;font-size:14px;white-space:nowrap}
-    .publishbar{padding:8px 14px calc(8px + env(safe-area-inset-bottom))}
+    .publishbar{padding:8px 14px}
     .publishbar .wrap{flex-wrap:wrap;gap:8px;padding:0}
-    .publishbar .status{flex:1 1 100%;font-size:13px;order:0;text-align:center}
-    .publishbar .btn-ghost{flex:1 1 auto;padding:9px 6px;font-size:15px;order:1;border-radius:9px}
+    .publishbar .status{flex:1 1 auto;font-size:14px;order:0;text-align:left}
+    .publishbar #revert{flex:0 0 auto;order:1;padding:6px 10px;font-size:14px;border:0;background:transparent;
+                        color:var(--muted);text-decoration:underline;border-radius:9px}
     .publishbar #publish{flex:1 1 100%;order:2;padding:14px;font-size:18px}
     .publishbar #venue{order:1;flex:1 1 100%;max-width:none}
     h2{margin:12px 0 8px}
@@ -269,8 +332,8 @@
 
 <div class="top">
   <div class="wrap">
-    <h1>🍺 Tap List</h1>
-    <button class="btn-ghost-light btn-sm" id="preview">See the TV screen</button>
+    <div class="tt"><h1>🍺 Tap List</h1><div class="topsub" id="topsub">&nbsp;</div></div>
+    <button class="btn-ghost-light btn-sm" id="preview">See the TV</button>
   </div>
 </div>
 
@@ -314,6 +377,7 @@
     <button class="btn-sm btn-ghost" id="installdone">Got it</button>
   </div>
 
+  <section class="tab" id="tab-beers">
   <h2>The beers</h2>
   <div id="taps"></div>
   <div class="libbar">
@@ -338,6 +402,13 @@
     </div>
   </div>
 
+  </section>
+
+  <section class="tab" id="tab-screen">
+  <div class="mrow">
+    <button class="btn-ghost" id="preview-m">📺 See the TV screen</button>
+    <button class="btn-ghost" id="print-m">🖨 Print menu</button>
+  </div>
   <h2>Screen settings</h2>
   <details>
     <summary>Brewery name, clock, and layout</summary>
@@ -554,25 +625,6 @@
     </div>
   </details>
 
-  <h2>The TVs</h2>
-  <div class="card tvcard">
-    <div class="tvrow">
-      <div class="t"><strong>A gag on the hour</strong>
-        <div class="hint" id="autohint" style="margin-top:2px">&nbsp;</div></div>
-      <button class="tog" id="autoOn" role="switch" aria-checked="false" aria-label="A gag on the hour"></button>
-    </div>
-    <div class="tvrow">
-      <div class="t"><strong>Want a laugh now?</strong>
-        <div class="hint" id="laughmsg" style="margin-top:2px">&nbsp;</div></div>
-      <button class="btn-ghost" id="laugh">Go on</button>
-    </div>
-    <div class="hint">Write a line across the screen, show a photo, or pick the hours for the hourly gag:
-      <a href="telly.html">Telly remote</a>.</div>
-  </div>
-
-</div>
-
-<div class="wrap">
   <details id="teamsec" style="display:none">
     <summary>&#128101; Your team &amp; venues</summary>
     <div class="pad">
@@ -614,13 +666,42 @@
       </div>
     </div>
   </details>
+  </section>
+
+  <section class="tab" id="tab-tvs">
+  <h2>The TVs</h2>
+  <div class="card tvcard">
+    <div class="tvrow">
+      <div class="t"><strong>A gag on the hour</strong>
+        <div class="hint" id="autohint" style="margin-top:2px">&nbsp;</div></div>
+      <button class="tog" id="autoOn" role="switch" aria-checked="false" aria-label="A gag on the hour"></button>
+    </div>
+    <div class="tvrow">
+      <div class="t"><strong>Want a laugh now?</strong>
+        <div class="hint" id="laughmsg" style="margin-top:2px">&nbsp;</div></div>
+      <button class="btn-ghost" id="laugh">Go on</button>
+    </div>
+    <div class="hint">Write a line across the screen, show a photo, or pick the hours for the hourly gag:
+      <a href="telly.html">Telly remote</a>.</div>
+  </div>
+  </section>
+
 </div>
+
+
+<button class="fab" id="fab" aria-label="Add another beer">+</button>
+
+<nav class="tabbar" aria-label="Sections">
+  <button type="button" data-tab="beers"><span class="i">🍺</span>Beers</button>
+  <button type="button" data-tab="screen"><span class="i">🖥️</span>Screen</button>
+  <button type="button" data-tab="tvs"><span class="i">📺</span>TVs</button>
+</nav>
 
 <div class="publishbar">
   <div class="wrap">
-    <div class="status" id="status">Ready.</div>
+    <div class="status" id="status">Everything's on the TV.</div>
     <button class="btn-ghost" id="revert">Undo changes</button>
-    <button class="btn-ghost" id="preview">Preview</button>
+    <button class="btn-ghost" id="preview2">Preview</button>
     <button class="btn-ghost" id="printmenu">Print menu</button>
     <select id="venue" style="display:none;max-width:190px"></select>
     <span id="whoami" style="display:none;font-size:14px;color:var(--muted)"></span>
@@ -765,7 +846,17 @@
     var s = $("status");
     s.textContent = msg;
     s.className = "status" + (kind ? " " + kind : "");
+    paintDirty();
   }
+  /* Is what is on screen different from what is on the TV? Drives the publish bar:
+     a quiet one line when they match, the big green button when they don't. */
+  function paintDirty(){
+    var d = false;
+    try { d = !!(data && published) && JSON.stringify(data) !== JSON.stringify(published); } catch(e){}
+    document.body.classList.toggle("dirty", d);
+    if(!d && /^Unpublished/.test($("status").textContent)) $("status").textContent = "Everything's on the TV.";
+  }
+  setInterval(paintDirty, 2000);
 
   /* ---------------- config ---------------- */
   function cfg(){
@@ -881,7 +972,7 @@
   function touched(){
     if(saveTimer) clearTimeout(saveTimer);
     saveTimer = setTimeout(saveDraft, 400);
-    setStatus("Unpublished changes — hit Publish when you're happy.");
+    setStatus("Unpublished — not on the TV yet.");
   }
 
   /* ---------------- render ---------------- */
@@ -1299,27 +1390,49 @@
     var meta = [t.style, t.abv ? String(t.abv).replace(/%$/, "") + "%" : ""].filter(Boolean).join(" \u00b7 ");
     return '<div class="tapsum" role="button" tabindex="0" aria-expanded="' + (isOpen(t) ? "true" : "false") + '">' +
       '<span class="tn">' + esc(t.num) + '</span>' +
-      '<span class="tname"><b>' + (esc(t.name) || '<span class="muted">New beer</span>') + '</b>' +
+      '<span class="tname"><b><i class="dot" style="background:' + esc(t.color || "#e0a63a") + '"></i>' +
+        (esc(t.name) || '<span class="muted">New beer</span>') + '</b>' +
         '<span>' + (esc(meta) || "&nbsp;") + '</span></span>' +
       '<span class="pill ' + st + '">' + pill + '</span>' +
       '<span class="chev">\u25B8</span>' +
     '</div>';
   }
 
+  /* "More details" inside a card: remembered per beer so a re-render (every colour
+     or icon tap re-renders the list) does not snap it shut. Open by default on a
+     desktop, closed on a phone. */
+  var moreOpened = [], moreClosed = [];
+  function moreIsOpen(t){
+    if(moreOpened.indexOf(t) !== -1) return true;
+    if(moreClosed.indexOf(t) !== -1) return false;
+    return !(window.matchMedia && window.matchMedia("(max-width:640px)").matches);
+  }
+  $("taps").addEventListener("toggle", function(e){
+    var d = e.target; if(!d.classList || !d.classList.contains("more")) return;
+    var card = d.closest(".card"); if(!card) return;
+    var t = data.taps[Number(card.dataset.i)], x;
+    x = moreOpened.indexOf(t); if(x !== -1) moreOpened.splice(x, 1);
+    x = moreClosed.indexOf(t); if(x !== -1) moreClosed.splice(x, 1);
+    (d.open ? moreOpened : moreClosed).push(t);
+  }, true);
+
   function renderTaps(){
     $("taps").innerHTML = data.taps.map(function(t, i){
-      var kicked = t.status === "kicked";
+      var kicked = t.status === "kicked", st = t.status || "pouring";
+      function seg(v, label){
+        return '<button type="button" class="seg' + (st === v ? " on" : "") + '" data-status="' + v + '">' + label + '</button>';
+      }
       return '' +
       '<div class="card' + (kicked ? " kicked" : "") + (isOpen(t) ? " open" : "") + '" data-i="' + i + '">' +
         tapSummary(t) +
-        '<div class="card-head">' +
-          '<span class="taplabel">Tap</span>' +
-          '<input class="tapno" type="number" min="1" value="' + esc(t.num) + '" data-f="num" title="Tap number">' +
-          '<div class="spacer"></div>' +
-          '<button class="btn-sm btn-ghost" data-act="up"'   + (i === 0 ? " disabled" : "") + '>↑</button>' +
-          '<button class="btn-sm btn-ghost" data-act="down"' + (i === data.taps.length - 1 ? " disabled" : "") + '>↓</button>' +
-          '<button class="btn-sm btn-ghost" data-act="lib" title="Save this recipe">Save recipe</button>' +
-          '<button class="btn-sm btn-danger" data-act="del">Remove</button>' +
+        '<div class="body">' +
+
+        '<div class="field"><label>Status</label>' +
+          '<div class="segs">' + seg("pouring", "Pouring") + seg("kicked", "Kicked") + seg("coming", "Coming soon") + '</div>' +
+          (st === "coming"
+            ? '<input type="date" data-f="ready" value="' + esc(t.ready || "") + '" style="margin-top:10px">' +
+              '<div class="hint">The TV counts down &mdash; &ldquo;Ready in 12 days&rdquo;.</div>'
+            : '') +
         '</div>' +
 
         '<div class="field"><label>Beer name</label>' +
@@ -1329,10 +1442,14 @@
           '<div class="field" style="flex:2 1 220px"><label>Style</label>' +
             '<input type="text" data-f="style" value="' + esc(t.style) + '" placeholder="American IPA"></div>' +
           '<div class="field"><label>ABV %</label>' +
-            '<input type="text" data-f="abv" value="' + esc(t.abv) + '" placeholder="6.8"></div>' +
+            '<input type="text" inputmode="decimal" data-f="abv" value="' + esc(t.abv) + '" placeholder="6.8"></div>' +
           '<div class="field"><label>IBU</label>' +
-            '<input type="text" data-f="ibu" value="' + esc(t.ibu) + '" placeholder="65"></div>' +
+            '<input type="text" inputmode="numeric" data-f="ibu" value="' + esc(t.ibu) + '" placeholder="65"></div>' +
         '</div>' +
+
+        '<details class="more"' + (moreIsOpen(t) ? " open" : "") + '>' +
+        '<summary>More details <span class="muted">notes, icon, colour, picture' + (pricingOn() ? ", prices" : "") + '</span></summary>' +
+        '<div class="morein">' +
 
         '<div class="field"><label>Tasting notes</label>' +
           '<textarea data-f="notes" placeholder="Grapefruit and pine, dry bitter finish.">' + esc(t.notes) + '</textarea></div>' +
@@ -1409,28 +1526,38 @@
             '</div><div class="hint">Leave one blank and that pour simply won&rsquo;t show on the TV for this beer.</div></div>'
           : '') +
 
-        (t.status === "coming"
-          ? '<div class="field"><label>Ready date (optional)</label>' +
-              '<input type="date" data-f="ready" value="' + esc(t.ready || "") + '">' +
-              '<div class="hint">The TV counts down — &ldquo;Ready in 12 days&rdquo;.</div></div>'
-          : '') +
-
-        '<div class="checkline" style="margin:4px 0 11px">' +
+        '<div class="checkline" style="margin:4px 0 4px">' +
           '<input type="checkbox" id="guest' + i + '" data-f="guest"' + (t.guest ? " checked" : "") + '>' +
           '<label for="guest' + i + '">Guest beer &mdash; not one of mine</label>' +
         '</div>' +
 
-        '<div class="field" style="margin-bottom:0"><label>Status</label>' +
-          '<select data-f="status">' +
-            '<option value="pouring"' + (t.status === "pouring" ? " selected" : "") + '>Pouring now</option>' +
-            '<option value="kicked"'  + (t.status === "kicked"  ? " selected" : "") + '>Kicked (keg is empty)</option>' +
-            '<option value="coming"'  + (t.status === "coming"  ? " selected" : "") + '>Coming soon (conditioning)</option>' +
-          '</select></div>' +
+        '</div></details>' +
+
+        '<div class="cardfoot">' +
+          '<span class="taplabel">Tap</span>' +
+          '<input class="tapno" type="number" min="1" value="' + esc(t.num) + '" data-f="num" title="Tap number">' +
+          '<button class="btn-sm btn-ghost" data-act="up" title="Move up"'     + (i === 0 ? " disabled" : "") + '>↑</button>' +
+          '<button class="btn-sm btn-ghost" data-act="down" title="Move down"' + (i === data.taps.length - 1 ? " disabled" : "") + '>↓</button>' +
+          '<div class="spacer"></div>' +
+          '<button class="btn-sm btn-ghost" data-act="lib" title="Save this recipe">Save recipe</button>' +
+          '<button class="btn-sm btn-danger" data-act="del">Remove</button>' +
+        '</div>' +
+
+        '</div>' +
       '</div>';
     }).join("");
   }
 
-  function renderAll(){ renderSettings(); renderTaps(); }
+  function renderAll(){ renderSettings(); renderTaps(); paintTop(); }
+  function paintTop(){
+    var el = $("topsub"); if(!el) return;
+    var when = "";
+    if(data.updated){
+      var d = new Date(data.updated);
+      if(!isNaN(d)) when = "On the TV since " + d.toLocaleDateString(undefined, { day: "numeric", month: "short" });
+    }
+    el.textContent = when + (when && data.brewery ? " \u00b7 " : "") + (data.brewery || "");
+  }
 
   /* ---------------- events ---------------- */
   /* Settings fields */
@@ -1663,6 +1790,13 @@
         renderTaps(); touched();
       }
       return;
+    }
+    if(btn.dataset.status){
+      var sv = btn.dataset.status;
+      data.taps[i].status = sv;
+      if(sv === "kicked") data.taps[i].level = 0;
+      if(sv !== "coming") delete data.taps[i].ready;
+      renderTaps(); touched(); return;
     }
     if(btn.dataset.srm){
       var srmN = Number(btn.dataset.srm);
@@ -2261,6 +2395,27 @@
     load();
   })();
 
+  /* Tabs on a phone: Beers, Screen, TVs. The last one used comes back next time. */
+  (function(){
+    var bar = document.querySelector(".tabbar"); if(!bar) return;
+    var KEY = "taptab.v1";
+    function show(name, keepScroll){
+      document.body.setAttribute("data-tab", name);
+      var bs = bar.querySelectorAll("button");
+      for(var k = 0; k < bs.length; k++) bs[k].classList.toggle("on", bs[k].dataset.tab === name);
+      try { localStorage.setItem(KEY, name); } catch(e){}
+      if(!keepScroll) window.scrollTo(0, 0);
+    }
+    bar.addEventListener("click", function(e){ var b = e.target.closest("button"); if(b) show(b.dataset.tab); });
+    var start = "beers"; try { start = localStorage.getItem(KEY) || "beers"; } catch(e){}
+    if(!document.getElementById("tab-" + start)) start = "beers";
+    show(start, true);
+  })();
+  $("fab").addEventListener("click", function(){ $("add").click(); });
+  $("preview2").addEventListener("click", function(){ $("preview").click(); });
+  $("preview-m").addEventListener("click", function(){ $("preview").click(); });
+  $("print-m").addEventListener("click", function(){ $("printmenu").click(); });
+
   /* iPhone, not yet on the home screen: say how, once. */
   (function(){
     var box = $("installnote"); if(!box) return;
@@ -2390,7 +2545,7 @@
     if(linkSetupApplied){
       setStatus("\u2713 Publishing is now set up on this computer. You're good to go.", "ok");
     } else {
-      setStatus("Ready.");
+      setStatus("Everything's on the TV.");
     }
 
     /* Pull the existing background photo in separately, so the preview shows it
@@ -2422,7 +2577,7 @@
       if(!r.ok){ setStatus(r.body.error || "Couldn't load your tap list.", "err"); return; }
       apiRev = r.body.rev;
       boot(r.body.data);
-      setStatus("Ready.");
+      setStatus("Everything's on the TV.");
       afterSignedInLoad();
     }).catch(function(){
       setStatus("Couldn't reach the service — check your connection.", "err");
