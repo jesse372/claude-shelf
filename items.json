@@ -1,7 +1,7 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-11-08T08:38:10+00:00",
+  "updated": "2026-11-08T08:50:22+00:00",
   "items": [
     {
       "slug": "beer-tap-list",
@@ -14,8 +14,8 @@
       "tags": [],
       "link": "https://jesse372.github.io/beer-tap-list/",
       "created": "2026-07-25T15:55:35+08:00",
-      "updated": "2026-11-08T08:38:10+00:00",
-      "version": 4,
+      "updated": "2026-11-08T08:50:22+00:00",
+      "version": 5,
       "useful": 5,
       "files": [
         ".claude/settings.json",
@@ -96,6 +96,15 @@
         "promote.sh",
         "reset.html",
         "setup.sh",
+        "shots/1-beers.png",
+        "shots/2-open-beer.png",
+        "shots/3-kicked-unpublished.png",
+        "shots/4-more-details.png",
+        "shots/5-screen-tab.png",
+        "shots/6-tvs-tab.png",
+        "shots/7-telly.png",
+        "shots/8-desktop.png",
+        "shots/index.html",
         "signin.html",
         "stage.sh",
         "taplib.js",

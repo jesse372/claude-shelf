@@ -222,109 +222,187 @@
   .tog[aria-checked="true"]::after{transform:translateX(24px)}
   .tog:active{transform:none}
 
-  /* ---------- the look, second pass ----------
-     Calmer and more app-like: quiet uppercase section labels, softer cards, a
-     segmented status control, and the rarely-touched fields folded away. */
-  :root{--bg:#f4efe6;--card:#fff;--ink:#1f1812;--muted:#7d6f5b;--line:#e4dac8;--soft:#efe6d5}
-  .top{background:#1f1812;padding:12px 18px}
+  /* ==========================================================================
+     Design system. Overrides the original pub styling above: neutral surfaces,
+     one amber accent, hairline dividers, SVG icons, sentence-case labels.
+     ========================================================================== */
+  :root{
+    --bg:#f3f3f5; --card:#fff; --ink:#111114; --muted:#6e6e76; --faint:#9a9aa3;
+    --line:#e4e4e9; --soft:#f0f0f3; --accent:#c8891a; --accent-ink:#8a5a0c;
+    --green:#1f8a4c; --red:#d23c3c; --gold:#c8891a; --radius:14px;
+    --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Inter,Arial,sans-serif;
+  }
+  html{background:var(--bg)}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.45;
+       -webkit-font-smoothing:antialiased}
+  .wrap{max-width:720px;padding:8px 16px}
+
+  /* header */
+  .top{background:#fff;color:var(--ink);box-shadow:none;border-bottom:1px solid var(--line);padding:14px 16px 12px;
+       position:sticky;top:0;z-index:20}
+  .top .wrap{padding:0;gap:6px}
   .top .tt{flex:1 1 auto;min-width:0}
-  .top h1{font-size:20px;line-height:1.15;flex:none}
-  .topsub{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-          font-size:13px;color:#b9a98f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
-  h2{font-family:inherit;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:22px 0 10px}
-  .card{border-radius:16px;box-shadow:0 1px 2px rgba(60,45,20,.05),0 6px 18px rgba(60,45,20,.05)}
-  .segs{display:flex;background:var(--soft);border-radius:12px;padding:4px;gap:4px}
-  .seg{flex:1 1 0;border:0;border-radius:9px;background:transparent;padding:10px 6px;font-size:15px;font-weight:600;color:var(--muted);white-space:nowrap}
-  .seg:hover{filter:none}
-  .seg.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.14)}
+  .top h1{font-family:var(--font);font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1.1;flex:none}
+  .topsub{font-family:var(--font);font-size:13px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .iconbtn{width:40px;height:40px;border-radius:50%;border:0;background:var(--soft);color:var(--ink);padding:0;
+           display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .iconbtn:hover{filter:none;background:#e6e6ea}
+  .iconbtn:active{transform:none;background:#dcdce2}
+
+  h2{font-family:var(--font);font-size:13px;font-weight:600;letter-spacing:.02em;text-transform:none;color:var(--muted);
+     margin:20px 4px 8px}
+
+  /* type + controls */
+  label,.taplabel,.plab,.cap,.srmother .cap{font-size:13px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--muted)}
+  label{margin-bottom:6px}
+  input[type=text],input[type=number],input[type=url],input[type=date],input[type=email],input[type=password],textarea,select{
+    font:inherit;font-size:16px;width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;
+    background:#fff;color:var(--ink);box-shadow:0 1px 1px rgba(0,0,0,.02)}
+  input:focus,textarea:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(200,137,26,.18)}
+  button{font-family:var(--font);font-weight:600;border:1px solid transparent;border-radius:10px;padding:10px 14px;
+         background:var(--soft);color:var(--ink);font-size:15px}
+  button:hover{filter:none;background:#e6e6ea}
+  .btn-primary{background:var(--ink);color:#fff;font-size:16px;padding:12px 20px;border-radius:12px}
+  .btn-primary:hover{background:#000}
+  .btn-ghost{background:#fff;border-color:var(--line);color:var(--ink)}
+  .btn-ghost:hover{background:var(--soft)}
+  .btn-danger{background:#fff;border-color:var(--line);color:var(--red)}
+  .btn-sm{padding:8px 12px;font-size:14px;border-radius:9px}
+  code{background:var(--soft);font-size:14px}
+  .hint{font-size:13px;color:var(--muted)}
+  .note{background:#fff;border:1px solid var(--line);border-radius:var(--radius);color:var(--muted);font-size:14px}
+  .banner{background:#fff8e8;border:1px solid #f0d9a6;border-radius:var(--radius);font-size:15px}
+  .banner.danger{background:#fdf0f0;border-color:#f1c7c7}
+
+  /* grouped lists */
+  .card{border:1px solid var(--line);border-radius:var(--radius);box-shadow:none;padding:16px;margin-bottom:12px}
+  #taps{background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-bottom:12px}
+  #taps:empty{display:none}
+  #taps .card{border:0;border-radius:0;margin:0;padding:0 16px;box-shadow:none}
+  #taps .card + .card{border-top:1px solid var(--line)}
+  #taps .card.kicked{background:#fff;opacity:1}
+  .libbar{margin:0 0 12px;flex-direction:column;gap:0;background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .libbar button.addrow{flex:none;display:flex;align-items:center;gap:12px;background:#fff;border:0;border-radius:0;padding:13px 16px;
+    font-size:16px;font-weight:500;color:var(--accent-ink);text-align:left;width:100%}
+  .libbar button.addrow + button.addrow{border-top:1px solid var(--line)}
+  .libbar button.addrow svg{color:var(--accent);flex:0 0 auto}
+  .libbar button.addrow:hover{background:var(--soft)}
+  details{background:#fff;border:1px solid var(--line);border-radius:var(--radius);margin-bottom:12px}
+  summary{display:flex;align-items:center;flex-wrap:wrap;column-gap:10px;padding:14px 16px;font-size:16px;font-weight:500;position:relative}
+  summary::before,details[open] summary::before{content:none}
+  summary::after{content:"";width:8px;height:8px;border-right:1.6px solid var(--faint);border-bottom:1.6px solid var(--faint);
+    transform:rotate(45deg);margin-left:auto;transition:transform .15s;flex:0 0 auto}
+  details[open] summary::after{transform:rotate(-135deg)}
+  summary .sub{flex:1 1 100%;font-size:13px;font-weight:400;color:var(--muted);margin-top:1px}
+  summary .muted{font-weight:400;font-size:14px}
+  details .inner,details .pad{padding:0 16px 16px}
+  .chev{width:8px;height:8px;border-right:1.6px solid var(--faint);border-bottom:1.6px solid var(--faint);transform:rotate(-45deg);flex:0 0 auto}
+  .linkrow{display:flex;align-items:center;gap:10px;padding:12px 0 0;border-top:1px solid var(--line);color:var(--ink);text-decoration:none;font-size:15px}
+  .linkrow .chev{margin-left:auto}
+
+  /* beer rows */
+  .tapsum{display:flex;align-items:center;gap:12px;min-height:60px;padding:10px 0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .tapsum .tn{width:30px;height:30px;border-radius:50%;background:var(--soft);color:var(--muted);font-size:13px;font-weight:600;
+              display:flex;align-items:center;justify-content:center;flex:0 0 auto;font-variant-numeric:tabular-nums}
+  .tapsum .tname{flex:1 1 auto;min-width:0}
+  .tapsum .tname b{display:block;font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tapsum .tname span{display:block;font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tapsum .tname b .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 7px 1px 0;vertical-align:middle;
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+  .st{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--muted);flex:0 0 auto}
+  .st i{width:8px;height:8px;border-radius:50%;background:var(--green)}
+  .st-kicked i{background:var(--red)} .st-coming i{background:var(--accent)}
+  #taps .card.kicked .tapsum .tname b{color:var(--muted);text-decoration:line-through}
+  #taps .card.open .tapsum{border-bottom:1px solid var(--line)}
+  #taps .card.open .tapsum .chev{transform:rotate(45deg)}
+  #taps .card .body{padding:16px 0 14px}
+  .tapsum,.tapsum *{-webkit-user-select:none;user-select:none}
+  #taps .card:not(.open) > :not(.tapsum){display:none}
+
+  /* inside a beer */
+  .segs{display:flex;background:var(--soft);border-radius:10px;padding:3px;gap:2px}
+  .seg{flex:1 1 0;border:0;border-radius:8px;background:transparent;padding:9px 6px;font-size:14px;font-weight:600;color:var(--muted);white-space:nowrap}
+  .seg:hover{background:transparent;filter:none}
+  .seg.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12),0 0 0 .5px rgba(0,0,0,.04)}
   .seg.on[data-status=pouring]{color:var(--green)}
   .seg.on[data-status=kicked]{color:var(--red)}
-  .seg.on[data-status=coming]{color:var(--gold)}
+  .seg.on[data-status=coming]{color:var(--accent-ink)}
   details.more{background:transparent;border:0;border-top:1px solid var(--line);border-radius:0;margin:4px 0 0;padding:0}
-  details.more summary{padding:12px 0;font-size:15px;color:var(--ink)}
-  details.more summary .muted{font-size:13px;font-weight:400;margin-left:4px}
+  details.more summary{padding:12px 0;font-size:15px;font-weight:500;flex-wrap:nowrap}
+  details.more summary .sub{flex:1 1 auto;margin:0;font-size:13px}
   details.more .morein{padding:2px 0 0}
   .cardfoot{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:12px;margin-top:8px}
-  .cardfoot .taplabel{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
-  .cardfoot input.tapno[type=number]{background:#1f1812;color:#f4e9d5;border-radius:10px;font-weight:700;
-    width:58px;height:40px;font-size:17px;text-align:center;border:2px solid #1f1812;flex:0 0 auto;padding:0}
+  .cardfoot input.tapno[type=number]{background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:9px;font-weight:600;
+    width:54px;height:36px;font-size:15px;text-align:center;flex:0 0 auto;padding:0}
   .cardfoot .spacer{flex:1 1 auto}
-  .tapsum .tname b .dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin:0 7px 1px 0;vertical-align:middle;
-    box-shadow:inset 0 0 0 1px rgba(0,0,0,.2)}
-  #taps .card.kicked .tapsum .tname b{color:var(--muted);text-decoration:line-through}
-  .tabbar{display:none}
-  .fab{display:none}
-  .mrow{display:none}
-  .publishbar{background:rgba(255,255,255,.96);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+  .ic{border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--accent-ink)}
+  .ic.on{border-color:var(--ink);background:var(--soft)}
+  .ic.none{color:var(--muted)}
+  .srmwrap{border:1px solid var(--line);border-radius:10px;background:#fff}
+  .srm{border-radius:5px}
+  .checkline input{accent-color:var(--ink)}
+  .checkline label{font-size:15px;color:var(--ink)}
+  .field{margin-bottom:12px}
 
-  /* ---------- phones ----------
-     The brewer edits this from a phone behind the bar. Twelve fully open cards made a
-     15,000px page there, and the publish bar pushed its own green button off the right
-     edge. On a narrow screen each beer is one row (tap, name, style, status) that opens
-     when touched, and the publish bar stacks with Publish full-width on its own line. */
-  .tapsum{display:none}
+  /* the TVs card */
+  .tvcard{gap:0}
+  .tvrow{padding:12px 0}
+  .tvrow + .tvrow{border-top:1px solid var(--line)}
+  .tvrow:first-child{padding-top:0}
+  .tvrow .t strong{font-size:16px;font-weight:600}
+  .tog{background:#d9d9df}
+  .tog[aria-checked="true"]{background:var(--green)}
+
+  /* publish bar */
+  .publishbar{background:rgba(255,255,255,.94);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+              border-top:1px solid var(--line);box-shadow:none;padding:10px 16px}
+  .publishbar .wrap{padding:0;gap:10px}
+  .status{font-size:14px;color:var(--muted)}
+  .status.ok{color:var(--green)}
+  .status.err{color:var(--red)}
+  body:not(.dirty) .status:not(.err):not(.ok)::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;
+    background:var(--green);margin:0 7px 1px 0}
+
+  .tabbar{display:none}
+  .mrow{display:none}
+  body:not(.dirty) #revert{display:none}
+
+  /* ---------- phones ---------- */
   @media (max-width:640px){
-    body{padding-bottom:calc(160px + env(safe-area-inset-bottom))}
-    body:not(.dirty){padding-bottom:calc(120px + env(safe-area-inset-bottom))}
-    .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:32;background:#fff;border-top:1px solid var(--line);
+    body{padding-bottom:calc(150px + env(safe-area-inset-bottom))}
+    body:not(.dirty){padding-bottom:calc(112px + env(safe-area-inset-bottom))}
+    .wrap{padding:8px 14px}
+    .top{padding:calc(env(safe-area-inset-top) + 12px) 14px 10px}
+    .top h1{font-size:24px}
+    .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:32;background:rgba(255,255,255,.96);
+            -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-top:1px solid var(--line);
             padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
-    .tabbar button{flex:1 1 0;border:0;background:transparent;padding:6px 4px;border-radius:12px;display:flex;flex-direction:column;
-            align-items:center;gap:2px;font-size:11px;font-weight:600;color:var(--muted)}
-    .tabbar button .i{font-size:22px;line-height:1}
-    .tabbar button.on{color:var(--ink);background:var(--soft)}
+    .tabbar button{flex:1 1 0;border:0;background:transparent;padding:5px 4px;border-radius:10px;display:flex;flex-direction:column;
+            align-items:center;gap:3px;font-size:11px;font-weight:500;color:var(--faint)}
+    .tabbar button:hover{background:transparent}
+    .tabbar button.on{color:var(--accent-ink)}
+    .tabbar button.on svg{color:var(--accent)}
     .tabbar button:active{transform:none}
     body[data-tab="beers"] .tab:not(#tab-beers),body[data-tab="screen"] .tab:not(#tab-screen),body[data-tab="tvs"] .tab:not(#tab-tvs){display:none}
-    .mrow{display:flex;gap:10px;margin:4px 0 6px}
+    .mrow{display:flex;gap:10px;margin:6px 0 4px}
     .mrow button{flex:1 1 0;padding:12px 8px;font-size:15px}
-    .fab{position:fixed;right:16px;z-index:31;width:56px;height:56px;border-radius:50%;background:var(--ink);color:#fff;border:0;
-         font-size:32px;line-height:1;padding:0 0 3px;box-shadow:0 8px 20px rgba(0,0,0,.28);align-items:center;justify-content:center;
-         bottom:calc(132px + env(safe-area-inset-bottom))}
-    body.dirty .fab{bottom:calc(176px + env(safe-area-inset-bottom))}
-    body[data-tab="beers"] .fab{display:flex}
-    .fab:active{transform:scale(.96)}
-    .publishbar{bottom:calc(58px + env(safe-area-inset-bottom))}
+    .publishbar{bottom:calc(58px + env(safe-area-inset-bottom));padding:10px 14px}
+    .publishbar .wrap{flex-wrap:wrap;gap:8px}
     .publishbar #preview2,.publishbar #printmenu{display:none}
+    .publishbar .status{flex:1 1 auto;order:0;text-align:left;min-width:0}
+    .publishbar #revert{flex:0 0 auto;order:1;padding:6px 10px;font-size:14px;border:0;background:transparent;color:var(--accent-ink)}
+    .publishbar #publish{flex:1 1 100%;order:2;padding:14px;font-size:16px}
     body:not(.dirty) .publishbar #revert{display:none}
     body:not(.dirty) .publishbar .wrap{flex-wrap:nowrap}
-    body:not(.dirty) .publishbar .status{flex:1 1 auto;order:0;text-align:left}
-    body:not(.dirty) .publishbar #publish{flex:0 0 auto;order:1;padding:9px 14px;font-size:15px;background:transparent;
-                                           color:var(--green);border-color:var(--line)}
-    .segs{padding:3px;gap:3px}
-    .seg{padding:11px 4px;font-size:14px}
+    body:not(.dirty) .publishbar #publish{flex:0 0 auto;order:1;padding:9px 14px;font-size:14px;background:#fff;color:var(--ink);
+                                           border-color:var(--line)}
+    .segs{padding:3px;gap:2px}
+    .seg{padding:10px 4px;font-size:14px}
     .cardfoot .btn-sm{padding:8px 10px;font-size:14px}
-    .wrap{padding:12px 14px}
-    .top .wrap{padding:0 14px}
-    .top h1{font-size:18px}
-    .top .btn-sm{padding:8px 10px;font-size:14px;white-space:nowrap}
-    .publishbar{padding:8px 14px}
-    .publishbar .wrap{flex-wrap:wrap;gap:8px;padding:0}
-    .publishbar .status{flex:1 1 auto;font-size:14px;order:0;text-align:left}
-    .publishbar #revert{flex:0 0 auto;order:1;padding:6px 10px;font-size:14px;border:0;background:transparent;
-                        color:var(--muted);text-decoration:underline;border-radius:9px}
-    .publishbar #publish{flex:1 1 100%;order:2;padding:14px;font-size:18px}
-    .publishbar #venue{order:1;flex:1 1 100%;max-width:none}
-    h2{margin:12px 0 8px}
-    .card{padding:12px}
-    /* one row per beer; touch it to open the full card */
-    .tapsum{display:flex;align-items:center;gap:10px;min-height:44px;cursor:pointer;-webkit-tap-highlight-color:transparent}
-    .tapsum .tn{background:#241d15;color:#f4e9d5;border-radius:8px;font-weight:700;min-width:38px;height:34px;
-                display:flex;align-items:center;justify-content:center;font-size:15px;flex:0 0 auto}
-    .tapsum .tname{flex:1 1 auto;min-width:0}
-    .tapsum .tname b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:17px}
-    .tapsum .tname span{display:block;font-size:14px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .tapsum .pill{font-size:12px;font-weight:700;letter-spacing:.04em;padding:4px 8px;border-radius:999px;flex:0 0 auto;
-                  background:#e4f3ea;color:var(--green)}
-    .tapsum .pill.kicked{background:#f8e3e3;color:var(--red)}
-    .tapsum .pill.coming{background:#fbefd3;color:var(--gold)}
-    .tapsum .chev{color:var(--muted);flex:0 0 auto;transition:transform .15s}
-    #taps .card.open .tapsum .chev{transform:rotate(90deg)}
-    #taps .card.open .tapsum{margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--line)}
-    #taps .card:not(.open) > :not(.tapsum){display:none}
-    #taps .card.kicked{opacity:1}
-    .card-head .btn-sm{padding:8px 10px;font-size:15px}
-    .libbar button{flex:1 1 100%}
-    summary{padding:15px 14px;font-size:17px}
+    .libbar button.addrow{padding:14px 16px}
+    .card{padding:14px}
     details .inner,details .pad{padding:0 14px 14px}
+    summary{padding:14px}
   }
 </style>
 </head>
@@ -332,8 +410,9 @@
 
 <div class="top">
   <div class="wrap">
-    <div class="tt"><h1>🍺 Tap List</h1><div class="topsub" id="topsub">&nbsp;</div></div>
-    <button class="btn-ghost-light btn-sm" id="preview">See the TV</button>
+    <div class="tt"><h1>Taps</h1><div class="topsub" id="topsub">&nbsp;</div></div>
+    <button class="iconbtn" id="preview" aria-label="Preview the TV" title="Preview the TV"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></button>
+    <button class="iconbtn" id="addtop" aria-label="Add a beer" title="Add a beer"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
   </div>
 </div>
 
@@ -378,15 +457,11 @@
   </div>
 
   <section class="tab" id="tab-beers">
-  <h2>The beers</h2>
+  <h2>Beers</h2>
   <div id="taps"></div>
   <div class="libbar">
-    <button id="add" style="padding:13px;font-size:18px;border:2px dashed var(--line)">
-      + Add another beer
-    </button>
-    <button id="fromlib" class="btn-ghost" style="padding:13px;font-size:18px">
-      + From my recipes
-    </button>
+    <button id="add" class="addrow"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Add a beer</button>
+    <button id="fromlib" class="addrow"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1.2" fill="currentColor" stroke="none"/><circle cx="3.5" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="3.5" cy="18" r="1.2" fill="currentColor" stroke="none"/></svg>Add from recipes</button>
   </div>
 
   <div class="libpick" id="libpick">
@@ -406,12 +481,12 @@
 
   <section class="tab" id="tab-screen">
   <div class="mrow">
-    <button class="btn-ghost" id="preview-m">📺 See the TV screen</button>
-    <button class="btn-ghost" id="print-m">🖨 Print menu</button>
+    <button class="btn-ghost" id="preview-m">Preview TV</button>
+    <button class="btn-ghost" id="print-m">Print menu</button>
   </div>
-  <h2>Screen settings</h2>
+  <h2>Screen</h2>
   <details>
-    <summary>Brewery name, clock, and layout</summary>
+    <summary>Display settings<span class="sub">Name, clock, layout, background</span></summary>
     <div class="inner">
       <div class="field">
         <label for="brewery">Name at the top of the TV</label>
@@ -580,7 +655,7 @@
   </details>
 
   <details id="setup">
-    <summary id="setupsummary">⚙️ One-time setup</summary>
+    <summary id="setupsummary">Setup</summary>
     <div class="inner">
       <div class="note">
         This is what lets the Publish button send your changes to the TV.
@@ -626,7 +701,7 @@
   </details>
 
   <details id="teamsec" style="display:none">
-    <summary>&#128101; Your team &amp; venues</summary>
+    <summary>Team &amp; venues</summary>
     <div class="pad">
       <div class="field">
         <label>Venues on this account</label>
@@ -650,7 +725,7 @@
   </details>
 
   <details id="extras">
-    <summary>🍟 Food &amp; merch <span class="muted" id="extrascount"></span></summary>
+    <summary>Food &amp; merch <span class="muted" id="extrascount"></span></summary>
     <div class="pad">
       <div class="checkline">
         <input type="checkbox" id="extrasOn"><label for="extrasOn">Show food, merch and other non-beer items</label>
@@ -669,44 +744,41 @@
   </section>
 
   <section class="tab" id="tab-tvs">
-  <h2>The TVs</h2>
+  <h2>TVs</h2>
   <div class="card tvcard">
     <div class="tvrow">
-      <div class="t"><strong>A gag on the hour</strong>
+      <div class="t"><strong>Hourly gag</strong>
         <div class="hint" id="autohint" style="margin-top:2px">&nbsp;</div></div>
       <button class="tog" id="autoOn" role="switch" aria-checked="false" aria-label="A gag on the hour"></button>
     </div>
     <div class="tvrow">
-      <div class="t"><strong>Want a laugh now?</strong>
+      <div class="t"><strong>Play a gag now</strong>
         <div class="hint" id="laughmsg" style="margin-top:2px">&nbsp;</div></div>
-      <button class="btn-ghost" id="laugh">Go on</button>
+      <button class="btn-ghost" id="laugh">Play</button>
     </div>
-    <div class="hint">Write a line across the screen, show a photo, or pick the hours for the hourly gag:
-      <a href="telly.html">Telly remote</a>.</div>
+    <a class="linkrow" href="telly.html">Write on the screen, show a photo, set the hours<span class="chev"></span></a>
   </div>
   </section>
 
 </div>
 
 
-<button class="fab" id="fab" aria-label="Add another beer">+</button>
-
 <nav class="tabbar" aria-label="Sections">
-  <button type="button" data-tab="beers"><span class="i">🍺</span>Beers</button>
-  <button type="button" data-tab="screen"><span class="i">🖥️</span>Screen</button>
-  <button type="button" data-tab="tvs"><span class="i">📺</span>TVs</button>
+  <button type="button" data-tab="beers"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1.2" fill="currentColor" stroke="none"/><circle cx="3.5" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="3.5" cy="18" r="1.2" fill="currentColor" stroke="none"/></svg>Beers</button>
+  <button type="button" data-tab="screen"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Screen</button>
+  <button type="button" data-tab="tvs"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M17 2l-5 5-5-5"/></svg>TVs</button>
 </nav>
 
 <div class="publishbar">
   <div class="wrap">
-    <div class="status" id="status">Everything's on the TV.</div>
-    <button class="btn-ghost" id="revert">Undo changes</button>
+    <div class="status" id="status">Up to date</div>
+    <button class="btn-ghost" id="revert">Undo</button>
     <button class="btn-ghost" id="preview2">Preview</button>
     <button class="btn-ghost" id="printmenu">Print menu</button>
     <select id="venue" style="display:none;max-width:190px"></select>
     <span id="whoami" style="display:none;font-size:14px;color:var(--muted)"></span>
     <button class="btn-ghost" id="signout" style="display:none">Sign out</button>
-    <button class="btn-primary" id="publish">Publish to the TV</button>
+    <button class="btn-primary" id="publish">Publish</button>
   </div>
 </div>
 
@@ -854,7 +926,7 @@
     var d = false;
     try { d = !!(data && published) && JSON.stringify(data) !== JSON.stringify(published); } catch(e){}
     document.body.classList.toggle("dirty", d);
-    if(!d && /^Unpublished/.test($("status").textContent)) $("status").textContent = "Everything's on the TV.";
+    if(!d && /^Unpublished/.test($("status").textContent)) $("status").textContent = "Up to date";
   }
   setInterval(paintDirty, 2000);
 
@@ -972,7 +1044,7 @@
   function touched(){
     if(saveTimer) clearTimeout(saveTimer);
     saveTimer = setTimeout(saveDraft, 400);
-    setStatus("Unpublished — not on the TV yet.");
+    setStatus("Unpublished changes");
   }
 
   /* ---------------- render ---------------- */
@@ -1393,8 +1465,8 @@
       '<span class="tname"><b><i class="dot" style="background:' + esc(t.color || "#e0a63a") + '"></i>' +
         (esc(t.name) || '<span class="muted">New beer</span>') + '</b>' +
         '<span>' + (esc(meta) || "&nbsp;") + '</span></span>' +
-      '<span class="pill ' + st + '">' + pill + '</span>' +
-      '<span class="chev">\u25B8</span>' +
+      '<span class="st st-' + st + '"><i></i>' + pill + '</span>' +
+      '<span class="chev"></span>' +
     '</div>';
   }
 
@@ -1448,7 +1520,7 @@
         '</div>' +
 
         '<details class="more"' + (moreIsOpen(t) ? " open" : "") + '>' +
-        '<summary>More details <span class="muted">notes, icon, colour, picture' + (pricingOn() ? ", prices" : "") + '</span></summary>' +
+        '<summary>More<span class="sub">Notes, icon, colour, picture' + (pricingOn() ? ", prices" : "") + '</span></summary>' +
         '<div class="morein">' +
 
         '<div class="field"><label>Tasting notes</label>' +
@@ -1554,9 +1626,9 @@
     var when = "";
     if(data.updated){
       var d = new Date(data.updated);
-      if(!isNaN(d)) when = "On the TV since " + d.toLocaleDateString(undefined, { day: "numeric", month: "short" });
+      if(!isNaN(d)) when = "Updated " + d.toLocaleDateString(undefined, { day: "numeric", month: "short" });
     }
-    el.textContent = when + (when && data.brewery ? " \u00b7 " : "") + (data.brewery || "");
+    el.textContent = (data.brewery || "") + (when && data.brewery ? " \u00b7 " : "") + when;
   }
 
   /* ---------------- events ---------------- */
@@ -2184,7 +2256,7 @@
           published = JSON.parse(JSON.stringify(data));
           clearDraft();
           adoptPublished();
-          setStatus("✓ Published! The TV will show it within about a minute.", "ok");
+          setStatus("Published. The TV updates within a minute.", "ok");
           verifyPublished();
           return;
         }
@@ -2411,7 +2483,10 @@
     if(!document.getElementById("tab-" + start)) start = "beers";
     show(start, true);
   })();
-  $("fab").addEventListener("click", function(){ $("add").click(); });
+  $("addtop").addEventListener("click", function(){
+    var b = document.querySelector('.tabbar button[data-tab="beers"]'); if(b && getComputedStyle(b).display !== "none") b.click();
+    $("add").click();
+  });
   $("preview2").addEventListener("click", function(){ $("preview").click(); });
   $("preview-m").addEventListener("click", function(){ $("preview").click(); });
   $("print-m").addEventListener("click", function(){ $("printmenu").click(); });
@@ -2545,7 +2620,7 @@
     if(linkSetupApplied){
       setStatus("\u2713 Publishing is now set up on this computer. You're good to go.", "ok");
     } else {
-      setStatus("Everything's on the TV.");
+      setStatus("Up to date");
     }
 
     /* Pull the existing background photo in separately, so the preview shows it
@@ -2577,7 +2652,7 @@
       if(!r.ok){ setStatus(r.body.error || "Couldn't load your tap list.", "err"); return; }
       apiRev = r.body.rev;
       boot(r.body.data);
-      setStatus("Everything's on the TV.");
+      setStatus("Up to date");
       afterSignedInLoad();
     }).catch(function(){
       setStatus("Couldn't reach the service — check your connection.", "err");
