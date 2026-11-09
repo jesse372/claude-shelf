@@ -3,14 +3,21 @@
 # Inspects every URL in the LIVE sitemap, counts index states, pulls queries at positions 11-20, writes
 # reports/YYYY-MM-DD.md + state/last.json (atomic), and pushes a one-line ntfy summary with the week's delta.
 # Exit 0 = ran and reported. Exit 1 = could not run (auth/API down) - the guardian alerts on that.
+#
+# A SECOND PROPERTY uses the same script with three env vars (set them in a second LaunchAgent):
+#   GSC_SITE=sc-domain:example.com   the Search Console property (gsc.py reads this itself)
+#   GSC_WEEKLY_URL=https://example.com   where the live sitemap is
+#   GSC_WEEKLY_NAME=shop             suffix for its own report, state file and heartbeat
+# With none of them set the script behaves exactly as before (gsc.config.json, state/last.json).
 set -uo pipefail
 export PATH="$HOME/.local/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin"
 D="$(cd "$(dirname "$0")" && pwd)"; G="python3 -I $D/gsc.py"
 # site + ntfy topic come from gsc.config.json next to the script: {"site": "https://www.example.com/", "ntfy_topic": "..."}
 SITE="$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1])).get("site","").rstrip("/"))' "$D/gsc.config.json" 2>/dev/null)"
 NTFY_TOPIC="${NTFY_TOPIC:-$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1])).get("ntfy_topic",""))' "$D/gsc.config.json" 2>/dev/null)}"
+NAME="${GSC_WEEKLY_NAME:-}"; [ -n "${GSC_WEEKLY_URL:-}" ] && SITE="${GSC_WEEKLY_URL%/}"
 [ -n "$SITE" ] || { echo "no site in $D/gsc.config.json"; exit 1; }
-TODAY=$(date +%F); R="$D/reports/$TODAY.md"; S="$D/state/last.json"; TMP=$(mktemp -d); trap 'rm -rf "$TMP"' EXIT
+TODAY=$(date +%F); R="$D/reports/${NAME:+$NAME-}$TODAY.md"; S="$D/state/last${NAME:+-$NAME}.json"; TMP=$(mktemp -d); trap 'rm -rf "$TMP"' EXIT
 log(){ echo "$(date '+%F %T') $*"; }
 notify(){ [ -n "$NTFY_TOPIC" ] || return 0; curl -fsS --max-time 20 -H "Title: $1" -d "$2" "https://ntfy.sh/$NTFY_TOPIC" >/dev/null 2>&1 || log "ntfy failed"; }
 
@@ -52,5 +59,7 @@ PY
 DELTA=""; [ "$PREV_IDX" != "?" ] && DELTA=" ($(( IDX - PREV_IDX )) vs $PREV_DATE)"
 MSG="Indexed $IDX/$N$DELTA. Not crawled yet: $DISC. Crawled-not-indexed: $CRAWLED_NOT. Unknown: $UNKNOWN. Report: $R"
 log "$MSG"; notify "${SITE#https://} Google index" "$MSG"
-mkdir -p "$HOME/.qc-heartbeats" && date +%s > "$HOME/.qc-heartbeats/gsc-weekly"
+# Heartbeat format is "epoch maxgap label". Without a maxgap the heartbeat watchdog assumes 30h and
+# reports a WEEKLY job as "gone DARK" every Friday. 734400s = 8.5 days.
+HB="gsc-weekly${NAME:+-$NAME}"; mkdir -p "$HOME/.qc-heartbeats" && echo "$(date +%s) 734400 $HB" > "$HOME/.qc-heartbeats/$HB"
 log "gsc-weekly done"

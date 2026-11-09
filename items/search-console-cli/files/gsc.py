@@ -258,7 +258,7 @@ def cmd_relay(a):
             p = urllib.parse.urlparse(self.path).path
             if p == f"/{tok}/":
                 self.send(page(
-                    f"<h2>Connect Google Search Console ({html.escape(SITE)})</h2><ol>"
+                    f"<h2>Connect {html.escape(os.environ.get('GSC_LABEL', 'Google Search Console'))} ({html.escape(SITE)})</h2><ol>"
                     f"<li>Tap <b>Start</b>. Google opens. Sign in{' as <b>' + html.escape(LOGIN_HINT) + '</b>' if LOGIN_HINT else ''} and tap <b>Allow</b>.</li>"
                     "<li>If Google says the app isn't verified: <b>Advanced &rarr; Go to &hellip; (unsafe) &rarr; Continue</b>. "
                     "It's your own OAuth app.</li>"
@@ -298,7 +298,7 @@ def cmd_relay(a):
                 print("RESULT FAILED", str(e)[:300], flush=True)
 
     srv = http.server.ThreadingHTTPServer(("127.0.0.1", 8771), H)
-    threading.Thread(target=lambda: (time.sleep(7200), os._exit(1)), daemon=True).start()
+    threading.Thread(target=lambda: (time.sleep(int(os.environ.get("GSC_RELAY_SECS", "7200"))), os._exit(1)), daemon=True).start()
     srv.serve_forever()
 
 
