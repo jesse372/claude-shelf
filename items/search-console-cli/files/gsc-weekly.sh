@@ -8,6 +8,8 @@
 #   GSC_SITE=sc-domain:example.com   the Search Console property (gsc.py reads this itself)
 #   GSC_WEEKLY_URL=https://example.com   where the live sitemap is
 #   GSC_WEEKLY_NAME=shop             suffix for its own report, state file and heartbeat
+#   GSC_WEEKLY_EXTRA=/path/to/cmd    optional: a command whose first output line is added to the phone
+#                                    message and whose whole output goes into the report (site visitors etc.)
 # With none of them set the script behaves exactly as before (gsc.config.json, state/last.json).
 set -uo pipefail
 export PATH="$HOME/.local/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin"
@@ -56,8 +58,17 @@ d = {"date": date, "indexed": int(idx), "discovered_not_crawled": int(disc), "cr
      "unknown": int(unk), "sitemap_urls": int(n), "report": rep}
 fd, tmp = tempfile.mkstemp(dir=os.path.dirname(p)); os.write(fd, json.dumps(d, indent=1).encode()); os.close(fd); os.replace(tmp, p)
 PY
+EXTRA=""
+if [ -n "${GSC_WEEKLY_EXTRA:-}" ]; then
+  if "$GSC_WEEKLY_EXTRA" > "$TMP/extra" 2> "$TMP/extra.err"; then
+    EXTRA=" $(head -1 "$TMP/extra")"
+    { echo; echo "## Extra"; echo '```'; cat "$TMP/extra"; echo '```'; } >> "$R"
+  else
+    EXTRA=" Extra report FAILED: $(head -c 160 "$TMP/extra.err" | tr '\n' ' ')"; log "extra command failed: $(cat "$TMP/extra.err")"
+  fi
+fi
 DELTA=""; [ "$PREV_IDX" != "?" ] && DELTA=" ($(( IDX - PREV_IDX )) vs $PREV_DATE)"
-MSG="Indexed $IDX/$N$DELTA. Not crawled yet: $DISC. Crawled-not-indexed: $CRAWLED_NOT. Unknown: $UNKNOWN. Report: $R"
+MSG="Indexed $IDX/$N$DELTA. Not crawled yet: $DISC. Crawled-not-indexed: $CRAWLED_NOT. Unknown: $UNKNOWN.$EXTRA Report: $R"
 log "$MSG"; notify "${SITE#https://} Google index" "$MSG"
 # Heartbeat format is "epoch maxgap label". Without a maxgap the heartbeat watchdog assumes 30h and
 # reports a WEEKLY job as "gone DARK" every Friday. 734400s = 8.5 days.
