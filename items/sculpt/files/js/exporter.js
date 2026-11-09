@@ -53,36 +53,88 @@ async function renderJpeg(maxSide, quality) {
   return c.convertToBlob({ type: 'image/jpeg', quality });
 }
 
-/** Render + save one photo. Returns the file name. */
-export async function exportOne(p, { dir, maxSide = 0, quality = 0.92, suffix = '', used = new Set(), safety = false, onSaved = null }) {
+// background encoder (deferred exports): one worker, jobs by id
+let encW = null, encN = 0;
+const encJobs = new Map();
+function encodeInWorker(bmp, quality) {
+  if (!encW) {
+    encW = new Worker(new URL('./encode-worker.js', import.meta.url), { type: 'module' });
+    encW.onmessage = (e) => { const j = encJobs.get(e.data.id); if (!j) return; encJobs.delete(e.data.id); e.data.blob ? j.res(e.data.blob) : j.rej(new Error(e.data.error || 'encode failed')); };
+    encW.onerror = (e) => { for (const j of encJobs.values()) j.rej(new Error('encoder stopped')); encJobs.clear(); encW = null; e.preventDefault?.(); };
+  }
+  const id = ++encN;
+  return new Promise((res, rej) => { encJobs.set(id, { res, rej }); encW.postMessage({ id, bmp, quality }, [bmp]); });
+}
+
+/** A snapshot of the finished render (full size or scaled to maxSide), for the background encoder. */
+async function snapshot(maxSide) {
+  renderer.draw({ split: -1 });
+  const W = renderer.w, H = renderer.h, s = maxSide && Math.max(W, H) > maxSide ? maxSide / Math.max(W, H) : 1;
+  const bmp = await (s < 1 ? createImageBitmap(renderer.canvas, { resizeWidth: Math.round(W * s), resizeHeight: Math.round(H * s), resizeQuality: 'high' }) : createImageBitmap(renderer.canvas));
+  renderer.draw();
+  return bmp;
+}
+
+/** Render + save one photo. Returns the file name.
+ * defer (Process shoot): returns once the render is captured - { name, done } - and the JPEG is encoded in a worker,
+ * safety-checked and written in the background while the caller starts the next photo. done resolves to { redo } when
+ * the check wants a gentler edit: the caller then calls exportOne(p, { ...opts, name, prior: redo }) without defer.
+ * The check always measures the real JPEG (the raw render reads up to ~1 L* different on a white dress). */
+export async function exportOne(p, { dir, maxSide = 0, quality = 0.92, suffix = '', used = new Set(), safety = false, onSaved = null, defer = false, name = null, prior = null }) {
   if (!(await loadPhoto(p, { interactive: false }))) throw new Error('could not open');
+  let first = 1;
+  if (safety && prior) {                                 // a deferred check found problems: its gentler edit, then check again
+    p.safety = { fixed: prior.problems.map((x) => x.msg), attempts: 1 };
+    saferEdit(p, prior, 1);
+    if (!(await loadPhoto(p, { interactive: false }))) throw new Error('could not open');
+    first = 2;
+  }
+  if (!name) {
+    const stem = p.name.replace(/\.[^.]+$/, '') + suffix;
+    let n = 2; name = stem + '.jpg';
+    while (used.has(name.toLowerCase())) name = `${stem}-${n++}.jpg`;   // e.g. IMG_1.CR3 + IMG_1.JPG
+    used.add(name.toLowerCase());
+  }
+  const m = { ...(p.meta || {}), ...(p.fullMeta || {}) }, exif = { make: m.make, model: m.model, time: p.time ? new Date(p.time) : m.time || null };
+  const save = async (b) => {
+    b = await addExif(b, exif);
+    await writeOut(dir, name, b);
+    if (onSaved) onSaved(name, b, p);
+    // learning from edits: colour fixed by hand becomes an example of your style
+    if (p.userColour && p.emb && !p.exampleRecorded) { p.exampleRecorded = true; recordExample(p.emb, p.edit.dev).catch(() => {}); }
+    return name;
+  };
+  const seg = p.det && p.det.seg, base = safety ? renderer.thumbnail(480) : null;   // the photo before any edit
+  if (defer) {
+    if (safety) p.safety = null;
+    const snap = await snapshot(maxSide);
+    const done = encodeInWorker(snap, quality).then(async (blob) => {
+      if (safety) {
+        const rep = await inspect(blob, seg, base);
+        if (rep.unsure && rep.unsure.length) p.unsure = { ...(p.unsure || {}), dress: true };   // borderline: for the review, not re-edited
+        if (!rep.ok) return { redo: rep };
+      }
+      await save(blob);
+      return { name };
+    });
+    return { name, done };
+  }
   let blob = await renderJpeg(maxSide, quality);
   // hands-off safety: check the actual result; if anything is off, re-edit more conservatively and check again
   if (safety) {
-    p.safety = null;
-    const base = renderer.thumbnail(480);               // the photo before any edit
-    for (let attempt = 1; attempt <= 2; attempt++) {
-      const rep = await inspect(blob, p.det && p.det.seg, base);
+    if (!prior) p.safety = null;
+    for (let attempt = first; attempt <= 2; attempt++) {
+      const rep = await inspect(blob, seg, base);
       if (attempt === 1 && rep.unsure && rep.unsure.length) p.unsure = { ...(p.unsure || {}), dress: true };   // borderline: for the review, not re-edited
       if (attempt === 2 && rep.problems.every((x) => x.kind.startsWith('dress'))) break;                          // the dress fix is applied once
       if (rep.ok) break;
-      p.safety = { fixed: rep.problems.map((x) => x.msg), attempts: attempt };
+      p.safety = { fixed: [...new Set([...(p.safety?.fixed || []), ...rep.problems.map((x) => x.msg)])], attempts: attempt };
       saferEdit(p, rep, attempt);
       if (!(await loadPhoto(p, { interactive: false }))) break;
       blob = await renderJpeg(maxSide, quality);
     }
   }
-  const m = { ...(p.meta || {}), ...(p.fullMeta || {}) };
-  blob = await addExif(blob, { make: m.make, model: m.model, time: p.time ? new Date(p.time) : m.time || null });
-  const base = p.name.replace(/\.[^.]+$/, '') + suffix;
-  let name = base + '.jpg', n = 2;
-  while (used.has(name.toLowerCase())) name = `${base}-${n++}.jpg`;   // e.g. IMG_1.CR3 + IMG_1.JPG
-  used.add(name.toLowerCase());
-  await writeOut(dir, name, blob);
-  if (onSaved) onSaved(name, blob);
-  // learning from edits: colour fixed by hand becomes an example of your style
-  if (p.userColour && p.emb && !p.exampleRecorded) { p.exampleRecorded = true; recordExample(p.emb, p.edit.dev).catch(() => {}); }
-  return name;
+  return save(blob);
 }
 
 export async function pickFolder() {

@@ -101,7 +101,7 @@ async function run(resume = null) {
   let cur = null;
   const quickOn = !resume && !!(o.profile && profileById(o.profile)?.learned?.unsure);
   const opts = { dir, quality: 0.92, used: new Set(names.map((n) => n.toLowerCase())), safety: true,
-    onSaved: (name, blob) => { names.push(name); R.done[cur.key] = name; if (sending) sending.up.add(name, blob); } };
+    onSaved: (name, blob, p) => { names.push(name); R.done[p.key] = name; if (sending) sending.up.add(name, blob); } };
   // a photo saved to the folder just before an interruption, but not yet recorded as done, is not redone: the browser
   // only commits a file when it is complete, so one already in the folder is finished (base names shared by two photos
   // - IMG_1.CR3 + IMG_1.JPG - are left to the normal rule)
@@ -149,8 +149,9 @@ async function run(resume = null) {
   // 4. edit + export each pick (skipping any finished before an interruption)
   const b0 = quickOn ? 0.3 : 0.1;
   const t0 = performance.now();
+  let saving = null; const redo = [];
   for (let i = 0; i < todo.length; i++) {
-    if (cancel) { await job({ run: null }); return finish(list.slice(0, before + i), failed, before + i, dir, true, notes); }
+    if (cancel) { await saving; await job({ run: null }); return finish(list.slice(0, before + i), failed, before + i, dir, true, notes); }
     const p = todo[i], k = before + i;
     const el = (performance.now() - t0) / 1000, eta = i ? el / i * (todo.length - i) : 0;
     $('#apStatus').textContent = `Editing & exporting ${k + 1} of ${list.length} — ${p.name}` + (i ? ` · about ${fmtTime(eta)} left` : '') + sendNote();
@@ -159,14 +160,33 @@ async function run(resume = null) {
       if (o.colour || o.profile || o.retouch || o.shape) p.pendingAuto = { colour: o.colour, profile: o.profile, retouch: o.retouch, shape: o.shape, brightness, hl, keepTone: !!p.toneChecked };
       cur = p;
       prefetchDecode(todo[i + 1]);                                  // the next RAW develops while this one renders + saves
-      await exportOne(p, opts);
-      p.editedOnce = true;
+      const out = await exportOne(p, { ...opts, defer: true });     // its JPEG encodes + saves in the background...
       if (p.autoNotes) for (const n of p.autoNotes) if (/child|group/.test(n)) notes.push(`${p.name}: ${n}`);
+      if (p.safety) notes.push(`${p.name}: re-edited more gently (${p.safety.fixed.join(', ')})`);
+      await saving;                                                 // ...at most one photo behind (memory: one snapshot)
+      saving = out.done.then((r) => {
+        if (r.redo) { redo.push({ p, name: out.name, rep: r.redo }); return null; }               // the check wants a gentler edit: after the loop
+        p.editedOnce = true; emit('photo-updated', p); return job({ run: { ...R }, progress: [k + 1, list.length] });   // saved after every photo
+      }, (e) => { console.error(e); failed.push(p.name); }).catch((e) => console.error(e));
+    } catch (e) { console.error(e); failed.push(p.name); }
+    busy(null);
+  }
+  await saving; saving = null;
+  // 4b. photos the safety check sent back: re-edited more gently, checked again, saved
+  for (let j = 0; j < redo.length; j++) {
+    if (cancel) { await job({ run: null }); return finish(list.filter((q) => R.done[q.key]), failed, Object.keys(R.done).length, dir, true, notes); }
+    const { p, name, rep } = redo[j];
+    $('#apStatus').textContent = `Re-editing ${j + 1} of ${redo.length} more gently — ${p.name}` + sendNote();
+    try {
+      if (o.colour || o.profile || o.retouch || o.shape) p.pendingAuto = { colour: o.colour, profile: o.profile, retouch: o.retouch, shape: o.shape, brightness, hl, keepTone: !!p.toneChecked };
+      prefetchDecode(redo[j + 1]?.p);
+      await exportOne(p, { ...opts, name, prior: rep });
+      p.editedOnce = true;
       if (p.safety) notes.push(`${p.name}: re-edited more gently (${p.safety.fixed.join(', ')})`);
       emit('photo-updated', p);
     } catch (e) { console.error(e); failed.push(p.name); }
     busy(null);
-    await job({ run: { ...R }, progress: [k + 1, list.length] });             // saved after every photo
+    await job({ run: { ...R }, progress: [list.length - redo.length + j + 1, list.length] });
   }
   // 5. let the last uploads finish, then hand the gallery over (anything an interruption lost is re-read from the folder)
   if (sending) {
@@ -268,7 +288,7 @@ async function quickCheck(items, profileId) {
   // it. A nudge on the anchor is carried to its frames (their cards redraw with it); a nudge on any other card sits on top
   // of what was carried, so most frames need a glance and no tap.
   // Warm/cool too: Jesse's warmth is within ~4 slider units across a scene while the style misses it by ~18 (14k pairs).
-  const TSTEP = 15, TMAX = 4 * TSTEP, PAGE = quickSettings.page;
+  const TSTEP = 15, TMAX = 8 * TSTEP, PAGE = quickSettings.page;   // 8 taps: Jesse goes past +-60 on ~2% of photos (J&D harness 4/248)
   // Softer / Punchier (Jesse 2026-11-05 on Steph & Josh: "Too much contrast and maybe whites"): one step = contrast -10,
   // highlights -20, whites -12 (render.js sliders, added on top of the style's tone), -2..+3 steps. Per-photo highlights /
   // whites are not predictable from the photo (tools/colour/hiwhites_macbook.py: LOWO no gain), so it is his tap.

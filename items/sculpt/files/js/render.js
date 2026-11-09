@@ -153,6 +153,15 @@ in vec2 vUv; out vec4 o;
 uniform sampler2D uSrc;
 void main() { o = texture(uSrc, vUv); }`;
 
+// 16-bit RAW pixels -> half floats on the GPU, bit-identical to halfLUT(): each value's half bits come from the same
+// table (uHalf, 256 x 256), so no float rounding is involved (was a per-pixel JS loop: ~2-4 s per full-size photo)
+const FS_U16 = `#version 300 es
+precision highp float; precision highp usampler2D;
+out vec4 o;
+uniform usampler2D uSrc, uHalf;
+float h(uint v) { return unpackHalf2x16(texelFetch(uHalf, ivec2(int(v & 255u), int(v >> 8u)), 0).r).x; }
+void main() { uvec3 v = texelFetch(uSrc, ivec2(gl_FragCoord.xy), 0).rgb; o = vec4(h(v.r), h(v.g), h(v.b), 1.0); }`;
+
 // separable Gaussian
 const FS_BLUR = `#version 300 es
 precision highp float;
@@ -287,9 +296,12 @@ export class Renderer {
     gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
-    if (img.rgb16 && this.floatRT) {
+    if (img.rgb16 && this.floatRT && this._u16(t, img.rgb16, w, h)) {
       this.hdr = true;
-      gl.texStorage2D(gl.TEXTURE_2D, 1, gl.RGBA16F, w, h);
+    } else if (img.rgb16 && this.floatRT) {
+      this.hdr = true;
+      gl.bindTexture(gl.TEXTURE_2D, t);
+      if (!gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_IMMUTABLE_FORMAT)) gl.texStorage2D(gl.TEXTURE_2D, 1, gl.RGBA16F, w, h);   // the GPU path may have allocated it
       LUT = LUT || halfLUT();
       const rows = Math.max(1, Math.floor(4e6 / w)), buf = new Uint16Array(rows * w * 4);
       for (let y = 0; y < h; y += rows) {
@@ -313,6 +325,46 @@ export class Renderer {
     this.setField(1, 1, new Float32Array(2));
     this.setMask('uChinMask', 1, 1, new Uint8Array(1));
     this.setMask('uSkinMask', 1, 1, new Uint8Array(1));
+  }
+
+  /** Fill texture t (RGBA16F) from 16-bit RGB on the GPU. False if the GPU can't (then the JS loop runs). */
+  _u16(t, rgb16, w, h) {
+    if (this._u16off || !(rgb16 instanceof Uint16Array)) return false;
+    const gl = this.gl, near = () => { for (const k of [gl.TEXTURE_MIN_FILTER, gl.TEXTURE_MAG_FILTER]) gl.texParameteri(gl.TEXTURE_2D, k, gl.NEAREST); };
+    let src = null;
+    try {
+      if (!this.u16) {
+        this.u16 = this._program(FS_U16, ['uSrc', 'uHalf', 'uRect', 'uToFbo']);
+        LUT = LUT || halfLUT();
+        this.halfTex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, this.halfTex);
+        gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.R16UI, 256, 256, 0, gl.RED_INTEGER, gl.UNSIGNED_SHORT, LUT); near();
+      }
+      while (gl.getError()) { /* clear stale errors */ }
+      gl.bindTexture(gl.TEXTURE_2D, t);
+      gl.texStorage2D(gl.TEXTURE_2D, 1, gl.RGBA16F, w, h);
+      src = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, src);
+      gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB16UI, w, h, 0, gl.RGB_INTEGER, gl.UNSIGNED_SHORT, rgb16); near();
+      gl.bindFramebuffer(gl.FRAMEBUFFER, this.fbo);
+      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, t, 0);
+      const ok = gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE;
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      if (!ok) throw new Error('fbo');
+      this._drawTo({ tex: t, w, h }, this.u16, () => {
+        gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, src); gl.uniform1i(this.u16.u.uSrc, 0);
+        gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, this.halfTex); gl.uniform1i(this.u16.u.uHalf, 1);
+      });
+      if (gl.getError()) throw new Error('gl');
+      gl.deleteTexture(src);
+      gl.bindTexture(gl.TEXTURE_2D, t);
+      return true;
+    } catch (e) {
+      console.warn('GPU 16-bit upload unavailable, using the CPU path', e);
+      this._u16off = true;
+      if (src) gl.deleteTexture(src);
+      return false;
+    }
   }
 
   /** interleaved Float32Array (dx,dy) in image-pixel units */
