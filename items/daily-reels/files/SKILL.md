@@ -452,3 +452,26 @@ Cost: Jesse is credit-sensitive. Don't print big files (use grep -n / sed -n ran
 - Declined reels in focus mode: pickers skip declined ids (photopost/rotate/trial); if nothing fresh fits, the watcher sets the slot to skipped instead of failing (no more 10-minute failure emails).
 - 2026-11-09 Jesse: "Why was there nothing fresh?" Photo posts only use hand-picked frames (albums_photopost.json); only 24 weddings had picks. Claude hand-picked 1-3 frames for the other 40 website albums (curated claude-visual-2026-11-09, catalog .webp paths, contact sheets reviewed by eye, no groups/children) -> 64 weddings, ~6 more weeks.
 - 2026-11-09 Jesse declined the OLD face-cam Imagine (recipe 'imagine'): "you blocked half the screen with a black background on the text". build_imagine no longer draws the band - his clip's own caption stays, price swapped via _price_overlay('jesse'). Focus days use only recipe I2 (imagine2, intro jesse/girl alternating via _trial_build). Nov 18 [redacted] re-rendered in place (approval kept).
+- 2026-11-10 PHOTO POST PICKS = JESSE'S FEED STYLE (Jesse: "you're not selecting the best of the best ... check our Instagram to see what we normally post"). His 202 self-posted feed photos are in local-data/feed_ref. feed_shortlist.py ranks every frame of a released Pixieset gallery: exactly 2 faces, similar size, close together (embrace/kiss) + colour/tone similarity to his feed + sharpness; drops frames used in reels/feed. Sheets in "Back Up/JC Studio training/photopost-feedstyle". Then pick by eye to his style (couple close, golden backlight or rich greens, veil/dip; never guests/ceremony/getting ready/children/flat light) with photo_curate.pick (pc.WORK = feedstyle dir). Website-album frames are NOT usable for photo posts (most were used in reels). photo_curate.pick now stores pixieset_key (else published_slugs skips the album) and writes atomically.
+
+## 2026-11-10 - no stock ("AI") music, trials refill, little-things
+- Jesse: "I'm gonna decline any with AI music". music/songs.py prepare() now makes reel_song.mp4 for EVERY upcoming reel
+  (silent; button/imagine keep their hook sound -> spec keep_sfx, ig_audio.video_volume=100). Skips copy-loved-it (boy's
+  "you love it" is the sound) and photoposts (carousels). assign() runs in the daily run AND after watcher replacements.
+- Declined trial slots now come back as new-style trials (thumb / one-word / little-things) instead of 'skipped'.
+  copy-little-things trials: plan.trial_idea_spec, copies2.A(film, n); shots from filmlib/little_shots.json
+  (bright>=66, no baked-in letterbox); LITTLE_BLOCK = [redacted], [redacted]. Few films have 7s+ couple shots.
+- handle_declines clears plan._G before each render (memoised warm-up specs predated the decline -> 'no alternative').
+- daily: skipped slots no longer raise 'approved reel missing on disk'.
+- Watcher via Terminal looked idle 05:46-08:16 on 11-10 although Jesse had declined reels; a direct
+  `.venv/bin/python daily.py --declines` worked and the 09:06 launchd run worked. Watch for a repeat.
+- (later 11-10) Jesse: "we only have the new style on trial reels" + "missing the ones with the fishing boy".
+  Focus main slots .2 (now DAILY) and .4 = new styles via trial_idea_spec(main=True) (NEWSTYLE_MAIN_FROM); .1 rotate falls
+  back to a new style when no QC'd rotate preview is left. Fishing-boy = style copy-loved-it (copies2.Cr(bts=...)),
+  LOVED_BTS = 9 BTS clips dark enough behind the question text, max one every 2 days, keeps its own sound (no song).
+  Supply is THIN: 2nd versions added (thumb part 1 = next 9 photos, needs 18 varied; one-word phase 1 = in-between shots,
+  needs 40 good shots; both >=10 days after the 1st version). Slots keep the style of content already theirs.
+  Page hides skipped + past reels (data-gone); app lists waiting reels with thumbnails.
+- 2026-11-10 NEW COPY IDEAS: research/ideas-study-2026-11-10.md. ideas2.py builds 4 formats (seevs, photogvs, onemore,
+  poses) from BTS clips + feed picks; on the Ideas page as idea-*; approved -> trial_idea_spec fn "I2" (daily imports ideas2,
+  OUT=tempdir). Text = Instrument Serif with soft dark glow (no boxes). Needs-footage ideas listed in the study.
