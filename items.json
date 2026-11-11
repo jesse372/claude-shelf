@@ -1,7 +1,7 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-11-10T19:15:15+00:00",
+  "updated": "2026-11-11T19:15:19+00:00",
   "items": [
     {
       "slug": "daily-reels",
@@ -14,8 +14,8 @@
       "tags": [],
       "link": "",
       "created": "2026-10-22T04:00:01+08:00",
-      "updated": "2026-11-10T19:15:07+00:00",
-      "version": 8,
+      "updated": "2026-11-11T19:15:12+00:00",
+      "version": 9,
       "useful": 4,
       "files": [
         "SKILL.md"

@@ -475,3 +475,19 @@ Cost: Jesse is credit-sensitive. Don't print big files (use grep -n / sed -n ran
 - 2026-11-10 NEW COPY IDEAS: research/ideas-study-2026-11-10.md. ideas2.py builds 4 formats (seevs, photogvs, onemore,
   poses) from BTS clips + feed picks; on the Ideas page as idea-*; approved -> trial_idea_spec fn "I2" (daily imports ideas2,
   OUT=tempdir). Text = Instrument Serif with soft dark glow (no boxes). Needs-footage ideas listed in the study.
+
+## 2026-11-11 REUSE + 16 SLOTS (Jesse: "surely you aren't running out of content. You can use the same content in a different style")
+- Simulation (/tmp/sim_slots.py logic: plan.slots_for + spec_for_slot per day) showed only ~2 of 8 focus slots fillable from Nov 23: every new-style
+  ledger (trial_used.json) was once-ever per film/album. Fix in plan.trial_idea_spec: REUSE_DAYS=7 / REUSE_VERSIONS=10 - thumb part>=2 =
+  seeded 9-photo mix of the album (copies2.D), one-word phase>=2 = seeded 17-shot set in film order (copies2.B), little-things = any other
+  long couple shot (key little:<film>:<n>); a film/album comes back in the SAME style only after 7 days (_cool). Cross-style reuse was already free.
+- TRIALS_FOCUS default 4 -> 10 (slots .7-.16, 16 distinct post times). Result: ~8-12 filled per day from Nov 23 (avg ~8.6); thumb-beat dominates.
+- Ceiling = SCREENED material: 43 thumb-eligible website albums + 22 verified films (37 min approved shots). 221 released Pixieset galleries
+  (~154k photos) and 576 Drive videos are NOT screened for children - that is the next lever (feed_shortlist + by-eye sheets / film_scan).
+- Backups: local-data/plan.py.bak-2026-11-11, copies2.py.bak-2026-11-11. Rollback volume only: REELS_TRIALS_FOCUS=4 or edit the default.
+- (later 11-11) Jesse: "We were originally doing 10 trial, 5 reels and 1 post. These need to start tomorrow and we are aiming for the max
+  posts per day eventually." plan.DAILY5_FROM = 2026-11-12: every day = .1-.5 reels + .6 photo post + .7-.16 trials (16). .3 and .5
+  (non-Friday) = trial_idea_spec(main=True), but a copy-*/rotate reel already placed in the slot is kept (_existing_spec).
+  Reused one-word versions (phase>=2 seeded) use couple/moments/detail shots only - no party/group shots ([redacted] young groomsmen risk).
+  Two runs 11-12 00:42 + 01:07 OK. Nov 12-14 + 22 = 16/16, Nov 15-21 = 9-14 (7-day reuse cooldown after the Nov 12-14 burst).
+  Instagram API cap = 100 posts/24h (content_publishing_limit). Next lever for "max": screen the 221 released Pixieset galleries + Drive films.
