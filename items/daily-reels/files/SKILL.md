@@ -491,3 +491,64 @@ Cost: Jesse is credit-sensitive. Don't print big files (use grep -n / sed -n ran
   Reused one-word versions (phase>=2 seeded) use couple/moments/detail shots only - no party/group shots ([redacted] young groomsmen risk).
   Two runs 11-12 00:42 + 01:07 OK. Nov 12-14 + 22 = 16/16, Nov 15-21 = 9-14 (7-day reuse cooldown after the Nov 12-14 burst).
   Instagram API cap = 100 posts/24h (content_publishing_limit). Next lever for "max": screen the 221 released Pixieset galleries + Drive films.
+- 2026-11-12 GALLERY REVIEW (Jesse: "start reviewing all of the other albums and videos" / "why are we cutting albums ... surely they still
+  have enough"): all 169 remaining released Pixieset galleries reviewed by eye (bin/pool/, log local-data/pool_review_log.json).
+  156 added, 13 none (no couple-only frames / blocked / duplicate / unidentified). Reel pool 23 -> 179 albums, 175 -> 1,945 photos
+  (assets/reelpool, 933 MB). Code: copies.album_photos allows anon pool albums; copies2.D selects by slug (build carries slug);
+  plan.varied() passes reel-pool KIND labels through; thumb minimum 11 -> 9 photos. Thumb-eligible albums 43 -> 173.
+  Simulation Nov 23-Dec 6: 15-16 of 16 slots filled every day (was ~8). Thumb-beat = 183/220 of fills -> approve more PHOTO styles for variety.
+- Films 2026-11-12: [redacted]-Ceremony verified (8 adult-only close-ups; crowd shots never whitelisted), proxy built, prewarmed.
+  Still unused: 251025-ceremony (= [redacted], blocked), Ceremony.mov + Speeches.mov (couple unidentified -> consent unknown),
+  Copy-of-UPDATED/Copy-of-film (showreels, never), [redacted] (never), [redacted]-Continuous (ages unconfirmed).
+  Raw: LaCie raw/[redacted] 198 clips 92 GB (their film is still in production - don't post raw before the couple gets it unless
+  Jesse says so; S-Log needs native.py LUT) and raw/july-2025-shared-drive 282 clips 214 GB (couple unidentified). Drive: the other
+  ~350 GB is raw camera clips; every finished film there is already in filmlib.
+- 2026-11-12 PERFORMANCE PASS (Jesse: "find out how to get our reels to perform better ... do all of that, I'll work on the videos of me").
+  Finding (133 reels since Oct 26): views track SECONDS watched - avg watch < 3.5 s -> ~190 views, 7 s+ -> median 1,490. Only
+  imagine2 (9.3 s) and native POV (7.7 s) hold viewers; shares (9/133 reels) correlate most with views. Changes (PERF_FROM 2026-11-13):
+  * ig_learn.score: watch_s (median seconds), sends, tier A >= 5 s / C = n >= 5 and < 3 s / B; score weights watch seconds; atomic write.
+  * plan._perf_main: .4 18:30 = a fresh imagine2 every day (124 albums incl. reel pool; each album once; a couple's 2nd gallery counts as
+    the same couple, +-3 days); .2 11:30 = an unposted native POV clip, else the old new-style pick. _imagine2_albums memoised.
+  * trial_idea_spec: styles ordered by tier, TIER_CAP per style per day (A5/B3/C1) on the first pass, then gaps filled.
+  * rotate (tier C): every second day only; moments.build caps rotate reels at ~14.5 s (prompt already on frame 0).
+  * copies2.D thumb intro: 2 flicks (was 3) over a 55%-darkened couple photo instead of black (all 53 thumbs opened on black).
+  * captions.share_pass (daily, after refresh): one send-prompt line by style above the hashtags, UNAPPROVED reels only (.share_v1).
+  Jesse declined 'imagine2' as a TRIAL style on the Ideas page, yet imagine2 trials hold 9.0 s - ask before re-enabling.
+  Native supply: all 5 clips used -> Jesse is filming more; screen them (no kids) into assets/native/clips.json.
+- 2026-11-12 STORAGE (Jesse: "stop everything that doesn't absolutely need to from saving to the main hard drive"): reels assets
+  {reelpool, photoposts, bts, broll, beforeafter}, research, music/profile -> LaCie (symlinks), untracked from the JesseOS git backup and
+  mirrored nightly to Back Up/JesseOS-media by com.jesse.media-mirror (backup/media_mirror.py via Terminal). Scratch renders: 
+  /Volumes/LaCie/JesseOS-offload/scratch, not /tmp.
+- 2026-11-12 Jesse: "more imagine, don't stop doing those" -> imagine2 re-accepted on the Ideas page (KV iv:imagine2). imagine2 =
+  18:30 daily + max 3 trials/day (hard cap, never a gap-filler) ~= 4/day; 124 albums x 2 intros last ~2 months; no album within +-3 days.
+- 2026-11-12 Jesse: "When I decline a reel it's usually for the photos being bad not the style of reel". Declines now ban MEDIA, not
+  style: copies2 builds record used_photos / used_shots; daily.record_declined_media (before the replacement deletes the render) adds
+  them to local-data/declined_media.json; plan.photo_banned (path or '<album>/<file>' key) filters copies.album_photos and
+  _imagine2_albums; plan.shot_flagged also checks declined shots. Past declines couldn't be backfilled (renders were deleted; photopost
+  picks have since changed) except Highlight-film-100725.mov|139.
+- 2026-11-12 new Imagine intro attempt: Jesse's 2 s tree selfie (Drive Reels/VID20261112163014.mp4 -> LaCie JC Reels/imagine-intros,
+  assets/imagine/jesse_tree.*) - Jesse: "that's rubbish, I'll do it again". OUT of rotation (plan intros = jesse/girl). engine supports
+  intros WITHOUT a baked caption: *_price.json {full_text, y, size, shadow, text_until} draws the whole 3-line caption with a dark glow.
+  For a new clip: convert to 1080x1920 30fps (assets/imagine/<name>.mp4 + .wav peak -20 dBFS), add IMAGINE_INTROS entry + json, add the
+  name to the intro list in plan._trial_build (m % len) and the -suffix to the key/norm regexes.
+- 2026-11-12 Jesse re-shot the Imagine intro in the park: Drive Reels/VID20261112164609 (face-palm, 5.1 s) + 164536 (walking selfie,
+  6.0 s); originals on LaCie JC Reels/imagine-intros, intros assets/imagine/jesse_park_{palm,walk}.{mp4,wav,_price.json} (caption drawn
+  on his shirt, y 0.66, glow). Rotation now jesse / girl / palm / walk (m % 4; ids -her/-palm/-walk). Tree clip deleted (rejected).
+  Both clips checked: only Jesse in frame, background cars unreadable.
+- 2026-11-12 Jesse: "Why didn't you put them on the reels app" -> reels for him to look at go on the app, unapproved, in real slots.
+  swap_in.py now has --no-approve (leaves it for his tap; sets spec pinned=True) and --keep-format (keeps e.g. imagine2 instead of
+  'rotate'). daily.render_day keeps any pinned slot that verifies (force/declines still replace it). Placed: 2026-11-21.5
+  imagine2-stephandbrad-palm (new face-palm intro) and 2026-11-22.4 imagine2-emmaandhayden-walk (walking intro; replaced the approved
+  old-style imagine-[redacted], moved to out/.replaced). Round: local-data/creative-previews/imagine-intros-2026-11-12.
+- 2026-11-12 IDEAS ROUND 3 (Jesse: "more ideas researched and more experiment reels"): research/ideas-study-2026-11-12.md
+  (research/ig/ideas3). ideas3.py builds readcap-{nophotog,tips,glad} (24M/18.7M 'list in the caption' format: one held
+  film shot + white-box headline + "Read the caption"), idea-numbered (couple-only shots, lines about the couple), idea-timeline
+  (Perth summer, sunset ~7:20pm), idea-details ('\bdetail' alt text only - broader regexes pulled couple shots). On the Ideas
+  page as NEW 11-12. Wired: approve -> plan.IDEAS3 -> daily fn "I3" (one per style per 3 days). Backups local-data/*.bak-2026-11-12b.
+- 2026-11-13 INSTA360 BTS (Jesse's X-series card): /Volumes/LaCie/JC Reels/insta360-2026-11-12/{insv,lrv,transcripts,reframed}
+  (card untouched on the MacBook). Weddings 10-03 = Kirsty & Steve (Pixieset status 2 HELD -> not used without Jesse's OK),
+  11-07 (garden + full ceremony vows, clear audio), 11-12 (registry-style ceremony). 09-29 = car/boat. insta.py = fisheye->9:16
+  (lens 0 = POV through his Canon, roll 90 when held portrait; lens 1 = his face, roll -90; roll drifts when he turns the
+  camera -> constant-roll windows only, or Insta360 Studio horizon lock). Transcripts = whisper base on LRV audio (transcribe.py,
+  one model load; per-clip whisper CLI was 8 min/clip under load); re-run small on chosen windows for subtitle text.
+  native.py bubble now takes hook_y. Previews insta360-2026-11-13 (insta-n7-rings POV, insta-n7-seevs) on the Ideas page.
