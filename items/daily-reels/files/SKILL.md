@@ -546,9 +546,20 @@ Cost: Jesse is credit-sensitive. Don't print big files (use grep -n / sed -n ran
   (Perth summer, sunset ~7:20pm), idea-details ('\bdetail' alt text only - broader regexes pulled couple shots). On the Ideas
   page as NEW 11-12. Wired: approve -> plan.IDEAS3 -> daily fn "I3" (one per style per 3 days). Backups local-data/*.bak-2026-11-12b.
 - 2026-11-13 INSTA360 BTS (Jesse's X-series card): /Volumes/LaCie/JC Reels/insta360-2026-11-12/{insv,lrv,transcripts,reframed}
-  (card untouched on the MacBook). Weddings 10-03 = Kirsty & Steve (Pixieset status 2 HELD -> not used without Jesse's OK),
+  (card untouched on the MacBook). Weddings 10-03 = Kirsty & Steve (status 2 but CLEARED by Jesse 11-13; BTS before gallery release is fine),
   11-07 (garden + full ceremony vows, clear audio), 11-12 (registry-style ceremony). 09-29 = car/boat. insta.py = fisheye->9:16
   (lens 0 = POV through his Canon, roll 90 when held portrait; lens 1 = his face, roll -90; roll drifts when he turns the
   camera -> constant-roll windows only, or Insta360 Studio horizon lock). Transcripts = whisper base on LRV audio (transcribe.py,
   one model load; per-clip whisper CLI was 8 min/clip under load); re-run small on chosen windows for subtitle text.
   native.py bubble now takes hook_y. Previews insta360-2026-11-13 (insta-n7-rings POV, insta-n7-seevs) on the Ideas page.
+- 2026-11-13 CAVERSHAM HOUSE POST (Jesse: "find these photos and make a post ... went well on my other page when I tagged Caversham
+  house"): screenshots matched by grey 48x32 NCC over every Aug-Dec 2025 Pixieset gallery (scratch/cav/match.py, ~0.99 = exact)
+  -> Luke & Monique 0646 0614 0633 0648 0575 0569. Extra slot out/2026-11-14.17 (11:00, pinned, unapproved), 3:2 1080x720 frames
+  (group lineups would be cut at 4:5), spec collaborators ["cavershamhouse"] (handle from cavershamhouse.com.au). Worker carousel path
+  now sends collaborators (falls back untagged if refused); publish.py passes photopost collaborators + shows them on the card.
+  insta.py grade 'rich' + exp (stops) = Jesse's "colour grade it really nice" for 360 clips.
+- 2026-11-13 Jesse approved the 360 POV style (insta-seevs declined). insta_auto.py: candidates.json (transcript directing
+  windows) -> auto roll per window (YuNet face score over rolls 0/90/-90/180) -> strip sheet for by-eye check. Usable: K&S white
+  room, Nov 12 window room. Nov 12 afternoon (151352/154308) lens 0 stares at the white telephoto -> unusable from lens 0.
+  5 POV reels (insta_reels.POV: n12-window, k3-close, n12-kiss, k-light, n7-rings) appended to assets/native/clips.json 'clips'
+  -> scheduled by the 11:30 native slot, own sound. Backup local-data/clips.json.bak-2026-11-13.
