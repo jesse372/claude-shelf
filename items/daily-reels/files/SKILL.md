@@ -563,3 +563,20 @@ Cost: Jesse is credit-sensitive. Don't print big files (use grep -n / sed -n ran
   room, Nov 12 window room. Nov 12 afternoon (151352/154308) lens 0 stares at the white telephoto -> unusable from lens 0.
   5 POV reels (insta_reels.POV: n12-window, k3-close, n12-kiss, k-light, n7-rings) appended to assets/native/clips.json 'clips'
   -> scheduled by the 11:30 native slot, own sound. Backup local-data/clips.json.bak-2026-11-13.
+- 2026-11-14 AUTO-LEVEL from the camera's IMU (insta_level.py): telemetry-parser (pip, in .venv) reads the X6 accelerometer;
+  roll = 180 - atan2(gz, gy) (calibrated on 9 hand-set rolls), median-smoothed, <=60 points -> ffmpeg rotate expression on a
+  1.5x canvas, sign -1. Face-based levelling failed (couples too small). insta_scan.py = levelled 540x960 pass -> face runs.
+  Card result: Nov 7 garden posing still has the couple too far away; Nov 12 family groups skipped (a young-looking guest; one
+  frame shows the certificate); Jesse DECLINED insta-k-light (K&S white room). New: insta-n7-vows (groom's vows, real audio,
+  hook 'POV: you're photographing his vows', 1.7 s hold on the bride where the camera dropped) -> 2026-11-22.2 unapproved.
+- 2026-11-14 QUALITY + STABILISATION (Jesse: "why are the 360 videos low quality and shaky ... I get way better quality"):
+  stab360.py = own FlowState: gyro-integrated orientation (complementary filter k=0.0005 - 0.02 doubled the shake), axis cal
+  in insta360-2026-11-12/stab_cal.json (fwd -x, down +y, right +z; chosen on a level frame + a 31 deg pitched frame), target =
+  smoothed (4 s) or locked heading/pitch with a level horizon, ONE Lanczos remap from the 3840 fisheye, light hqdn3d, no unsharp,
+  crf 15. Shake (mean frame shift) raw 2.8 -> smooth 1.65 -> lock 1.25. lock=True also keeps the couple in frame when the camera
+  drops (vows). native.py final encode now crf 17 / slow, maxrate sized to <21 MiB (was crf 22 / 5M). Insta360 Studio GUI route
+  not needed (old helper .js scripts on the MacBook /tmp are gone). Re-rendered in place (same ids, approvals kept): 16.2, 18.2, 22.2.
+- 2026-11-14 (later) stab360.face_track + render(track=...) = the view follows the couple (YuNet on a levelled 100 deg view,
+  smoothed 1.5 s); BORDER_REPLICATE hides lens-edge wedges. New: insta-n7-pose (2.6-14.3), insta-n7-kiss (24.8-36.3), both in
+  native clips.json. Placed unapproved: 17.2 n7-pose, 19.2 n7-kiss, 21.2 n7-rings (replaced oneword/thumb trials), 22.2 vows.
+  Jesse expects NEW reels on the app when he asks for more - re-rendering approved slots in place doesn't count.
