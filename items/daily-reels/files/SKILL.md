@@ -580,3 +580,13 @@ Cost: Jesse is credit-sensitive. Don't print big files (use grep -n / sed -n ran
   smoothed 1.5 s); BORDER_REPLICATE hides lens-edge wedges. New: insta-n7-pose (2.6-14.3), insta-n7-kiss (24.8-36.3), both in
   native clips.json. Placed unapproved: 17.2 n7-pose, 19.2 n7-kiss, 21.2 n7-rings (replaced oneword/thumb trials), 22.2 vows.
   Jesse expects NEW reels on the app when he asks for more - re-rendering approved slots in place doesn't count.
+- 2026-11-15 360 REELS REDONE (Jesse: "Do you even look at what you do? All of them are shaky and half aren't even pointing at
+  people"). LESSONS: (1) NEVER judge video from a 10-still strip - run insta_qc.py (qc + steadiness) on every reframed clip;
+  gate: jitter < 0.8, steadiness median > 0.7, framed > 0.9. (2) Tight crops (hfov 36-50) were the root cause: shake x2.5, ~700 px
+  stretched to 1080, any aim error cuts people off -> use WIDE POV (hfov 70-88, Canon in frame; 52 min for ceremonies with guests).
+  (3) stab360 v2: accel pull k=0.00003 + 1 s accel low-pass (k .0005 ADDED 2.3 px/frame), exact source-frame times (every 2nd 50p
+  frame = 25 fps; native.py takes c['fps']), F x1.05, T_OFF 3 ms, track = median-prefiltered, tripod if faces move < 6 deg.
+  (4) face_track averages ALL faces: at ceremonies it aims at the guests -> lock=True there. (5) Walking/stepping = real sway no
+  stabiliser removes (stab2.py subject-anchored pass only halves it). PASSED + replaced in place: k3-close (16.2), n12-kiss (18.2),
+  n7-vows (22.2). FAILED QC, removed from app + clips.json (insta_failed_qc): n7-rings/pose/kiss, n14-roughup, n14-bridesmaids
+  (he walks toward the group). Wide renders: reframed/wide/. Remaining n14 windows (sunnies, shorties, walk, bearhug, yacht) untested.

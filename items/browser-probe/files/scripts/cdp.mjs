@@ -16,6 +16,12 @@ export async function connect({ port = 9222, device = { width: 390, height: 844,
        this, reusing one Chrome across probes reports the PREVIOUS page's
        failures against the current one — a green app looks broken. */
     if (m.method === "Runtime.executionContextsCleared") errors.length = 0;
+    /* A native alert/confirm/beforeunload dialog blocks every later command: the probe just hangs.
+       Accept it and record it, so the caller sees what the page asked. */
+    if (m.method === "Page.javascriptDialogOpening") {
+      errors.push("DIALOG(" + m.params.type + "): " + (m.params.message || "").slice(0, 200));
+      send("Page.handleJavaScriptDialog", { accept: true });
+    }
     if (m.method === "Runtime.exceptionThrown")
       errors.push("EXC: " + (m.params.exceptionDetails.exception?.description || "").slice(0, 200));
     if (m.method === "Log.entryAdded" && m.params.entry.level === "error")

@@ -301,7 +301,7 @@ def cmd_draft(a):
     if a.bcc:
         msg["Bcc"] = ", ".join(a.bcc)
     msg["Subject"] = a.subject
-    msg.set_content(_read_body(a.body))
+    msg.set_content(body)
 
     create = {"message": {"raw": base64.urlsafe_b64encode(msg.as_bytes()).decode()}}
 
@@ -390,7 +390,21 @@ def cmd_notify_self(a):
     This is the only send path without --confirm, and it is safe by construction: there
     is no recipient argument. To/From are both the account's own address, looked up from
     the API, so a prompt-injected agent can at worst email Jesse about Jesse.
+
+    Optional router: if a notifier script exists (NOTIFY_ROUTER, default ~/JesseOS/workspace/notify/notify.py)
+    the alert goes there instead (urgent -> chat app now, the rest -> one daily summary or nowhere). The router
+    calls back here with NOTIFY_DIRECT=1 when it really wants an email (e.g. the chat app is not linked).
     """
+    body = _read_body(a.body)
+    router = os.environ.get("NOTIFY_ROUTER") or os.path.expanduser("~/JesseOS/workspace/notify/notify.py")
+    if os.environ.get("NOTIFY_DIRECT") != "1" and os.path.exists(router):
+        import subprocess
+        r = subprocess.run([sys.executable if sys.executable else "python3", router, "send", "--subject", a.subject,
+                            "--body", "-", "--source", os.environ.get("NOTIFY_SOURCE", "notify-self")],
+                           input=body, text=True, timeout=180)
+        if r.returncode == 0:
+            print("routed to notifier"); return
+        print("notifier failed, emailing instead", file=sys.stderr)
     s = svc()
     me = s.users().getProfile(userId="me").execute().get("emailAddress")
     if not me:
@@ -399,7 +413,7 @@ def cmd_notify_self(a):
     msg["To"] = me
     msg["From"] = me
     msg["Subject"] = a.subject
-    msg.set_content(_read_body(a.body))
+    msg.set_content(body)
     sent = s.users().messages().send(
         userId="me", body={"raw": base64.urlsafe_b64encode(msg.as_bytes()).decode()}
     ).execute()
