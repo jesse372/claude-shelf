@@ -590,3 +590,13 @@ Cost: Jesse is credit-sensitive. Don't print big files (use grep -n / sed -n ran
   stabiliser removes (stab2.py subject-anchored pass only halves it). PASSED + replaced in place: k3-close (16.2), n12-kiss (18.2),
   n7-vows (22.2). FAILED QC, removed from app + clips.json (insta_failed_qc): n7-rings/pose/kiss, n14-roughup, n14-bridesmaids
   (he walks toward the group). Wide renders: reframed/wide/. Remaining n14 windows (sunnies, shorties, walk, bearhug, yacht) untested.
+- 2026-11-16 THUMB REELS CUT (Jesse: "The thumb reels aren't performing let's cut them and do more of what's working"). Data: thumb 13 posts,
+  119-208 views, 3.6 s watched; imagine2 2,441 (trials 852, 9.3 s), native POV 1,858; everything else at or under the ~207 median.
+  Style copy-thumb-beat = decline on the Ideas page (KV iv:copy-thumb-beat; his tap there can turn it back on). plan.I2_TRIALS_DAY = 10
+  (was 3) so Imagine takes the freed slots; plan._i2_near/_i2_album keep a couple +-3 days apart using out/ (in-process memory alone was
+  not enough at 10 a day); 18:30 _perf_main falls back to a new intro of an already-shown album once all are used. Supply: 115 albums x 4
+  intros, ~10 a day = about 5-6 weeks -> needs new intros / POV clips from Jesse and newly released galleries.
+  cut_style.py <format> --from D --to D [--dry-run] = remove one style from upcoming slots and refill (render first, then decline ->
+  publish -> replaced; new reels wait UNAPPROVED; old ones in out/.replaced/<format>-cut-<date>/reels). ~5 KV writes per slot (1,000/day,
+  resets 08:00 Perth) -> Nov 17-18 done that night, Nov 19-29 queued for 08:10 on 11-17 (scratch/cut_style_b.sh on LaCie, one-off).
+  Never cut a style by "declining" its reels: the watcher bans the PHOTOS (declined_media.json). Backups local-data/*.bak-2026-11-16.
