@@ -301,7 +301,7 @@ def cmd_draft(a):
     if a.bcc:
         msg["Bcc"] = ", ".join(a.bcc)
     msg["Subject"] = a.subject
-    msg.set_content(body)
+    msg.set_content(_read_body(a.body))  # 2026-11-17: the 11-15 notify change broke this (NameError: body)
 
     create = {"message": {"raw": base64.urlsafe_b64encode(msg.as_bytes()).decode()}}
 

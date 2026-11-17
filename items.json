@@ -1,7 +1,7 @@
 {
   "title": "Jesse's Claude Shelf",
   "site": "https://jesse372.github.io/claude-shelf/",
-  "updated": "2026-11-16T19:15:13+00:00",
+  "updated": "2026-11-17T19:15:17+00:00",
   "items": [
     {
       "slug": "daily-reels",
@@ -14,8 +14,8 @@
       "tags": [],
       "link": "",
       "created": "2026-10-22T04:00:01+08:00",
-      "updated": "2026-11-16T19:15:07+00:00",
-      "version": 14,
+      "updated": "2026-11-17T19:15:10+00:00",
+      "version": 15,
       "useful": 4,
       "files": [
         "SKILL.md"
@@ -23,6 +23,30 @@
       "skill_name": "daily-reels",
       "zip": "items/daily-reels/daily-reels.zip",
       "install_prompt": "Please install the Claude Code skill \"Daily Instagram Reels\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/daily-reels/daily-reels.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/daily-reels/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
+    },
+    {
+      "slug": "gmail",
+      "title": "Gmail Assistant",
+      "emoji": "✉️",
+      "type": "skill",
+      "summary": "Search, read, summarise and draft replies in your Gmail from the command line. Claude can write anything, but nothing sends until you explicitly confirm.",
+      "how_to_use": "Ask \"check my inbox\", \"what did X email me?\", \"draft a reply to that thread\". Sending needs --confirm.",
+      "requires": "Your own Google Cloud OAuth client for the Gmail API (SKILL.md walks through it). Replace you@example.com with your address.",
+      "tags": [],
+      "link": "",
+      "created": "2026-08-16T04:00:00+08:00",
+      "updated": "2026-11-17T19:15:10+00:00",
+      "version": 5,
+      "useful": 3,
+      "files": [
+        "SKILL.md",
+        "scripts/gmail.py",
+        "scripts/gmail.sh",
+        "scripts/phone_auth_relay.py"
+      ],
+      "skill_name": "gmail",
+      "zip": "items/gmail/gmail.zip",
+      "install_prompt": "Please install the Claude Code skill \"Gmail Assistant\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/gmail/gmail.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/gmail/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "browser-probe",
@@ -47,30 +71,6 @@
       "skill_name": "browser-probe",
       "zip": "items/browser-probe/browser-probe.zip",
       "install_prompt": "Please install the Claude Code skill \"Browser Tester\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/browser-probe/browser-probe.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/browser-probe/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
-    },
-    {
-      "slug": "gmail",
-      "title": "Gmail Assistant",
-      "emoji": "✉️",
-      "type": "skill",
-      "summary": "Search, read, summarise and draft replies in your Gmail from the command line. Claude can write anything, but nothing sends until you explicitly confirm.",
-      "how_to_use": "Ask \"check my inbox\", \"what did X email me?\", \"draft a reply to that thread\". Sending needs --confirm.",
-      "requires": "Your own Google Cloud OAuth client for the Gmail API (SKILL.md walks through it). Replace you@example.com with your address.",
-      "tags": [],
-      "link": "",
-      "created": "2026-08-16T04:00:00+08:00",
-      "updated": "2026-11-15T19:15:07+00:00",
-      "version": 4,
-      "useful": 3,
-      "files": [
-        "SKILL.md",
-        "scripts/gmail.py",
-        "scripts/gmail.sh",
-        "scripts/phone_auth_relay.py"
-      ],
-      "skill_name": "gmail",
-      "zip": "items/gmail/gmail.zip",
-      "install_prompt": "Please install the Claude Code skill \"Gmail Assistant\" from my friend's Claude Shelf.\n1. Download https://jesse372.github.io/claude-shelf/items/gmail/gmail.zip\n2. Unzip it into ~/.claude/skills/ so it ends up at ~/.claude/skills/gmail/SKILL.md\n3. Read the files first and tell me if anything looks risky, needs an API key, or costs money. Ask me before installing anything system-wide.\n4. Set up anything SKILL.md says it needs, then tell me in plain words how to use it."
     },
     {
       "slug": "search-console-cli",

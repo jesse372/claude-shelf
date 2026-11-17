@@ -9,7 +9,7 @@ Code: `~/JesseOS/workspace/reels/` · LaunchAgent `com.jesseos.reels` (05:30 dai
 Output: `iCloud Drive/Reels/<date> <Dow> - <id>/` → `reel.mp4`, `caption.txt`, `cover.jpg` (7 days ahead)
 Approve page: `https://jc-reels.madlad-taps.workers.dev/<.share-token>/` — Cloudflare WORKER `jc-reels` (worker/), NOT the jessechance site. Static assets = site/ (built by publish.py) + `/api/state`, `POST /api/approve`. Approve -> IG container (video_url = the Worker's own mp4 URL); a 1-min cron is the single writer that publishes when the container is FINISHED. KV `jc-reels-state` holds per-day status. No IG secrets -> dry run. Old `jc-reels.pages.dev/<token>/` 301s here (root is blank - never redirect `/*`, it leaks the token).
 Jesse's flow (2026-10-22): ONE approval per WEEK. Page groups Mon-Sun; "Approve this week" -> each reel `scheduled`; Worker cron posts it on its day at POST_TIME (19:00 Perth, wrangler.toml) -> container -> publish. Per-reel "Don't post" toggle (skipped) and editable caption (KV `cap:<day>` override, max 2200 chars / 30 hashtags). share_to_feed=false (Reels tab only - Jesse doesn't want them on the grid). daily.py renders through the end of NEXT week and NEVER re-renders a day that is approved/skipped/posted (reads Worker /api/state) - the Worker also refuses to post if the reel id changed since approval.
-Venue tags: venues.json = handles the venue links from ITS OWN website only (6 of 9; Olive Estate, Anderson Point, Quarry Farm have none - ask Jesse, never guess). Showcase reels get "📍 Venue @handle" in the caption + user_tags; if IG rejects the tag the Worker retries untagged.
+Venue tags (2026-11-17, Jesse: "you haven't been tagging venues"): EVERY post and reel of one wedding is tagged at publish time by `venue_tags.py` (publish.py -> manifest user_tags/collaborators/venue_line; Worker tags photo posts on the first frame, reels and trials, and retries untagged if Instagram refuses). Venue comes from catalog.json or the site repo's tools/collection_venues.json (areas/private homes/unknown never tag); handle from venues.json = linked from the venue's OWN website only, never guessed (`_no_tag` lists venues with no handle or on hold, e.g. Sandalford). Caption gets "📍 Venue @handle" above the hashtags; collab invite on photo posts, normal reels AND trials (Jesse 11-17: "we want to add them as a collaborator"). `venue_tags.py audit` shows what upcoming posts get. New venue = add it to venues.json. LIVE posts cannot be edited by the API (only comment_enabled): old posts need the Instagram app/website.
 
 | file | job |
 |---|---|
@@ -600,3 +600,29 @@ Cost: Jesse is credit-sensitive. Don't print big files (use grep -n / sed -n ran
   publish -> replaced; new reels wait UNAPPROVED; old ones in out/.replaced/<format>-cut-<date>/reels). ~5 KV writes per slot (1,000/day,
   resets 08:00 Perth) -> Nov 17-18 done that night, Nov 19-29 queued for 08:10 on 11-17 (scratch/cut_style_b.sh on LaCie, one-off).
   Never cut a style by "declining" its reels: the watcher bans the PHOTOS (declined_media.json). Backups local-data/*.bak-2026-11-16.
+- 2026-11-17 (a) cut_style follow-up: the 05:30 run re-planned the unapproved Imagine replacements (first acceptable album won over the
+  slot's own) and stale trial_used keys filled the 10-a-day cap -> empty slots. Fixed: imagine2 picks are sticky (trial + 18:30),
+  render_day drops a slot's old keys when it records a new one. Never re-render a slot while Jesse may be approving on the app: he
+  approved 6 idea reels mid-render and publish refused ("approved reel missing") -> decline -> publish -> replaced under the lock.
+  (b) WE/US RULE (Jesse: "we are a company with many photographers. It needs us and we"): no I/me/my on screen or in captions.
+  captions.FIRST_PERSON rejects Codex captions; builders fixed (little-things "to us", readcap "we give/tell", see-vs "What we see");
+  we_us_fix.py corrected 12 captions + rebuilt 13 approved reels in place (same id). copy-little-things-3 (2026-11-18.3) could not be
+  rebuilt (shot unknown) -> skipped. (c) NEW STYLE idea-pov-booked / idea-pov-hardearn = ideas4.py, study research/ideas-study-2026-11-17.md
+  (TikTok logged-out scan; the MacBook Instagram copy came up logged out). On the Ideas page, NOT approved yet -> no trials until he taps.
+- 2026-11-17 (later) IDEAS PAGE: styles already approved/declined when the page opens move into a closed "Already decided" drawer
+  (experiments_page.py sort()); only undecided styles show (Jesse: "hard to work out what's new"). plan reads local-data/ideas.json,
+  which only the DAILY RUN syncs: after Jesse approves a style, sync it (GET /api/ideas) before planning or nothing is made.
+- 2026-11-17 CAPTIONS v3 (Jesse: "all of our posts have the same captions again. It looks stupid, make the captions like what I was
+  doing before you took over"). Cause: 121 of 195 scheduled captions opened "Imagine! 🤷🏻‍♂️😂💍" (kept first line x 10 Imagine reels a day),
+  19 "Your wedding is one extraordinary day", same CTA + send line on everything. His own 172 pre-automation captions: median 82
+  characters, a third are a quip or just names + emoji, no two alike, a CTA only now and then. captions.py now: NO kept first line,
+  per-reel shape (quip / names / line / few / long via captions.shape), CTA on 1 in 5, send-prompt line on 1 in 3, ABOUT = what each
+  style is, facts.photos = written alt text, and check() rejects a caption that opens like any other scheduled one (opener() = first
+  28 letters). KEEP = formats whose caption is the content (read-the-caption lists, numbered, timeline, review, button).
+  `captions.py --all` rewrites every upcoming reel incl. approved ones. Codex hit its ChatGPT cap after 132 (resets ~19:48); the other
+  37 were written by hand. Never bring back a fixed caption line for a style that posts more than once a week.
+- 2026-11-17 (evening) CAPTIONS = LOVE STORY (Jesse on the v3 quips: 'The "honestly" one is creepy. Copy the love story style posts').
+  "Honestly, the audacity to look this good 😏" = a joke about how a couple looks: NEVER. captions.STYLE is now his romantic style
+  ("In a sun-drenched garden, two souls entwined, we captured a love story for the ages 🌿 ..."), shapes love / story / title / names /
+  long, "us" only for jokes about our own job (FUN). captions.CREEPY rejects remarks about looks. Marker is now .caption_v3: the daily
+  run rewrites every upcoming reel without it (so a Codex cap just delays it a day). Imagine reels get love-story captions too.
