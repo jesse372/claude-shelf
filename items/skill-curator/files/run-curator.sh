@@ -1,7 +1,7 @@
 #!/bin/zsh
 # Runner for the weekly skill-curator (launchd has a minimal env). Resolves claude + python3,
 # then runs curate.py. Logs to the machine-local state dir.
-TOOL="~/.claude/skills/skill-curator"
+TOOL="$HOME/.claude/skills/skill-curator"
 STATE_DIR="$HOME/.local/state/jesseos-skills"
 mkdir -p "$STATE_DIR"
 LOG="$STATE_DIR/runner.log"

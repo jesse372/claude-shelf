@@ -47,7 +47,7 @@ qc_init() {
   QC_SOFT_ESCALATE=3      # a --soft stage stuck "behind" for this many consecutive runs => escalate
   QC_CLAUDE_BIN="${QC_CLAUDE_BIN:-$(command -v claude 2>/dev/null || echo claude)}"
   # where the generic notifier appends a durable record of every Tier-3 alert
-  QC_NOTIFY_LOG="${QC_NOTIFY_LOG:-~/.claude/logs/pipeline-qc.log}"
+  QC_NOTIFY_LOG="${QC_NOTIFY_LOG:-$HOME/.claude/logs/pipeline-qc.log}"
   while [ $# -gt 0 ]; do case "$1" in
     --name)             QC_LABEL="$2"; shift 2;;
     --lockdir)          QC_LOCKDIR="$2"; shift 2;;

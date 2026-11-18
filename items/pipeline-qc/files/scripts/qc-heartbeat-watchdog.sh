@@ -12,7 +12,7 @@
 set -uo pipefail
 export PATH="/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 HB_DIR="$HOME/.qc-heartbeats"
-NOTIFY_LOG="${QC_NOTIFY_LOG:-~/.claude/logs/pipeline-qc.log}"
+NOTIFY_LOG="${QC_NOTIFY_LOG:-$HOME/.claude/logs/pipeline-qc.log}"
 now=$(date +%s)
 
 # =============================================================================

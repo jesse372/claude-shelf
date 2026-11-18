@@ -178,7 +178,7 @@ This protocol does not assume any particular alerting stack. For a self-containe
 
 ```bash
 # Generic notifier — desktop notification + append to a log file.
-NOTE_LOG="~/.claude/logs/mac-headless-setup.log"
+NOTE_LOG="$HOME/.claude/logs/mac-headless-setup.log"
 mkdir -p "$(dirname "$NOTE_LOG")"
 notify() {
   local msg="$1"

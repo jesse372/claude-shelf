@@ -2,9 +2,9 @@
 # Runner for JesseOS memory auto-capture. Resolves claude + node (launchd has a
 # minimal env), then runs summarize.js. Logs to the machine-local state dir and
 # to ~/.claude/logs/memory-capture.log; pops a desktop notification on failure.
-TOOL="~/.claude/skills/memory-capture"
+TOOL="$HOME/.claude/skills/memory-capture"
 STATE_DIR="$HOME/.local/state/jesseos-memory"
-WORKLOG_DIR="~/.claude/logs"
+WORKLOG_DIR="$HOME/.claude/logs"
 mkdir -p "$STATE_DIR" "$WORKLOG_DIR"
 LOG="$STATE_DIR/runner.log"
 WORKLOG="$WORKLOG_DIR/memory-capture.log"

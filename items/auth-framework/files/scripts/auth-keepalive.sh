@@ -28,7 +28,7 @@ set -uo pipefail
 
 AF_DIR="${AF_DIR:-$HOME/.authframework}"
 STATE="$AF_DIR/keepalive-state"; mkdir -p "$STATE"
-LOG_DIR="${LOG_DIR:-~/.claude/logs}"; mkdir -p "$LOG_DIR" 2>/dev/null
+LOG_DIR="${LOG_DIR:-$HOME/.claude/logs}"; mkdir -p "$LOG_DIR" 2>/dev/null
 LOG="$LOG_DIR/auth-framework.log"
 DRY=0; [ "${1:-}" = "--dry-run" ] && DRY=1
 THRESH_H=48                       # default proactive window (hours)
@@ -190,7 +190,7 @@ t_gmail(){
   #                                        on disk; only an API call proves it)
   # The real-world killer here is a Google Cloud project left in "Testing" mode: those refresh
   # tokens are revoked by Google after 7 days. The probe catches that as a refresh failure.
-  local GM="~/.claude/skills/gmail/scripts/gmail.sh"
+  local GM="$HOME/.claude/skills/gmail/scripts/gmail.sh"
   [ -x "$GM" ] || return 0                      # skill not installed; stay silent
 
   local js hl has_ref present
@@ -250,7 +250,7 @@ t_square(){
   # expiry timer, so there are no hours-left to report — the only failure modes are "never
   # installed", "rotated in the developer dashboard", and "revoked". All three look identical
   # on disk and only an API call tells them apart, so probe for real.
-  local SQ="~/.claude/skills/square/scripts/square.sh"
+  local SQ="$HOME/.claude/skills/square/scripts/square.sh"
   [ -x "$SQ" ] || return 0                      # skill not installed; stay silent
 
   local js present valid
@@ -274,7 +274,7 @@ t_square(){
 }
 
 t_youtube(){
-  local yt="~/.claude/skills/youtube-upload/scripts/youtube.sh"
+  local yt="$HOME/.claude/skills/youtube-upload/scripts/youtube.sh"
   [ -x "$yt" ] || return 0
   # Do not nag about a setup that has never been connected.
   if [ ! -f "${YOUTUBE_HOME:-$HOME/.youtube-upload}/channel.json" ] && ! compgen -G "${YOUTUBE_HOME:-$HOME/.youtube-upload}/profiles/*/channel.json" >/dev/null; then
@@ -311,7 +311,7 @@ t_meta_ads(){
   # Meta Marketing API token (skills/meta-ads). Jesse's is a 60-day USER token that cannot
   # self-refresh headlessly, so warn 10 days out (not 48h): re-minting needs him in a browser.
   # Probe is `ads.sh token-status` (Meta's /debug_token), so a revoked token shows up too.
-  local ADS="~/.claude/skills/meta-ads/scripts/ads.sh"
+  local ADS="$HOME/.claude/skills/meta-ads/scripts/ads.sh"
   [ -x "$ADS" ] || return 0
   local js present valid hl
   js="$("$ADS" token-status 2>/dev/null)"
@@ -335,7 +335,7 @@ t_meta_ads(){
   # Email too, at most every 3 days (af_alert's cap file was just written if it fired).
   local capf="$STATE/email.meta_ads.epoch" now; now=$(date +%s)
   if [ $(( now - $(cat "$capf" 2>/dev/null || echo 0) )) -ge 259200 ]; then
-    printf '%s\n' "$body" | /bin/bash "~/.claude/skills/gmail/scripts/gmail.sh" notify-self \
+    printf '%s\n' "$body" | /bin/bash "$HOME/.claude/skills/gmail/scripts/gmail.sh" notify-self \
       --subject "$subj" --body - >>"$LOG" 2>&1 && echo "$now" >"$capf"
   fi
 }

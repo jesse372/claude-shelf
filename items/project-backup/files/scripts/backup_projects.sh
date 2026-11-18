@@ -11,8 +11,8 @@ ts(){ date '+%F %T'; }
 notify(){
   local msg="$1"
   osascript -e "display notification \"${msg//\"/\'}\" with title \"project-backup\"" 2>/dev/null || true
-  mkdir -p "~/.claude/logs" 2>/dev/null || true
-  echo "[$(ts)] $msg" >> "~/.claude/logs/project-backup.log" 2>/dev/null || true
+  mkdir -p "$HOME/.claude/logs" 2>/dev/null || true
+  echo "[$(ts)] $msg" >> "$HOME/.claude/logs/project-backup.log" 2>/dev/null || true
   # Placeholder for a custom alert channel (e.g. your own webhook/chat bot):
   # curl -s -X POST "$YOUR_WEBHOOK_URL" -d "$msg" >/dev/null 2>&1 || true
 }

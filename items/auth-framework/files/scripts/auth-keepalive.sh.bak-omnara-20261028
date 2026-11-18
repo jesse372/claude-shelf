@@ -28,7 +28,7 @@ set -uo pipefail
 
 AF_DIR="${AF_DIR:-$HOME/.authframework}"
 STATE="$AF_DIR/keepalive-state"; mkdir -p "$STATE"
-LOG_DIR="${LOG_DIR:-~/.claude/logs}"; mkdir -p "$LOG_DIR" 2>/dev/null
+LOG_DIR="${LOG_DIR:-$HOME/.claude/logs}"; mkdir -p "$LOG_DIR" 2>/dev/null
 LOG="$LOG_DIR/auth-framework.log"
 DRY=0; [ "${1:-}" = "--dry-run" ] && DRY=1
 THRESH_H=48                       # default proactive window (hours)
@@ -218,7 +218,7 @@ t_gmail(){
   #                                        on disk; only an API call proves it)
   # The real-world killer here is a Google Cloud project left in "Testing" mode: those refresh
   # tokens are revoked by Google after 7 days. The probe catches that as a refresh failure.
-  local GM="~/.claude/skills/gmail/scripts/gmail.sh"
+  local GM="$HOME/.claude/skills/gmail/scripts/gmail.sh"
   [ -x "$GM" ] || return 0                      # skill not installed; stay silent
 
   local js hl has_ref present
@@ -258,7 +258,7 @@ t_square(){
   # expiry timer, so there are no hours-left to report — the only failure modes are "never
   # installed", "rotated in the developer dashboard", and "revoked". All three look identical
   # on disk and only an API call tells them apart, so probe for real.
-  local SQ="~/.claude/skills/square/scripts/square.sh"
+  local SQ="$HOME/.claude/skills/square/scripts/square.sh"
   [ -x "$SQ" ] || return 0                      # skill not installed; stay silent
 
   local js present valid

@@ -10,7 +10,7 @@ if [ -z "$NAME" ]; then
   echo "usage: new-loop.sh <loop-name> \"<one-line goal>\"" >&2; exit 2
 fi
 
-SKILL_DIR="~/.claude/skills/loop-contract"
+SKILL_DIR="$HOME/.claude/skills/loop-contract"
 LOOPS_DIR="$HOME/JesseOS/workspace/loops"
 DEST="$LOOPS_DIR/$NAME"
 TODAY="$(date +%Y-%m-%d)"
@@ -35,7 +35,7 @@ set +e
 LOOP_DIR="$(cd "$(dirname "$0")" && pwd)"
 NAME="$(basename "$LOOP_DIR")"
 STATUS="$LOOP_DIR/state/STATUS.md"
-LOG="~/.claude/logs/loop-contract.log"
+LOG="$HOME/.claude/logs/loop-contract.log"
 MAX_ITERS=10
 
 # Generic notifier: macOS notification + append to the loop-contract log.

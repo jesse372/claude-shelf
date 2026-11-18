@@ -10,7 +10,7 @@ export PATH="/usr/local/bin:/opt/homebrew/bin:$HOME/.local/bin:/usr/bin:/bin:/us
 
 source "$HOME/.claude/skills/pipeline-qc/scripts/qc-lib.sh"
 
-SKILL="~/.claude/skills/media-inbox"
+SKILL="$HOME/.claude/skills/media-inbox"
 PROC="$SKILL/scripts/process-inbox.sh"
 INBOX="$HOME/Library/Mobile Documents/com~apple~CloudDocs/AI-Inbox"
 OUT="$HOME/JesseOS/vault/60-inbox/media"

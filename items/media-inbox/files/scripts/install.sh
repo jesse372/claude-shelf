@@ -7,7 +7,7 @@ set -uo pipefail
 HOME="${HOME:-~}"
 export PATH="/usr/local/bin:/opt/homebrew/bin:$HOME/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
-SKILL="~/.claude/skills/media-inbox"
+SKILL="$HOME/.claude/skills/media-inbox"
 INBOX="$HOME/Library/Mobile Documents/com~apple~CloudDocs/AI-Inbox"
 ICLOUD_TX="$HOME/Library/Mobile Documents/com~apple~CloudDocs/AI-Transcripts"
 OUT="$HOME/JesseOS/vault/60-inbox/media"
@@ -16,7 +16,7 @@ UID_N="$(id -u)"
 
 echo "==> creating folders"
 mkdir -p "$INBOX" "$ICLOUD_TX" "$OUT"/{transcripts,originals,work,state,failed} \
-         "~/.claude/logs" "$LA"
+         "$HOME/.claude/logs" "$LA"
 # Migrate away from the old in-inbox location (it caused WatchPaths retriggers).
 if [ -d "$INBOX/_transcripts" ]; then
   mv -f "$INBOX/_transcripts"/* "$ICLOUD_TX"/ 2>/dev/null
@@ -74,8 +74,8 @@ cat >"$LA/com.jesse.mediainbox.plist" <<EOF
   <key>StartInterval</key><integer>120</integer>
   <key>RunAtLoad</key><true/>
   <key>Nice</key><integer>5</integer>
-  <key>StandardOutPath</key><string>~/.claude/logs/mediainbox.log</string>
-  <key>StandardErrorPath</key><string>~/.claude/logs/mediainbox.log</string>
+  <key>StandardOutPath</key><string>$HOME/.claude/logs/mediainbox.log</string>
+  <key>StandardErrorPath</key><string>$HOME/.claude/logs/mediainbox.log</string>
 </dict></plist>
 EOF
 else
