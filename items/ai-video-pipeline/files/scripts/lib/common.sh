@@ -6,7 +6,7 @@
 export HOME="${HOME:-~}"
 export PATH="/usr/local/bin:/opt/homebrew/bin:$HOME/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
-SKILL_DIR="~/.claude/skills/ai-video-pipeline"
+SKILL_DIR="$HOME/.claude/skills/ai-video-pipeline"
 PROJECTS_DIR="$HOME/JesseOS/workspace/video-projects"
 
 # Credential accessor: env var -> macOS Keychain. Keys never live in this repo.

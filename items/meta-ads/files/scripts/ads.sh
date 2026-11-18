@@ -5,7 +5,7 @@
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-AUTHLIB="~/.claude/skills/auth-framework/scripts/authlib.sh"
+AUTHLIB="$HOME/.claude/skills/auth-framework/scripts/authlib.sh"
 
 # launchd/cron get a bare PATH; make sure python3 is reachable.
 case ":$PATH:" in

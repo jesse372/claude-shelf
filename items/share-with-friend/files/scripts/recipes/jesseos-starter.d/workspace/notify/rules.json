@@ -1,0 +1,21 @@
+{
+ "_doc": "First match on the SUBJECT wins (regex, case-insensitive). urgent = Telegram now; daily = evening summary (only sent if something is in it); quiet = log only. Add a rule whenever the owner says a message is too noisy or too slow.",
+ "default": "daily",
+ "rules": [
+  {
+   "match": "need(s)? you|waiting on you|action needed|approval needed|not replied|unanswered",
+   "level": "urgent",
+   "why": "a person has to do something"
+  },
+  {
+   "match": "FAILED|DISK FULL|BLOCKED|is dead|token expires|login expires|held",
+   "level": "urgent",
+   "why": "something broke, will break soon, or is waiting for an OK"
+  },
+  {
+   "match": "back to normal|restarting now",
+   "level": "quiet",
+   "why": "nothing to do or know"
+  }
+ ]
+}

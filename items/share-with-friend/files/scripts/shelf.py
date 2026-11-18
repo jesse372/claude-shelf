@@ -112,8 +112,11 @@ def read_text(p):
         return None
 
 
-def rewrite(text):
+def rewrite(text, keep_layout=False):
+    """keep_layout: the source IS a ~/JesseOS tree (the starter kit), so its own paths must stay as they are."""
     for pat, rep in CFG.get("path_rewrites", []):
+        if keep_layout and "JesseOS/workspace" in pat:
+            continue
         text = re.sub(pat, rep, text)
     return text
 
@@ -227,6 +230,7 @@ def stage(src, dest, patterns=(), do_redact=False):
     """Copy src into dest with rewrites applied; return report dict. dest must not exist."""
     terms = private_terms()
     rep = {"files": [], "skipped": [], "blockers": [], "warnings": [], "total": 0, "media": []}
+    keep_layout = Path(src).is_dir() and (Path(src) / ".shelf-keep-layout").exists()
     for p, rel, why in iter_source(src, patterns):
         if why:
             rep["skipped"].append(f"{rel}  ({why})")
@@ -237,7 +241,7 @@ def stage(src, dest, patterns=(), do_redact=False):
         if text is None:
             shutil.copy2(p, out)
         else:
-            text = rewrite(text)
+            text = rewrite(text, keep_layout)
             if do_redact:
                 text = redact(text, terms)
             b, w = scan_text(rel, text, terms)
