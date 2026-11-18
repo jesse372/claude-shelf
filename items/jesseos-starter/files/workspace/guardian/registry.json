@@ -1,0 +1,59 @@
+{
+ "_doc": "Every unattended job on this Mac. guardian-qc.sh checks each one every 10 min and self-repairs. Fields: label (launchd), what, kind (interval|calendar|daemon|watch), max_gap_h (alert if launchd 'runs' hasn't moved for this long; omit for daemons/watch jobs), log (scanned for NEW crash lines), script (file Claude may fix in Tier 2), selfheal (false = never let Claude edit it: money, security, other people's code), rerun (false = never kick it on demand), state_json (files that must stay valid JSON; last-good copy restored if corrupted), probe (extra shell check, exit 0 = healthy), allow_exit (exit codes that are fine), owner_note.",
+ "jobs": [
+  {
+   "label": "com.jesse.backup",
+   "what": "04:00 nightly: git push of ~/JesseOS (vault, skills, workspace) to the private backup repo",
+   "kind": "calendar",
+   "max_gap_h": 26,
+   "log": "~/JesseOS/workspace/logs/backup.log",
+   "script": "~/JesseOS/workspace/backup/backup.sh",
+   "selfheal": true
+  },
+  {
+   "label": "com.jesse.appupdate",
+   "what": "every 6h: updates Claude Code CLI / Codex CLI and verifies they still run",
+   "kind": "interval",
+   "max_gap_h": 7,
+   "log": "~/JesseOS/workspace/logs/appupdate.log",
+   "script": "~/JesseOS/workspace/update/update.sh",
+   "selfheal": true
+  },
+  {
+   "label": "com.jesse.authwatchdog",
+   "what": "09:00 daily: security auth watchdog",
+   "kind": "calendar",
+   "max_gap_h": 26,
+   "log": "~/JesseOS/workspace/logs/authwatchdog.log",
+   "selfheal": false
+  },
+  {
+   "label": "com.jesse.skillsync",
+   "what": "mirrors ~/JesseOS/workspace/skills into ~/.claude/skills and ~/.codex/skills on change",
+   "kind": "watch",
+   "log": "~/JesseOS/workspace/logs/skillsync.log",
+   "script": "~/JesseOS/workspace/skills/sync-skills.sh",
+   "selfheal": true
+  },
+  {
+   "label": "com.jesse.claude-remote",
+   "what": "every 5 min: keeps Claude Code Remote Control (phone access) running inside Terminal",
+   "kind": "interval",
+   "max_gap_h": 0.5,
+   "log": "~/JesseOS/workspace/logs/claude-remote.launchd.log",
+   "script": "~/JesseOS/workspace/claude-remote/keepalive.sh",
+   "selfheal": true,
+   "probe": "ps -axo command | grep -q '[c]laude remote-control --name'"
+  },
+  {
+   "label": "com.jesse.notify-digest",
+   "what": "18:40 daily: ONE Telegram summary of the day's non-urgent robot messages from notify/notify.py; sends nothing on days with nothing queued. exit 1 = could not deliver (queue kept)",
+   "kind": "calendar",
+   "max_gap_h": 26,
+   "log": "~/JesseOS/workspace/notify/state/digest.log",
+   "script": "~/JesseOS/workspace/notify/digest.sh",
+   "selfheal": true
+  }
+ ],
+ "not_monitored": {}
+}

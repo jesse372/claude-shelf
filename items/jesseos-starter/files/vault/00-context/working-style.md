@@ -1,2 +1,7 @@
 # Working style
-(Fill in: how you like your agents to behave — tone, autonomy, what to ask vs. just do.)
+(Claude fills this in by interviewing the owner.)
+
+- Tone and how short answers should be: 
+- What to just do versus what to ask first: 
+- Who approves what (money, anything sent outside the company, changes to live systems): 
+- Hours and how to reach us when something is urgent: 

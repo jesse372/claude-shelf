@@ -1,0 +1,9 @@
+# logs, transient state, caches: never worth backing up
+workspace/logs/
+**/*.log
+**/state/
+**/cache/
+**/node_modules/
+**/__pycache__/
+.DS_Store
+workspace/claude-remote/.*

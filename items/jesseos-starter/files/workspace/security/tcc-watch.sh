@@ -10,7 +10,7 @@ set -u
 export PATH="/usr/local/bin:$HOME/.omnara/bin:$PATH"
 cd /tmp || exit 1
 STATE="$HOME/JesseOS/workspace/security/tcc-status.json"
-LOG="~/.claude/logs/tcc-watch.log"
+LOG="$HOME/JesseOS/workspace/logs/tcc-watch.log"
 mkdir -p "$(dirname "$LOG")" "$(dirname "$STATE")"
 ts(){ date '+%Y-%m-%d %H:%M'; }
 # macOS ships no `timeout`. Under launchd (no TTY) a TCC-denied `claude` BLOCKS
