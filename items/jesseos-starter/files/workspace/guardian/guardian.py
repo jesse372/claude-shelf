@@ -67,7 +67,8 @@ def new_log_errors(j, s, advance):
     if off is None or off > size: off = size if off is None else 0   # first sight: don't alarm on history; truncated: rescan
     with open(p, "rb") as fh:
         fh.seek(off); chunk = fh.read(min(size - off, 2_000_000)).decode("utf-8", "replace")
-    errs = [l.strip()[:220] for l in chunk.splitlines() if ERR_RX.search(l)]
+    ign = re.compile(j["log_ignore"]) if j.get("log_ignore") else None   # registry: lines that look like errors but aren't
+    errs = [l.strip()[:220] for l in chunk.splitlines() if ERR_RX.search(l) and not (ign and ign.search(l))]
     if advance or not errs: s["log_off"] = size
     return errs
 
