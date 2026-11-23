@@ -164,6 +164,28 @@ Cost: Jesse is credit-sensitive. Don't print big files (use grep -n / sed -n ran
   week keeps WEEK. Type enlarged vs brief (76->120 px etc.) - brief sizes read tiny at phone size. D picks a
   film shot where heading + label rows cover no face (cache filmlib/photog_fit.json); ceremony shots excluded.
   Previews: local-data/creative-previews/cde-2026-10-23/ (rendered, QC'd: 1080x1920 30fps, -14 LUFS, no silence).
+- TIKTOK OWN ROBOT (LIVE 2026-11-23; Jesse: "surely we can just make our own version", "keep this account, if we lost
+  it, it's only 200 followers"): reels/tiktok_web/ = launch.sh (real Chrome, profile ~/.authframework/chrome-tiktok, port
+  9349, never headless) + tt.mjs (login | status | post <mp4> <caption> [--dry] | logout; screenshots of every step in
+  tiktok_web/shots/). tiktok.py mode "web" when tiktok_web/ENABLED exists (web-on/web-off/web-status): all 15 reels a day (5 main + 10 trials, Jesse 11-23 "post all the reels we post on Instagram"; no photo posts) at
+  post_time, ONE per 5-min run, slot marked before posting, "unsure" results never retried (no double posts), slots >90 min
+  late skipped, alerts via notify.py (signed out / 3 failures / unsure). Sign-in: tt.mjs login prints the QR code as a
+  LINK that lives 60 s (hand Jesse a fresh one), then TikTok emails a 6-digit code to his Gmail to type on the Mac.
+  Page-change traps met: one-time "Turn on automatic content checks?" dialog; Post button has data-loading="false".
+  Against TikTok's automation terms: Jesse accepted the risk. Buffer mode below is built but unused.
+- TIKTOK NUMBERS (2026-11-23, Jesse: "monitor what performs on tiktok as it might perform better on tiktok vs
+  Instagram"): reels/tiktok_learn.py. Once a day (first tiktok.py run after 05:00, no own LaunchAgent) `tt.mjs stats`
+  reads views/likes/comments/shares/saves of every post from TikTok Studio; robot posts are matched to their reel via
+  tiktok_sent.json (caption opening + time) and paired with the same reel's Instagram views. Output
+  local-data/tiktok_perf.json + tiktok_scores.json; `tiktok_learn.py report`; also a section in the weekly reels email.
+  Scores only posts >= 48 h old; lift = TikTok vs Instagram, each against its own median. MEASURES ONLY: plan.py still
+  picks formats from Instagram scores (ask Jesse before letting TikTok numbers steer the plan).
+- TIKTOK AUTO-POST (2026-11-23, Jesse: "post on their own, I don't have the time"): TikTok only lets audited apps post
+  publicly and won't audit a one-business tool, so tiktok.py publishes through Buffer's API (free plan; audited app).
+  `tiktok.py buffer-setup <api key>` turns it on (key + channel in Keychain jc-reels-tiktok); then `run` hands all 5 main
+  reels (not trials/photo posts) to Buffer at post_time (mode shareNow), re-checks the status, alerts via notify.py if one
+  did not go out, never posts a slot twice. Buffer downloads the reel from Worker route /pub/<sig>/<file>.mp4 (signed, hides
+  SHARE). `buffer-status`, `buffer-off` (back to drafts). Test: reels/test_tiktok_buffer.py. No key = drafts as below.
 - TIKTOK (2026-10-23, Jesse chose option 1 = inbox drafts): tiktok.py + LaunchAgent com.jesseos.reels.tiktok (5 min).
   Sandbox app "JC Reels" (client key sbaweml4bvmlbzqgkp; key/secret + tokens in Keychain jc-reels-tiktok; access 24 h
   auto-refresh, refresh 365 d). Worker: /tiktok/callback/ (code -> KV 60 min), /<SHARE>/api/tiktok_code, /legal/privacy|terms/,
