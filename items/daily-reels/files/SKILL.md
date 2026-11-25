@@ -568,7 +568,7 @@ Cost: Jesse is credit-sensitive. Don't print big files (use grep -n / sed -n ran
   (Perth summer, sunset ~7:20pm), idea-details ('\bdetail' alt text only - broader regexes pulled couple shots). On the Ideas
   page as NEW 11-12. Wired: approve -> plan.IDEAS3 -> daily fn "I3" (one per style per 3 days). Backups local-data/*.bak-2026-11-12b.
 - 2026-11-13 INSTA360 BTS (Jesse's X-series card): /Volumes/LaCie/JC Reels/insta360-2026-11-12/{insv,lrv,transcripts,reframed}
-  (card untouched on the MacBook). Weddings 10-03 = Kirsty & Steve (status 2 but CLEARED by Jesse 11-13; BTS before gallery release is fine),
+  (card untouched on the MacBook). Weddings 10-03 = JESS & MATT (Jessica Cooper; corrected 2026-11-24: NOT Kirsty & Steve, whose wedding another shooter covered the same day; clips named k*/k3 are Jess & Matt, gallery still a draft; BTS before gallery release is fine),
   11-07 (garden + full ceremony vows, clear audio), 11-12 (registry-style ceremony). 09-29 = car/boat. insta.py = fisheye->9:16
   (lens 0 = POV through his Canon, roll 90 when held portrait; lens 1 = his face, roll -90; roll drifts when he turns the
   camera -> constant-roll windows only, or Insta360 Studio horizon lock). Transcripts = whisper base on LRV audio (transcribe.py,
@@ -648,3 +648,7 @@ Cost: Jesse is credit-sensitive. Don't print big files (use grep -n / sed -n ran
   ("In a sun-drenched garden, two souls entwined, we captured a love story for the ages 🌿 ..."), shapes love / story / title / names /
   long, "us" only for jokes about our own job (FUN). captions.CREEPY rejects remarks about looks. Marker is now .caption_v3: the daily
   run rewrites every upcoming reel without it (so a Codex cap just delays it a day). Imagine reels get love-story captions too.
+- 2026-11-24 GUEST'S-VIEW IMAGINE (Jesse: no Runway, "use what we have already" = the Insta360 on his hot shoe): guestview.py = ideas4 hardearn
+  build with a stabilised 360 clip of the couple as the opener, then THE SAME couple's photos. Preview guestview-2026-11-24/guestview-jm-hut
+  (Jess & Matt, wide/k3-close 3.9-7.3 s + 7 of the 10 Sculpt picks). Jesse 11-25 "why is it not on my reels app" -> placed UNAPPROVED + pinned in trial slot 2026-11-27.13 (swap_in --no-approve --keep-format --round guestview-2026-11-24; preview spec needs music_used, ig_audio, reel_song.mp4, trial fields copied from the slot it replaces). Their gallery is still a draft: his approve tap is his OK.
+  Nov 7 / 12 / 14 weddings have 360 clips but no delivered gallery yet: build theirs when each gallery is released.
