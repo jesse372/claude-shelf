@@ -652,3 +652,11 @@ Cost: Jesse is credit-sensitive. Don't print big files (use grep -n / sed -n ran
   build with a stabilised 360 clip of the couple as the opener, then THE SAME couple's photos. Preview guestview-2026-11-24/guestview-jm-hut
   (Jess & Matt, wide/k3-close 3.9-7.3 s + 7 of the 10 Sculpt picks). Jesse 11-25 "why is it not on my reels app" -> placed UNAPPROVED + pinned in trial slot 2026-11-27.13 (swap_in --no-approve --keep-format --round guestview-2026-11-24; preview spec needs music_used, ig_audio, reel_song.mp4, trial fields copied from the slot it replaces). Their gallery is still a draft: his approve tap is his OK.
   Nov 7 / 12 / 14 weddings have 360 clips but no delivered gallery yet: build theirs when each gallery is released.
+
+## Instagram Stories (2026-11-26, `stories.py`)
+Jesse: Stories must feel like we genuinely post there. NEVER re-share reels/feed posts, NEVER scheduled portfolio photos with captions (both rejected 11-26).
+- `.21` wedding tomorrow: text-only 'Create'-style Story the evening before each JC wedding date (loops/leads-dash/state/jobs.json). Venue named only if it's a real place (no street address), never couple names. Several weddings = "N weddings tomorrow" + venues.
+- `.22` new 5-star Google review (gbp.reviews, `stories_state.json` reviews_seen): verbatim quote, first name, "thank you".
+- `.23-.29` phone clips: Jesse taps "+ Add a Story" in the app's Stories tab; Worker stores 20 MB parts in KV (`up:<uid>:<n>`, list `uploads`); the 10-min watcher runs `stories.pull()` -> 9:16 (blur fill for landscape, HDR tonemap, max 59 s) -> publish -> approve. Upload = approval; posts the same evening or ~15 min later if already evening.
+- Files live in out-stories/ (LaCie), separate from out/ so TikTok/captions/slot cleanup never touch them. Worker posts kind "story" as media_type STORIES (no caption/tags possible). Event Stories need approval in the Stories tab; declines = slot dropped for good.
+- Not built: 'gallery delivered' (px_collections.json stale since 10-24), sneak peeks (consent gate). Instagram's API can't add polls, questions, music or link stickers.
