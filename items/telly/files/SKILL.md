@@ -39,3 +39,9 @@ rebuilt): grey bg, white grouped lists, hairlines, one amber accent, SVG icons, 
 copy "Up to date" / "Unpublished changes" / "Publish". Keep new screens on that system.
 `telly.html` (write a line, show a photo, hourly hours, jumble) is a page inside that app with a
 back link, not an app of its own. Same open access as the `telly` command.
+
+## Rotation picture (2026-11-27)
+Gag #5 in the "Want a laugh?" rotation (`gagFullPhoto` in beer-tap-list `index.html`) shows ONE
+stored picture full screen for 12s. It lives in the worker's KV key `gagimg`, separate from `telly photo`'s
+`laughimg`. Replace: POST `{"image":"data:image/jpeg;base64,..."}` to `/gagimg`; `{"image":null}` removes it
+(the gag then skips silently). Jesse confirmed the screens are in a private bar.

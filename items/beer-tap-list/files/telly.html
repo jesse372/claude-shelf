@@ -142,6 +142,17 @@
   </section>
 
   <section class="card">
+    <h2>Pick a gag</h2>
+    <div class="grid" id="gagpick">
+      <button class="big" data-gag="0">Doodle shower<small>things rain down</small></button>
+      <button class="big" data-gag="1">Browsing history<small>someone's searches</small></button>
+      <button class="big" data-gag="2">Still drinking?<small>the Netflix question</small></button>
+      <button class="big" data-gag="3">Crayon scribble<small>a kid got the telly</small></button>
+      <button class="big" data-gag="4">The picture<small>full screen</small></button>
+    </div>
+  </section>
+
+  <section class="card">
     <h2>Show a photo</h2>
     <label class="pick">Choose a photo <input type="file" id="file" accept="image/*"></label>
     <div class="thumbwrap" id="thumbwrap"><img id="thumb" alt=""><div class="n" id="thumbname"></div></div>
@@ -206,7 +217,10 @@
      with the last one, so the buttons lock for as long as the effect runs. */
   var busyUntil = 0, busyT = null;
   var LOCK = ["next", "jumble", "write", "show", "again"];
-  function setLocked(on){ LOCK.forEach(function(id){ var b = $(id); if(b) b.disabled = on || (id === "show" && !staged); }); }
+  function setLocked(on){
+    LOCK.forEach(function(id){ var b = $(id); if(b) b.disabled = on || (id === "show" && !staged); });
+    Array.prototype.forEach.call(document.querySelectorAll("[data-gag]"), function(b){ b.disabled = on; });
+  }
   function busy(secs, what){
     busyUntil = Date.now() + secs * 1000;
     setLocked(true);
@@ -286,6 +300,13 @@
   $("next").addEventListener("click", function(){
     setLocked(true);
     post("/laugh", {}).then(function(){ busy(GAG_SECS, "Gag"); }).catch(fail);
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-gag]"), function(b){
+    b.addEventListener("click", function(){
+      setLocked(true);
+      post("/laugh", { n: Number(b.getAttribute("data-gag")) })
+        .then(function(){ busy(GAG_SECS, b.firstChild.nodeValue); }).catch(fail);
+    });
   });
   $("jumble").addEventListener("click", function(){
     setLocked(true);

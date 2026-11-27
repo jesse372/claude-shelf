@@ -525,6 +525,10 @@
   #photogag .pcap{font-family:"Dancing Script",cursive;font-weight:700;color:#fff;
     font-size:9vh;line-height:1.1;margin-top:2vh;white-space:nowrap}
   #writegag path.go{transition:stroke-dashoffset .9s ease-out;stroke-dashoffset:0;opacity:1}
+  /* The rotation picture, edge to edge. */
+  #fullgag{position:fixed;left:0;top:0;right:0;bottom:0;z-index:9770;display:none;background:#000}
+  #fullgag.on{display:block}
+  #fullgag img{display:block;width:100vw;height:100vh;object-fit:contain}
 
   /* Unmistakably not the live board. Sits inside .screen so it rotates with it. */
   #previewbadge{
@@ -601,6 +605,7 @@
 <div id="scribgag" aria-hidden="true"></div>
 <div id="writegag" aria-hidden="true"></div>
 <div id="photogag" aria-hidden="true"></div>
+<div id="fullgag" aria-hidden="true"></div>
 <div id="dimveil"></div>
 
 <video id="awake" muted loop playsinline webkit-playsinline preload="auto"
@@ -1227,7 +1232,7 @@
      server says what the current build is. If they differ, this page is stale
      and reloads. Unlike comparing ETags, this cannot be fooled by a cached
      page, because BUILD travels with the page itself. */
-  var BUILD = "20261108-164844";
+  var BUILD = "20261127-214358";
 
   (function(){
     function check(){
@@ -1667,7 +1672,25 @@
       done(secs * 1000 + 300);
     }
 
-    var GAGS = [gagDoodles, gagHistory, gagStill, gagScribble];
+    /* 8 - the rotation picture (POST /gagimg), full screen for 12s.
+       Skips itself if no picture is stored. */
+    function gagFullPhoto(){
+      var box = el("fullgag");
+      if(!box){ done(400); return; }
+      var img = new Image(), settled = false;
+      img.onload = function(){
+        if(settled) return;
+        settled = true;
+        box.innerHTML = ""; box.appendChild(img); box.className = "on";
+        setTimeout(function(){ box.className = ""; box.innerHTML = ""; }, 12000);
+        done(12600);
+      };
+      img.onerror = function(){ if(!settled){ settled = true; done(200); } };
+      setTimeout(function(){ if(!settled){ settled = true; done(0); } }, 15000);
+      img.src = SIGNAL_URL.replace(/laugh$/, "gagimg") + "?t=" + Date.now();
+    }
+
+    var GAGS = [gagDoodles, gagHistory, gagStill, gagScribble, gagFullPhoto];
 
     /* What the last signal actually did on this screen. Rides along on the next
        poll (&r=...) so `wrangler tail` shows it — the only way to see inside a TV. */

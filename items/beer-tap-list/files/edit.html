@@ -752,6 +752,17 @@
       <button class="tog" id="autoOn" role="switch" aria-checked="false" aria-label="A gag on the hour"></button>
     </div>
     <div class="tvrow">
+      <div class="t"><strong>Which gag</strong></div>
+      <select id="laughPick" aria-label="Which gag" style="width:auto;max-width:60%">
+        <option value="">Next in rotation</option>
+        <option value="0">Doodle shower</option>
+        <option value="1">Browsing history</option>
+        <option value="2">Are you still drinking?</option>
+        <option value="3">Kid's crayon scribble</option>
+        <option value="4">The picture</option>
+      </select>
+    </div>
+    <div class="tvrow">
       <div class="t"><strong>Play a gag now</strong>
         <div class="hint" id="laughmsg" style="margin-top:2px">&nbsp;</div></div>
       <button class="btn-ghost" id="laugh">Play</button>
@@ -2424,7 +2435,8 @@
       if(!WORKER_URL){ msg.textContent = "Not connected."; return; }
       btn.disabled = true;
       msg.textContent = "Go and look at the telly…";
-      workerPost("/laugh", {}, function(err, status){
+      var pick = $("laughPick") ? $("laughPick").value : "";
+      workerPost("/laugh", pick === "" ? {} : { n: Number(pick) }, function(err, status){
         if(err || status !== 200) msg.textContent = "Couldn't reach the TV.";
         setTimeout(function(){
           btn.disabled = false;

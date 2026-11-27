@@ -7,7 +7,7 @@
   "perPage": "auto",
   "rotateSeconds": 10,
   "hideKicked": false,
-  "updated": "2026-11-07T14:12:24.485Z",
+  "updated": "2026-11-19T09:20:41.851Z",
   "taps": [
     {
       "num": 1,
@@ -170,6 +170,38 @@
       "srm": null,
       "ready": "",
       "guest": false,
+      "icon": "",
+      "level": 100,
+      "status": "coming"
+    },
+    {
+      "num": 12,
+      "name": "Red Dirt Lager ",
+      "style": "Amber Lager",
+      "abv": "5.8",
+      "ibu": "30",
+      "notes": "",
+      "color": "#DE7C00",
+      "srm": 10,
+      "icon": "",
+      "level": 100,
+      "status": "coming",
+      "custom": [
+        {
+          "k": "",
+          "v": ""
+        }
+      ]
+    },
+    {
+      "num": 13,
+      "name": "Palm Grease",
+      "style": "American IPA",
+      "abv": "6.3",
+      "ibu": "30",
+      "notes": "",
+      "color": "#E58500",
+      "srm": 9,
       "icon": "",
       "level": 100,
       "status": "coming"

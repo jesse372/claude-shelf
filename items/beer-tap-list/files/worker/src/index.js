@@ -323,9 +323,10 @@ export default {
                   200, { ...cors, "Cache-Control": "no-store" });
     }
 
-    // The picture for the photo gag. Lives in KV, not the public repo.
-    if (route === "/laughimg" && request.method === "GET") {
-      const uri = await env.SIGNAL.get("laughimg");
+    // The picture for the photo gag (laughimg), and the one that rides in the
+    // hourly rotation (gagimg). Both live in KV, not the public repo.
+    if ((route === "/laughimg" || route === "/gagimg") && request.method === "GET") {
+      const uri = await env.SIGNAL.get(route.slice(1));
       const m = uri && /^data:(image\/(?:jpeg|png|webp));base64,(.+)$/.exec(uri);
       if (!m) return new Response("no picture", { status: 404, headers: cors });
       const bin = atob(m[2]);
@@ -385,13 +386,15 @@ export default {
 
     // Stage a picture for the photo gag: {"image": "data:image/jpeg;base64,..."}.
     // {"image": null} deletes it.
-    if (route === "/laughimg") {
-      if (body.image === null) { await env.SIGNAL.delete("laughimg"); return json({ ok: true }, 200, cors); }
+    // Same for the rotation picture at /gagimg.
+    if (route === "/laughimg" || route === "/gagimg") {
+      const key = route.slice(1);
+      if (body.image === null) { await env.SIGNAL.delete(key); return json({ ok: true }, 200, cors); }
       if (typeof body.image !== "string" || !/^data:image\/(jpeg|png|webp);base64,/.test(body.image)) {
         return json({ ok: false, error: "image must be a jpeg/png/webp data URI" }, 400, cors);
       }
       if (body.image.length > 3000000) return json({ ok: false, error: "Picture too big" }, 400, cors);
-      await env.SIGNAL.put("laughimg", body.image);
+      await env.SIGNAL.put(key, body.image);
       return json({ ok: true }, 200, cors);
     }
 
